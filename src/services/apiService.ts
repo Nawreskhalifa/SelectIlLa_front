@@ -5,7 +5,7 @@ import { UserApi } from '@/models/User/UserApi';
 import { httpCodes } from '@/utils/httpCodes';
 import { methodsHttpNames } from '@/utils/methods';
 import { API_BASE_URL } from '@/utils/constants';
-import Cookies from 'js-cookie';
+ import Cookies from 'js-cookie';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -182,3 +182,19 @@ export async function register(userApi: UserApi) {
         };
     }
 }
+
+export async function fetchVehicles() {
+    try {
+        console.log("ok")
+      const response = await axios.get(endPoints.vehicle);
+      if (response) {
+        return response.data;
+      } else {
+        console.error("Failed to fetch vehicles:");
+        throw new Error("Failed to fetch vehicles");
+      }
+    } catch (error) {
+      console.error("Error fetching vehicles:", error);
+      throw error;
+    }
+  }

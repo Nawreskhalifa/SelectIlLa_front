@@ -11,5 +11,6 @@ export const endPoints = {
     forgetPassword: `${API_BASE_URL}forgetPassword`,
     resetPassword: `${API_BASE_URL}password/reset`,
     refreshToken: `${API_BASE_URL}token/refresh`,
+    vehicle: `${API_BASE_URL}vehicles`
 
 };
