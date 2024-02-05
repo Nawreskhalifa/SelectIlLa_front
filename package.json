@@ -33,6 +33,7 @@
     "vue3-apexcharts": "^1.4.4",
     "vue3-circle-progress": "^1.0.7",
     "vue3-prism": "^0.1.4",
+    "vue3-toastify": "^0.2.1",
     "vue3-tree": "^0.11.5",
     "vuex": "^4.0.2",
     "vuex-extensions": "^4.1.0"

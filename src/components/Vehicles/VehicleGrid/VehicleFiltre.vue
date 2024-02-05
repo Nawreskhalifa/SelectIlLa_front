@@ -1,414 +1,203 @@
 <template>
   <div class="products-sidebar-filter bg-white letter-spacing mb-25">
-    <div class="title">
-      <h5 class="mb-0 fw-semibold text-secondary">Filters</h5>
+    <div
+      class="title"
+      style="
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      "
+    >
+      <h5 class="mb-0 fw-semibold text-secondary">Select All</h5>
+      <div>
+        <div class="onoffswitch">
+          <input
+            type="radio"
+            name="onoffswitch"
+            class="onoffswitch-checkbox"
+            id="myonoffswitch"
+            v-model="selectAll"
+            value="false"
+            checked
+          />
+          <label class="onoffswitch-label" for="myonoffswitch">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+          </label>
+        </div>
+
+        <div class="onoffswitch">
+          <input
+            type="radio"
+            v-model="selectAll"
+            value="true"
+            name="onoffswitch"
+            class="onoffswitch-checkbox"
+            id="myonoffswitch2"
+          />
+          <label class="onoffswitch-label" for="myonoffswitch2">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+          </label>
+        </div>
+      </div>
     </div>
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Search</h6>
-      <form class="search-box position-relative mb-15">
+      <div class="search-box -relative mb-15">
         <input
           type="text"
           class="form-control shadow-none text-black rounded-0 border-0"
           placeholder="Search product"
+          v-model="searchInput"
         />
-        <button
+        <!-- <button
           type="submit"
           class="bg-transparent text-primary transition p-0 border-0"
         >
           <i class="flaticon-search-interface-symbol"></i>
-        </button>
-      </form>
-      <span class="d-block fs-13 fw-medium text-black mb-10">
-        Previous Searches
-      </span>
-      <div class="previous-searches-list">
-        <div
-          class="item d-inline-block fw-medium fs-13 text-primary position-relative"
-        >
-          Red Hat
-          <button type="button" class="bg-transparent p-0 border-0 transition">
-            <i class="flaticon-close"></i>
-          </button>
-        </div>
-        <div
-          class="item d-inline-block fw-medium fs-13 text-primary position-relative"
-        >
-          Phone
-          <button type="button" class="bg-transparent p-0 border-0 transition">
-            <i class="flaticon-close"></i>
-          </button>
-        </div>
-        <div
-          class="item d-inline-block fw-medium fs-13 text-primary position-relative"
-        >
-          Bed Furniture
-          <button type="button" class="bg-transparent p-0 border-0 transition">
-            <i class="flaticon-close"></i>
-          </button>
-        </div>
-        <div
-          class="item d-inline-block fw-medium fs-13 text-primary position-relative"
-        >
-          Hair Accessories
-          <button type="button" class="bg-transparent p-0 border-0 transition">
-            <i class="flaticon-close"></i>
-          </button>
-        </div>
-        <div
-          class="item d-inline-block fw-medium fs-13 text-primary position-relative"
-        >
-          Color: Purple
-          <button type="button" class="bg-transparent p-0 border-0 transition">
-            <i class="flaticon-close"></i>
-          </button>
-        </div>
+        </button> -->
       </div>
-      <a
-        href="javascript:void(0);"
-        class="clear-btn text-decoration-none fs-13 fw-medium text-black position-relative d-inline-block mt-10"
-      >
-        Clear
-      </a>
     </div>
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Categories</h6>
       <ul class="categories-list ps-0 mb-0 list-unstyled">
         <li>
-          <router-link
-            to="/products"
-            class="d-flex align-items-center justify-content-between text-decoration-none text-paragraph"
-          >
-            <span class="d-block fs-md-15 fw-medium">All</span>
-            <span class="d-block fw-medium text-muted">314</span>
-          </router-link>
+          <span class="d-block fs-md-15 fw-medium">All</span>
         </li>
-        <li>
-          <router-link
-            to="/products"
-            class="d-flex align-items-center justify-content-between text-decoration-none text-paragraph"
-          >
-            <span class="d-block fs-md-15 fw-medium">Accessories</span>
-            <span class="d-block fw-medium text-muted">25</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/products"
-            class="d-flex align-items-center justify-content-between text-decoration-none text-paragraph"
-          >
-            <span class="d-block fs-md-15 fw-medium">Bags</span>
-            <span class="d-block fw-medium text-muted">5</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/products"
-            class="d-flex align-items-center justify-content-between text-decoration-none text-paragraph"
-          >
-            <span class="d-block fs-md-15 fw-medium">Entertainment</span>
-            <span class="d-block fw-medium text-muted">60</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/products"
-            class="d-flex align-items-center justify-content-between text-decoration-none text-paragraph"
-          >
-            <span class="d-block fs-md-15 fw-medium">Electronics</span>
-            <span class="d-block fw-medium text-muted">125</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/products"
-            class="d-flex align-items-center justify-content-between text-decoration-none text-paragraph"
-          >
-            <span class="d-block fs-md-15 fw-medium">Gaming</span>
-            <span class="d-block fw-medium text-muted">56</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/products"
-            class="d-flex align-items-center justify-content-between text-decoration-none text-paragraph"
-          >
-            <span class="d-block fs-md-15 fw-medium">Mobile </span>
-            <span class="d-block fw-medium text-muted">74</span>
-          </router-link>
-        </li>
-      </ul>
-      <button
-        type="button"
-        class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
-      >
-        See More
-      </button>
-    </div>
-    <div class="sidebar-item">
-      <h6 class="text-black fw-bold fs-md-15">Brands</h6>
-      <ul class="brands-list ps-0 mb-0 list-unstyled">
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="allBrands"
-            />
-            <label class="form-check-label fs-md-15 fw-medium" for="allBrands">
-              All
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">222</span>
-        </li>
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="sanungBrand"
-            />
-            <label
-              class="form-check-label fs-md-15 fw-medium"
-              for="sanungBrand"
-            >
-              Sanung
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">209</span>
-        </li>
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="pixelBrand"
-            />
-            <label class="form-check-label fs-md-15 fw-medium" for="pixelBrand">
-              Pixel
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">32</span>
-        </li>
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="channeleBrand"
-            />
-            <label
-              class="form-check-label fs-md-15 fw-medium"
-              for="channeleBrand"
-            >
-              Channele
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">100</span>
-        </li>
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="oxiBrand"
-            />
-            <label class="form-check-label fs-md-15 fw-medium" for="oxiBrand">
-              Oxi
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">98</span>
-        </li>
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="pandoraBrand"
-            />
-            <label
-              class="form-check-label fs-md-15 fw-medium"
-              for="pandoraBrand"
-            >
-              Pandora
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">43</span>
-        </li>
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="sugarBrand"
-            />
-            <label class="form-check-label fs-md-15 fw-medium" for="sugarBrand">
-              Sugar
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">56</span>
-        </li>
-      </ul>
-      <button
-        type="button"
-        class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
-      >
-        See More
-      </button>
-    </div>
-    <div class="sidebar-item">
-      <h6 class="text-black fw-bold fs-md-15">Pricing</h6>
-      <div class="pricing-filter" id="pricing-filter">
-        <div class="range-slider">
-          <input
-            type="range"
-            class="min-price"
-            min="10"
-            v-model="minPrice"
-            @change="updateRange"
-          />
-          <input
-            type="range"
-            class="max-price"
-            max="6000"
-            v-model="maxPrice"
-            @change="updateRange"
-          />
-        </div>
-        <div
-          class="price-content d-flex align-items-center justify-content-between"
-        >
-          <span id="min-value" class="d-block text-black fw-medium fs-13">
-            ${{ minPrice }}
+        <li v-for="category in categories" :key="category.id">
+          <span class="d-block fs-md-15 fw-medium">{{
+            category.attributes.name
+          }}</span>
+          <span
+            class="d-block fw-medium text-muted"
+            v-if="
+              category.attributes &&
+              category.attributes.vehicles &&
+              category.attributes.vehicles.data
+            "
+            >{{ category.attributes.vehicles.data.length }}
           </span>
-          <span id="max-value" class="d-block text-black fw-medium fs-13">
-            ${{ maxPrice }}
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="sidebar-item">
-      <h6 class="text-black fw-bold fs-md-15">Ratings</h6>
-      <ul class="ratings-list ps-0 mb-0 list-unstyled">
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="rating4"
-            />
-            <label class="form-check-label fw-medium" for="rating4">
-              <span>
-                <i class="flaticon-star-1"></i>
-                <i class="flaticon-star-1"></i>
-                <i class="flaticon-star-1"></i>
-                <i class="flaticon-star-1"></i>
-                <i class="flaticon-star"></i>
-              </span>
-              4.00 & above
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">56</span>
-        </li>
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="rating3"
-            />
-            <label class="form-check-label fw-medium" for="rating3">
-              <span>
-                <i class="flaticon-star-1"></i>
-                <i class="flaticon-star-1"></i>
-                <i class="flaticon-star-1"></i>
-                <i class="flaticon-star"></i>
-                <i class="flaticon-star"></i>
-              </span>
-              3.00 & above
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">25</span>
-        </li>
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="rating2"
-            />
-            <label class="form-check-label fw-medium" for="rating2">
-              <span>
-                <i class="flaticon-star-1"></i>
-                <i class="flaticon-star-1"></i>
-                <i class="flaticon-star"></i>
-                <i class="flaticon-star"></i>
-                <i class="flaticon-star"></i>
-              </span>
-              2.00 & above
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">14</span>
-        </li>
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="rating1"
-            />
-            <label class="form-check-label fw-medium" for="rating1">
-              <span>
-                <i class="flaticon-star-1"></i>
-                <i class="flaticon-star"></i>
-                <i class="flaticon-star"></i>
-                <i class="flaticon-star"></i>
-                <i class="flaticon-star"></i>
-              </span>
-              1.00 & above
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">5</span>
         </li>
       </ul>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, watch } from "vue";
-
-const minPrice = ref(10);
-const maxPrice = ref(6000);
-
-function updateRange() {
-  if (minPrice.value > maxPrice.value) {
-    [minPrice.value, maxPrice.value] = [maxPrice.value, minPrice.value];
-  }
-}
-
-watch([minPrice, maxPrice], () => {
-  updateRange();
-});
+<script>
+import { fetchVehicleCategories } from "@/services/apiService";
+// search(table, field , query , searchInput)
+export default {
+  data() {
+    return {
+      categories: [],
+      searchInput: "",
+      selectAll: Boolean,
+    };
+  },
+  watch: {
+    async searchInput(newValue, oldValue) {
+      this.$emit("newFiltredData", newValue);
+    },
+    selectAll(newValue, prevValue) {
+      this.$emit("allSelected", newValue);
+    },
+  },
+  methods: {
+    async fetchCategories() {
+      try {
+        const data = await fetchVehicleCategories("populate=*");
+        this.categories = data.data;
+        console.log("Categories:", this.categories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    },
+  },
+  mounted() {
+    this.fetchCategories();
+  },
+};
 </script>
+
+<style scope>
+.onoffswitch {
+  position: relative;
+  width: 70px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  margin-bottom: 10px;
+}
+.onoffswitch-checkbox {
+  display: none;
+}
+.onoffswitch-label {
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid #999999;
+  border-radius: 20px;
+}
+.onoffswitch-inner {
+  display: block;
+  width: 200%;
+  margin-left: -100%;
+  -moz-transition: margin 0.3s ease-in 0s;
+  -webkit-transition: margin 0.3s ease-in 0s;
+  -o-transition: margin 0.3s ease-in 0s;
+  transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before,
+.onoffswitch-inner:after {
+  display: block;
+  float: left;
+  width: 50%;
+  height: 30px;
+  padding: 0;
+  line-height: 30px;
+  font-size: 14px;
+  color: white;
+  font-family: Trebuchet, Arial, sans-serif;
+  font-weight: bold;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+  content: "OFF";
+  padding-left: 10px;
+  background-color: #3c3a56;
+  color: #ffffff;
+}
+.onoffswitch-inner:after {
+  content: "ON";
+  padding-right: 10px;
+  background-color: #eeeeee;
+  color: #999999;
+  text-align: right;
+}
+.onoffswitch-switch {
+  display: block;
+  width: 18px;
+  margin: 6px;
+  background: #ffffff;
+  border: 2px solid #999999;
+  border-radius: 20px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 38px;
+  -moz-transition: all 0.3s ease-in 0s;
+  -webkit-transition: all 0.3s ease-in 0s;
+  -o-transition: all 0.3s ease-in 0s;
+  transition: all 0.3s ease-in 0s;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+  margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+  right: 0px;
+}
+</style>

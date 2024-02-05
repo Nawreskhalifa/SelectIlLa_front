@@ -1,6 +1,10 @@
 import { createWebHistory, createRouter } from "vue-router";
 import AddVehicle from "@/pages/Vehicle/AddVehicle.vue"
 import VehicleList from "@/pages/Vehicle/VehicleList.vue"
+ import VillaList from "@/pages/Villa/VillaList.vue"
+import AddVilla from "@/pages/Villa/AddVilla.vue"
+import AddVehicleCategory from "../pages/Categories/Vehicle/AddVehicleCategory.vue"
+import VehicleListCategory from "../pages/Categories/Vehicle/VehicleListCategory.vue"
 
 const routes = [
   {
@@ -12,7 +16,32 @@ const routes = [
     path: "/vehiclelist",
     name: "vehiclelist",
     component: VehicleList,
-  }
+  },
+  {
+    path: "/villalist",
+    name: "villalist",
+    component: VillaList,
+  },
+  {
+    path: "/addvilla",
+    name: "addvilla",
+    component: AddVilla,
+  },
+  {
+    path: "/AddVehicleCategory",
+    name: "AddVehicleCategory",
+    component: AddVehicleCategory,
+  },
+  {
+    path: "/VehicleListCategory",
+    name: "VehicleListCategory",
+    component: VehicleListCategory,
+  },
+  // {
+  //   path: "/vehicledetails",
+  //   name: "vehicledetails",
+  //   component: VehicleDetails,
+  // }
 ];
 
 const router = createRouter({

@@ -2,11 +2,11 @@
   <div
     class="col-sm-6 col-lg-6 col-xxxl-3"
     v-if="
-      vehicle &&
-      vehicle.attributes &&
-      vehicle.attributes.photos &&
-      vehicle.attributes.photos.data &&
-      vehicle.attributes.photos.data.length > 0
+      villa &&
+      villa.attributes &&
+      villa.attributes.photos &&
+      villa.attributes.photos.data &&
+      villa.attributes.photos.data.length > 0
     "
   >
     <div class="card mb-25 border-0 rounded-0 bg-white single-product-box">
@@ -15,10 +15,10 @@
           <img
             @click="toggleModal"
             :src="
-              getFullImageUrl(vehicle.attributes.photos.data[0].attributes.url)
+              getFullImageUrl(villa.attributes.photos.data[0].attributes.url)
             "
             class="imagev"
-            alt="vehicle"
+            alt="villa"
           />
 
           <button
@@ -35,44 +35,44 @@
         </div>
         <div class="content p-20">
           <h4 class="mb-10 fw-semibold fs-16 fs-lg-18">
-            {{ vehicle.attributes.make }} {{ vehicle.attributes.brand }}
+            {{ villa.attributes.name }} - {{ villa.attributes.city }}
           </h4>
           <div class="reviews d-flex align-items-center"></div>
           <div class="mt-10 price d-flex align-items-center">
             <span class="text-primary fw-bold fs-md-15 fs-lg-16">{{
-              vehicle.attributes.msrp
+              villa.attributes.daily
             }}</span>
           </div>
           <span>
-            published : <span v-date="vehicle.attributes.publishedAt"></span>
+            published : <span v-date="villa.attributes.publishedAt"></span>
           </span>
           <br />
           <span>
-            updated : <span v-date="vehicle.attributes.updatedAt"></span>
+            updated : <span v-date="villa.attributes.updatedAt"></span>
           </span>
           <button
             type="button"
             class="add-to-cart-btn text-center d-block mt-15 fw-medium transition w-100 rounded-1 position-relative"
-            @click="updateVehicle"
+            @click="updateVillaModal"
           >
             Update This
             <i class="fas fa-edit"></i>
           </button>
 
-          <VehicleDetails
+          <VillaDetails
             @close="toggleModal"
             :modalActive="modalActive"
-            :vehicle="vehicle"
-          ></VehicleDetails>
+            :villa="villa"
+          ></VillaDetails>
           <DeleteModal
             :show="deleteModalVisible"
-            :propToDelete="vehicle.attributes.brand"
+            :propToDelete="villa.attributes.brand"
             @delete="handleDelete"
           />
-          <UpdateVehicle
+          <UpdateVilla
             :show="isUpdate"
-            :vehicle="vehicle"
-            @close="updateVehicle"
+            :villa="villa"
+            @close="updateVillaModal"
             @updatedData="newData"
           />
         </div>
@@ -83,13 +83,13 @@
 
 <script>
 import { ref } from "vue";
-import VehicleDetails from "../VehicleDetails/VehicleDetails.vue";
+import VillaDetails from "../VillaDetails/VillaDetails.vue";
 import DeleteModal from "@/components/Common/DeleteModal.vue";
-import UpdateVehicle from "../UpdateVehicle/UpdateVehicle.vue";
+import UpdateVilla from "../UpdateVilla/UpdateVilla.vue";
 
 export default {
   props: {
-    vehicle: {
+    villa: {
       type: Object,
       required: true,
     },
@@ -107,14 +107,14 @@ export default {
       return `http://localhost:1337${relativePath}`;
     },
     addToFavorites() {
-      console.log("Add to favorites:", this.vehicle);
+      console.log("Add to favorites:", this.villa);
     },
     toggleModal() {
       this.modalActive = !this.modalActive;
     },
     handleDelete(confirmed) {
       if (confirmed) {
-        this.$emit("itemDeleted", this.vehicle.id);
+        this.$emit("itemDeleted", this.villa.id);
       } else {
         console.log("Deletion cancelled.");
       }
@@ -125,9 +125,11 @@ export default {
     toggleDeleteModal() {
       this.deleteModalVisible = !this.deleteModalVisible;
     },
-    updateVehicle() {
+    updateVillaModal() {
       this.isUpdate = !this.isUpdate;
+      console.log(this.isUpdate);
     },
+
     newData(event) {
       this.$emit("itemUpdated", event);
     },
@@ -145,9 +147,9 @@ export default {
     },
   },
   components: {
-    VehicleDetails,
+    VillaDetails,
     DeleteModal,
-    UpdateVehicle,
+    // UpdateVilla,
   },
 };
 </script>

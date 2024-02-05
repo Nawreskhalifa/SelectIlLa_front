@@ -5,42 +5,88 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">Make</label>
+              <label class="d-block text-black fw-semibold mb-10">name</label>
               <input
-                v-model="make"
+                v-model="name"
                 type="text"
                 class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. Sensung Smart Watch"
+                placeholder="e.g.    Smart House"
               />
-              <div v-if="makeError" class="text-danger">{{ makeError }}</div>
+              <div v-if="nameError" class="text-danger">{{ nameError }}</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"> city </label>
+              <input
+                v-model="city"
+                type="text"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. Ny"
+              />
+              <div v-if="cityError" class="text-danger">{{ cityError }}</div>
             </div>
           </div>
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Brand
+                rooms
               </label>
               <input
-                v-model="brand"
-                type="text"
+                v-model="rooms"
+                type="number"
                 class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. Sensung Smart Watch"
+                placeholder="e.g. 2"
               />
-              <div v-if="brandError" class="text-danger">{{ brandError }}</div>
             </div>
           </div>
-
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                style
+                baths
               </label>
               <input
-                v-model="style"
+                v-model="baths"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 2"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"> pool </label>
+              <input
+                v-model="pool"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 1"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"> view </label>
+              <input
+                v-model="view"
                 type="text"
                 class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. style"
+                placeholder="view description   .... "
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                sleeps
+              </label>
+              <input
+                v-model="sleeps"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 50"
               />
             </div>
           </div>
@@ -59,12 +105,14 @@
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"> msrp </label>
+              <label class="d-block text-black fw-semibold mb-10">
+                minioeuvre_daily
+              </label>
               <input
-                v-model="msrp"
+                v-model="minioeuvre_daily"
                 type="text"
                 class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. msrp"
+                placeholder="e.g. minioeuvre_daily"
               />
             </div>
           </div>
@@ -89,7 +137,7 @@
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Category Vehicles
+                Category Villa
               </label>
               <select
                 v-model="selectedCategory"
@@ -101,7 +149,7 @@
                   :key="category.id"
                   :value="category.id"
                 >
-                  {{ category.attributes.name }}
+                  {{ category.attributes.Name }}
                 </option>
               </select>
               <div v-if="categoryError" class="text-danger">
@@ -131,25 +179,6 @@
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">Mice</label>
-              <div class="input-group">
-                <span
-                  class="input-group-text rounded-0 fs-14 fw-bold text-primary"
-                >
-                  $
-                </span>
-                <input
-                  v-model="mice"
-                  type="text"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="e.g. 15"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10"
                 >New Daily</label
               >
@@ -165,7 +194,7 @@
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Vehicle Image
+                Villa Image
               </label>
               <div class="file-upload text-center position-relative">
                 <img
@@ -213,18 +242,23 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Seats
+                Partner
               </label>
-              <input
-                v-model="seats"
-                type="number"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. 4"
-              />
-              <div v-if="seatsError" class="text-danger">{{ seatsError }}</div>
+              <select
+                v-model="selectedPartner"
+                class="form-select shadow-none fw-semibold rounded-0"
+              >
+                <option selected>Select a partner</option>
+                <option
+                  v-for="partner in allPartners"
+                  :key="partner.id"
+                  :value="partner.id"
+                >
+                  {{ partner.name }}
+                </option>
+              </select>
             </div>
           </div>
-
           <div class="col-md-12">
             <button
               class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16"
@@ -242,8 +276,11 @@
 import { defineComponent, ref } from "vue";
 import BlotFormatter from "quill-blot-formatter";
 import ImageUploader from "quill-image-uploader";
-import { fetchVehicleCategories } from "@/services/apiService";
-import { postVehicle } from "@/services/apiService";
+import {
+  postVilla,
+  fetchVillaCategories,
+  fetchPartners,
+} from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useRouter } from "vue-router";
@@ -252,22 +289,25 @@ export default defineComponent({
 
   setup() {
     const router = useRouter();
-
-    const categories = ref();
-    const make = ref("");
-    const brand = ref("");
-    const description = ref("");
     const selectedCategory = ref("");
-    const selectedFiles = ref([]);
-    const owner = ref("");
-    const seats = ref("");
-    const daily = ref("");
-    const mice = ref("");
-    const newDaily = ref("");
-    const msrp = ref("");
-    const style = ref("");
-    const deposit = ref("");
 
+    const selectedFiles = ref([]);
+    const categories = ref();
+    const allPartners = ref();
+    const name = ref("");
+    const city = ref("");
+    const rooms = ref("");
+    const baths = ref("");
+    const pool = ref("");
+    const view = ref("");
+    const sleeps = ref("");
+    const daily = ref("");
+    const newDaily = ref("");
+    const deposit = ref("");
+    const description = ref("");
+    const minioeuvre_daily = ref("");
+    const owner = ref("");
+    const selectedPartner = ref("");
     const modules = {
       module: BlotFormatter,
       ImageUploader,
@@ -280,23 +320,28 @@ export default defineComponent({
       },
     };
 
-    const makeError = ref("");
-    const brandError = ref("");
+    const nameError = ref("");
+    const cityError = ref("");
     const descriptionError = ref("");
     const categoryError = ref("");
-    const imageError = ref("");
     const ownerError = ref("");
     const seatsError = ref("");
     const dailyError = ref("");
-    const miceError = ref("");
+    const roomsError = ref("");
     const newDailyError = ref("");
     const showToatSuccess = () => {
-      toast.success("Vehicle Created  🚗 👍 ", {
+      toast.success("Villa Created  🚗 👍 ", {
         autoClose: 1000,
       });
     };
+
+    const fetchPartnersList = async () => {
+      const data = await fetchPartners();
+      allPartners.value = data;
+      console.log(data, allPartners, "data");
+    };
     const fetchCategories = async () => {
-      const data = await fetchVehicleCategories();
+      const data = await fetchVillaCategories();
       categories.value = data.data;
     };
     const selectedFilesRef = ref([] as File[]);
@@ -305,7 +350,6 @@ export default defineComponent({
     const handleFileChange = (event) => {
       const input = event.target;
       selectedFilesRef.value = Array.from(input.files || []);
-
       previewImages();
     };
 
@@ -343,21 +387,21 @@ export default defineComponent({
       }
     };
     const submitForm = async () => {
-      makeError.value = "";
-      brandError.value = "";
+      nameError.value = "";
+      cityError.value = "";
       descriptionError.value = "";
       categoryError.value = "";
       ownerError.value = "";
       seatsError.value = "";
       dailyError.value = "";
-      miceError.value = "";
+      roomsError.value = "";
       newDailyError.value = "";
-      if (!make.value.trim()) {
-        makeError.value = "Make is required.";
+      if (!name.value.trim()) {
+        nameError.value = "name is required.";
       }
 
-      if (!brand.value.trim()) {
-        brandError.value = "Brand is required.";
+      if (!city.value.trim()) {
+        cityError.value = "city is required.";
       }
 
       if (!description.value.trim()) {
@@ -368,10 +412,6 @@ export default defineComponent({
         categoryError.value = "Please select a category.";
       }
 
-      if (selectedFiles.value.length === 0) {
-        imageError.value = "Please upload at least one image.";
-      }
-
       if (!owner.value.trim()) {
         ownerError.value = "Owner is required.";
       }
@@ -380,19 +420,15 @@ export default defineComponent({
         dailyError.value = "Daily amount is required.";
       }
 
-      if (!mice.value.trim()) {
-        miceError.value = "Mice amount is required.";
-      }
-
       if (
-        makeError.value ||
-        brandError.value ||
+        nameError.value ||
+        roomsError.value ||
         descriptionError.value ||
         categoryError.value ||
         ownerError.value ||
         seatsError.value ||
         dailyError.value ||
-        miceError.value ||
+        cityError.value ||
         newDailyError.value
       ) {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -400,64 +436,68 @@ export default defineComponent({
       }
       const vehicleData = {
         data: {
-          make: make.value,
-          brand: brand.value,
-          style: style.value,
-          msrp: msrp.value,
+          name: name.value,
+          city: city.value,
+          rooms: parseInt(rooms.value),
+          baths: parseInt(baths.value),
+          pool: parseInt(pool.value),
+          view: view.value,
+          sleeps: parseInt(sleeps.value),
           daily: parseFloat(daily.value),
-          mice: parseFloat(mice.value),
           new_daily: parseFloat(newDaily.value),
           deposit: parseFloat(deposit.value),
           description: description.value,
-          owner: owner.value,
-          category_vehicles: [parseInt(selectedCategory.value)],
-          seats: parseInt(seats.value),
+          minioeuvre_daily: minioeuvre_daily.value.toString(),
+          partner: [parseInt(selectedPartner.value)],
+          category_villas: [parseInt(selectedCategory.value)],
         },
       };
 
-      console.log(vehicleData);
-
-      const result = await postVehicle(selectedFilesRef, vehicleData);
+      const result = await postVilla(selectedFilesRef, vehicleData);
 
       if (result.success) {
         showToatSuccess();
-        router.push("/VehicleList");
+        router.push("/villalist");
       }
     };
 
     fetchCategories();
+    fetchPartnersList();
 
     return {
       modules,
       categories,
-      make,
-      brand,
+      allPartners,
       description,
       selectedCategory,
       selectedFiles,
       owner,
-      seats,
       daily,
       deposit,
-      style,
-      msrp,
       showToatSuccess,
-      mice,
       newDaily,
-      makeError,
-      brandError,
       descriptionError,
       categoryError,
       ownerError,
       seatsError,
       dailyError,
-      miceError,
       newDailyError,
       submitForm,
       selectedFilesRef,
       imageUrls,
       handleFileChange,
       uploadImage,
+      city,
+      cityError,
+      name,
+      pool,
+      view,
+      baths,
+      sleeps,
+      minioeuvre_daily,
+      selectedPartner,
+      rooms,
+      nameError,
     };
   },
 });

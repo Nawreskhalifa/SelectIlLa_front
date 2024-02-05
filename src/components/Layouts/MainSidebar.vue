@@ -102,18 +102,12 @@
             <div class="accordion-body">
               <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
                 <li class="sidebar-sub-menu-item">
-                  <router-link
-                    to="/crm-customers"
-                    class="sidebar-sub-menu-link"
-                  >
+                  <router-link to="/villalist" class="sidebar-sub-menu-link">
                     Villas List
                   </router-link>
                 </li>
                 <li class="sidebar-sub-menu-item">
-                  <router-link
-                    to="/crm-customers"
-                    class="sidebar-sub-menu-link"
-                  >
+                  <router-link to="/addvilla" class="sidebar-sub-menu-link">
                     Add Villa
                   </router-link>
                 </li>
@@ -121,7 +115,86 @@
             </div>
           </div>
         </li>
-
+        <li
+          class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
+        >
+          <a
+            class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
+            data-bs-toggle="collapse"
+            data-bs-target="#sidebarCollapseFourth"
+            aria-expanded="false"
+            aria-controls="sidebarCollapseFourth"
+          >
+            <i class="fas fa-snowplow"></i>
+            <span class="title">Vehicle Category </span>
+          </a>
+          <div
+            id="sidebarCollapseFourth"
+            class="accordion-collapse collapse"
+            data-bs-parent="#sidebarNavAccordion"
+          >
+            <div class="accordion-body">
+              <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/VehicleListCategory"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Vehicle Categories
+                  </router-link>
+                </li>
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/AddVehicleCategory"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Add A Vehicle Category
+                  </router-link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        <li
+          class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
+        >
+          <a
+            class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
+            data-bs-toggle="collapse"
+            data-bs-target="#sidebarCollapseFive"
+            aria-expanded="false"
+            aria-controls="sidebarCollapseFive"
+          >
+            <i class="fa-solid fa-dungeon"></i>
+            <span class="title">Villa Categories </span>
+          </a>
+          <div
+            id="sidebarCollapseFive"
+            class="accordion-collapse collapse"
+            data-bs-parent="#sidebarCollapseFive"
+          >
+            <div class="accordion-body">
+              <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/VehicleCategory"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Villa Categories
+                  </router-link>
+                </li>
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/addAVehicleCategory"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Add A Villa Category
+                  </router-link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
         <li class="sidebar-nav-item">
           <router-link to="/changelog" class="sidebar-nav-link d-block">
             <i class="fa fa-address-book" aria-hidden="true"></i>
@@ -158,6 +231,6 @@ export default defineComponent({
 
 <style scoped>
 .customSide {
-  padding-top: 130px;
+  padding-top: 160px;
 }
 </style>

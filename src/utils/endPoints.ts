@@ -11,6 +11,10 @@ export const endPoints = {
     forgetPassword: `${API_BASE_URL}forgetPassword`,
     resetPassword: `${API_BASE_URL}password/reset`,
     refreshToken: `${API_BASE_URL}token/refresh`,
-    vehicle: `${API_BASE_URL}vehicles`
-
+    vehicles: `${API_BASE_URL}vehicles`,
+    vehiclesCategories: `${API_BASE_URL}category-vehicles`,
+    villaCategories:`${API_BASE_URL}category-villas`,
+    upload: `${API_BASE_URL}upload` , 
+    villa : `${API_BASE_URL}villas`,
+    partners : `${API_BASE_URL}partners`
 };

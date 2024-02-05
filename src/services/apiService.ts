@@ -183,11 +183,11 @@ export async function register(userApi: UserApi) {
     }
 }
 
-export async function fetchVehicles() {
-    try {
-        console.log("ok")
-      const response = await axios.get(endPoints.vehicle);
+export async function fetchVehicles(start=0,limit=16) {
+     try {
+       const response = await axios.get(`${endPoints.vehicles}/?populate=*&pagination[start]=${start}&pagination[limit]=${limit}`);
       if (response) {
+        console.log(response.data)
         return response.data;
       } else {
         console.error("Failed to fetch vehicles:");
@@ -198,3 +198,345 @@ export async function fetchVehicles() {
       throw error;
     }
   }
+
+  export async function deleteVehicle(vehicleId) {
+    try {
+      const response = await axios.delete(`${endPoints.vehicles}/${vehicleId}`);
+      return response.data;  
+    } catch (error) {
+      console.error(`Error deleting vehicle with ID ${vehicleId}:`, error);
+      throw error;
+    }
+  }
+
+
+  export async function fetchVehicleCategories(query="") {
+    try {
+      const response = await axios.get(`${endPoints.vehiclesCategories}?${query}`);
+      if (response) {
+         return response.data;
+      } else {
+         throw new Error("Failed to fetch vehicles");
+      }
+    } catch (error) {
+      console.error("Error fetching vehicles:", error);
+      throw error;
+    }
+  }
+
+
+  export async function postVehicle(files, data) {
+    try {
+      console.log(Array.isArray(files),data , files.value);
+      const formData = new FormData();
+  
+      files.value.forEach((file) => {
+        formData.append(`files`, file);
+      });
+      formData.append('ref', 'api::vehicle.vehicle');
+      formData.append('field', 'photos');
+  
+      const postDataResponse = await axios.post(endPoints.vehicles,data, {
+        headers: {
+          'Content-Type': 'application/json',
+          "Accept": "application/json"
+        },
+      });
+  
+      const vehicleId = postDataResponse.data.data.id
+       formData.append('refId', vehicleId);
+  
+      const postFilesResponse = await axios.post(endPoints.upload, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      if (postFilesResponse.status === httpCodes.HTTP_OK) {
+        return {
+          success: true,
+          data: {
+            postData: postDataResponse.data,
+            filesData: postFilesResponse.data,
+          },
+          status: httpCodes.HTTP_OK,
+        };
+      } else {
+        console.error('Failed to post files:', postFilesResponse);
+        return {
+          success: false,
+          error: 'Failed to post files',
+          status: postFilesResponse.status,
+        };
+      }
+    } catch (error: any) {
+      console.error('Error posting vehicle:', error);
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+  export async function uploadFiles(files, ref, field, refId) {
+    try {
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append(`files`, file);
+      });
+      formData.append('ref', ref);
+      formData.append('field', field);
+      formData.append('refId', refId);
+  
+      const postFilesResponse = await axios.post(endPoints.upload, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      if (postFilesResponse.status === httpCodes.HTTP_OK) {
+        return {
+          success: true,
+          data: {
+            filesData: postFilesResponse.data,
+          },
+          status: httpCodes.HTTP_OK,
+        };
+      } else {
+        console.error('Failed to post files:', postFilesResponse);
+        return {
+          success: false,
+          error: 'Failed to post files',
+          status: postFilesResponse.status,
+          data:postFilesResponse
+        };
+      }
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+  
+  export async function deleteFiles(id) {
+    try {
+      const response = await axios.delete(`${endPoints.upload}/files/${id}`);
+      return response;   
+    } catch (error) {
+      console.error(`Error deleting files with ID ${id}:`, error);
+      throw error;
+    }
+  }
+  export async function search(table, field , query , searchInput) {
+    try {
+      const url = "http://localhost:1337/api"
+      const response = await axios.get(
+        `${url}/${table}?filters[${field}]/[${query}]=${searchInput}`  
+      );
+  
+      if (response) {
+        return {
+          success: true,
+          data: response.data,
+          status: response.status,
+        }
+     } else {
+        throw new Error("Failed to fetch vehicles");
+     }
+    } catch (error) {
+      console.error('Error getting vehicle:', error);
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+  
+  
+  export async function updateVehicle(vehicleId, updatedData) {
+    try {
+      const response = await axios.put(
+        `${endPoints.vehicles}/${vehicleId}`,
+        updatedData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        }
+      );
+  
+      if (response.status === httpCodes.HTTP_OK) {
+        return {
+          success: true,
+          data: response.data,
+          status: response.status,
+        };
+      } else {
+        console.error('Failed to update vehicle data:', response);
+        return {
+          data:response, 
+          success: false,
+          error: 'Failed to update vehicle data',
+          status: response.status,
+        };
+      }
+    } catch (error) {
+      console.error('Error updating vehicle:', error);
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+ 
+  
+
+export async function fetchVilla(start=0,limit=16) {
+  try {
+    const response = await axios.get(`${endPoints.villa}/?populate=*&pagination[start]=${start}&pagination[limit]=${limit}`);
+   if (response) {
+     console.log(response.data)
+     return response.data;
+   } else {
+     console.error("Failed to fetch villa:");
+     throw new Error("Failed to fetch villa");
+   }
+ } catch (error) {
+   console.error("Error fetching villa:", error);
+   throw error;
+ }
+}
+
+export async function deleteVilla(villaId) {
+ try {
+   const response = await axios.delete(`${endPoints.villa}/${villaId}`);
+   return response.data;  
+ } catch (error) {
+   console.error(`Error deleting vehicle with ID ${villaId}:`, error);
+   throw error;
+ }
+}
+
+
+export async function fetchVillaCategories(query="") {
+ try {
+   const response = await axios.get(`${endPoints.villaCategories}?${query}`);
+   if (response) {
+      return response.data;
+   } else {
+      throw new Error("Failed to fetch villa ");
+   }
+ } catch (error) {
+   console.error("Error fetching villa:", error);
+   throw error;
+ }
+}
+
+
+export async function postVilla(files, data) {
+ try {
+   console.log(Array.isArray(files),data , files.value);
+   const formData = new FormData();
+
+   files.value.forEach((file) => {
+     formData.append(`files`, file);
+   });
+   formData.append('ref', 'api::villa.villa');
+   formData.append('field', 'photos');
+
+   const postDataResponse = await axios.post(endPoints.villa,data, {
+     headers: {
+       'Content-Type': 'application/json',
+       "Accept": "application/json"
+     },
+   });
+
+   const villaId = postDataResponse.data.data.id
+    formData.append('refId', villaId);
+
+   const postFilesResponse = await axios.post(endPoints.upload, formData, {
+     headers: {
+       'Content-Type': 'multipart/form-data',
+     },
+   });
+
+   if (postFilesResponse.status === httpCodes.HTTP_OK) {
+     return {
+       success: true,
+       data: {
+         postData: postDataResponse.data,
+         filesData: postFilesResponse.data,
+       },
+       status: httpCodes.HTTP_OK,
+     };
+   } else {
+     console.error('Failed to post files:', postFilesResponse);
+     return {
+       success: false,
+       error: 'Failed to post files',
+       status: postFilesResponse.status,
+     };
+   }
+ } catch (error: any) {
+   console.error('Error posting Villa:', error);
+   return {
+     success: false,
+     error,
+   };
+ }
+}
+
+  
+export async function updateVilla(villaId, updatedData) {
+  try {
+    const response = await axios.put(
+      `${endPoints.villa}/${villaId}`,
+      updatedData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } else {
+      console.error('Failed to update villa data:', response);
+      return {
+        data:response, 
+        success: false,
+        error: 'Failed to update villa data',
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error('Error updating villa:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
+}
+
+
+export async function fetchPartners(query="") {
+  try {
+    const response = await axios.get(`${endPoints.partners}?${query}`);
+    if (response) {
+       return response.data;
+    } else {
+       throw new Error("Failed to fetch partners");
+    }
+  } catch (error) {
+    console.error("Error fetching partners:", error);
+    throw error;
+  }
+}
