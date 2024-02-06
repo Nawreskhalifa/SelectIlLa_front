@@ -1,6 +1,7 @@
 <template>
   <div
     class="col-sm-6 col-lg-6 col-xxxl-3"
+    :class="{ seletedElement: isSelected }"
     v-if="
       vehicle &&
       vehicle.attributes &&
@@ -32,12 +33,34 @@
               aria-hidden="true"
             ></i>
           </button>
+          <button
+            v-if="isSelected"
+            class="bg-dark text-white rounded-1 border-1 p-2 d-inline-block"
+            type="button"
+          >
+            <i class="fas fa-solid fa-check"></i>
+          </button>
         </div>
         <div class="content p-20">
           <h4 class="mb-10 fw-semibold fs-16 fs-lg-18">
             {{ vehicle.attributes.make }} {{ vehicle.attributes.brand }}
           </h4>
-          <div class="reviews d-flex align-items-center"></div>
+          <div class="lockbtn reviews d-flex align-items-center">
+            <button
+              @click="active(false)"
+              class="lock"
+              v-if="vehicle.attributes.isActive"
+            >
+              <i class="fas fa-solid fa-eye-slash"></i>
+            </button>
+            <button
+              @click="active(true)"
+              class="lock"
+              v-if="!vehicle.attributes.isActive"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
           <div class="mt-10 price d-flex align-items-center">
             <span class="text-primary fw-bold fs-md-15 fs-lg-16">{{
               vehicle.attributes.msrp
@@ -86,12 +109,15 @@ import { ref } from "vue";
 import VehicleDetails from "../VehicleDetails/VehicleDetails.vue";
 import DeleteModal from "@/components/Common/DeleteModal.vue";
 import UpdateVehicle from "../UpdateVehicle/UpdateVehicle.vue";
-
+import { updateVehicle } from "@/services/apiService";
 export default {
   props: {
     vehicle: {
       type: Object,
       required: true,
+    },
+    isSelected: {
+      type: Boolean,
     },
   },
   setup() {
@@ -112,6 +138,27 @@ export default {
     toggleModal() {
       this.modalActive = !this.modalActive;
     },
+    async active(value) {
+      if (value === true) {
+        const updatedData = {
+          data: {
+            isActive: true,
+          },
+        };
+        const res = await updateVehicle(this.vehicle.id, updatedData);
+        this.$emit("isActive", { status: true, id: res.data.data.id });
+      } else {
+        const updatedData = {
+          data: {
+            isActive: false,
+          },
+        };
+        const res = await updateVehicle(this.vehicle.id, updatedData);
+        console.log(res);
+        this.$emit("isActive", { status: false, id: res.data.data.id });
+      }
+    },
+
     handleDelete(confirmed) {
       if (confirmed) {
         this.$emit("itemDeleted", this.vehicle.id);
@@ -155,5 +202,29 @@ export default {
 <style scoped>
 .imagev {
   width: 100%;
+}
+.lock {
+  color: #2b2a3f;
+  background-color: white;
+  border: 1px solid gray;
+  width: 50px;
+  height: 40px;
+  margin-right: 3px;
+  border-radius: 40%;
+}
+.lockbtn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.lock:hover {
+  background-color: #2b2a3f;
+  color: white;
+}
+.seletedElement {
+  border-radius: 5px;
+  background-color: rgb(9, 126, 221);
+  margin-right: 0.5px;
+  color: white;
 }
 </style>

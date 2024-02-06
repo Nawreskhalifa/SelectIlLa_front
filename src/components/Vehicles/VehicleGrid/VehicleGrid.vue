@@ -10,13 +10,9 @@
       <div class="row" v-if="selected.length > 0">
         <VehicleItem
           v-for="vehicle in selected"
-          style="
-            background-color: blue;
-            margin-left: 0.3px;
-            margin-right: 0.3px;
-          "
           :key="vehicle.id"
           :vehicle="vehicle"
+          :isSelected="true"
           @itemDeleted="handleItemDeleted"
           @itemUpdated="handleItemUpdated"
         />
@@ -28,12 +24,21 @@
           :vehicle="vehicle"
           @itemDeleted="handleItemDeleted"
           @itemUpdated="handleItemUpdated"
+          @isActive="changeStatus"
         />
       </div>
 
       <div
         class="pagination-area d-md-flex mb-25 justify-content-between align-items-center"
       >
+        <div class="button" v-if="selected.length > 0">
+          <button class="delete btn" @click="deleteAll">
+            <i class="fas fa-trash"> </i> Delete the Selected elements
+          </button>
+          <button class="active btn" @click="desactivateAll">
+            <i class="fas fa-ban"></i> disable the seleted elements
+          </button>
+        </div>
         <p class="mb-0 text-paragraph">
           Showing <span class="fw-bold">{{ vehicles.length }}</span> out of
           <span class="fw-bold">{{ vehicles.length }}</span> results
@@ -58,6 +63,12 @@
           </ul>
         </nav>
       </div>
+      <loading
+        v-model:active="isLoading"
+        :can-cancel="true"
+        :on-cancel="onCancel"
+        :is-full-page="fullPage"
+      />
     </div>
   </div>
 </template>
@@ -68,22 +79,42 @@ import VehicleItem from "./SingleItem.vue";
 import VehicleFiltre from "./VehicleFiltre.vue";
 import { fetchVehicles, deleteVehicle } from "@/services/apiService";
 import { search } from "@/services/apiService";
-
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
+import { updateVehicle } from "@/services/apiService";
 export default {
   name: "ProductsGrid",
   components: {
     VehicleFiltre,
     VehicleItem,
+    Loading,
   },
+
   data() {
     return {
       vehicles: [],
       newData: [],
       selected: [],
       isSelected: false,
+      isLoading: false,
+      fullPage: true,
     };
   },
   methods: {
+    changeStatus(event) {
+      this.vehicles = this.vehicles.map((item) => {
+        if (item.id === event.id) {
+          item.attributes.isActive = event.status;
+        }
+        return item;
+      });
+    },
+    clickOnSelected() {
+      console.log(
+        "You already clicked on the selectt all desactivate it first "
+      );
+    },
+
     async fetchData() {
       try {
         const data = await fetchVehicles();
@@ -115,6 +146,7 @@ export default {
       this.isSelected = !this.isSelected;
       console.log(this.isSelected);
     },
+
     selectedData() {
       this.isSelected = !this.isSelected;
       if (this.isSelected) {
@@ -126,9 +158,85 @@ export default {
     handleItemUpdated() {
       this.fetchData();
     },
+    desactivateAll() {
+      this.isLoading = true;
+      const updatedData = {
+        data: {
+          isActive: true,
+        },
+      };
+      this.selected.forEach(async (item) => {
+        const res = await updateVehicle(item.id, updatedData);
+        if (res) {
+          setTimeout(async () => {
+            this.isLoading = false;
+            item.attributes.isActive = true;
+
+            await this.fetchData();
+          }, 2000);
+        }
+      });
+    },
   },
   created() {
     this.fetchData();
   },
 };
 </script>
+<style scoped>
+.button {
+  position: fixed;
+  left: 85%;
+  top: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: fadeIn 1s ease forwards;
+  opacity: 0;
+}
+
+.button-container.show {
+  opacity: 1;
+}
+
+.delete.btn {
+  background-color: #2b2a3f; /* Red */
+}
+
+.active.btn {
+  background-color: #2b2a3f; /* Blue */
+}
+
+.button .btn {
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button .btn:hover {
+  opacity: 0.8;
+}
+
+.button .btn i {
+  margin-right: 5px;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

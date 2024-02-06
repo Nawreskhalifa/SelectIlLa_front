@@ -1,15 +1,15 @@
 <template>
-  <BreadCrumb PageTitle="Vehicle Category List" />
-  <CategoriesList />
+  <BreadCrumb PageTitle="Add Villa Category" />
+  <AddVillaCategory />
 </template>
 
 <script>
-import CategoriesList from "@/components/VehicleCategories/CategoriesList/CategoriesList.vue";
+import AddVillaCategory from "@/components/VillaCategories/AddVillaCategory/AddVillaCategory.vue";
 import BreadCrumb from "../../../components/Common/BreadCrumb.vue";
 
 export default {
   components: {
-    CategoriesList,
+    AddVillaCategory,
     BreadCrumb,
   },
   setup() {

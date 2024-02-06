@@ -28,7 +28,6 @@
               </div>
             </div>
           </div>
-
           <div class="col-md-12">
             <button
               class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16"
@@ -44,7 +43,7 @@
 </template>
 
 <script>
-import { postVehicleCategory } from "@/services/apiService";
+import { postVillaCategory } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useRouter } from "vue-router";
@@ -58,7 +57,7 @@ export default {
   },
   methods: {
     showToatSuccess() {
-      toast.success("Vehicle Category Created  🚗 👍 ", {
+      toast.success("Villa Category Created  🚗 👍 ", {
         autoClose: 1000,
       });
     },
@@ -66,14 +65,14 @@ export default {
       if (this.name.trim !== "" && this.description.trim !== "") {
         const category = {
           data: {
-            name: this.name,
+            Name: this.name,
             description: this.description,
           },
         };
-        const response = await postVehicleCategory(category);
+        const response = await postVillaCategory(category);
         if (response.success) {
           this.showToatSuccess();
-          this.router.push("/VehicleListCategory");
+          this.router.push("/VillaListCategory");
         }
       }
     },

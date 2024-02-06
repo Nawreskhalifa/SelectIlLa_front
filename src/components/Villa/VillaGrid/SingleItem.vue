@@ -149,7 +149,7 @@ export default {
   components: {
     VillaDetails,
     DeleteModal,
-    // UpdateVilla,
+    UpdateVilla,
   },
 };
 </script>

@@ -8,7 +8,7 @@
           @input="change"
           type="text"
           class="form-control shadow-none text-black rounded-0 border-0"
-          placeholder="Search vehicle"
+          placeholder="Search Villa"
           v-model="searchInput"
         />
       </div>
@@ -57,7 +57,7 @@
           <tbody>
             <tr v-for="category in categories" :key="category.id">
               <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ category.attributes.name }}
+                {{ category.attributes.Name }}
               </td>
 
               <td class="shadow-none lh-1 fw-medium text-paragraph">
@@ -151,11 +151,11 @@
 
 <script>
 import {
-  fetchVehicleCategories,
-  deleteVehicleCategory,
+  fetchVillaCategories,
+  deleteVillaCategory,
   search,
 } from "@/services/apiService";
-import UpdateModal from "@/components/VehicleCategories/EditCategory/EditCategory.vue";
+import UpdateModal from "../EditVillaCategory/EditVillaCategory.vue";
 export default {
   name: "CategoryList",
   components: {
@@ -166,18 +166,20 @@ export default {
       categories: [],
       ModalVisible: false,
       categoryEdit: "",
+      searchInput: "",
     };
   },
   methods: {
     async fetchCategories() {
-      const data = await fetchVehicleCategories();
+      const data = await fetchVillaCategories();
+      console.log(data);
       this.categories = data.data;
     },
     async deleteVehicle(id) {
       this.categories = this.categories.filter((item) => {
         return item.id !== id;
       });
-      const response = await deleteVehicleCategory(id);
+      const response = await deleteVillaCategory(id);
     },
     openEdit(category) {
       this.ModalVisible = !this.ModalVisible;
@@ -196,8 +198,8 @@ export default {
       try {
         console.log("searchinput", this.searchInput);
         const data = await search(
-          "category-vehicles",
-          "name",
+          "category-villas",
+          "Name",
           "$contains",
           this.searchInput
         );

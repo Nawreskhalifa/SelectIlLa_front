@@ -3,24 +3,19 @@
     <div
       class="card-head box-shadow bg-white d-md-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
     >
-      <div class="search-box position-relative">
+      <form class="search-box position-relative">
         <input
-          @input="change"
           type="text"
           class="form-control shadow-none text-black rounded-0 border-0"
-          placeholder="Search vehicle"
-          v-model="searchInput"
+          placeholder="Search order"
         />
-      </div>
-      <div class="d-sm-flex align-items-center">
         <button
-          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
-          type="button"
+          type="submit"
+          class="bg-transparent text-primary transition p-0 border-0"
         >
-          Export
-          <i class="flaticon-file-1 position-relative ms-5 top-2 fs-15"></i>
+          <i class="flaticon-search-interface-symbol"></i>
         </button>
-      </div>
+      </form>
     </div>
     <div class="card-body p-15 p-sm-20 p-md-25">
       <div class="table-responsive">
@@ -31,21 +26,33 @@
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
               >
-                Category Name
+                Contact Name
+              </th>
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+              >
+                Contact Last Name
+              </th>
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+              >
+                Contact Message
+              </th>
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+              >
+                Contact Email
+              </th>
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+              >
+                Date
               </th>
 
-              <th
-                scope="col"
-                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-              >
-                Created At
-              </th>
-              <th
-                scope="col"
-                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-              >
-                Updated At
-              </th>
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
@@ -55,16 +62,30 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="category in categories" :key="category.id">
+            <tr v-for="contact in contacts" :key="contact">
               <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ category.attributes.name }}
+                {{ contact.attributes.name }}
               </td>
 
               <td class="shadow-none lh-1 fw-medium text-paragraph">
-                <span v-date="category.attributes.updatedAt"></span>
+                {{ contact.attributes.last_name }}
               </td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                <span v-date="category.attributes.updatedAt"></span>
+              <td class="shadow-none lh-1 fw-medium">
+                <span class="badge text-outline-success">
+                  {{ contact.attributes.email }}
+                </span>
+              </td>
+              <td class="shadow-none lh-1 fw-medium">
+                <span class="badge text-outline-success"
+                  ><i class="fas fa-message"></i
+                ></span>
+              </td>
+
+              <td class="shadow-none lh-1 fw-medium">
+                <span
+                  class="badge text-outline-success"
+                  v-date="contact.attributes.createdAt"
+                ></span>
               </td>
               <td
                 class="shadow-none lh-1 fw-medium text-paragraph text-end pe-0"
@@ -82,7 +103,17 @@
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
-                        @click.prevent="openEdit(category)"
+                        href="javascript:void(0);"
+                        ><i
+                          class="flaticon-view lh-1 me-8 position-relative top-1"
+                        ></i>
+                        View</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        href="javascript:void(0);"
                         ><i
                           class="flaticon-pen lh-1 me-8 position-relative top-1"
                         ></i>
@@ -92,7 +123,7 @@
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
-                        @click.prevent="deleteVehicle(category.id)"
+                        href="javascript:void(0);"
                         ><i
                           class="flaticon-delete lh-1 me-8 position-relative top-1"
                         ></i>
@@ -123,12 +154,8 @@
             <li class="page-item">
               <a class="page-link active" href="#">1</a>
             </li>
-            <li class="page-item">
-              <a class="page-link" href="#">2</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">3</a>
-            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
             <li class="page-item">
               <a class="page-link" href="#" aria-label="Next">
                 <i class="flaticon-chevron"></i>
@@ -139,73 +166,22 @@
       </div>
     </div>
   </div>
-  <div v-if="categoryEdit">
-    <UpdateModal
-      :show="ModalVisible"
-      :category="categoryEdit"
-      @close="closeModal"
-      @updated="updated"
-    />
-  </div>
 </template>
 
 <script>
-import {
-  fetchVehicleCategories,
-  deleteVehicleCategory,
-  search,
-} from "@/services/apiService";
-import UpdateModal from "@/components/VehicleCategories/EditCategory/EditCategory.vue";
+import { deleteContact, fetchContacts } from "@/services/apiService.ts";
 export default {
-  name: "CategoryList",
-  components: {
-    UpdateModal,
-  },
+  name: "ClientContacts",
   data() {
     return {
-      categories: [],
-      ModalVisible: false,
-      categoryEdit: "",
+      contacts: [],
     };
   },
   methods: {
-    async fetchCategories() {
-      const data = await fetchVehicleCategories();
-      this.categories = data.data;
-    },
-    async deleteVehicle(id) {
-      this.categories = this.categories.filter((item) => {
-        return item.id !== id;
-      });
-      const response = await deleteVehicleCategory(id);
-    },
-    openEdit(category) {
-      this.ModalVisible = !this.ModalVisible;
-      this.categoryEdit = category;
-      console.log(this.categoryEdit);
-    },
-
-    closeModal() {
-      this.ModalVisible = !this.ModalVisible;
-    },
-    async updated() {
-      await this.fetchCategories();
-      this.ModalVisible = !this.ModalVisible;
-    },
-    async change() {
-      try {
-        console.log("searchinput", this.searchInput);
-        const data = await search(
-          "category-vehicles",
-          "name",
-          "$contains",
-          this.searchInput
-        );
-        console.log(data.data.data, "+ change ", this.categories);
-        this.categories = data.data.data;
-      } catch (error) {
-        console.error("Error searching for vehicles:", error);
-      }
+    async fetchCon() {
+      const res = await fetchContacts();
+      console.log(res);
+      this.contacts = res.data;
     },
   },
   directives: {
@@ -221,7 +197,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchCategories();
+    this.fetchCon();
   },
 };
 </script>

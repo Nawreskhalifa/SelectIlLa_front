@@ -208,7 +208,7 @@ export async function fetchVehicles(start=0,limit=16) {
       throw error;
     }
   }
-
+  
 
   export async function fetchVehicleCategories(query="") {
     try {
@@ -537,6 +537,134 @@ export async function fetchPartners(query="") {
     }
   } catch (error) {
     console.error("Error fetching partners:", error);
+    throw error;
+  }
+}
+export async function postVehicleCategory(Catgegory) {
+  try {
+       const response = await axios.post(endPoints.vehiclesCategories, Catgegory, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+      return { success: response.status === httpCodes.HTTP_OK, data: response.data, status: response.status };
+  } catch (error: any) {
+      return {
+          status: error?.response?.status,
+          success: error?.response?.data?.success,
+          error: error?.response?.data?.message,
+      };
+  }
+}
+export async function deleteVehicleCategory(id) {
+  try {
+    const response = await axios.delete(`${endPoints.vehiclesCategories}/${id}`);
+    return {     success: true,
+      data: response.data,
+      status: response.status} 
+    
+  } catch (error) {
+    console.error(`vehicle  with  ${id} deleted:`, error);
+    throw error;
+  }
+}
+export async function updateVehicleCategory(id,updatedData) {
+  try {
+    const response = await axios.put(
+      `${endPoints.vehiclesCategories}/${id}`,
+      updatedData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
+    );
+    return {     success: true,
+      data: response.data,
+      status: response.status} 
+    
+  } catch (error) {
+    console.error(`vehicle  with  ${id} deleted:`, error);
+    throw error;
+  }
+}
+// updateVehicleCategory
+
+export async function postVillaCategory(Catgegory) {
+  try {
+       const response = await axios.post(endPoints.villaCategories, Catgegory, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+      return { success: response.status === httpCodes.HTTP_OK, data: response.data, status: response.status };
+  } catch (error: any) {
+      return {
+          status: error?.response?.status,
+          success: error?.response?.data?.success,
+          error: error?.response?.data?.message,
+      };
+  }
+}
+export async function deleteVillaCategory(id) {
+  try {
+    const response = await axios.delete(`${endPoints.villaCategories}/${id}`);
+    return {     success: true,
+      data: response.data,
+      status: response.status} 
+    
+  } catch (error) {
+    console.error(`villa  with  ${id} deleted:`, error);
+    throw error;
+  }
+}
+export async function updateVillaCategory(id,updatedData) {
+  try {
+    const response = await axios.put(
+      `${endPoints.villaCategories}/${id}`,
+      updatedData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
+    );
+    return {     success: true,
+      data: response.data,
+      status: response.status} 
+    
+  } catch (error) {
+    console.error(`villa  with  ${id} deleted:`, error);
+    throw error;
+  }
+}
+ export async function fetchContacts(query="") {
+  try {
+    const response = await axios.get(`${endPoints.contacts}?${query}`);
+    if (response) {
+       return response.data;
+    } else {
+       throw new Error("Failed to fetch contacts");
+    }
+  } catch (error) {
+    console.error("Error fetching contacts:", error);
+    throw error;
+  }
+}
+export async function deleteContact(contactId) {
+  try {
+    const response = await axios.delete(`${endPoints.contacts}/contactId`);
+    if (response) {
+       return response.data;
+    } else {
+       throw new Error("Failed to delete contacts");
+    }
+  } catch (error) {
+    console.error("Error delete contacts:", error);
     throw error;
   }
 }

@@ -1,19 +1,19 @@
 <template>
-  <BreadCrumb PageTitle="Event Details" />
-  <EventDetails />
+  <BreadCrumb PageTitle="Events" />
+  <ListEvents />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 
 import BreadCrumb from "../../components/Common/BreadCrumb.vue";
-import EventDetails from "../../components/Events/EventDetails.vue";
+import ListEvents from "../../components/Events/ListEvents.vue";
 
 export default defineComponent({
-  name: "EventDetailsPage",
+  name: "EventListPage",
   components: {
     BreadCrumb,
-    EventDetails,
+    ListEvents,
   },
 });
 </script>

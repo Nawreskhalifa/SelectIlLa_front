@@ -88,6 +88,7 @@
 <script>
 import { fetchVehicleCategories } from "@/services/apiService";
 // search(table, field , query , searchInput)
+
 export default {
   data() {
     return {

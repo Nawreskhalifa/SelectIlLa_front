@@ -177,7 +177,7 @@
               <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
                 <li class="sidebar-sub-menu-item">
                   <router-link
-                    to="/VehicleCategory"
+                    to="/VillaListCategory"
                     class="sidebar-sub-menu-link"
                   >
                     Villa Categories
@@ -185,7 +185,7 @@
                 </li>
                 <li class="sidebar-sub-menu-item">
                   <router-link
-                    to="/addAVehicleCategory"
+                    to="/AddVillaCategory"
                     class="sidebar-sub-menu-link"
                   >
                     Add A Villa Category
@@ -196,7 +196,7 @@
           </div>
         </li>
         <li class="sidebar-nav-item">
-          <router-link to="/changelog" class="sidebar-nav-link d-block">
+          <router-link to="/contacts" class="sidebar-nav-link d-block">
             <i class="fa fa-address-book" aria-hidden="true"></i>
             <span class="title">Contacts</span>
           </router-link>

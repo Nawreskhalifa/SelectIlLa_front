@@ -4,6 +4,13 @@ export const endPoints = {
     allUsers: `${API_BASE_URL}users?populate=*`,
     allCustomers: `${API_BASE_URL}customers?populate=*`,
     deleteCustomer: `${API_BASE_URL}customers/`,
+    deleteCategoryEvent: `${API_BASE_URL}category-events`,
+    allCategoriesEvent: `${API_BASE_URL}category-events`,
+    detailCategoryEvent: `${API_BASE_URL}category-events`,
+    createCategoryEvent: `${API_BASE_URL}category-events`,
+    allEvents: `${API_BASE_URL}events?populate=*`,
+    findEvent: `${API_BASE_URL}events`,
+    findCategoryEventByName: `${API_BASE_URL}category-events/category`,
     findCustomer: `${API_BASE_URL}customers/`,
     allPartners: `${API_BASE_URL}partners?populate=*`,
     register: `${API_BASE_URL}auth/local/register`,
@@ -16,5 +23,6 @@ export const endPoints = {
     villaCategories:`${API_BASE_URL}category-villas`,
     upload: `${API_BASE_URL}upload` , 
     villa : `${API_BASE_URL}villas`,
-    partners : `${API_BASE_URL}partners`
+    partners : `${API_BASE_URL}partners` ,
+    contacts :`${API_BASE_URL}contacts`
 };

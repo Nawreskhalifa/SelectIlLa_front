@@ -1,6 +1,6 @@
 <template>
   <transition name="modal-animation">
-    <div v-if="show" class="modal">
+    <div v-show="show" class="modal">
       <transition name="modal-animation-inner">
         <div v-show="show" class="modal-inner">
           <div class="card product-details-box">
@@ -221,7 +221,7 @@
                             v-for="cat in previousCategories"
                             :key="cat.id"
                           >
-                            <span> {{ cat.attributes.name }}</span>
+                            <span> {{ cat.attributes.Name }}</span>
                             <i
                               class="fas fa-times-circle"
                               @click="deleteFromCategories(cat)"
@@ -239,7 +239,7 @@
                             :key="category.id"
                             :value="category.id"
                           >
-                            {{ category.attributes.name }}
+                            {{ category.attributes.Name }}
                           </option>
                         </select>
                         <div v-if="categoryError" class="text-danger">
@@ -376,7 +376,6 @@
     </div>
   </transition>
 </template>
-
 <script>
 import {
   uploadFiles,
@@ -555,9 +554,6 @@ export default {
         }, 1500);
       }
     },
-  },
-  mounted() {
-    this.fetchCategories();
   },
 };
 </script>
