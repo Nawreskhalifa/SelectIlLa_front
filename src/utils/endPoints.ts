@@ -10,7 +10,7 @@ export const endPoints = {
     createCategoryEvent: `${API_BASE_URL}category-events`,
     allEvents: `${API_BASE_URL}events?populate=*`,
     findEvent: `${API_BASE_URL}events`,
-    findCategoryEventByName: `${API_BASE_URL}category-events/category`,
+    findCategoryEventByName: `${API_BASE_URL}category-events`,
     findCustomer: `${API_BASE_URL}customers/`,
     allPartners: `${API_BASE_URL}partners?populate=*`,
     register: `${API_BASE_URL}auth/local/register`,

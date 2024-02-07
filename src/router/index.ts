@@ -1,3 +1,4 @@
+
 import { createWebHistory, createRouter } from "vue-router";
 import AddVehicle from "@/pages/Vehicle/AddVehicle.vue"
 import VehicleList from "@/pages/Vehicle/VehicleList.vue"
@@ -20,6 +21,7 @@ import CustomersListPage from "../pages/Users/Customers/CustomersListPage.vue";
 import CustomersPage from "../pages/Ecommerce/CustomersPage.vue";
 import AddCustomerPage from "../pages/Users/Customers/AddCustomerPage.vue"
 import CustomerDetailPage from '../pages/Users/Customers/CustomerDetailPage.vue';
+import LoginPage from "../pages/Authentication/LoginPage.vue";
 
   
 const routes = [
@@ -125,6 +127,11 @@ const routes = [
     name: "contacts",
     component: ContactPage,
   },
+  {
+    path: "/login",
+    name: "LoginPage",
+    component: LoginPage,
+  }
   // {
   //   path: "/vehicledetails",
   //   name: "vehicledetails",

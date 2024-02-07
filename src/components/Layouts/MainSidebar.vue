@@ -34,17 +34,86 @@
             <span class="title">Dashboard</span>
           </router-link>
         </li>
-        <li class="sidebar-nav-item">
-          <router-link to="/file-manager" class="sidebar-nav-link d-block">
-            <i class="flaticon-people"></i>
+        <li
+          class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
+        >
+          <a
+            href="#"
+            class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
+            data-bs-toggle="collapse"
+            data-bs-target="#sidebarCollapseEleven"
+            aria-expanded="false"
+            aria-controls="sidebarCollapseEleven"
+          >
+            <i class="flaticon-user-3"></i>
             <span class="title">Customers</span>
-          </router-link>
+          </a>
+          <div
+            id="sidebarCollapseEleven"
+            class="accordion-collapse collapse"
+            data-bs-parent="#sidebarNavAccordion"
+          >
+            <div class="accordion-body">
+              <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/customersList"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Customers List
+                  </router-link>
+                </li>
+                <li class="sidebar-sub-menu-item">
+                  <router-link to="/add-customer" class="sidebar-sub-menu-link">
+                    Add Customer
+                  </router-link>
+                </li>
+              </ul>
+            </div>
+          </div>
         </li>
-        <li class="sidebar-nav-item">
-          <router-link to="/file-manager" class="sidebar-nav-link d-block">
+        <li
+          class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
+        >
+          <a
+            href="#"
+            class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
+            data-bs-toggle="collapse"
+            data-bs-target="#sidebarCollapseEight"
+            aria-expanded="false"
+            aria-controls="sidebarCollapseEight"
+          >
             <i class="flaticon-ticket"></i>
             <span class="title">Events</span>
-          </router-link>
+          </a>
+          <div
+            id="sidebarCollapseEight"
+            class="accordion-collapse collapse"
+            data-bs-parent="#sidebarNavAccordion"
+          >
+            <div class="accordion-body">
+              <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
+                <li class="sidebar-sub-menu-item">
+                  <router-link to="/events" class="sidebar-sub-menu-link">
+                    Events List
+                  </router-link>
+                </li>
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/event-details"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Event Details
+                  </router-link>
+                </li>
+                <li class="sidebar-sub-menu-item">
+                  <router-link to="/add-event" class="sidebar-sub-menu-link">
+                    Add Event
+                  </router-link>
+                </li>
+              </ul>
+            </div>
+          </div>
         </li>
 
         <li
@@ -81,6 +150,7 @@
             </div>
           </div>
         </li>
+
         <li
           class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
         >
@@ -189,6 +259,47 @@
                     class="sidebar-sub-menu-link"
                   >
                     Add A Villa Category
+                  </router-link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        <li
+          class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
+        >
+          <a
+            href="#"
+            class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
+            data-bs-toggle="collapse"
+            data-bs-target="#sidebarCollapseSeven"
+            aria-expanded="false"
+            aria-controls="sidebarCollapseSeven"
+          >
+            <i class="flaticon-layer-2"></i>
+            <span class="title">Categories Events</span>
+          </a>
+          <div
+            id="sidebarCollapseSeven"
+            class="accordion-collapse collapse"
+            data-bs-parent="#sidebarNavAccordion"
+          >
+            <div class="accordion-body">
+              <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/categories-event"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Categories List
+                  </router-link>
+                </li>
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/create-new-category-event"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Create New Category
                   </router-link>
                 </li>
               </ul>
