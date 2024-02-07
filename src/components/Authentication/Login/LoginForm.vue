@@ -1,5 +1,5 @@
 <template>
-  <div class="row justify-content-center">
+  <div class="  justify-content-center">
     <div class="col-md-10 col-lg-8 col-xl-9 col-xxl-8 col-xxxl-6">
       <div class="card mb-25 border-0 rounded-0 bg-white authentication-card">
         <div class="card-body letter-spacing">
@@ -94,7 +94,7 @@ export default {
         // update isAuthenticated in the store
         stateStore.isAuthenticated = true;
         // Redirect to the user's dashboard
-        this.$router.push({ name: "EcommercePage" });
+        this.$router.push({ name: "dashboard" });
       } else if (response.status == httpCodes.HTTP_NOT_FOUND) {
         swal({
           text: response.message,

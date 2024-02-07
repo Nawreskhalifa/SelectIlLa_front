@@ -10,7 +10,7 @@ export const endPoints = {
     createCategoryEvent: `${API_BASE_URL}category-events`,
     allEvents: `${API_BASE_URL}events?populate=*`,
     findEvent: `${API_BASE_URL}events`,
-    findCategoryEventByName: `${API_BASE_URL}category-events`,
+    findCategoryEventByName: `${API_BASE_URL}category-events/category/`,
     findCustomer: `${API_BASE_URL}customers/`,
     allPartners: `${API_BASE_URL}partners?populate=*`,
     register: `${API_BASE_URL}auth/local/register`,
@@ -21,7 +21,7 @@ export const endPoints = {
     vehicles: `${API_BASE_URL}vehicles`,
     vehiclesCategories: `${API_BASE_URL}category-vehicles`,
     villaCategories:`${API_BASE_URL}category-villas`,
-    upload: `${API_BASE_URL}upload` , 
+    upload: `${API_BASE_URL}upload` ,
     villa : `${API_BASE_URL}villas`,
     partners : `${API_BASE_URL}partners` ,
     contacts :`${API_BASE_URL}contacts`

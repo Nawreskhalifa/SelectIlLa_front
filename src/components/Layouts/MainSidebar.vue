@@ -29,7 +29,7 @@
         id="sidebarNavAccordion"
       >
         <li class="sidebar-nav-item">
-          <router-link to="/file-manager" class="sidebar-nav-link d-block">
+          <router-link to="/dashboard" class="sidebar-nav-link d-block">
             <i class="flaticon-more-1"></i>
             <span class="title">Dashboard</span>
           </router-link>
@@ -63,11 +63,7 @@
                     Customers List
                   </router-link>
                 </li>
-                <li class="sidebar-sub-menu-item">
-                  <router-link to="/add-customer" class="sidebar-sub-menu-link">
-                    Add Customer
-                  </router-link>
-                </li>
+
               </ul>
             </div>
           </div>
@@ -98,14 +94,7 @@
                     Events List
                   </router-link>
                 </li>
-                <li class="sidebar-sub-menu-item">
-                  <router-link
-                    to="/event-details"
-                    class="sidebar-sub-menu-link"
-                  >
-                    Event Details
-                  </router-link>
-                </li>
+
                 <li class="sidebar-sub-menu-item">
                   <router-link to="/add-event" class="sidebar-sub-menu-link">
                     Add Event

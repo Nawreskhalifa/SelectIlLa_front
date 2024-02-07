@@ -86,11 +86,9 @@ export default defineComponent({
 
     async createNewCategory() {
       const newCategory = {
-        data: {
-          Name: this.name,
+           name: this.name,
           description: this.description,
-        },
-      };
+       };
       try {
         const response = await makeApiRequest(
           methodsHttpNames.GET,

@@ -18,8 +18,8 @@
                 Event Description
               </label>
               <div class="mb-0">
-                <QuillEditor theme="snow" placeholder="Write your meta description" toolbar="full"
-                  v-model="description" />
+                <textarea v-model="description" class="form-control shadow-none rounded-0 text-black" rows="4"
+                  placeholder="Write your meta description"></textarea>
               </div>
             </div>
           </div>
@@ -139,6 +139,8 @@
                 Upload Images
               </label>
               <div class="file-upload text-center position-relative">
+                <input type="file" multiple v-on:change="handleFileUpload"
+                  class="d-block shadow-none border-0 position-absolute start-0 end-0 top-0 bottom-0 z-1 opacity-0" />
                 <i class="flaticon-image"></i>
                 <span class="d-block text-muted">
                   Drop Images Here Or
@@ -146,8 +148,15 @@
                     Click To Upload
                   </span>
                 </span>
-                <input type="file" multiple v-on:change="handleFileUpload"
-                  class="d-block shadow-none border-0 position-absolute start-0 end-0 top-0 bottom-0 z-1 opacity-0" />
+              </div>
+              <div v-if="photos.length > 0" class="image-preview">
+                <div v-for="(photo, index) in selectedPhotos" :key="index" class="image-item">
+                  <img :src="photo.url" alt="Selected Image" />
+                  <button @click="removeImage(index)" class="delete_icon">
+                    <i class="fas fa-times-circle"></i>
+                    <!-- Icône de suppression -->
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -175,7 +184,7 @@ import { mapActions, mapGetters } from "vuex";
 import { makeApiRequest } from "@/services/apiService";
 import { methodsHttpNames } from "@/utils/methods";
 import { endPoints } from "@/utils/endPoints";
-import { encodeEventCategoryToApi } from '../../models/EventCategory/EventCategoryApi'
+import swal from "sweetalert";
 
 export default defineComponent({
   name: "AddEvent",
@@ -183,6 +192,7 @@ export default defineComponent({
   },
   data() {
     return {
+      selectedPhotos: [],
       selectedCategories: [],
       currentDate: new Date().toISOString().split('T')[0], // Date actuelle
       eventName: "",
@@ -209,16 +219,24 @@ export default defineComponent({
         item.check = this.selectedCategories[key]
         return item
       })
-
-      console.log('fghg', this.selectedCategories, this.getCategoriesEvent)
-
-      console.log('fsgdhfj', category)
     },
     handleFileUpload(event) {
       // this.testphoto = event.target.files[0]
       // Gérer le téléchargement de fichiers (photos) ici
       const newPhotos = Array.from(event.target.files)
+
       this.photos.push(...newPhotos)
+      this.selectedPhotos = []
+      this.photos.forEach(item => {
+        console.log(item)
+        this.selectedPhotos.push({ id: item.name, url: URL.createObjectURL(item) })
+      })
+      console.log(this.selectedPhotos)
+    },
+    removeImage(index) {
+      // Supprimer l'image à l'index spécifié
+      this.photos.splice(index, 1)
+      this.selectedPhotos.splice(index, 1)
     },
     async createEvent() {
       const formData = new FormData();
@@ -232,7 +250,7 @@ export default defineComponent({
             // Créer un objet temporaire contenant uniquement la propriété 'id'
             const tempObj = { id: this.categoriesEvent[index].id };
             // Ajouter l'objet temporaire à formData
-            formData.append(`category_events`, JSON.stringify(this.categoriesEvent[index].id ));
+            formData.append(`category_events`, JSON.stringify(this.categoriesEvent[index].id));
           }
         }
 
@@ -263,8 +281,17 @@ export default defineComponent({
           formData,
           undefined
         );
-        console.log(response)
-        // await this.addEvent(response.data.data);
+        if (response.success) {
+          await this.addEvent(response.data.data);
+          this.$router.push({ name: 'EventListPage' });
+          // Afficher un message de succès
+          swal({
+            text: 'Event Added Successfully!',
+            icon: 'success',
+            closeOnClickOutside: false
+          })
+        }
+
       } catch (error) {
         console.log(error)
       }
@@ -284,32 +311,6 @@ export default defineComponent({
     // Initialise startDate avec la date actuelle
     this.startDate = this.currentDate;
   },
-  // setup: () => {
-  //   const modules = {
-  //     module: BlotFormatter,
-  //     ImageUploader,
-  //     options: {
-  //       upload: (file: string | Blob) => {
-  //         return new Promise((resolve, reject) => {
-  //           const formData = new FormData();
-  //           formData.append("image", file);
-
-  //           axios
-  //             .post("/upload-image", formData)
-  //             .then((res: { data: { url: unknown } }) => {
-  //               console.log(res);
-  //               resolve(res.data.url);
-  //             })
-  //             .catch((err: unknown) => {
-  //               reject("Upload failed");
-  //               console.error("Error:", err);
-  //             });
-  //         });
-  //       },
-  //     },
-  //   };
-  //   return { modules };
-  // },
 });
 </script>
 <style scoped>
@@ -336,6 +337,17 @@ details {
   width: 250px;
   background-color: white;
   cursor: pointer;
+}
+
+.delete_icon {
+  position: absolute;
+  top: -1px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: red;
 }
 
 select,
@@ -383,5 +395,21 @@ li>label {
 li>label:hover,
 li>label:has(input:checked) {
   background-color: var(--dk-gray);
+}
+
+.image-item {
+  position: relative;
+  max-width: 150px;
+  /* Taille maximale d'une image */
+  margin-bottom: 5px;
+}
+
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  overflow-x: auto;
+  max-height: 200px;
+  /* Ajustez la hauteur maximale si nécessaire */
 }
 </style>

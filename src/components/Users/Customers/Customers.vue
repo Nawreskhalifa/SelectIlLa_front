@@ -61,7 +61,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(customer, index) in getCustomers" :key="index">
+            <tr v-for="(customer, index) in getCustomers" :key="index"    @click.prevent="navigateToCustomerDetailPage(customer.id)">
               <th class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0">
                 <div class="d-flex align-items-center">
                   <div class="form-check mb-0">

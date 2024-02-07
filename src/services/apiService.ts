@@ -202,13 +202,13 @@ export async function fetchVehicles(start=0,limit=16) {
   export async function deleteVehicle(vehicleId) {
     try {
       const response = await axios.delete(`${endPoints.vehicles}/${vehicleId}`);
-      return response.data;  
+      return response.data;
     } catch (error) {
       console.error(`Error deleting vehicle with ID ${vehicleId}:`, error);
       throw error;
     }
   }
-  
+
 
   export async function fetchVehicleCategories(query="") {
     try {
@@ -229,29 +229,29 @@ export async function fetchVehicles(start=0,limit=16) {
     try {
       console.log(Array.isArray(files),data , files.value);
       const formData = new FormData();
-  
+
       files.value.forEach((file) => {
         formData.append(`files`, file);
       });
       formData.append('ref', 'api::vehicle.vehicle');
       formData.append('field', 'photos');
-  
+
       const postDataResponse = await axios.post(endPoints.vehicles,data, {
         headers: {
           'Content-Type': 'application/json',
           "Accept": "application/json"
         },
       });
-  
+
       const vehicleId = postDataResponse.data.data.id
        formData.append('refId', vehicleId);
-  
+
       const postFilesResponse = await axios.post(endPoints.upload, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+
       if (postFilesResponse.status === httpCodes.HTTP_OK) {
         return {
           success: true,
@@ -286,13 +286,13 @@ export async function fetchVehicles(start=0,limit=16) {
       formData.append('ref', ref);
       formData.append('field', field);
       formData.append('refId', refId);
-  
+
       const postFilesResponse = await axios.post(endPoints.upload, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+
       if (postFilesResponse.status === httpCodes.HTTP_OK) {
         return {
           success: true,
@@ -318,11 +318,11 @@ export async function fetchVehicles(start=0,limit=16) {
       };
     }
   }
-  
+
   export async function deleteFiles(id) {
     try {
       const response = await axios.delete(`${endPoints.upload}/files/${id}`);
-      return response;   
+      return response;
     } catch (error) {
       console.error(`Error deleting files with ID ${id}:`, error);
       throw error;
@@ -332,9 +332,9 @@ export async function fetchVehicles(start=0,limit=16) {
     try {
       const url = "http://localhost:1337/api"
       const response = await axios.get(
-        `${url}/${table}?filters[${field}]/[${query}]=${searchInput}`  
+        `${url}/${table}?filters[${field}]/[${query}]=${searchInput}`
       );
-  
+
       if (response) {
         return {
           success: true,
@@ -352,8 +352,8 @@ export async function fetchVehicles(start=0,limit=16) {
       };
     }
   }
-  
-  
+
+
   export async function updateVehicle(vehicleId, updatedData) {
     try {
       const response = await axios.put(
@@ -366,7 +366,7 @@ export async function fetchVehicles(start=0,limit=16) {
           },
         }
       );
-  
+
       if (response.status === httpCodes.HTTP_OK) {
         return {
           success: true,
@@ -376,7 +376,7 @@ export async function fetchVehicles(start=0,limit=16) {
       } else {
         console.error('Failed to update vehicle data:', response);
         return {
-          data:response, 
+          data:response,
           success: false,
           error: 'Failed to update vehicle data',
           status: response.status,
@@ -390,8 +390,8 @@ export async function fetchVehicles(start=0,limit=16) {
       };
     }
   }
- 
-  
+
+
 
 export async function fetchVilla(start=0,limit=16) {
   try {
@@ -412,7 +412,7 @@ export async function fetchVilla(start=0,limit=16) {
 export async function deleteVilla(villaId) {
  try {
    const response = await axios.delete(`${endPoints.villa}/${villaId}`);
-   return response.data;  
+   return response.data;
  } catch (error) {
    console.error(`Error deleting vehicle with ID ${villaId}:`, error);
    throw error;
@@ -488,7 +488,7 @@ export async function postVilla(files, data) {
  }
 }
 
-  
+
 export async function updateVilla(villaId, updatedData) {
   try {
     const response = await axios.put(
@@ -511,7 +511,7 @@ export async function updateVilla(villaId, updatedData) {
     } else {
       console.error('Failed to update villa data:', response);
       return {
-        data:response, 
+        data:response,
         success: false,
         error: 'Failed to update villa data',
         status: response.status,
@@ -562,8 +562,8 @@ export async function deleteVehicleCategory(id) {
     const response = await axios.delete(`${endPoints.vehiclesCategories}/${id}`);
     return {     success: true,
       data: response.data,
-      status: response.status} 
-    
+      status: response.status}
+
   } catch (error) {
     console.error(`vehicle  with  ${id} deleted:`, error);
     throw error;
@@ -583,8 +583,8 @@ export async function updateVehicleCategory(id,updatedData) {
     );
     return {     success: true,
       data: response.data,
-      status: response.status} 
-    
+      status: response.status}
+
   } catch (error) {
     console.error(`vehicle  with  ${id} deleted:`, error);
     throw error;
@@ -614,8 +614,8 @@ export async function deleteVillaCategory(id) {
     const response = await axios.delete(`${endPoints.villaCategories}/${id}`);
     return {     success: true,
       data: response.data,
-      status: response.status} 
-    
+      status: response.status}
+
   } catch (error) {
     console.error(`villa  with  ${id} deleted:`, error);
     throw error;
@@ -635,8 +635,8 @@ export async function updateVillaCategory(id,updatedData) {
     );
     return {     success: true,
       data: response.data,
-      status: response.status} 
-    
+      status: response.status}
+
   } catch (error) {
     console.error(`villa  with  ${id} deleted:`, error);
     throw error;
@@ -667,4 +667,20 @@ export async function deleteContact(contactId) {
     console.error("Error delete contacts:", error);
     throw error;
   }
+}
+// http://localhost:1337/api/events
+export async function fetchEvents(start=0,limit=16) {
+  try {
+    const response = await axios.get(`${endPoints.allEvents}`);
+   if (response) {
+     console.log(response.data)
+     return response.data;
+   } else {
+     console.error("Failed to fetch events:");
+     throw new Error("Failed to fetch events");
+   }
+ } catch (error) {
+   console.error("Error fetching events:", error);
+   throw error;
+ }
 }

@@ -462,7 +462,7 @@ export default defineComponent({
     };
 
     fetchCategories();
-    fetchPartnersList();
+    // fetchPartnersList();
 
     return {
       modules,

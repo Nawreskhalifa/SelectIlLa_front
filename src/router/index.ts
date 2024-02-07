@@ -22,16 +22,38 @@ import CustomersPage from "../pages/Ecommerce/CustomersPage.vue";
 import AddCustomerPage from "../pages/Users/Customers/AddCustomerPage.vue"
 import CustomerDetailPage from '../pages/Users/Customers/CustomerDetailPage.vue';
 import LoginPage from "../pages/Authentication/LoginPage.vue";
+import Dashboard from "../pages/Dashboard/EcommercePage.vue";
+import EditEventPage from "../pages/Events/EditEventPage.vue";
 
-  
+  function guardMyroute(to, from, next)
+{
+ let  isAuthenticated= false;
+  if(localStorage.getItem('user'))
+  isAuthenticated = true;
+ else
+  isAuthenticated= false;
+ if(isAuthenticated)
+ {
+  next();
+ }
+ else
+ {
+  next('/login');
+ }
+}
 const routes = [
+  {
+    path: "/login",
+    name: "LoginPage",
+    component: LoginPage,
+  },
   {
     path: "/customers",
     name: "CustomersPage",
     component: CustomersPage,
   },
   {
-    
+
     path: "/customersList",
     name: "CustomersListPage",
     component: CustomersListPage,
@@ -128,11 +150,24 @@ const routes = [
     component: ContactPage,
   },
   {
-    path: "/login",
-    name: "LoginPage",
-    component: LoginPage,
+    path: "/edit-event/:idEvent",
+    name: "EditEventPage",
+    component: EditEventPage,
+  },
+  {
+      path: "/dashboard",
+      name: "dashboard",
+      beforeEnter : guardMyroute,
+      meta: {title: 'Dashboard'},
+      component: Dashboard,
   }
-  // {
+  //
+  //   children: [
+
+  // ]},
+
+
+   // {
   //   path: "/vehicledetails",
   //   name: "vehicledetails",
   //   component: VehicleDetails,

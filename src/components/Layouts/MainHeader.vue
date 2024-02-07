@@ -354,8 +354,8 @@
                 height="44"
                 alt="admin"
               />
-              <span class="title d-none d-lg-block ms-10 ms-lg-15">
-                <span class="d-block fw-bold mb-5 mb-md-8">Victor James</span>
+              <span class="title d-none d-lg-block ms-10 ms-lg-15" v-if="getCurrentUser && getCurrentUser.username">
+                <span class="d-block fw-bold mb-5 mb-md-8">{{getCurrentUser.username}}</span>
                 <span class="text-body-emphasis fw-semibold fs-13">Admin</span>
               </span>
             </button>
@@ -395,13 +395,11 @@
                 </li>
                 <li
                   class="text-body-secondary fw-semibold transition position-relative"
+                  @click="logout"
                 >
                   <i class="flaticon-logout"></i>
                   Logout
-                  <router-link
-                    to="/logout"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></router-link>
+
                 </li>
               </ul>
             </div>
@@ -412,31 +410,45 @@
   </header>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent, ref, onMounted } from "vue";
+
 import LightDarkSwtichBtn from "./LightDarkSwtichBtn.vue";
 import stateStore from "../../utils/store";
+import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "MainHeader",
   components: {
     LightDarkSwtichBtn,
   },
-  setup() {
-    const stateStoreInstance = stateStore;
-    const isSticky = ref(false);
-
-    onMounted(() => {
-      window.addEventListener("scroll", () => {
-        let scrollPos = window.scrollY;
-        isSticky.value = scrollPos >= 100;
-      });
-    });
-
-    return {
-      isSticky,
-      stateStoreInstance,
-    };
+  data(){
+    return{
+currentUser : null ,
+router  : useRouter()
+    }
   },
+  methods: {
+    ...mapMutations["SET_LOG_OUT"]
+    ,
+   async  logout(){
+     await  localStorage.clear()
+      await  this.$router.push({ name: "LoginPage" });
+
+     }
+ ,
+
+    // ...mapActions(["fetchCurrentUser"]),
+  } ,
+computed:{
+...mapGetters(["getCurrentUser"])
+
+},
+async mounted(){
+//  await this.fetchCurrentUser()
+ }
+
+
 });
 </script>
