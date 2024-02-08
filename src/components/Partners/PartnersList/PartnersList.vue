@@ -8,17 +8,46 @@
           @input="change"
           type="text"
           class="form-control shadow-none text-black rounded-0 border-0"
-          placeholder="Search Villa"
+          placeholder="Search Partner"
           v-model="searchInput"
         />
       </div>
-      <div class="d-sm-flex align-items-center">
+      <div class="d-sm-flex align-items-center gap-2">
+
+        <button
+        class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
+        type="button"
+        :class="{ 'selected':allCheckboxesChecked }"
+        @click="allData"
+      >
+        All
+      </button>
+
+
+      <button
+      class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
+      type="button"
+      :class="{ 'selected':vehicleSelected }"
+      @click="vehicleData"
+
+    >
+      Vehicle
+     </button>
         <button
           class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
           type="button"
+          :class="{ 'selected':eventSelected }"
+          @click="eventData"
         >
-          Export
-          <i class="flaticon-file-1 position-relative ms-5 top-2 fs-15"></i>
+          Events
+         </button>
+         <button
+         class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
+         type="button"
+         :class="{ 'selected':villaSelected }"
+         @click="villaData"
+       >
+         Villas
         </button>
       </div>
     </div>
@@ -29,22 +58,27 @@
             <tr>
               <th
                 scope="col"
-                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
               >
-                Category Name
+                Name
               </th>
-
+              <th
+              scope="col"
+              class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+            >
+            surname
+            </th>
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
               >
-                Created At
+              phone
               </th>
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
               >
-                Updated At
+                Type Ressource
               </th>
               <th
                 scope="col"
@@ -55,17 +89,55 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="category in categories" :key="category.id">
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ category.attributes.Name }}
+            <tr v-for="partner in partners" :key="partner.id">
+              <td class="shadow-none lh-1 fw-medium text-paragraph">  {{ partner.name }}
               </td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">
+                {{ partner.surname }}
 
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                <span v-date="category.attributes.updatedAt"></span>
               </td>
               <td class="shadow-none lh-1 fw-medium text-paragraph">
-                <span v-date="category.attributes.updatedAt"></span>
+                {{ partner.phone }}
               </td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">
+
+  <div >
+    <label>
+      <input
+        type="checkbox"
+        :checked="partner.vehicles.length > 0"
+        v-model="partner.hasVehicle"
+        disabled
+        class="form-check-input"
+      />
+      Vehicle
+    </label>
+  </div>
+  <div>
+    <label>
+      <input
+        type="checkbox"
+        :checked="partner.villas.length > 0"
+        v-model="partner.hasVillas"
+        disabled
+        class="form-check-input"
+      />
+      Villas
+    </label>
+  </div>
+  <div>
+    <label>
+      <input
+        type="checkbox"
+        :checked="partner.events.length > 0"
+        disabled
+        v-model="partner.hasEvents"
+        class="form-check-input"
+      />
+      Events
+    </label>
+  </div>
+               </td>
               <td
                 class="shadow-none lh-1 fw-medium text-paragraph text-end pe-0"
               >
@@ -82,7 +154,7 @@
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
-                        @click.prevent="openEdit(category)"
+                        @click.prevent="openEdit(partner)"
                         ><i
                           class="flaticon-pen lh-1 me-8 position-relative top-1"
                         ></i>
@@ -92,7 +164,7 @@
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
-                        @click.prevent="deleteVehicle(category.id)"
+                        @click.prevent="deletePartner(partner.id)"
                         ><i
                           class="flaticon-delete lh-1 me-8 position-relative top-1"
                         ></i>
@@ -139,13 +211,12 @@
       </div>
     </div>
   </div>
-  <div v-if="categoryEdit">
+  <div v-if="partnerEdit">
     <UpdateModal
       :show="ModalVisible"
-      :category="categoryEdit"
+      :partner="partnerEdit"
       @close="closeModal"
-      @updated="updated"
-    />
+     />
   </div>
 </template>
 
@@ -155,43 +226,49 @@ import {
   deleteVillaCategory,
   search,
 } from "@/services/apiService";
-import UpdateModal from "../EditVillaCategory/EditVillaCategory.vue";
+import UpdateModal from "../EditPartners/EditPartners.vue";
+import {fetchPartners, fetchUserByPartner} from "@/services/apiService"
+
 export default {
-  name: "CategoryList",
+  name: "PartnersList ",
   components: {
     UpdateModal,
   },
   data() {
     return {
-      categories: [],
+      partners: [],
+      checkList: {
+      vehicle: true,
+      villa: true,
+      event: true
+    },
       ModalVisible: false,
-      categoryEdit: "",
+      partnerEdit: "",
       searchInput: "",
-    };
+     };
   },
   methods: {
-    async fetchCategories() {
-      const data = await fetchVillaCategories();
-      console.log(data);
-      this.categories = data.data;
+    async fetchAllPartners() {
+      const data = await fetchPartners();
+       this.partners = data;
+       console.log(this.partners,"ok")
     },
-    async deleteVehicle(id) {
-      this.categories = this.categories.filter((item) => {
+    async deletePartner(id) {
+      this.partners = this.partners.filter((item) => {
         return item.id !== id;
       });
       const response = await deleteVillaCategory(id);
     },
-    openEdit(category) {
+    async openEdit(partner) {
       this.ModalVisible = !this.ModalVisible;
-      this.categoryEdit = category;
-      console.log(this.categoryEdit);
-    },
+      this.partnerEdit = partner;
+      },
 
     closeModal() {
       this.ModalVisible = !this.ModalVisible;
     },
     async updated() {
-      await this.fetchCategories();
+      await this.fetchAllPartners();
       this.ModalVisible = !this.ModalVisible;
     },
     async change() {
@@ -209,6 +286,65 @@ export default {
         console.error("Error searching for vehicles:", error);
       }
     },
+    async vehicleData() {
+      await this.fetchAllPartners();
+
+
+  this.checkList.event = false;
+  this.checkList.villa = false;
+  this.checkList.vehicle = true;
+
+  this.partners = this.partners.filter((partner) => {
+    return partner.vehicles.length > 0;
+  });
+},
+async villaData() {
+  await this.fetchAllPartners();
+
+  this.checkList.event = false;
+  this.checkList.villa = true;
+  this.checkList.vehicle = false;
+
+  this.partners = this.partners.filter((partner) => {
+    return partner.villas.length > 0;
+  });
+},
+async eventData() {
+  await this.fetchAllPartners();
+
+  this.checkList.event = true;
+  this.checkList.villa = false;
+  this.checkList.vehicle = false;
+
+  this.partners = this.partners.filter((partner) => {
+    return partner.events.length > 0;
+  });
+},
+
+async allData() {
+  this.checkList.event = true;
+  this.checkList.villa = true;
+  this.checkList.vehicle = true;
+  await this.fetchAllPartners();
+}
+
+
+  },
+  computed:{
+    allCheckboxesChecked() {
+      return this.checkList.vehicle && this.checkList.villa && this.checkList.event;
+    },
+    vehicleSelected(){
+      return this.checkList.vehicle === true
+    },
+    villaSelected(){
+      return this.checkList.villa === true
+
+    },
+     eventSelected(){
+      return this.checkList.event === true
+
+    }
   },
   directives: {
     date: {
@@ -223,21 +359,19 @@ export default {
     },
   },
   mounted() {
-    this.fetchCategories();
+    this.fetchAllPartners();
   },
 };
 </script>
 
-<style>
-th,
-td {
-   padding: 8px;
-  text-align: left;
+<style scoped>
+.selected {
+  background-color: darkslategray !important ;
+  color: white !important;
 }
 
-/* Apply styles to table cells when hovered */
-table tbody tr:hover td {
-  background-color: #f5f5f5;
-}
+
+
+
 
 </style>

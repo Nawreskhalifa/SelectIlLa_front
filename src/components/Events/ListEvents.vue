@@ -1,20 +1,39 @@
 <template>
-  <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
+  <div
+    class="card mb-25 border-0 rounded-0 bg-white letter-spacing"
+    style="transition: background-color 0.3s"
+    @mouseover="isHovered = true"
+    @mouseleave="isHovered = false"
+    :style="{ 'background-color': isHovered ? '#007bff' : '#F8FCFF' }"
+  >
     <div
       class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between pt-15 pb-15 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30"
     >
       <div class="d-sm-flex align-items-center">
-        <form class="search-box position-relative">
+        <form
+          class="search-box position-relative"
+          @submit.prevent="handleSearch"
+        >
           <input
             type="text"
             class="form-control shadow-none text-black rounded-0 border-0"
             placeholder="Search event"
+            v-model="searchText"
           />
           <button
+            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
             type="submit"
-            class="bg-transparent text-primary transition p-0 border-0"
+            :disabled="getEventsLoading"
           >
-            <i class="flaticon-search-interface-symbol"></i>
+            <i
+              v-if="!getEventsLoading"
+              class="flaticon-search-interface-symbol"
+            ></i>
+            <div
+              v-if="getEventsLoading"
+              class="spinner-border"
+              role="status"
+            ></div>
           </button>
         </form>
       </div>
@@ -22,26 +41,28 @@
         <a
           href="javascript:void(0);"
           @click="navigateToAddEventPage()"
-          class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
+          class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
         >
           Add New Event
           <i class="flaticon-plus position-relative ms-5 fs-12"></i>
         </a>
         <select
+          v-model="isActiveFilter"
+          @change="handleFilterChange"
           class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
         >
-          <option selected>All (32)</option>
-          <option value="1">Open</option>
-          <option value="2">Closed</option>
+          <option value="All">All</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
         </select>
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-6 col-xxxl-4" v-for="event in getEvents" :key="event.id">
-      <div class="card mb-15 border-0 rounded-0 bg-white event-card">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-xxxl-3 g-4">
+    <div class="col" v-for="event in getEvents" :key="event.id">
+      <div class="card h-100 mb-15 border-0 rounded-0 bg-white event-card">
         <div class="card-body p-10 letter-spacing">
-          <router-link to="/event-details">
+          <router-link :to="`/event-details/${event.id}`">
             <img
               v-if="storageUrl && event?.photos"
               :src="storageUrl + event?.photos[0]?.url"
@@ -76,10 +97,17 @@
                 <div class="ms-lg-20 mt-15 mt-lg-0">
                   <div style="display: flex; justify-content: space-between">
                     <span class="d-block text-muted"> Categories: </span>
-                    <div v-for="e in event.categoryEvents" :key="e.id">
+                    <div v-for="(e, index) in event.categoryEvents" :key="e.id">
                       <span class="d-inline-block text-primary">{{
                         e.name
                       }}</span>
+                      <!-- Ajouter un séparateur sauf pour le dernier élément -->
+                      <span
+                        v-if="index !== event.categoryEvents.length - 1"
+                        class="text-muted"
+                      >
+                        -
+                      </span>
                     </div>
                   </div>
 
@@ -169,7 +197,7 @@
               </li>
             </ul>
             <router-link
-              to="/event-details"
+              :to="`/event-details/${event.id}`"
               class="link-btn closed p-12 p-sm-15 p-md-20 d-flex align-items-center justify-content-between w-100 text-decoration-none fw-medium text-muted"
             >
               <span class="position-relative">Closed</span>
@@ -185,27 +213,43 @@
       class="pagination-area d-md-flex mb-25 justify-content-between align-items-center"
     >
       <p class="mb-0 text-paragraph">
-        Showing <span class="fw-bold">06</span> out of
-        <span class="fw-bold">13</span> results
+        Showing <span class="fw-bold">{{ getEvents.length }}</span> out of
+        <span class="fw-bold">{{ getTotalItems }}</span> results
       </p>
       <nav class="mt-15 mt-md-0">
         <ul class="pagination mb-0">
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous">
+          <li class="page-item" :class="{ disabled: currentPage === 1 }">
+            <a
+              class="page-link"
+              href="#"
+              aria-label="Previous"
+              @click="currentPage !== 1 && onPageChange(currentPage - 1)"
+            >
               <i class="flaticon-chevron-1"></i>
             </a>
           </li>
-          <li class="page-item">
-            <a class="page-link active" href="#">1</a>
+          <li
+            class="page-item"
+            v-for="page in getTotalPages"
+            :key="page"
+            :class="{ active: page === currentPage }"
+          >
+            <a class="page-link" href="#" @click="onPageChange(page)">{{
+              page
+            }}</a>
           </li>
-          <li class="page-item">
-            <a class="page-link" href="#">2</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="#">3</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
+          <li
+            class="page-item"
+            :class="{ disabled: currentPage === getTotalPages }"
+          >
+            <a
+              class="page-link"
+              href="#"
+              aria-label="Next"
+              @click="
+                currentPage !== getTotalPages && onPageChange(currentPage + 1)
+              "
+            >
               <i class="flaticon-chevron"></i>
             </a>
           </li>
@@ -224,10 +268,39 @@ export default {
   data() {
     return {
       storagUrl: "",
+      currentPage: 1,
+      isHovered: false,
+      searchText: "",
+      isActiveFilter : "All",
     };
   },
   methods: {
     ...mapActions(["fetchAllEvents", "deleteEvent"]),
+    async handleFilterChange() {
+      // Réinitialiser la page actuelle à 1
+      this.currentPage = 1;
+
+      // Appeler fetchAllEvents avec le filtre actif
+      await this.fetchAllEvents({
+        page: this.currentPage,
+        perPage: 10,
+        name: this.searchText,
+        isActive: this.isActiveFilter ,
+      });
+    },
+    async handleSearch() {
+      console.log(this.searchText);
+      await this.fetchAllEvents({
+        page: this.currentPage,
+        perPage: 10,
+        name: this.searchText,
+      });
+      console.log("q:", this.getEvents);
+    },
+    async onPageChange(pageNumber) {
+      this.currentPage = pageNumber;
+      await this.fetchAllEvents({ page: pageNumber, perPage: 10, name: null });
+    },
     getDayOfMonth(inputDate) {
       // Création d'un objet Date à partir de la chaîne de date d'entrée
       var dateObject = new Date(inputDate);
@@ -333,19 +406,40 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getEventsError", "getEventsLoading", "getEvents"]),
+    ...mapGetters([
+      "getEventsError",
+      "getEventsLoading",
+      "getEvents",
+      "getTotalPages",
+      "getTotalItems",
+    ]),
   },
   async mounted() {
     this.storageUrl = storageUrl;
-    await this.fetchAllEvents();
-    console.log("dd", this.getEvents);
+    await this.fetchAllEvents({
+      page: this.currentPage,
+      perPage: 10,
+      name: null,
+    });
   },
 };
 </script>
 <style scoped>
 .card-image {
-  height: 250px;
+  position: relative;
+  max-height: 250px;
   width: 100%;
-  /* Redimensionner l'image à 30 % de la largeur de la carte */
+  /* Taille maximale d'une image */
+  margin-bottom: 5px;
+}
+.event-card {
+  /* Default box shadow */
+  transition: box-shadow 0.4s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.event-card:hover {
+  /* Box shadow on hover */
+  box-shadow: 0 8px 12px #7d6ff0;
 }
 </style>

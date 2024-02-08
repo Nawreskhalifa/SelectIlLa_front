@@ -1,6 +1,6 @@
 import { EventCategory, decodeApiToEventCategory } from "../EventCategory/EventCategory";
 import { Partner, decodePartner } from "../Partner/Partner";
-import { EventApi, PhotoApi } from "./EventApi";
+import { PhotoApi } from "./EventApi";
 export interface Photo {
     id: number;
     name: string;
@@ -25,6 +25,7 @@ export interface Event {
     photos: Photo[] | null;
     partner: Partner | null;
     categoryEvents: EventCategory[];
+    active:boolean
 }
 export const decodeApiToPhoto = (photoApi: PhotoApi): Photo => {
     return {
@@ -50,9 +51,10 @@ export const decodeApiToEvent = (eventApi): Event => {
         endDate: eventApi.attributes.end_date,
         endTime: eventApi.attributes.end_time,
         location: eventApi.attributes.location,
-        photos: eventApi.attributes.photos ? eventApi.attributes.photos.data.map(decodeApiToPhoto) : null,
+        photos: eventApi.attributes.photos.data ? eventApi.attributes.photos.data.map(decodeApiToPhoto) : null,
         partner: eventApi.attributes.partner.data ? decodePartner(eventApi.attributes.partner.data) : null,
         categoryEvents: eventApi.attributes.category_events.data.map(decodeApiToEventCategory),
+        active:eventApi.attributes.isActive
     };
 };
 

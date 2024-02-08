@@ -3,8 +3,19 @@
     <div class="col-xxxl-8">
       <div class="card mb-25 border-0 rounded-0 bg-white event-details-card">
         <div class="card-body p-10 letter-spacing">
-          <img v-if="storageUrl && getEvent?.photos[0]?.url" :src="storageUrl + getEvent?.photos[0]?.url"
-            alt="event-image"  class="card-image"/>
+          <div class="swiper-container">
+            <div class="swiper-wrapper">
+              <!-- Boucle sur toutes les images de l'événement -->
+              <div class="swiper-slide" v-for="(photo, index) in getEvent?.photos" :key="index">
+                <img v-if="storageUrl && photo.url" :src="storageUrl + photo.url" alt="event-image" class="card-image"/>
+              </div>
+            </div>
+            <!-- Ajouter les flèches de navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+          </div>
+          <!-- <img v-if="storageUrl && getEvent?.photos[0]?.url" :src="storageUrl + getEvent?.photos[0]?.url"
+            alt="event-image"  class="card-image"/> -->
 
           <div class="ps-5 pe-5 mb-15 ps-sm-20 pe-sm-20 mb-sm-25">
             <div class="mb-12 mb-md-20 d-lg-flex align-items-center justify-content-between">
@@ -28,37 +39,15 @@
                     </span>
                     <span class="badge text-outline-success ms-10">Open</span>
                   </div>
-
-                  <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                    <span class="d-block text-muted">
-                      Categories:
-                    </span>
-                    <div v-for="e in getEvent?.categoryEvents" :key="e.id">
+                  <div style="display: flex; justify-content: space-between">
+                    <span class="d-block text-muted"> Categories: </span>
+                    <div v-for="(e, index) in getEvent?.categoryEvents" :key="e.id">
                       <span class="d-inline-block text-primary">{{ e.name }}</span>
+                      <!-- Ajouter un séparateur sauf pour le dernier élément -->
+                      <span v-if="index !== getEvent.categoryEvents.length - 1" class="text-muted"> - </span>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="buttons-list mt-12 mt-lg-0 d-sm-flex align-items-center">
-                <button type="button"
-                  class="border-0 rounded-1 fs-14 fw-medium position-relative d-inline-block bg-primary text-white transition">
-                  Get Ticket
-                  <i class="flaticon-plus text-white"></i>
-                </button>
-                <button type="button"
-                  class="border-0 rounded-1 fs-14 fw-medium position-relative d-inline-block transition text-primary">
-                  Add To Calendar
-                  <i class="flaticon-calendar text-primary"></i>
-                </button>
-                <button type="button"
-                  class="border-0 rounded-1 fs-14 fw-medium position-relative d-inline-block transition text-primary">
-                  1201
-                  <i class="flaticon-heart-2 text-danger"></i>
-                </button>
-                <button type="button"
-                  class="border-0 rounded-1 fs-14 fw-medium position-relative d-inline-block transition text-primary">
-                  <i class="flaticon-share text-primary"></i>
-                </button>
               </div>
             </div>
           </div>
@@ -178,18 +167,20 @@
   </div>
 </template>
 
-<script lang="ts">
+<script >
 import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import swal from "sweetalert";
 import { storageUrl } from '../../utils/constants';
+import Swiper from 'swiper';
 
 
 export default defineComponent({
   name: "EventDetails",
   data() {
     return {
-      storageUrl: ""
+      storageUrl: "",
+      swiper: null // Ajouter une référence au slider Swiper
     }
   },
   methods: {
@@ -301,6 +292,15 @@ export default defineComponent({
       await this.fetchOneEvent(this.$route.params.idEvent);
       console.log(this.getEvent)
     }
+    // Initialiser le slider Swiper après que les images de l'événement ont été chargées
+    this.swiper = new Swiper('.swiper-container', {
+        // Configurer les options du slider Swiper selon vos besoins
+        loop: true,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      });
   }
 
 });

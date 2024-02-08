@@ -183,7 +183,7 @@ export async function register(userApi: UserApi) {
     }
 }
 
-export async function fetchVehicles(start=0,limit=16) {
+export async function fetchVehicles(start=0,limit=2) {
      try {
        const response = await axios.get(`${endPoints.vehicles}/?populate=*&pagination[start]=${start}&pagination[limit]=${limit}`);
       if (response) {
@@ -527,19 +527,6 @@ export async function updateVilla(villaId, updatedData) {
 }
 
 
-export async function fetchPartners(query="") {
-  try {
-    const response = await axios.get(`${endPoints.partners}?${query}`);
-    if (response) {
-       return response.data;
-    } else {
-       throw new Error("Failed to fetch partners");
-    }
-  } catch (error) {
-    console.error("Error fetching partners:", error);
-    throw error;
-  }
-}
 export async function postVehicleCategory(Catgegory) {
   try {
        const response = await axios.post(endPoints.vehiclesCategories, Catgegory, {
@@ -683,4 +670,66 @@ export async function fetchEvents(start=0,limit=16) {
    console.error("Error fetching events:", error);
    throw error;
  }
+}
+
+export async function fetchPartners(start=0,limit=16) {
+  try {
+    const response = await axios.get(`${endPoints.partners}?populate=deep`);
+   if (response) {
+     console.log(response.data)
+     return response.data;
+   } else {
+     console.error("Failed to fetch partners:");
+     throw new Error("Failed to fetch partners");
+   }
+ } catch (error) {
+   console.error("Error fetching partners:", error);
+   throw error;
+ }
+}
+export async function fetchUserByPartner(id) {
+  try {
+    const url = `${endPoints.users}?filters[partner][id][$contains]=${id}`;
+    console.log("Request URL:", url);
+
+    const response = await axios.get(url);
+    console.log("Response:", response);
+
+    if (response && response.data) {
+      console.log("Fetched users successfully:", response.data);
+      return response.data;
+    } else {
+      console.error("Failed to fetch users.");
+      throw new Error("Failed to fetch users");
+    }
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+}
+
+export async function fetchReservations(start = 0, limit = 16) {
+  try {
+    const response = await axios.get(`${endPoints.reservations}?_start=${start}&_limit=${limit}&populate=*`);
+    if (response) {
+      console.log(response.data);
+      return response.data;
+    } else {
+      console.error("Failed to fetch reservations:");
+      throw new Error("Failed to fetch reservations");
+    }
+  } catch (error) {
+    console.error("Error fetching reservations:", error);
+    throw error;
+  }
+}
+
+export async function deleteReservation(reservationId) {
+  try {
+    const response = await axios.delete(`${endPoints.reservations}/${reservationId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting reservation with ID ${reservationId}:`, error);
+    throw error;
+  }
 }

@@ -46,22 +46,21 @@
         <nav class="mt-15 mt-md-0">
           <ul class="pagination mb-0">
             <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous">
+              <a class="page-link"   aria-label="Previous" @click="fetchPreviousPage">
                 <i class="flaticon-chevron-1"></i>
               </a>
             </li>
-            <li class="page-item">
-              <a class="page-link active" href="#">1</a>
+            <li class="page-item" v-for="pageNumber in totalPages" :key="pageNumber" :class="{ 'active': currentPage === pageNumber }">
+              <a class="page-link"   @click="fetchPage(pageNumber)">{{ pageNumber }}</a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
             <li class="page-item">
-              <a class="page-link" href="#" aria-label="Next">
+              <a class="page-link"   aria-label="Next" @click="fetchNextPage">
                 <i class="flaticon-chevron"></i>
               </a>
             </li>
           </ul>
         </nav>
+
       </div>
       <loading
         v-model:active="isLoading"
@@ -98,6 +97,8 @@ export default {
       isSelected: false,
       isLoading: false,
       fullPage: true,
+      currentPage: 1,
+    totalPages: 1
     };
   },
   methods: {
@@ -116,13 +117,19 @@ export default {
     },
 
     async fetchData() {
-      try {
-        const data = await fetchVehicles();
-        this.vehicles = data.data;
-      } catch (error) {
-        console.error("Error in fetchData:", error);
-      }
-    },
+  try {
+    const data = await fetchVehicles(this.currentPage, 2);
+    this.vehicles = data.data;
+    console.log(this.vehicles.length )
+    this.totalPages = Math.ceil( this.vehicles.length / 2);
+    console.log(this.totalPages ," total ")
+
+  } catch (error) {
+    console.error("Error in fetchData:", error);
+  }
+},
+
+
     async filtredData(searchInput) {
       try {
         this.vehicles = [];
@@ -177,12 +184,35 @@ export default {
         }
       });
     },
+    async fetchPage(pageNumber) {
+  this.currentPage = pageNumber;
+  const start = (pageNumber - 1) * 2;
+  this.fetchData(start);
+},
+
+
+  async fetchNextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.fetchPage(this.currentPage + 1);
+    }
   },
-  created() {
-    this.fetchData();
+
+  async fetchPreviousPage() {
+    if (this.currentPage > 1) {
+      this.fetchPage(this.currentPage - 1);
+    }
+  }
   },
-};
-</script>
+  watch: {
+  vehicles() {
+    this.totalPages = Math.ceil(this.vehicles.length / 2);
+}
+},
+async created() {
+ await   this.fetchData();
+}
+}
+ </script>
 <style scoped>
 .button {
   position: fixed;

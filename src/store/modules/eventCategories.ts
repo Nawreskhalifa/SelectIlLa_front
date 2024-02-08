@@ -7,15 +7,27 @@ const state = {
     categoriesError: null,
     categoriesLoading: false,
     categoriesEvent: [],
-    categoryEvent: null
+    categoryEvent: null,
+    totalPages:1,
+    totalItems: 0,
 }
 const getters = {
     getCategoriesError: state => state.categoriesError,
     getCategoriesLoading: state => state.categoriesLoading,
     getCategoriesEvent: state => state.categoriesEvent,
     getCategoryEvent: state => state.categoryEvent,
+    getTotalPages:state=>state.totalPages,
+    getTotalItems: (state) => state.totalItems,
+
+
 }
 const mutations = {
+    SET_TOTAL_ITEMS(state, payload = 0) {
+        state.totalItems = payload;
+      },
+    SET_TOTAL_PAGES(state, payload =1) {
+        state.totalPages = payload
+    },
     SET_CATEGORIES_LOADING(state, payload = false) {
         state.categoriesLoading = payload
     },
@@ -81,19 +93,25 @@ const actions = {
         }
         return true
     },
-    async fetchAllCategoriesEvent({ commit }) {
+    async fetchAllCategoriesEvent({ commit },page,perPage=25) {
         commit('SET_CATEGORIES_LOADING', true)
         commit('SET_CATEGORIES_ERROR')
         try {
+
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
                 endPoints.allCategoriesEvent,
                 undefined,
-                undefined
+                { pagination: {
+                    page: page,
+                    pageSize: perPage,
+                  }}
             );
             console.log(response.data.data)
             if (response.success) {
-
+                console.log("dd", response.data.meta.pagination);
+                commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
+                commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
                 commit('SET_CATEGORIES', response.data.data.map(decodeApiToEventCategory))
                 commit('SET_CATEGORIES_LOADING')
 

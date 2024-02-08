@@ -1,76 +1,162 @@
 <template>
   <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
-    <div class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-20 p-md-25 p-lg-30">
+    <div
+      class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-20 p-md-25 p-lg-30"
+    >
       <div class="d-sm-flex align-items-center">
         <form class="search-box position-relative">
-          <input type="text" class="form-control shadow-none text-black rounded-0 border-0"
-            placeholder="Search Category" />
-          <button type="submit" class="bg-transparent text-primary transition p-0 border-0">
+          <input
+            type="text"
+            class="form-control shadow-none text-black rounded-0 border-0"
+            placeholder="Search Category"
+          />
+          <button
+            type="submit"
+            class="bg-transparent text-primary transition p-0 border-0"
+          >
             <i class="flaticon-search-interface-symbol"></i>
           </button>
         </form>
       </div>
       <div class="d-sm-flex align-items-center mt-10 mt-lg-0">
-        <router-link to="/create-new-category-event"
-          class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none">
+        <router-link
+          to="/create-new-category-event"
+          class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
+        >
           Add New Category
           <i class="flaticon-plus position-relative ms-5 fs-12"></i>
         </router-link>
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-6 col-xxl-6 col-xxxl-4" v-for="categoryEvent in getCategoriesEvent" :key="categoryEvent.id">
-      <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing project-card">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-xxxl-3 g-4">
+    <div
+      class="col"
+      v-for="categoryEvent in getCategoriesEvent"
+      :key="categoryEvent.id"
+    >
+      <div class="card h-100 mb-15 border-0 rounded-0 bg-white event-card">
         <div class="card-body p-20 p-md-25 p-lg-30">
-          <div class="mb-12 mb-md-15 mb-lg-20 d-flex justify-content-between align-items-center">
+          <div
+            class="mb-12 mb-md-15 mb-lg-20 d-flex justify-content-between align-items-center"
+          >
             <div class="title d-flex align-items-center">
               <div class="ms-15">
                 <h5 class="mb-0 fs-14 fs-md-16 fs-lg-18 fw-bold mt-8 mt-md-10">
-                  <router-link :to="'/category-event-details/' + categoryEvent.id"
-                    class="text-decoration-none text-black">
+                  <router-link
+                    :to="'/category-event-details/' + categoryEvent.id"
+                    class="text-decoration-none text-black"
+                  >
                     {{ categoryEvent.name }}
                   </router-link>
-
                 </h5>
               </div>
             </div>
             <div class="dropdown">
               <button
                 class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
-                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
                 <i class="flaticon-dots"></i>
               </button>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);"
-                    @click="navigateToCategoryDetailPage(categoryEvent.id)">
-                    <i class="flaticon-view lh-1 me-8 position-relative top-1"></i>
+                  <a
+                    class="dropdown-item d-flex align-items-center"
+                    href="javascript:void(0);"
+                    @click="navigateToCategoryDetailPage(categoryEvent.id)"
+                  >
+                    <i
+                      class="flaticon-view lh-1 me-8 position-relative top-1"
+                    ></i>
                     View
                   </a>
                 </li>
                 <li>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);"
-                    @click="navigateToEditCategoryPage(categoryEvent.id)"><i
-                      class="flaticon-pen lh-1 me-8 position-relative top-1"></i>
-                    Edit</a>
+                  <a
+                    class="dropdown-item d-flex align-items-center"
+                    href="javascript:void(0);"
+                    @click="navigateToEditCategoryPage(categoryEvent.id)"
+                    ><i
+                      class="flaticon-pen lh-1 me-8 position-relative top-1"
+                    ></i>
+                    Edit</a
+                  >
                 </li>
                 <li>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);"
-                    @click="deleteCategory(categoryEvent.id)"><i
-                      class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
-                    Delete</a>
+                  <a
+                    class="dropdown-item d-flex align-items-center"
+                    href="javascript:void(0);"
+                    @click="deleteCategory(categoryEvent.id)"
+                    ><i
+                      class="flaticon-delete lh-1 me-8 position-relative top-1"
+                    ></i>
+                    Delete</a
+                  >
                 </li>
               </ul>
             </div>
           </div>
-          <p class="mb-12 mb-md-15 mb-lg-25 text-muted lh-base fs-md-15 fs-lg-16">
+          <p
+            class="mb-12 mb-md-15 mb-lg-25 text-muted lh-base fs-md-15 fs-lg-16"
+          >
             {{ truncateDescription(categoryEvent.description) }}
           </p>
         </div>
       </div>
     </div>
-
+  </div>
+  <div class="col-12">
+    <div
+      class="pagination-area d-md-flex mb-25 justify-content-between align-items-center"
+    >
+      <p class="mb-0 text-paragraph">
+        Showing
+        <span class="fw-bold">{{ getCategoriesEvent.length }}</span> out of
+        <span class="fw-bold">{{ getTotalItems }}</span> results
+      </p>
+      <nav class="mt-15 mt-md-0">
+        <ul class="pagination mb-0">
+          <li class="page-item" :class="{ disabled: currentPage === 1 }">
+            <a
+              class="page-link"
+              href="#"
+              aria-label="Previous"
+              @click="currentPage !== 1 && onPageChange(currentPage - 1)"
+            >
+              <i class="flaticon-chevron-1"></i>
+            </a>
+          </li>
+          <li
+            class="page-item"
+            v-for="page in getTotalPages"
+            :key="page"
+            :class="{ active: page === currentPage }"
+          >
+            <a class="page-link" href="#" @click="onPageChange(page)">{{
+              page
+            }}</a>
+          </li>
+          <li
+            class="page-item"
+            :class="{ disabled: currentPage === getTotalPages }"
+          >
+            <a
+              class="page-link"
+              href="#"
+              aria-label="Next"
+              @click="
+                currentPage !== getTotalPages && onPageChange(currentPage + 1)
+              "
+            >
+              <i class="flaticon-chevron"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
   </div>
 </template>
 
@@ -81,20 +167,29 @@ import { mapActions, mapGetters } from "vuex";
 
 export default defineComponent({
   name: "CategoriesEventList",
+  data() {
+    return {
+      currentPage: 1,
+    };
+  },
   methods: {
     ...mapActions(["fetchAllCategoriesEvent", "deleteCategoryEvent"]),
+    async onPageChange(pageNumber) {
+      this.currentPage = pageNumber;
+      await this.fetchAllCategoriesEvent(pageNumber);
+    },
     truncateDescription(description) {
       const maxLength = 65;
       if (description.length <= maxLength) {
         return description;
       } else {
-        return description.slice(0, maxLength) + '...';
+        return description.slice(0, maxLength) + "...";
       }
     },
     navigateToEditCategoryPage(idCategoryEvent) {
       if (idCategoryEvent !== null && idCategoryEvent !== undefined) {
         this.$router.push({
-          name: 'EditCategoryEventPage',
+          name: "EditCategoryEventPage",
           params: { idCategoryEvent: idCategoryEvent },
         });
       }
@@ -102,7 +197,7 @@ export default defineComponent({
     navigateToCategoryDetailPage(idCategoryEvent) {
       if (idCategoryEvent !== null && idCategoryEvent !== undefined) {
         this.$router.push({
-          name: 'CategoryEventDetails',
+          name: "CategoryEventDetails",
           params: { idCategoryEvent: idCategoryEvent },
         });
       }
@@ -119,10 +214,10 @@ export default defineComponent({
           // Call the deleteCategoryEvent action or API endpoint to delete the category
           await this.deleteCategoryEvent(id);
           swal({
-            text: 'Category deleted Successfully!',
-            icon: 'success',
-            closeOnClickOutside: false
-          })
+            text: "Category deleted Successfully!",
+            icon: "success",
+            closeOnClickOutside: false,
+          });
         } else {
           swal("Category is safe!");
         }
@@ -130,10 +225,28 @@ export default defineComponent({
     },
   },
   computed: {
-    ...mapGetters(["getCategoriesError", "getCategoriesLoading", "getCategoriesEvent"]),
+    ...mapGetters([
+      "getCategoriesError",
+      "getCategoriesLoading",
+      "getCategoriesEvent",
+      "getTotalPages",
+      "getTotalItems",
+    ]),
   },
   async mounted() {
-    await this.fetchAllCategoriesEvent();
+    await this.fetchAllCategoriesEvent(this.currentPage);
   },
 });
 </script>
+<style scoped>
+.event-card {
+  /* Default box shadow */
+  transition: box-shadow 0.4s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.event-card:hover {
+  /* Box shadow on hover */
+  box-shadow: 0 8px 12px #7d6ff0;
+}
+</style>

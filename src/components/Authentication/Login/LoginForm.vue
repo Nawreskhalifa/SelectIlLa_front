@@ -94,7 +94,7 @@ export default {
         // update isAuthenticated in the store
         stateStore.isAuthenticated = true;
         // Redirect to the user's dashboard
-        this.$router.push({ name: "dashboard" });
+        this.$router.push("/dashboard");
       } else if (response.status == httpCodes.HTTP_NOT_FOUND) {
         swal({
           text: response.message,

@@ -24,154 +24,248 @@ import CustomerDetailPage from '../pages/Users/Customers/CustomerDetailPage.vue'
 import LoginPage from "../pages/Authentication/LoginPage.vue";
 import Dashboard from "../pages/Dashboard/EcommercePage.vue";
 import EditEventPage from "../pages/Events/EditEventPage.vue";
+import store from "../store/modules/users"
+import PartnersPage from "../pages/Partners/PartnersList/PartnersList.vue"
+import ReservationListPage from "../pages/Reservation/ReservationList.vue"
 
-  function guardMyroute(to, from, next)
-{
- let  isAuthenticated= false;
-  if(localStorage.getItem('user'))
-  isAuthenticated = true;
- else
-  isAuthenticated= false;
- if(isAuthenticated)
- {
-  next();
- }
- else
- {
-  next('/login');
- }
+function guardMyroute(to, from, next) {
+  const isAuthenticated = localStorage.getItem('user');
+
+  if (to.name === 'LoginPage') {
+     if (isAuthenticated) {
+      next('/dashboard');
+    } else {
+      next();
+    }
+  } else {
+     if (isAuthenticated) {
+      next();
+    } else {
+      next('/login');
+    }
+  }
 }
-const routes = [
+
+ const routes = [
   {
     path: "/login",
     name: "LoginPage",
     component: LoginPage,
+    beforeEnter : guardMyroute,
+     meta :{auth : false}
   },
   {
     path: "/customers",
     name: "CustomersPage",
     component: CustomersPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
 
     path: "/customersList",
     name: "CustomersListPage",
     component: CustomersListPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
   },
   {
     path: "/add-customer",
     name: "AddCustomerPage",
     component: AddCustomerPage,
+    beforeEnter : guardMyroute,
+    meta :{auth : true}
+
+  },
+  {
+    path: "/partnersList",
+    name: "partnersList",
+    component: PartnersPage,
+    beforeEnter : guardMyroute,
+    meta :{auth : true}
+
+  },
+  {
+    path: "/reservationList",
+    name: "reservationList",
+    component: ReservationListPage,
+    beforeEnter : guardMyroute,
+    meta :{auth : true}
   },
   {
     path: "/customer-detail/:customerId",
     name: "CustomerDetailPage",
     component: CustomerDetailPage,
+    beforeEnter : guardMyroute,
+
     props: true,
+    meta :{auth : true}
+
   },
   {
     path: "/categories-event",
     name: "CategoriesEventPage",
     component: CategoriesEventPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/category-event-details/:idCategoryEvent",
     name: "CategoryEventDetails",
     component: CategoryEventDetailsPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/create-new-category-event",
     name: "CreateNewCategoryEventPage",
     component: CreateNewCategoryEventPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/edit-category-event/:idCategoryEvent",
     name: "EditCategoryEventPage",
     component: EditCategoryEventPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/events",
     name: "EventListPage",
     component: EventListPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/event-details/:idEvent",
     name: "EventDetailsPage",
     component: EventDetailsPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/add-event",
     name: "AddEventPage",
     component: AddEventPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/addvehicle",
     name: "addvehicle",
     component: AddVehicle,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/vehiclelist",
     name: "vehiclelist",
     component: VehicleList,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/villalist",
     name: "villalist",
     component: VillaList,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/addvilla",
     name: "addvilla",
     component: AddVilla,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/AddVehicleCategory",
     name: "AddVehicleCategory",
     component: AddVehicleCategory,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/VehicleListCategory",
     name: "VehicleListCategory",
     component: VehicleListCategory,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/AddVillaCategory",
     name: "AddVillaCategory",
     component: AddVillaCategory,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/VillaListCategory",
     name: "VillaListCategory",
     component: VillaListCategory,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/contacts",
     name: "contacts",
     component: ContactPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
     path: "/edit-event/:idEvent",
     name: "EditEventPage",
     component: EditEventPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
   },
   {
       path: "/dashboard",
       name: "dashboard",
       beforeEnter : guardMyroute,
-      meta: {title: 'Dashboard'},
-      component: Dashboard,
-  }
-  //
-  //   children: [
+      meta :{auth : true},
+       component: Dashboard,
+  },
 
-  // ]},
-
-
-   // {
-  //   path: "/vehicledetails",
-  //   name: "vehicledetails",
-  //   component: VehicleDetails,
-  // }
 ];
 
 const router = createRouter({
@@ -182,5 +276,8 @@ const router = createRouter({
     return { top: 0, behavior: "smooth" };
   },
 });
+
+
+
 
 export default router;

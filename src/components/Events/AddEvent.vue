@@ -163,10 +163,11 @@
           <div class="col-md-12">
             <div class="d-flex align-items-center justify-content-between">
               <button
-                class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
-                type="submit">
-                Save Event
-              </button>
+              class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
+              type="submit" :disabled="getEventsLoading">
+              <span v-if="!getEventsLoading">Save Event</span>
+              <div v-if="getEventsLoading" class="spinner-border" role="status"></div>
+            </button>
             </div>
           </div>
         </div>
@@ -298,7 +299,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapGetters(["getCategoriesError", "getCategoriesLoading", "getCategoriesEvent"]),
+    ...mapGetters(["getCategoriesError", "getCategoriesLoading", "getCategoriesEvent","getEventsLoading","getEventsError"]),
   },
   async mounted() {
     await this.fetchAllCategoriesEvent();

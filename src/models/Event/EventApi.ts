@@ -28,7 +28,8 @@ export interface EventApi {
         location: string,
         photos: PhotoApi[] | null,
         partner: PartnerApi | null,
-        category_events: EventCategoryApi[]
+        category_events: EventCategoryApi[],
+        isActive:boolean
 
     }
 }

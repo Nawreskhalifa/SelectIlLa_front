@@ -24,5 +24,8 @@ export const endPoints = {
     upload: `${API_BASE_URL}upload` ,
     villa : `${API_BASE_URL}villas`,
     partners : `${API_BASE_URL}partners` ,
-    contacts :`${API_BASE_URL}contacts`
+    contacts :`${API_BASE_URL}contacts`,
+    users :`${API_BASE_URL}users`,
+    reservations :`${API_BASE_URL}reservations`,
+
 };

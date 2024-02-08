@@ -36,9 +36,23 @@
               <fieldset>
                 <details>
                   <summary>Select categories:</summary>
-<select>
-  <option  :v-for="(cat,i) in getCategoriesEvent" :value="i">{{cat}}</option>
-</select>
+                  <ul>
+                    <li
+                      v-for="category in getCategoriesEvent"
+                      :key="category.id"
+                    >
+                      <label>
+                        <input
+                          type="checkbox"
+                          :checked="
+                            objetExisteDansListe(category, selectedCategories)
+                          "
+                          @change="addCategoryEvent(category)"
+                        />
+                        {{ category.name }}
+                      </label>
+                    </li>
+                  </ul>
                 </details>
               </fieldset>
             </div>
@@ -237,23 +251,24 @@
                   </button>
                 </div>
               </div>
-
-              <!-- <div v-for="(photo, index) in selectedPhotos" :key="index" class="image-item">
-                  <img :src="photo.url" alt="Selected Image" />
-                  <button @click="removeImage(index)" class="delete_icon">
-                    <i class="fas fa-times-circle"></i>
-                  </button>
-                </div> -->
             </div>
           </div>
           <div class="col-md-12">
             <div class="d-flex align-items-center justify-content-between">
-              <button
-                class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
-                type="submit"
-              >
-                Save Event
-              </button>
+              <div class="d-flex align-items-center justify-content-between">
+                <button
+                  class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
+                  type="submit"
+                  :disabled="getCategoriesLoading"
+                >
+                  <span v-if="!getCategoriesLoading">Save Event</span>
+                  <div
+                    v-if="getCategoriesLoading"
+                    class="spinner-border"
+                    role="status"
+                  ></div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -273,6 +288,7 @@ import {
 import { methodsHttpNames } from "@/utils/methods";
 import { endPoints } from "@/utils/endPoints";
 import { storageUrl } from "../../utils/constants";
+import swal from "sweetalert";
 
 export default defineComponent({
   name: "AddEvent",
@@ -307,6 +323,7 @@ export default defineComponent({
       updatedPhotos: [],
       photos: [],
       categoriesEvent: [],
+      categoriesSelected: [],
     };
   },
   methods: {
@@ -316,12 +333,38 @@ export default defineComponent({
       "fetchOneCategoryEvent",
       "fetchOneEvent",
     ]),
-    addCategoryEvent(category) {
-      this.getCategoriesEvent.map((item, key) => {
-        item.check = this.selectedCategories[key];
-        return item;
-      });
+    objetExisteDansListe(objetRecherche, listeObjets) {
+      // Parcourir la liste d'objets
+      for (let objet of listeObjets) {
+        // Vérifier si l'objet courant correspond à l'objet recherché
+        if (objet.id === objetRecherche.id) {
+          // Retourner true si l'objet est trouvé
+          return true;
+        }
+      }
+      // Retourner false si l'objet n'est pas trouvé dans la liste
+      return false;
     },
+    addCategoryEvent(category) {
+      // Vérifier si la catégorie est déjà dans la liste
+      const existingCategoryIndex = this.selectedCategories.findIndex(
+        (cat) => cat.id === category.id
+      );
+      if (existingCategoryIndex === -1) {
+        // Si la catégorie n'est pas déjà dans la liste, l'ajouter avec checked à true
+        this.selectedCategories.push({ ...category, checked: true });
+      } else {
+        // Si la catégorie est déjà dans la liste, inverser l'état de checked
+        this.selectedCategories[existingCategoryIndex].checked =
+          !this.selectedCategories[existingCategoryIndex].checked;
+        // Si la catégorie est désélectionnée, la supprimer de la liste
+        if (!this.selectedCategories[existingCategoryIndex].checked) {
+          this.selectedCategories.splice(existingCategoryIndex, 1);
+        }
+      }
+      console.log(this.selectedCategories);
+    },
+
     removeNewImage(index) {
       this.newPhotos.splice(index, 1);
     },
@@ -354,15 +397,12 @@ export default defineComponent({
 
       try {
         console.log(this.selectedCategories);
-        if (this.getCategoriesEvent && this.getCategoriesEvent.length) {
-          this.categoriesEvent = this.getCategoriesEvent.filter(
-            (item) => item.check == true
-          );
-          for (let index = 0; index < this.categoriesEvent.length; index++) {
+        if (this.selectedCategories && this.selectedCategories.length) {
+          for (let index = 0; index < this.selectedCategories.length; index++) {
             // Ajouter l'objet temporaire à formData
             formData.append(
               `category_events`,
-              JSON.stringify(this.categoriesEvent[index].id)
+              JSON.stringify(this.selectedCategories[index].id)
             );
           }
         }
@@ -404,6 +444,13 @@ export default defineComponent({
           this.updatedPhotos.forEach(async (item) => {
             await deleteFiles(item);
           });
+          this.$router.push({ name: "EventListPage" });
+          // Afficher un message de succès
+          swal({
+            text: "Event Updated Successfully!",
+            icon: "success",
+            closeOnClickOutside: false,
+          });
         }
       } catch (error) {
         console.log(error);
@@ -428,7 +475,7 @@ export default defineComponent({
     this.currentDate = `${year}-${month}-${day}`;
     // Initialise startDate avec la date actuelle
     this.startDate = this.currentDate;
-    console.log('dfd',this.getCategoriesEvent)
+    console.log("dfd", this.getCategoriesEvent);
     if (this.$route.params && this.$route.params.idEvent) {
       await this.fetchOneEvent(this.$route.params.idEvent);
       console.log("dd", this.getEvent);
@@ -436,13 +483,13 @@ export default defineComponent({
 
       this.eventName = this.getEvent.name;
       this.description = this.getEvent.description;
-      if (this.getEvent.categoryEvents) {
-        this.getEvent.categoryEvents.forEach((item) => {
-          this.selectedCategories.push(item);
-          console.log("selected",this.selectedCategories)
-        });
-        console.log('gg',this.selectedCategories)
-
+      if (this.getEvent.categoryEvents && this.getEvent.categoryEvents.length) {
+        this.selectedCategories = this.getEvent.categoryEvents.map(
+          (category) => ({
+            ...category,
+            checked: true,
+          })
+        );
       }
       // this.selectedCategories = [];
       this.price = this.getEvent.price;

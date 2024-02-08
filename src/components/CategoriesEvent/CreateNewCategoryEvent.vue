@@ -8,13 +8,8 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Category Name
               </label>
-              <input
-                v-model="name"
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. AI Machine Learning"
-                required
-              />
+              <input v-model="name" type="text" class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. AI Machine Learning" required />
             </div>
           </div>
           <div class="col-md-12">
@@ -23,29 +18,21 @@
                 Category Description
               </label>
               <div class="mb-0">
-                <textarea
-                  v-model="description"
-                  class="form-control shadow-none rounded-0 text-black"
-                  rows="4"
-                  placeholder="Write your meta description"
-                ></textarea>
+                <textarea v-model="description" class="form-control shadow-none rounded-0 text-black" rows="4"
+                  placeholder="Write your meta description"></textarea>
               </div>
+
             </div>
           </div>
 
           <div class="col-md-12">
             <button
               class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
-              type="submit"
-              :disabled="getCategoriesLoading"
-            >
+              type="submit" :disabled="getCategoriesLoading">
               <span v-if="!getCategoriesLoading">Create Category</span>
-              <div
-                v-if="getCategoriesLoading"
-                class="spinner-border"
-                role="status"
-              ></div>
+              <div v-if="getCategoriesLoading" class="spinner-border" role="status"></div>
             </button>
+
           </div>
         </div>
       </form>
@@ -71,24 +58,21 @@ export default defineComponent({
   },
   watch: {
     categoryDescription(newValue) {
-      console.log("categoryDescription updated:", newValue);
+      console.log('categoryDescription updated:', newValue);
     },
   },
   computed: {
-    ...mapGetters([
-      "getCategoriesError",
-      "getCategoriesLoading",
-      "getCategoryEvent",
-    ]),
+    ...mapGetters(["getCategoriesError", "getCategoriesLoading", "getCategoryEvent"]),
   },
   methods: {
     ...mapActions(["fetchOneCategoryEvent", "addCategory"]),
 
     async createNewCategory() {
+      // Use this.categoryName and this.categoryDescription to create a new category
       const newCategory = {
-           name: this.name,
-          description: this.description,
-       };
+        name: this.name,
+        description: this.description,
+      };
       try {
         const response = await makeApiRequest(
           methodsHttpNames.GET,
@@ -96,29 +80,32 @@ export default defineComponent({
           undefined,
           undefined
         );
-        console.log(response);
+        console.log(response)
         if (response.success) {
           swal({
-            text: "Category already exists!",
-            icon: "error",
-            closeOnClickOutside: false,
-          });
-        } else {
+            text: 'Category already exists!',
+            icon: 'error',
+            closeOnClickOutside: false
+          })
+        }
+        else {
           await this.addCategory(newCategory);
-          this.$router.push({ name: "CategoriesEventPage" });
+          this.$router.push({ name: 'CategoriesEventPage' });
           // Afficher un message de succès
           swal({
-            text: "Category Added Successfully!",
-            icon: "success",
-            closeOnClickOutside: false,
-          });
+            text: 'Category Added Successfully!',
+            icon: 'success',
+            closeOnClickOutside: false
+          })
           // Reset form fields after submission
           this.name = "";
           this.description = "";
         }
-      } catch (error: any) {
-        console.log(error);
-      }
+
+
+      } catch (error: any) { console.log(error) }
+
+
     },
   },
 });
