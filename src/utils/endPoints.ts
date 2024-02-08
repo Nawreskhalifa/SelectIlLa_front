@@ -27,5 +27,5 @@ export const endPoints = {
     contacts :`${API_BASE_URL}contacts`,
     users :`${API_BASE_URL}users`,
     reservations :`${API_BASE_URL}reservations`,
-
+    accepted_reservations:`${API_BASE_URL}accepted-reservations`,
 };

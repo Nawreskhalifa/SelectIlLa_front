@@ -100,7 +100,7 @@
     <div v-if="reserveData">
       <AcceptRef
       :show="ModalVisible"
-      :dataAtt="reserveData"
+      :dataProp="reserveData"
       @close="closeModal"
       @updated="updated"
     />

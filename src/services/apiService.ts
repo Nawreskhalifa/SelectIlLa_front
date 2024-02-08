@@ -733,3 +733,93 @@ export async function deleteReservation(reservationId) {
     throw error;
   }
 }
+export async function acceptReservation(data){
+  try {
+    const response = await axios.post(endPoints.accepted_reservations, data, {
+      headers: {
+          'Content-Type': '"application/json'
+      }
+  });
+  if ( response ) {
+    return {
+      success: true,
+      data: {
+        response
+      },
+      status: httpCodes.HTTP_OK,
+    };
+  } else {
+     return {
+      success: false,
+      error: 'Failed to accept',
+     };
+  }
+} catch (error: any) {
+  console.error('Error   accept:', error);
+  return {
+    success: false,
+    error,
+  };
+
+}
+}
+
+// /api/accepted-reservations
+
+export async function deleteAcceptedReservation(reservationId) {
+  try {
+    const response = await axios.delete(`${endPoints.accepted_reservations}/${reservationId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting acceptation reservation with ID ${reservationId}:`, error);
+    throw error;
+  }
+}
+
+export async function deteleFromReservation(reservationId) {
+  try {
+    const response = await axios.delete(`${endPoints.accepted_reservations}/${reservationId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting acceptation reservation with ID ${reservationId}:`, error);
+    throw error;
+  }
+}
+
+
+export async function updateInReservation(reservationId, itemId ,field) {
+  try {
+    const response = await axios.put(
+      `${endPoints.reservations}/reser}`,
+      // updatedData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } else {
+      console.error('Failed to update vehicle data:', response);
+      return {
+        data:response,
+        success: false,
+        error: 'Failed to update vehicle data',
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error('Error updating vehicle:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
+}

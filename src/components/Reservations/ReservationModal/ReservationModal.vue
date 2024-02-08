@@ -23,8 +23,8 @@
                         <td class="shadow-none lh-1 fw-medium text-paragraph">{{ item.attributes.daily }} $</td>
                         <td class="shadow-none lh-1 fw-medium text-paragraph">{{ item.attributes.brand }} {{ item.attributes.style }}</td>
                          <td class="shadow-none lh-1 fw-medium text-paragraph">{{ item.attributes.available }}</td>
-                        <td class="shadow-none lh-1 fw-medium text-paragraph">
-                          <button @click="acceptItem(item)">Accept</button>
+                        <td class="shadow-none lh-1 fw-medium text-paragraph" style="display: flex; flex-direction: row ; gap: 5px;">
+                          <button @click="acceptItem(item)" style="background-color: darkorchid !important; color :white !important ; border: none !important; padding:2px !important">Accept</button>
                           <button @click="refuseItem(item)">Refuse</button>
                         </td>
                       </tr>
@@ -49,7 +49,7 @@
                         <td class="shadow-none lh-1 fw-medium text-paragraph">{{ villa.attributes.city }}</td>
                          <td class="shadow-none lh-1 fw-medium text-paragraph">{{ villa.attributes.deposit }}</td>
                         <td class="shadow-none lh-1 fw-medium text-paragraph">
-                          <button style="background-color: darkslateblue; color: white; padding: 3px; border: none;" @click="acceptVilla(villa)">Accept</button>
+                          <button   style="background-color: darkorchid !important; color :white !important ; border: none !important; padding:2px !important" @click="acceptVilla(villa)">Accept</button>
                           <button @click="refuseVilla(villa)">Refuse</button>
                         </td>
                       </tr>
@@ -57,17 +57,12 @@
                   </table>
                 </div>
               </div>
-   Villa :    <div class="table-responsive">
+    <div class="table-responsive">
 
   </div>
 
 </div>
-            <div class="buttons">
-              <button class="confirm-button bg-white p-15" @click="confirmUpdate">
-                Confirm
-              </button>
-              <button class="cancel-button" @click="closeModal">No</button>
-            </div>
+
           </div>
         </div>
       </transition>
@@ -76,22 +71,42 @@
 </template>
 
 <script>
-import { updateVillaCategory } from "@/services/apiService";
+import { updateVillaCategory , acceptReservation ,deleteAcceptedReservation} from "@/services/apiService";
 export default {
   props: {
     show: Boolean,
-    dataAtt: {
+    dataProp: {
       type: Object,
       required: true,
     },
   },
   data() {
     return {
-      datafromFather: this.data ,
+      dataAtt:this.dataProp,
       name: "",
     };
   },
   methods: {
+   async  acceptVilla(villa){
+       const  postedData= {
+        data : {
+          reservation_demand : this.dataAtt.id,
+          villa: villa.id,
+          Price:villa.attributes.daily,
+          customer:this.dataAtt.attributes.customer.data.id
+        }
+       }
+  await  acceptReservation(postedData)
+    } ,
+  async    refuseVilla(villa){
+    const resp = await   deleteAcceptedReservation(villa.id)
+if(resp){
+  this.dataAtt.attributes.villas.data =this.dataAtt.attributes.villas.data.map(item => {
+     item !==villa.id
+  })
+}
+ }
+,
     closeModal() {
       this.$emit("close");
     },
