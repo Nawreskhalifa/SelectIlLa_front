@@ -14,7 +14,7 @@
           <button
             class="header-burger-menu transition position-relative lh-1 bg-transparent p-0 border-0"
             id="header-burger-menu"
-            @click="stateStoreInstance.onChange"
+            @click="updateOpen"
           >
             <i class="flaticon-menu-3"></i>
           </button>
@@ -430,8 +430,7 @@ router  : useRouter()
     }
   },
   methods: {
-    ...mapMutations["SET_LOG_OUT"]
-    ,
+    ...mapMutations(['SET_LOG_OUT', 'updateOpen']),
    async  logout(){
      await  localStorage.clear()
       await  this.$router.push({ name: "LoginPage" });

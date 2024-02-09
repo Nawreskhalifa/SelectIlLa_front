@@ -310,8 +310,18 @@
                       </div>
                     </div>
 
-                    <div class="col-md-12 text-danger"></div>
 
+                    <div class="col-md-12 text-danger"></div>
+                    <div class="col-md-6">
+                      <div class="form-group mb-15 mb-sm-20 mb-md-25" v-if="partner && partner.data && partner.data.attributes">
+                        <label class="d-block text-black fw-semibold mb-10"
+                          >Partner</label
+                        >
+ <select>
+  <option :v-for="partner in partnerData">{{ partner }} </option>
+ </select>
+                      </div>
+                    </div>
                     <div class="col-md-6">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25">
                         <label class="d-block text-black fw-semibold mb-10"
@@ -370,6 +380,7 @@ import {
   fetchVehicleCategories,
   uploadFiles,
   deleteFiles,
+   fetchPartnerData,
   updateVehicle,
 } from "@/services/apiService";
 import { toast } from "vue3-toastify";
@@ -384,27 +395,30 @@ export default {
     },
   },
   data() {
-    return {
-      categories: [],
-      make: this.vehicle.attributes.make,
-      brand: this.vehicle.attributes.brand,
-      description: this.vehicle.attributes.description,
-      previousCategories: this.vehicle.attributes.category_vehicles.data,
-      selectedCategory: "",
-      owner: this.vehicle.attributes.owner,
-      seats: this.vehicle.attributes.seats,
-      daily: this.vehicle.attributes.daily,
-      mice: this.vehicle.attributes.mice,
-      newDaily: this.vehicle.attributes.new_daily,
-      msrp: this.vehicle.attributes.msrp,
-      style: this.vehicle.attributes.style,
-      deposit: this.vehicle.attributes.deposit,
-      showUploadedFiles: false,
-      previousPhotos: this.vehicle,
-      selectedFiles: [],
-      imageUrls: [],
-    };
-  },
+  return {
+    categories: [],
+    make: this.vehicle.attributes.make,
+    brand: this.vehicle.attributes.brand,
+    description: this.vehicle.attributes.description,
+    previousCategories: this.vehicle.attributes.category_vehicles.data,
+    selectedCategory: "",
+    owner: this.vehicle.attributes.owner,
+    seats: this.vehicle.attributes.seats,
+    daily: this.vehicle.attributes.daily,
+    mice: this.vehicle.attributes.mice,
+    newDaily: this.vehicle.attributes.new_daily,
+    msrp: this.vehicle.attributes.msrp,
+    style: this.vehicle.attributes.style,
+    deposit: this.vehicle.attributes.deposit,
+    partner: this.vehicle.attributes.partner,
+    showUploadedFiles: false,
+    previousPhotos: this.vehicle,
+    selectedFiles: [],
+    imageUrls: [],
+    partnerData: []
+  };
+},
+
   watch: {
     previousCategories: {
       handler(newValue, oldValue) {
@@ -498,10 +512,19 @@ export default {
     //   const result =
     //   console.log(result);
     // },
+    async fetchPartner(){
+  this.partnerData = await fetchPartnerData();
+  console.log(this.partnerData, 'partners');
+},
+
     async submitForm() {
       const allCategories = this.previousCategories.map((item) => {
         return item.id;
       });
+// let partnerUpdate
+//       if(partner && partner.data ){
+
+//       }
       const vehicleData = {
         data: {
           make: this.make,
@@ -542,6 +565,7 @@ export default {
   },
   mounted() {
     this.fetchCategories();
+    console.log(this.partner,"partner")
   },
 };
 </script>

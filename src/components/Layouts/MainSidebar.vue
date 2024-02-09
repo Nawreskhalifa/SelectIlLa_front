@@ -1,11 +1,12 @@
 <template>
   <div
-    :class="[
-      'sidebar-area position-fixed start-0 top-0 bg-black h-100vh transition',
-      { active: stateStoreInstance.open },
-    ]"
-    id="sidebar-area"
-  >
+  :class="[
+    'sidebar-area position-fixed start-0 top-0 bg-black h-100vh transition',
+    { active: isOpen },
+  ]"
+  id="sidebar-area"
+>
+
     <div class="logo position-absolute start-0 end-0 top-0 bg-black">
       <router-link
         to="/"
@@ -16,7 +17,7 @@
       <div class="border-bottom"></div>
       <button
         class="sidebar-burger-menu position-absolute lh-1 bg-transparent p-0 border-0"
-        @click="stateStoreInstance.onChange"
+        @click="updateOpen"
       >
         <i class="ph-duotone ph-caret-double-right"></i>
       </button>
@@ -126,12 +127,12 @@
             <div class="accordion-body">
               <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
                 <li class="sidebar-sub-menu-item">
-                  <router-link to="/VehicleList" class="sidebar-sub-menu-link">
+                  <router-link to="/vehiclelist" class="sidebar-sub-menu-link">
                     Vehicles List
                   </router-link>
                 </li>
                 <li class="sidebar-sub-menu-item">
-                  <router-link to="/AddVehicle" class="sidebar-sub-menu-link">
+                  <router-link to="/addvehicle" class="sidebar-sub-menu-link">
                     Add Vehicle
                   </router-link>
                 </li>
@@ -354,19 +355,29 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import stateStore from "../../utils/store";
+import { defineComponent, ref } from "vue";
+import stateStore from "@/utils/store";
 import { keys } from "../../utils/storageKeys";
+import { mapGetters, mapMutations } from "vuex";
 export default defineComponent({
   name: "MainSidebar",
   setup() {
     const stateStoreInstance = stateStore;
+    const open = ref(false); // Initialize with false
     return {
       stateStoreInstance,
+      open
     };
   },
+computed:{
+...mapGetters(['isOpen'])
+},
 
   methods: {
+    ...mapMutations(['SET_LOG_OUT', 'updateOpen']),
+    openSlider() {
+      this.open = !this.open;
+    },
     logout() {
       window.localStorage.removeItem(keys.token);
       window.localStorage.removeItem(keys.userData);
@@ -375,6 +386,7 @@ export default defineComponent({
   },
 });
 </script>
+
 
 <style scoped>
 .customSide {

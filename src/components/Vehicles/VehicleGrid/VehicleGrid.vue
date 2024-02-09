@@ -98,7 +98,7 @@ export default {
       isLoading: false,
       fullPage: true,
       currentPage: 1,
-    totalPages: 1
+    totalPages: []
     };
   },
   methods: {
@@ -116,14 +116,14 @@ export default {
       );
     },
 
-    async fetchData() {
+    async fetchData(start = 0, limit = 2) {
   try {
-    const data = await fetchVehicles(this.currentPage, 2);
+    const data = await fetchVehicles(start, limit);
     this.vehicles = data.data;
-    console.log(this.vehicles.length )
-    this.totalPages = Math.ceil( this.vehicles.length / 2);
-    console.log(this.totalPages ," total ")
-
+    console.log(data,"data")
+     this.totalPages = Math.ceil(data.meta.pagination.total / limit);
+   console.log(this.totalPages,"toal")
+   console.log(data.meta.pagination.total ,"total",limit , "limit")
   } catch (error) {
     console.error("Error in fetchData:", error);
   }
@@ -200,29 +200,26 @@ export default {
       });
     },
     async fetchPage(pageNumber) {
-  this.currentPage = pageNumber;
-  const start = (pageNumber - 1) * 2;
-  this.fetchData(start);
-},
+      const start = (pageNumber - 1) * 2;
+      this.fetchData(start);
+      this.currentPage = pageNumber;
+    },
 
 
-  async fetchNextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.fetchPage(this.currentPage + 1);
-    }
-  },
 
-  async fetchPreviousPage() {
-    if (this.currentPage > 1) {
-      this.fetchPage(this.currentPage - 1);
-    }
-  }
+    async fetchNextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.fetchPage(this.currentPage + 1);
+      }
+    } ,
+    async fetchPreviousPage() {
+      if (this.currentPage > 1) {
+        this.fetchPage(this.currentPage - 1);
+      }
+    },
   },
   watch: {
-  vehicles() {
-    this.totalPages = this.vehicles.length > 0 ? Math.ceil(this.vehicles.length / 2) : 1;
 
-}
 },
 async created() {
  await   this.fetchData();

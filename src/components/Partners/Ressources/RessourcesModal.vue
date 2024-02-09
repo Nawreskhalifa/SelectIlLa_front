@@ -24,7 +24,7 @@
               <div class="row row-cols-1 row-cols-md-3" v-if="villas && ressources && ressources.villas">
                 <div class="col mb-4" v-for="villa in ressources.villas" :key="villa.id">
                   <div class="card h-100" v-if="villa.photos">
-                    <img :src="urlPic(villa)" class="card-img-top" alt="">
+                    <img :src="urlPic(villa)" class="card-img-top img" alt="">
                     <div class="card-body">
                       <h5 class="card-title">{{ villa.name }}</h5>
                       <p class="card-text">{{villa.description}}</p>
@@ -32,30 +32,31 @@
                   </div>
                 </div>
               </div>
-               <div class="row row-cols-1 row-cols-md-3" v-if="vehicles">
-                <div class="col mb-4">
-                  <div class="card h-100">
-                    <img src="" class="card-img-top" alt="">
-                    <div class="card-body">
-                      <h5 class="card-title">Card tsdfdsfsdfitle</h5>
-                      <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+               <div class="row row-cols-1 row-cols-md-3" v-if="vehicles  && ressources && ressources.vehicles">
+                <div class="col mb-4" v-for="vehicle in ressources.vehicles" :key="vehicle.id">
+                    <div class="card h-100" v-if="vehicle.photos">
+                      <img :src="urlPic(vehicle)" class="card-img-top img " alt=""
+                       >
+                      <div class="card-body">
+                        <h5 class="card-title">{{ vehicle.make }}</h5>
+                        <p class="card-text">{{vehicle.description}}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
                </div>
 
-               <div class="row row-cols-1 row-cols-md-3" v-if="events">
-                <div class="col mb-4">
-                  <div class="card h-100">
-                    <img src="" class="card-img-top" alt="">
-                    <div class="card-body">
-                      <h5 class="card-title">Card title</h5>
-                      <p class="card-text">This is adsfdsfdsfdsf longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+               <div class="row row-cols-1 row-cols-md-3" v-if="events  && ressources && ressources.events">
+                <div class="col mb-4" v-for="event in ressources.events" :key="event.id">
+                    <div class="card h-100" v-if="event.photos">
+                      <img :src="urlPic(event)" class="card-img-top img" alt="">
+                      <div class="card-body">
+                        <h5 class="card-title">{{ event.name }}</h5>
+                        <p class="card-text">{{event.description}}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-               </div>
-            </div>
+                 </div>
+                 </div>
           </div>
         </transition>
       </div>
@@ -81,11 +82,12 @@
     methods: {
         urlPic(villa) {
   if (villa && villa.photos && villa.photos.length > 0 && villa.photos[0].url) {
-    return `${process.env.VUE_APP_STORAGE_URL}/${villa.photos[0].url}`;
+     return `${process.env.VUE_APP_STORAGE_URL}${villa.photos[0].url.trim()}`;
   } else {
-     return '';
+    return '';
   }
-},
+}
+,
       closeModal() {
         this.$emit("close");
       },
@@ -209,4 +211,12 @@
      color: white;
    }
  }
+ .card-img-top {
+    max-height: 200px;
+    transition: transform 0.3s ease; /* Add transition for smoother animation */
+  }
+
+  .card-img-top:hover {
+    transform: scale(1.05); /* Increase size on hover */
+  }
  </style>

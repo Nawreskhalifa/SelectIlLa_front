@@ -89,11 +89,33 @@
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Category Vehicles
+                Category Villa
               </label>
+              <ul
+              style="
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+                justify-content: flex-start;
+                align-items: center;
+              "
+            >
+              <li
+                class="single_cat"
+                v-for="cat in AllSelected"
+                :key="cat"
+              >
+                <span> {{ cat}}</span>
+                <i
+                  class="fas fa-times-circle"
+                  @click="deleteFromCategories(cat)"
+                ></i>
+              </li>
+            </ul>
               <select
                 v-model="selectedCategory"
                 class="form-select shadow-none fw-semibold rounded-0"
+                @change="addToAllCat"
               >
                 <option selected>Select a Category</option>
                 <option
@@ -280,6 +302,8 @@ export default defineComponent({
     const description = ref("");
     const selectedCategory = ref("");
     const selectedFiles = ref([]);
+    const AllSelected = ref<string[]>([]);
+
     const owner = ref("");
     const seats = ref("");
     const daily = ref("");
@@ -300,6 +324,10 @@ export default defineComponent({
         },
       },
     };
+    const  addToAllCat = () => {
+    AllSelected.value.push(selectedCategory.value)
+    console.log(AllSelected.value)
+}
     const fetchPartnersList = async () => {
       const data = await fetchPartners();
       allPartners.value = data;
@@ -367,6 +395,9 @@ export default defineComponent({
         console.error("Error uploading image:", error);
       }
     };
+    const deleteFromCategories = (cat) => {
+  AllSelected.value = AllSelected.value.filter((item) => item !== cat);
+};
     const submitForm = async () => {
       makeError.value = "";
       brandError.value = "";
@@ -423,6 +454,9 @@ export default defineComponent({
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
+      const selectedC= AllSelected.value.filter(item =>{
+    return parseInt(item)
+  })
       const vehicleData = {
         data: {
           make: make.value,
@@ -435,7 +469,7 @@ export default defineComponent({
           deposit: parseFloat(deposit.value),
           description: description.value,
           owner: owner.value,
-          category_vehicles: [parseInt(selectedCategory.value)],
+          category_vehicles: selectedC ,
           seats: parseInt(seats.value),
           partner: [parseInt(selectedPartner.value)]
         },
@@ -447,7 +481,7 @@ export default defineComponent({
 
       if (result.success) {
         showToatSuccess();
-        router.push("/VehicleList");
+        router.push("/vehiclelist");
       }
     };
     fetchPartnersList() ;
@@ -470,6 +504,7 @@ export default defineComponent({
       msrp,
       showToatSuccess,
       mice,
+      deleteFromCategories,
       newDaily,
       makeError,
       brandError,
@@ -483,6 +518,8 @@ export default defineComponent({
       selectedPartner,
       submitForm,
       selectedFilesRef,
+      addToAllCat,
+      AllSelected ,
       imageUrls,
       handleFileChange,
       uploadImage,

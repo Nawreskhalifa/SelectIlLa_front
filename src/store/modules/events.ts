@@ -8,6 +8,7 @@ const state = {
   eventsLoading: false,
   events: [],
   event: null,
+  open : false ,
   totalPages: 1,
   totalItems: 0,
 };
@@ -18,6 +19,7 @@ const getters = {
   getEvent: (state) => state.event,
   getTotalPages: (state) => state.totalPages,
   getTotalItems: (state) => state.totalItems,
+  isOpen: (state)=> state.open
 };
 const mutations = {
   SET_TOTAL_ITEMS(state, payload = 0) {
@@ -47,6 +49,10 @@ const mutations = {
   UPDATE_EVENT(state, { event, data }) {
     event.updateEvent(data);
   },
+  updateOpen(state){
+    console.log(state,"state")
+    state.open=!state.open
+  }
 };
 const actions = {
   async updateEvent({ commit }, { body, event }) {

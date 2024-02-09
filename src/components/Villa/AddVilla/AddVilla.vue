@@ -466,7 +466,6 @@ export default defineComponent({
     return parseInt(item)
   })
       const vehicleData = {
-
         data: {
           name: name.value,
           city: city.value,

@@ -28,6 +28,8 @@ import store from "../store/modules/users"
 import PartnersPage from "../pages/Partners/PartnersList/PartnersList.vue"
 import ReservationListPage from "../pages/Reservation/ReservationList.vue"
 import AcceptReservation from "../pages/Reservation/AcceptedReservation.vue"
+import ErrorPage from "../pages/ErrorPage.vue"
+import LogOut from "../pages/LogoutPage.vue"
 function guardMyroute(to, from, next) {
   const isAuthenticated = localStorage.getItem('user');
 
@@ -272,6 +274,11 @@ function guardMyroute(to, from, next) {
       meta :{auth : true},
        component: Dashboard,
   },
+  {
+    path: "/error",
+    name: "error",
+       component: ErrorPage,
+},
 
 ];
 
@@ -284,7 +291,18 @@ const router = createRouter({
   },
 });
 
-
+router.beforeEach((to, from, next) => {
+   if (to.path === '/') {
+    next('/dashboard');
+  } else {
+     const found = routes.some(route => route.path.trim() === to.path);
+    if (!found) {
+      next('/error');
+    } else {
+      next();
+    }
+  }
+});
 
 
 export default router;

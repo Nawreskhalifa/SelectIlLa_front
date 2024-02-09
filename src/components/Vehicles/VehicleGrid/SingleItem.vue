@@ -14,13 +14,12 @@
       <div class="card-body p-0 letter-spacing">
         <div class="image position-relative">
           <img
-            @click="toggleModal"
-            :src="
-              getFullImageUrl(vehicle.attributes.photos.data[0].attributes.url)
-            "
-            class="imagev"
-            alt="vehicle"
-          />
+          @click="toggleModal"
+          :src="getFullImageUrl(vehicle.attributes.photos.data[0].attributes.url)"
+          class="imagev"
+          alt="vehicle"
+          style="max-width: 100%; max-height: 200px"
+        />
 
           <button
             class="fav position-absolute bg-white rounded-circle border-0 p-0 d-inline-block"

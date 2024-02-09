@@ -63,10 +63,10 @@
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Categories</h6>
       <ul class="categories-list ps-0 mb-0 list-unstyled">
-        <li>
+        <li class="cat">
           <span class="d-block fs-md-15 fw-medium">All</span>
         </li>
-        <li v-for="category in categories" :key="category.id">
+        <li v-for="category in categories" :key="category.id" @click="byCategory" class="cat">
           <span class="d-block fs-md-15 fw-medium">{{
             category.attributes.name
           }}</span>
@@ -200,5 +200,12 @@ export default {
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
   right: 0px;
+}
+.cat:hover{
+  background-color:#999999 ;
+
+}
+.cat{
+  cursor: pointer;
 }
 </style>

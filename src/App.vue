@@ -1,15 +1,17 @@
 <template>
-  <MainHeader  v-if="route.path !== '/login'" />
-  <MainSidebar v-if="route.path !== '/login'" />
-  <div class="main-content d-flex flex-column transition overflow-hidden">
-    <router-view />
-    <MainFooter v-if="route.path !== '/login'" />
+  <div>
+    <MainHeader v-if="route.path !== '/login' && route.path !== '/error'" />
+    <MainSidebar v-if="route.path !== '/login' && route.path !== '/error'" />
+    <div class="main-content d-flex flex-column transition overflow-hidden">
+      <router-view />
+      <MainFooter v-if="route.path !== '/login'" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-    import { RouterLink, RouterView, useRoute } from 'vue-router'
-import { defineComponent, watchEffect   } from "vue";
+import { defineComponent, watchEffect } from "vue";
+import { useRoute } from 'vue-router';
 import stateStore from "./utils/store";
 
 import MainHeader from "./components/Layouts/MainHeader.vue";
@@ -28,7 +30,7 @@ export default defineComponent({
   },
   setup() {
     const stateStoreInstance = stateStore;
-    const route = useRoute()
+    const route = useRoute();
 
     watchEffect(() => {
       if (stateStoreInstance.open) {
@@ -42,7 +44,8 @@ export default defineComponent({
         console.log("hide");
       }
     });
-    return {route};
+
+    return { route };
   },
 });
 </script>
