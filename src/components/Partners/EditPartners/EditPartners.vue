@@ -206,7 +206,7 @@
 
 
                           <div v-for="(item,i) in allRessources" :key="i">
-                            <img src={{ item }} alt="Sample photo">
+                            <img src="item" alt="Sample photo">
                             <div class="text">
                               <h3 v-if="item.make">{{item.make }} </h3>
                               <h3 v-if="item.name">{{item.name }} </h3>

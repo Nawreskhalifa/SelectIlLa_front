@@ -21,18 +21,17 @@
                 </ul>
               </nav>
 
-               <div class="row row-cols-1 row-cols-md-3" v-if="villas && ressources.villas ">
-                <div class="col mb-4" v-for="villa in villas" :key="villa.id">
-                  <div class="card h-100">
-                    <img src="" class="card-img-top" alt="">
+              <div class="row row-cols-1 row-cols-md-3" v-if="villas && ressources && ressources.villas">
+                <div class="col mb-4" v-for="villa in ressources.villas" :key="villa.id">
+                  <div class="card h-100" v-if="villa.photos">
+                    <img :src="urlPic(villa)" class="card-img-top" alt="">
                     <div class="card-body">
-                      <h5 class="card-title">Card title</h5>
-                      <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                      <h5 class="card-title">{{ villa.name }}</h5>
+                      <p class="card-text">{{villa.description}}</p>
                     </div>
                   </div>
                 </div>
-               </div>
-
+              </div>
                <div class="row row-cols-1 row-cols-md-3" v-if="vehicles">
                 <div class="col mb-4">
                   <div class="card h-100">
@@ -62,8 +61,7 @@
       </div>
     </transition>
   </template>
-
-  <script>
+<script>
   export default {
     props: {
       show: Boolean,
@@ -77,10 +75,17 @@
         name: "",
         villas: true,
         vehicles: false,
-        events: false
+        events: false,
       };
     },
     methods: {
+        urlPic(villa) {
+  if (villa && villa.photos && villa.photos.length > 0 && villa.photos[0].url) {
+    return `${process.env.VUE_APP_STORAGE_URL}/${villa.photos[0].url}`;
+  } else {
+     return '';
+  }
+},
       closeModal() {
         this.$emit("close");
       },
@@ -100,12 +105,11 @@
         this.events = true;
       }
     },
-    mounted(){
-        console.log(this.ressources)
-
+    mounted() {
+      console.log('Photos:', this.ressources.villas[0]?.photos[0].url);
     }
   };
-  </script>
+</script>
  <style lang="scss" scoped>
  .modal-animation-enter-active,
  .modal-animation-leave-active {

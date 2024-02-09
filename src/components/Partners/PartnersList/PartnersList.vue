@@ -227,12 +227,14 @@
       :partner="partnerEdit"
       @close="closeModal"
      />
+     <RessourcesModal
+     :show="ressourcesModalVisible"
+     @close="closeRessources"
+     :ressources="partnerEdit"
+    />
   </div>
-  <RessourcesModal
-   :show="ressourcesModalVisible"
-   @close="closeRessources"
-   :ressources="partnerEdit"
-  />
+
+
 </template>
 
 <script>
@@ -348,8 +350,8 @@ async allData() {
   await this.fetchAllPartners();
 },
 openRessources(partner){
-   console.log(partner)
-this.ressourcesModalVisible  = true;
+    this.partnerEdit= partner
+ this.ressourcesModalVisible  = true;
 }
   },
   computed:{
