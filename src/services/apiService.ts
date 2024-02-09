@@ -733,36 +733,37 @@ export async function deleteReservation(reservationId) {
     throw error;
   }
 }
-export async function acceptReservation(data){
+export async function acceptReservation(data) {
   try {
     const response = await axios.post(endPoints.accepted_reservations, data, {
       headers: {
-          'Content-Type': '"application/json'
-      }
-  });
-  if ( response ) {
-    return {
-      success: true,
-      data: {
-        response
+        'Content-Type': 'application/json',
       },
-      status: httpCodes.HTTP_OK,
-    };
-  } else {
-     return {
-      success: false,
-      error: 'Failed to accept',
-     };
-  }
-} catch (error: any) {
-  console.error('Error   accept:', error);
-  return {
-    success: false,
-    error,
-  };
+    });
 
+    if (response.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } else {
+      console.error('Failed to accept:', response);
+      return {
+        success: false,
+        error: 'Failed to accept',
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error('Error accepting:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
 }
-}
+
 
 // /api/accepted-reservations
 
@@ -787,11 +788,11 @@ export async function deteleFromReservation(reservationId) {
 }
 
 
-export async function updateInReservation(reservationId, itemId ,field) {
+export async function updateInReservation(reservationId, updatedData) {
   try {
     const response = await axios.put(
-      `${endPoints.reservations}/reser}`,
-      // updatedData,
+      `${endPoints.reservations}/${reservationId}`,
+      updatedData,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -807,19 +808,35 @@ export async function updateInReservation(reservationId, itemId ,field) {
         status: response.status,
       };
     } else {
-      console.error('Failed to update vehicle data:', response);
+      console.error('Failed to update reservation data:', response);
       return {
-        data:response,
         success: false,
-        error: 'Failed to update vehicle data',
+        error: 'Failed to update reservation data',
         status: response.status,
       };
     }
   } catch (error) {
-    console.error('Error updating vehicle:', error);
+    console.error('Error updating reservation:', error);
     return {
       success: false,
       error,
     };
+  }
+}
+
+
+export async function fetchAcceptedReservations(start = 0, limit = 16) {
+  try {
+    const response = await axios.get(`${endPoints.accepted_reservations}?_start=${start}&_limit=${limit}&populate=*`);
+    if (response) {
+      console.log(response.data);
+      return response.data;
+    } else {
+      console.error("Failed to fetch accepted reservations:");
+      throw new Error("Failed to fetch accepted reservations");
+    }
+  } catch (error) {
+    console.error("Error fetching accepted reservations:", error);
+    throw error;
   }
 }

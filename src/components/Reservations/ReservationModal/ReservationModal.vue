@@ -3,6 +3,8 @@
     <div v-show="show" class="modal">
       <transition name="modal-animation-inner">
         <div v-show="show" class="modal-inner">
+          <button class="close_icon" @click="closeModal">×</button>
+
           <div class="card product-details-box">
             <div class="card-body p-15 p-sm-20 p-md-25">
               <div class="table-responsive">
@@ -57,8 +59,31 @@
                   </table>
                 </div>
               </div>
+              <hr />
     <div class="table-responsive">
+      <table class="table text-nowrap align-middle mb-0" v-if="dataAtt && dataAtt.attributes && dataAtt.attributes.villas && dataAtt.attributes.villas.data.length > 0">
+        <thead>
+          <tr>
 
+            <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0">Name</th>
+            <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0">Daily</th>
+            <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">start_date</th>
+             <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">end_date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="event in  dataAtt.attributes.events.data" :key="event.id">
+            <td class="shadow-none lh-1 fw-medium text-paragraph">{{ event.attributes.name }}</td>
+            <td class="shadow-none lh-1 fw-medium text-paragraph">{{ event.attributes.price }} $</td>
+            <td class="shadow-none lh-1 fw-medium text-paragraph">{{ event.attributes.start_date }}</td>
+             <td class="shadow-none lh-1 fw-medium text-paragraph">{{ event.attributes.end_date }}</td>
+            <td class="shadow-none lh-1 fw-medium text-paragraph">
+              <button   style="background-color: darkorchid !important; color :white !important ; border: none !important; padding:2px !important" @click="acceptVilla(villa)">Accept</button>
+              <button @click="refuseVilla(villa)">Refuse</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
   </div>
 
 </div>
@@ -71,7 +96,7 @@
 </template>
 
 <script>
-import { updateVillaCategory , acceptReservation ,deleteAcceptedReservation} from "@/services/apiService";
+import { updateVillaCategory , acceptReservation ,deleteAcceptedReservation,updateInReservation} from "@/services/apiService";
 export default {
   props: {
     show: Boolean,
@@ -96,16 +121,33 @@ export default {
           customer:this.dataAtt.attributes.customer.data.id
         }
        }
-  await  acceptReservation(postedData)
+ const res =  await  acceptReservation(postedData)
+ console.log(res,"res")
     } ,
-  async    refuseVilla(villa){
-    const resp = await   deleteAcceptedReservation(villa.id)
-if(resp){
-  this.dataAtt.attributes.villas.data =this.dataAtt.attributes.villas.data.map(item => {
-     item !==villa.id
-  })
+       async  refuseVilla(villa) {
+  try {
+
+      this.dataAtt.attributes.villas.data = this.dataAtt.attributes.villas.data.filter(item => item.id !== villa.id);
+
+      // Update the reservation with the modified list of villas
+      const updatedReservationData = {
+        data: {
+          villas: this.dataAtt.attributes.villas.data.map(item => item.id)
+        }
+      };
+
+       const updateReservationResponse = await updateInReservation(this.dataAtt.id, updatedReservationData);
+
+      if (updateReservationResponse.success) {
+        console.log('Reservation updated successfully.');
+      } else {
+        console.error('Failed to update reservation:', updateReservationResponse.error);
+      }
+
+  } catch (error) {
+    console.error('Error handling refused villa:', error);
+  }
 }
- }
 ,
     closeModal() {
       this.$emit("close");

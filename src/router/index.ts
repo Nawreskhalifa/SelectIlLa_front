@@ -27,7 +27,7 @@ import EditEventPage from "../pages/Events/EditEventPage.vue";
 import store from "../store/modules/users"
 import PartnersPage from "../pages/Partners/PartnersList/PartnersList.vue"
 import ReservationListPage from "../pages/Reservation/ReservationList.vue"
-
+import AcceptReservation from "../pages/Reservation/AcceptedReservation.vue"
 function guardMyroute(to, from, next) {
   const isAuthenticated = localStorage.getItem('user');
 
@@ -92,6 +92,13 @@ function guardMyroute(to, from, next) {
     path: "/reservationList",
     name: "reservationList",
     component: ReservationListPage,
+    beforeEnter : guardMyroute,
+    meta :{auth : true}
+  },
+  {
+    path: "/acceptedres",
+    name: "acceptedres",
+    component: AcceptReservation,
     beforeEnter : guardMyroute,
     meta :{auth : true}
   },

@@ -57,12 +57,7 @@
               >
                 Phone
               </th>
-              <th
-                scope="col"
-                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-              >
-                Status
-              </th>
+
 
             </tr>
           </thead>
@@ -82,9 +77,6 @@
               </td>
               <td class="shadow-none lh-1 fw-medium text-paragraph">
                 {{ reservation.attributes.phone }}
-              </td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ reservation.attributes.status }}
               </td>
 
             </tr>
@@ -110,7 +102,7 @@
 </template>
 
 <script>
-import { fetchReservations, deleteReservation } from "@/services/apiService";
+import { fetchReservations, deleteReservation ,fetchAcceptedReservations } from "@/services/apiService";
 import AcceptRef from "../ReservationModal/ReservationModal.vue"
 export default {
   name: "ReservationList",
@@ -145,13 +137,21 @@ export default {
     async change() {
       // Handle search functionality
     },
+    closeModal(){
+ this.ModalVisible =  false
+    } ,
     openModal(reservation){
     this.ModalVisible=!this.ModalVisible
     this.reserveData = reservation
+    },
+    async fetchAccepted(){
+      const res = await fetchAcceptedReservations()
+      console.log(res)
     }
   },
   mounted() {
     this.fetchReservationsData();
+     this.fetchAccepted()
   },
 };
 </script>

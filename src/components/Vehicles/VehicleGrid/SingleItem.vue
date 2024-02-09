@@ -43,7 +43,7 @@
         </div>
         <div class="content p-20">
           <h4 class="mb-10 fw-semibold fs-16 fs-lg-18">
-            {{ vehicle.attributes.make }} {{ vehicle.attributes.brand }}
+           Name:    {{ vehicle.attributes.make }} {{ vehicle.attributes.brand }}
           </h4>
           <div class="lockbtn reviews d-flex align-items-center">
             <button

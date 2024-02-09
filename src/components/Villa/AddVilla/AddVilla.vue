@@ -139,9 +139,31 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Category Villa
               </label>
+              <ul
+              style="
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+                justify-content: flex-start;
+                align-items: center;
+              "
+            >
+              <li
+                class="single_cat"
+                v-for="cat in AllSelected"
+                :key="cat"
+              >
+                <span> {{ cat}}</span>
+                <i
+                  class="fas fa-times-circle"
+                  @click="deleteFromCategories(cat)"
+                ></i>
+              </li>
+            </ul>
               <select
                 v-model="selectedCategory"
                 class="form-select shadow-none fw-semibold rounded-0"
+                @change="addToAllCat"
               >
                 <option selected>Select a Category</option>
                 <option
@@ -286,11 +308,10 @@ import "vue3-toastify/dist/index.css";
 import { useRouter } from "vue-router";
 export default defineComponent({
   name: "AddProduct",
-
   setup() {
     const router = useRouter();
-    const selectedCategory = ref("");
-
+    const AllSelected = ref<string[]>([]);
+    const selectedCategory = ref<string>("");
     const selectedFiles = ref([]);
     const categories = ref();
     const allPartners = ref();
@@ -334,7 +355,10 @@ export default defineComponent({
         autoClose: 1000,
       });
     };
-
+    const  addToAllCat = () => {
+    AllSelected.value.push(selectedCategory.value)
+    console.log(AllSelected.value)
+}
     const fetchPartnersList = async () => {
       const data = await fetchPartners();
       allPartners.value = data;
@@ -386,6 +410,10 @@ export default defineComponent({
         console.error("Error uploading image:", error);
       }
     };
+    const deleteFromCategories = (cat) => {
+  AllSelected.value = AllSelected.value.filter((item) => item !== cat);
+};
+
     const submitForm = async () => {
       nameError.value = "";
       cityError.value = "";
@@ -434,7 +462,11 @@ export default defineComponent({
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
+      const selectedC= AllSelected.value.filter(item =>{
+    return parseInt(item)
+  })
       const vehicleData = {
+
         data: {
           name: name.value,
           city: city.value,
@@ -449,7 +481,7 @@ export default defineComponent({
           description: description.value,
           minioeuvre_daily: minioeuvre_daily.value.toString(),
           partner: [parseInt(selectedPartner.value)],
-          category_villas: [parseInt(selectedCategory.value)],
+          category_villas: selectedC,
         },
       };
 
@@ -462,11 +494,13 @@ export default defineComponent({
     };
 
     fetchCategories();
+    fetchPartnersList();
     // fetchPartnersList();
 
     return {
       modules,
       categories,
+      addToAllCat,
       allPartners,
       description,
       selectedCategory,
@@ -494,7 +528,9 @@ export default defineComponent({
       view,
       baths,
       sleeps,
+      AllSelected,
       minioeuvre_daily,
+      deleteFromCategories,
       selectedPartner,
       rooms,
       nameError,

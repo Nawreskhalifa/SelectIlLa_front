@@ -158,4 +158,7 @@ export default {
 .imagev {
   width: 100%;
 }
+.card{
+  height: 500px;
+}
 </style>

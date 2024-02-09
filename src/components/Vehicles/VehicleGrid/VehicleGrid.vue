@@ -130,16 +130,31 @@ export default {
 },
 
 
+    // async filtredData(searchInput) {
+    //   try {
+
+    //      const data = await search("vehicles", "make", "$contains", searchInput);
+    //     this.vehicles = data.data;
+    //   } catch (error) {
+    //     console.error("Error in filtredData:", error);
+    //   }
+    // },
     async filtredData(searchInput) {
-      try {
-        this.vehicles = [];
-        console.log(this.vehicles);
-        const data = await search("vehicles", "make", "$contains", searchInput);
-        this.vehicles = data.data;
-      } catch (error) {
-        console.error("Error in filtredData:", error);
-      }
-    },
+  try {
+    if (searchInput) {
+      console.log("Search input:", searchInput);
+      console.log("New data:", this.newData);
+      this.vehicles = this.vehicles.filter(vehicle => vehicle.attributes.make.toLowerCase().includes(searchInput.toLowerCase()));
+    } else {
+      console.log("No search input provided.");
+       await this.fetchData();
+    }
+    console.log("Filtered vehicles:", this.vehicles);
+  } catch (error) {
+    console.error("Error in filtredData:", error);
+  }
+},
+
 
     async handleItemDeleted(vehicleId) {
       try {
@@ -205,7 +220,8 @@ export default {
   },
   watch: {
   vehicles() {
-    this.totalPages = Math.ceil(this.vehicles.length / 2);
+    this.totalPages = this.vehicles.length > 0 ? Math.ceil(this.vehicles.length / 2) : 1;
+
 }
 },
 async created() {

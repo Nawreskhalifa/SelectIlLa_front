@@ -332,7 +332,7 @@
               </li>
               <li class="sidebar-sub-menu-item">
                 <router-link
-                  to="/create-new-category-event"
+                  to="/acceptedres"
                   class="sidebar-sub-menu-link"
                 >
                   Accepted Reservations

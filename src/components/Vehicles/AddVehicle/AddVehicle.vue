@@ -224,6 +224,26 @@
               <div v-if="seatsError" class="text-danger">{{ seatsError }}</div>
             </div>
           </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Partner
+              </label>
+              <select
+                v-model="selectedPartner"
+                class="form-select shadow-none fw-semibold rounded-0"
+              >
+                <option selected>Select a partner</option>
+                <option
+                  v-for="partner in allPartners"
+                  :key="partner.id"
+                  :value="partner.id"
+                >
+                  {{ partner.name }}
+                </option>
+              </select>
+            </div>
+          </div>
 
           <div class="col-md-12">
             <button
@@ -242,7 +262,7 @@
 import { defineComponent, ref } from "vue";
 import BlotFormatter from "quill-blot-formatter";
 import ImageUploader from "quill-image-uploader";
-import { fetchVehicleCategories } from "@/services/apiService";
+import { fetchVehicleCategories  , fetchPartners} from "@/services/apiService";
 import { postVehicle } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -252,7 +272,8 @@ export default defineComponent({
 
   setup() {
     const router = useRouter();
-
+    const allPartners = ref();
+    const selectedPartner = ref("");
     const categories = ref();
     const make = ref("");
     const brand = ref("");
@@ -279,7 +300,11 @@ export default defineComponent({
         },
       },
     };
-
+    const fetchPartnersList = async () => {
+      const data = await fetchPartners();
+      allPartners.value = data;
+      console.log(data, allPartners, "data");
+    };
     const makeError = ref("");
     const brandError = ref("");
     const descriptionError = ref("");
@@ -412,6 +437,7 @@ export default defineComponent({
           owner: owner.value,
           category_vehicles: [parseInt(selectedCategory.value)],
           seats: parseInt(seats.value),
+          partner: [parseInt(selectedPartner.value)]
         },
       };
 
@@ -424,13 +450,14 @@ export default defineComponent({
         router.push("/VehicleList");
       }
     };
-
+    fetchPartnersList() ;
     fetchCategories();
 
     return {
       modules,
       categories,
       make,
+      allPartners,
       brand,
       description,
       selectedCategory,
@@ -453,6 +480,7 @@ export default defineComponent({
       dailyError,
       miceError,
       newDailyError,
+      selectedPartner,
       submitForm,
       selectedFilesRef,
       imageUrls,

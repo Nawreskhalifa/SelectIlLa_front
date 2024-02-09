@@ -81,6 +81,12 @@
                 Type Ressource
               </th>
               <th
+              scope="col"
+              class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+            >
+                Check
+            </th>
+              <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
               >
@@ -138,6 +144,10 @@
     </label>
   </div>
                </td>
+
+               <td class="shadow-none lh-1 fw-medium text-paragraph">
+                <i @click="openRessources(partner)" class="fas fa-database" style="cursor: pointer;"></i>
+              </td>
               <td
                 class="shadow-none lh-1 fw-medium text-paragraph text-end pe-0"
               >
@@ -218,6 +228,11 @@
       @close="closeModal"
      />
   </div>
+  <RessourcesModal
+   :show="ressourcesModalVisible"
+   @close="closeRessources"
+   :ressources="partnerEdit"
+  />
 </template>
 
 <script>
@@ -228,11 +243,12 @@ import {
 } from "@/services/apiService";
 import UpdateModal from "../EditPartners/EditPartners.vue";
 import {fetchPartners, fetchUserByPartner} from "@/services/apiService"
-
+import RessourcesModal from '../Ressources/RessourcesModal.vue'
 export default {
   name: "PartnersList ",
   components: {
     UpdateModal,
+    RessourcesModal
   },
   data() {
     return {
@@ -243,6 +259,7 @@ export default {
       event: true
     },
       ModalVisible: false,
+      ressourcesModalVisible : false,
       partnerEdit: "",
       searchInput: "",
      };
@@ -266,6 +283,9 @@ export default {
 
     closeModal() {
       this.ModalVisible = !this.ModalVisible;
+    },
+    closeRessources(){
+   this.ressourcesModalVisible = false
     },
     async updated() {
       await this.fetchAllPartners();
@@ -326,9 +346,11 @@ async allData() {
   this.checkList.villa = true;
   this.checkList.vehicle = true;
   await this.fetchAllPartners();
+},
+openRessources(partner){
+   console.log(partner)
+this.ressourcesModalVisible  = true;
 }
-
-
   },
   computed:{
     allCheckboxesChecked() {
