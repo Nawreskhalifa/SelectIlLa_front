@@ -312,16 +312,16 @@
 
 
                     <div class="col-md-12 text-danger"></div>
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25" v-if="partner && partner.data && partner.data.attributes">
                         <label class="d-block text-black fw-semibold mb-10"
                           >Partner</label
                         >
  <select>
-  <option :v-for="partner in partnerData">{{ partner }} </option>
+  <option :v-for="partner in partnerData">{{ partner. }} </option>
  </select>
                       </div>
-                    </div>
+                    </div> -->
                     <div class="col-md-6">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25">
                         <label class="d-block text-black fw-semibold mb-10"
