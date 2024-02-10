@@ -393,7 +393,7 @@ export async function fetchVehicles(start=0,limit=2) {
 
 
 
-export async function fetchVilla(start=0,limit=16) {
+export async function fetchVilla(start=0,limit=5) {
   try {
     const response = await axios.get(`${endPoints.villa}/?populate=*&pagination[start]=${start}&pagination[limit]=${limit}`);
    if (response) {

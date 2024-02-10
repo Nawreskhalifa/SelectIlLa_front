@@ -19,6 +19,8 @@
             "
             class="imagev"
             alt="villa"
+            style="max-width: 100%; height: 200px"
+
           />
 
           <button
@@ -32,16 +34,40 @@
               aria-hidden="true"
             ></i>
           </button>
+          <button
+          v-if="isSelected"
+          class="bg-dark text-white rounded-1 border-1 p-2 d-inline-block"
+          type="button"
+        >
+          <i class="fas fa-solid fa-check"></i>
+        </button>
         </div>
         <div class="content p-20">
           <h4 class="mb-10 fw-semibold fs-16 fs-lg-18">
             {{ villa.attributes.name }} - {{ villa.attributes.city }}
           </h4>
-          <div class="reviews d-flex align-items-center"></div>
-          <div class="mt-10 price d-flex align-items-center">
+          <div class="reviews d-flex align-items-center "></div>
+          <div class="mt-10 price d-flex align-items-center justify-content-between">
             <span class="text-primary fw-bold fs-md-15 fs-lg-16">{{
               villa.attributes.daily
             }}</span>
+            <div class="lockbtn reviews d-flex align-items-center">
+              <button
+              @click="active(false)"
+              class="lock"
+              v-if="villa.attributes.isActive"
+            >
+              <i class="fas fa-solid fa-eye-slash"></i>
+            </button>
+            <button
+              @click="active(true)"
+              class="lock"
+              v-if="!villa.attributes.isActive"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+
+            </div>
           </div>
           <span>
             published : <span v-date="villa.attributes.publishedAt"></span>
@@ -86,12 +112,16 @@ import { ref } from "vue";
 import VillaDetails from "../VillaDetails/VillaDetails.vue";
 import DeleteModal from "@/components/Common/DeleteModal.vue";
 import UpdateVilla from "../UpdateVilla/UpdateVilla.vue";
+import {updateVilla} from "@/services/apiService"
 
 export default {
   props: {
     villa: {
       type: Object,
       required: true,
+    },
+    isSelected: {
+      type: Boolean,
     },
   },
   setup() {
@@ -133,6 +163,26 @@ export default {
     newData(event) {
       this.$emit("itemUpdated", event);
     },
+    async active(value) {
+      if (value === true) {
+        const updatedData = {
+          data: {
+            isActive: true,
+          },
+        };
+        const res = await updateVilla(this.villa.id, updatedData);
+        this.$emit("isActive", { status: true, id: res.data.data.id });
+      } else {
+        const updatedData = {
+          data: {
+            isActive: false,
+          },
+        };
+        const res = await updateVilla(this.villa.id, updatedData);
+        console.log(res);
+        this.$emit("isActive", { status: false, id: res.data.data.id });
+      }
+    },
   },
   directives: {
     date: {
@@ -158,7 +208,31 @@ export default {
 .imagev {
   width: 100%;
 }
-.card{
-  height: 500px;
+
+
+
+
+
+.lockbtn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.lock{
+ background-color: white;
+ border: none;
+ color: gray;
+ font-size: 20px;
+}
+
+
+
+/* Add shadow effect */
+.single-product-box {
+  transition: box-shadow 0.3s ease;
+}
+
+.single-product-box:hover {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 6px 20px rgba(0, 0, 0, 0.19);
 }
 </style>

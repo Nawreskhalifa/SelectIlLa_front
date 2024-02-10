@@ -11,34 +11,10 @@
     >
       <h5 class="mb-0 fw-semibold text-secondary">Select All</h5>
       <div>
-        <div class="onoffswitch">
-          <input
-            type="radio"
-            name="onoffswitch"
-            class="onoffswitch-checkbox"
-            id="myonoffswitch"
-            v-model="selectAll"
-            value="false"
-            checked
-          />
-          <label class="onoffswitch-label" for="myonoffswitch">
-            <span class="onoffswitch-inner"></span>
-            <span class="onoffswitch-switch"></span>
-          </label>
-        </div>
-
-        <div class="onoffswitch">
-          <input
-            type="radio"
-            v-model="selectAll"
-            value="true"
-            name="onoffswitch"
-            class="onoffswitch-checkbox"
-            id="myonoffswitch2"
-          />
-          <label class="onoffswitch-label" for="myonoffswitch2">
-            <span class="onoffswitch-inner"></span>
-            <span class="onoffswitch-switch"></span>
+         <div class="checkbox-wrapper">
+          <input type="checkbox" id="selectAllCheckbox" v-model="selectAll"  />
+          <label class="checkbox-label" for="selectAllCheckbox">
+             <i v-if="selectAll" class="fas fa-check"></i>
           </label>
         </div>
       </div>
@@ -52,12 +28,6 @@
           placeholder="Search product"
           v-model="searchInput"
         />
-        <!-- <button
-          type="submit"
-          class="bg-transparent text-primary transition p-0 border-0"
-        >
-          <i class="flaticon-search-interface-symbol"></i>
-        </button> -->
       </div>
     </div>
     <div class="sidebar-item">
@@ -83,18 +53,18 @@
       </ul>
     </div>
   </div>
+
 </template>
 
 <script>
 import { fetchVehicleCategories } from "@/services/apiService";
-// search(table, field , query , searchInput)
 
 export default {
   data() {
     return {
       categories: [],
       searchInput: "",
-      selectAll: Boolean,
+      selectAll: false,
     };
   },
   watch: {
@@ -122,90 +92,43 @@ export default {
 };
 </script>
 
-<style scope>
-.onoffswitch {
+<style scoped>
+ .checkbox-wrapper {
   position: relative;
-  width: 70px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  margin-bottom: 10px;
-}
-.onoffswitch-checkbox {
-  display: none;
-}
-.onoffswitch-label {
-  display: block;
-  overflow: hidden;
-  cursor: pointer;
-  border: 2px solid #999999;
-  border-radius: 20px;
-}
-.onoffswitch-inner {
-  display: block;
-  width: 200%;
-  margin-left: -100%;
-  -moz-transition: margin 0.3s ease-in 0s;
-  -webkit-transition: margin 0.3s ease-in 0s;
-  -o-transition: margin 0.3s ease-in 0s;
-  transition: margin 0.3s ease-in 0s;
-}
-.onoffswitch-inner:before,
-.onoffswitch-inner:after {
-  display: block;
-  float: left;
-  width: 50%;
+  display: inline-block;
+  width: 30px;
   height: 30px;
-  padding: 0;
-  line-height: 30px;
-  font-size: 14px;
-  color: white;
-  font-family: Trebuchet, Arial, sans-serif;
-  font-weight: bold;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
 }
-.onoffswitch-inner:before {
-  content: "OFF";
-  padding-left: 10px;
-  background-color: #3c3a56;
-  color: #ffffff;
+
+.checkbox-wrapper input[type="checkbox"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
-.onoffswitch-inner:after {
-  content: "ON";
-  padding-right: 10px;
-  background-color: #eeeeee;
-  color: #999999;
-  text-align: right;
-}
-.onoffswitch-switch {
-  display: block;
-  width: 18px;
-  margin: 6px;
-  background: #ffffff;
-  border: 2px solid #999999;
-  border-radius: 20px;
+
+.checkbox-label {
   position: absolute;
   top: 0;
-  bottom: 0;
-  right: 38px;
-  -moz-transition: all 0.3s ease-in 0s;
-  -webkit-transition: all 0.3s ease-in 0s;
-  -o-transition: all 0.3s ease-in 0s;
-  transition: all 0.3s ease-in 0s;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  background-color: #f0f0f0;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
-  margin-left: 0;
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-  right: 0px;
-}
-.cat:hover{
-  background-color:#999999 ;
 
+.checkbox-label i {
+  color: #333;
 }
-.cat{
+
+.cat:hover {
+  background-color: #999999;
+}
+
+.cat {
   cursor: pointer;
 }
 </style>

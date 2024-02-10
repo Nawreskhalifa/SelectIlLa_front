@@ -205,7 +205,7 @@
                     <div class="col-md-12">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25">
                         <label class="d-block text-black fw-semibold mb-10">
-                          Category Villas
+                          Update Villas
                         </label>
                         <ul
                           style="
@@ -298,6 +298,47 @@
                         />
                       </div>
                     </div>
+                    <div class="col-md-6">
+                      <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                        <label class="d-block text-black fw-semibold mb-10">
+                          Partner
+                        </label>
+                        <ul
+                          style="
+                            display: flex;
+                            flex-direction: row;
+                            gap: 10px;
+                            justify-content: flex-start;
+                            align-items: center;
+                          "
+                        >
+                        <li class="single_cat" v-if="partner">
+                          {{ getSelectedPartnerName }}
+                          <!-- <span> {{ cat.attributes.Name }}</span> -->
+                          <i class="fas fa-times-circle" @click="deleteFromCategories(cat)"></i>
+                      </li>
+
+                        </ul>
+                        <select
+                        v-model="partner"
+                        class="form-select shadow-none fw-semibold rounded-0"
+                      >
+                        <option value="" disabled>Select a Partner</option>
+                        <option
+                          v-for="partner in partnerData"
+                          :key="partner.id"
+                          :value="partner.id"
+                          :selected="selectedPartner === partner.id"
+                        >
+                          {{ partner.name }}
+                        </option>
+                      </select>
+
+                        <div v-if="categoryError" class="text-danger">
+                          {{ categoryError }}
+                        </div>
+                      </div>
+                    </div>
 
                     <div class="col-md-12 text-danger"></div>
 
@@ -363,7 +404,7 @@
                         class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16"
                         type="submit"
                       >
-                        Create Villa
+                        Update Villa
                       </button>
                     </div>
                   </div>
@@ -382,6 +423,7 @@ import {
   deleteFiles,
   updateVilla,
   fetchVillaCategories,
+  fetchPartners
 } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -410,15 +452,26 @@ export default {
       description: this.villa.attributes.description,
       minioeuvre_daily: this.villa.attributes.minioeuvre_daily,
       owner: this.villa.attributes.owner,
-      selectedPartner: this.villa.attributes.selectedPartner,
+      selectedPartner: this.villa.attributes.partner.data.attributes.id,
       previousCategories: this.villa.attributes.category_villas.data,
       selectedCategory: "",
       showUploadedFiles: false,
       previousPhotos: this.villa,
+      partner:this.villa.attributes.partner.data.attributes.id,
       selectedFiles: [],
       imageUrls: [],
+      partnerData :[]
     };
   },
+  computed: {
+    getSelectedPartnerName() {
+      if (this.partnerData && this.partnerData.length > 0) {
+        const selectedPartner = this.partnerData.find(partner => partner.id === this.partner);
+        return selectedPartner ? selectedPartner.name : '';
+      }
+      return '';
+    }
+},
   watch: {
     previousCategories: {
       handler(newValue, oldValue) {
@@ -512,10 +565,16 @@ export default {
     //   const result =
     //   console.log(result);
     // },
+    async fetchAllPartners() {
+      this.partnerData =await fetchPartners()
+      console.log(this.partnerData ,"data")
+    },
     async submitForm() {
       const allCategories = this.previousCategories.map((item) => {
         return item.id;
       });
+      console.log(allCategories)
+      console.log(this.partner)
       const villaData = {
         data: {
           name: this.name,
@@ -530,9 +589,11 @@ export default {
           deposit: parseFloat(this.deposit),
           description: this.description,
           minioeuvre_daily: this.minioeuvre_daily.toString(),
-          category_villas: [parseInt(this.selectedCategory)],
+          category_villas: allCategories,
+          partner:this.partner
         },
       };
+      console.log(villaData)
       if (this.selectedFiles.length > 0) {
         await uploadFiles(
           this.selectedFiles,
@@ -545,6 +606,7 @@ export default {
 
       if (result.success) {
         this.$emit("updatedData", result.data.data);
+        this.$emit("close");
 
         toast.success("villa Updated  🚗 👍 ", {
           autoClose: 1000,
@@ -555,6 +617,10 @@ export default {
       }
     },
   },
+  mounted(){
+    this.fetchCategories()
+    this.fetchAllPartners()
+    }
 };
 </script>
 

@@ -1,9 +1,7 @@
 <template>
   <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
-    <div
-      class="card-head box-shadow bg-white d-md-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
-    >
-      <div class="search-box position-relative">
+    <div class="card-head box-shadow bg-white d-md-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25">
+      <div class="search-box position-relative" style="display: flex; align-items: center;">
         <input
           @input="change"
           type="text"
@@ -11,6 +9,16 @@
           placeholder="Search Reservation"
           v-model="searchInput"
         />
+      </div>
+      <div class="filter-btn">
+        <button
+          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
+          type="button"
+          @click="toggleFilterByDate"
+        >
+          Filter by Date
+          <i class="fas fa-filter position-relative ms-2 top-1"></i>
+        </button>
       </div>
       <div class="d-sm-flex align-items-center">
         <button
@@ -57,64 +65,54 @@
               >
                 Phone
               </th>
-
-
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="reservation in reservations" :key="reservation.id" @click="openModal(reservation)">
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ reservation.attributes.pickup_date }}
+            <tr v-for="reservation in reservations" :key="reservation.id">
+              <td class="shadow-none lh-1 fw-medium text-paragraph">{{ reservation.attributes.pickup_date }}</td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">{{ reservation.attributes.drop_off_date }}</td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">{{ reservation.attributes.pickup_location }}</td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">{{ reservation.attributes.drop_off_location }}</td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">{{ reservation.attributes.phone }}</td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph btns">
+                <button @click="showDetail(reservation)" class="btn-action detail">Detail</button>
+                <button @click="acceptReservation(reservation)" class="btn-action accept">Accept</button>
+                <button @click="refuseReservation(reservation)" class="btn-action refuse">Refuse</button>
               </td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ reservation.attributes.drop_off_date }}
-              </td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ reservation.attributes.pickup_location }}
-              </td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ reservation.attributes.drop_off_location }}
-              </td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ reservation.attributes.phone }}
-              </td>
-
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div
-        class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
-      >
-       </div>
+      <div class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"></div>
     </div>
     <div v-if="reserveData">
-      <AcceptRef
-      :show="ModalVisible"
-      :dataProp="reserveData"
-      @close="closeModal"
-      @updated="updated"
-    />
+      <AcceptRef :show="ModalVisible" :dataProp="reserveData" @close="closeModal" @updated="updated" />
     </div>
-
   </div>
 </template>
 
 <script>
-import { fetchReservations, deleteReservation ,fetchAcceptedReservations } from "@/services/apiService";
-import AcceptRef from "../ReservationModal/ReservationModal.vue"
+import { fetchReservations, deleteReservation, fetchAcceptedReservations } from "@/services/apiService";
+import AcceptRef from "../ReservationModal/ReservationModal.vue";
+
 export default {
   name: "ReservationList",
-  components:{
-    AcceptRef
+  components: {
+    AcceptRef,
   },
   data() {
     return {
       reservations: [],
       searchInput: "",
-      reserveData:"",
-      ModalVisible:false
+      reserveData: "",
+      ModalVisible: false,
     };
   },
   methods: {
@@ -122,6 +120,7 @@ export default {
       try {
         const data = await fetchReservations();
         this.reservations = data.data;
+        console.log(this.reservations, "reservation List ");
       } catch (error) {
         console.error("Error fetching reservations:", error);
       }
@@ -137,21 +136,27 @@ export default {
     async change() {
       // Handle search functionality
     },
-    closeModal(){
- this.ModalVisible =  false
-    } ,
-    openModal(reservation){
-    this.ModalVisible=!this.ModalVisible
-    this.reserveData = reservation
+    closeModal() {
+      this.ModalVisible = false;
     },
-    async fetchAccepted(){
-      const res = await fetchAcceptedReservations()
-      console.log(res)
-    }
+    showDetail(reservation) {
+      this.ModalVisible = true;
+      this.reserveData = reservation;
+    },
+    async acceptReservation(reservation) {
+      // Handle accept reservation action
+    },
+    async refuseReservation(reservation) {
+      // Handle refuse reservation action
+    },
+    async fetchAccepted() {
+      const res = await fetchAcceptedReservations();
+      console.log(res);
+    },
   },
   mounted() {
     this.fetchReservationsData();
-     this.fetchAccepted()
+    this.fetchAccepted();
   },
 };
 </script>
@@ -159,7 +164,7 @@ export default {
 <style>
 th,
 td {
-   padding: 8px;
+  padding: 8px;
   text-align: left;
 }
 
@@ -168,4 +173,41 @@ table tbody tr:hover td {
   background-color: #f5f5f5;
 }
 
+.filter-btn {
+  display: flex;
+  align-items: center;
+}
+
+.btns {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+}
+
+.btn-action {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-action.detail {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.btn-action.accept {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+.btn-action.refuse {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.btn-action:hover {
+  filter: brightness(90%);
+}
 </style>

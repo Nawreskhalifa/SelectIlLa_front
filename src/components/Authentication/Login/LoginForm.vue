@@ -1,6 +1,6 @@
 <template>
-  <div class="  justify-content-center">
-    <div class="col-md-10 col-lg-8 col-xl-9 col-xxl-8 col-xxxl-6">
+  <div class="container">
+    <div class="center-container">
       <div class="card mb-25 border-0 rounded-0 bg-white authentication-card">
         <div class="card-body letter-spacing">
           <h4 class="text-black fw-bold mb-0 text-center">
@@ -116,3 +116,11 @@ export default {
   },
 };
 </script>
+<style scoped>
+.center-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>

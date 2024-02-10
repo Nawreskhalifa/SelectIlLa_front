@@ -89,7 +89,7 @@
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Category Villa
+                Category Vehicle
               </label>
               <ul
               style="
@@ -100,15 +100,12 @@
                 align-items: center;
               "
             >
-              <li
-                class="single_cat"
-                v-for="cat in AllSelected"
-                :key="cat"
-              >
-                <span> {{ cat}}</span>
+            <li class="single_cat" v-for="catName in selectedCategoryNames" :key="catName">
+
+                <span> {{ catName }}</span>
                 <i
                   class="fas fa-times-circle"
-                  @click="deleteFromCategories(cat)"
+                  @click="deleteFromCategories(catName )"
                 ></i>
               </li>
             </ul>
@@ -281,7 +278,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref  ,computed } from "vue";
 import BlotFormatter from "quill-blot-formatter";
 import ImageUploader from "quill-image-uploader";
 import { fetchVehicleCategories  , fetchPartners} from "@/services/apiService";
@@ -289,8 +286,10 @@ import { postVehicle } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useRouter } from "vue-router";
+
 export default defineComponent({
   name: "AddProduct",
+
 
   setup() {
     const router = useRouter();
@@ -333,6 +332,12 @@ export default defineComponent({
       allPartners.value = data;
       console.log(data, allPartners, "data");
     };
+    const selectedCategoryNames = computed(() => {
+    return AllSelected.value.map((categoryId) => {
+      const selectedCategory = categories.value.find(category => category.id === categoryId);
+      return selectedCategory ? selectedCategory.attributes.name : '';
+    });
+  });
     const makeError = ref("");
     const brandError = ref("");
     const descriptionError = ref("");
@@ -457,6 +462,7 @@ export default defineComponent({
       const selectedC= AllSelected.value.filter(item =>{
     return parseInt(item)
   })
+  console.log(selectedC,"sele")
       const vehicleData = {
         data: {
           make: make.value,
@@ -509,6 +515,7 @@ export default defineComponent({
       makeError,
       brandError,
       descriptionError,
+      selectedCategoryNames,
       categoryError,
       ownerError,
       seatsError,

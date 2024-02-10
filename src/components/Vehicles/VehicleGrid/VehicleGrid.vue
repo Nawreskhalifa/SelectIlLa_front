@@ -1,12 +1,34 @@
 <template>
-  <div class="row">
+  <div class="row" style=" position: relative !important; ">
     <div class="col-lg-4 col-xxxl-3">
       <VehicleFiltre
         @newFiltredData="filtredData"
         @allSelected="selectedData"
       />
+      <div class="products-sidebar-filter bg-white letter-spacing mb-25" v-if="selected.length > 0 ">
+        <div
+          class="title"
+          style="
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h5 class="mb-0 fw-semibold text-secondary">Avaible Actions</h5>
+          <div class="button" >
+            <button class="active btn  " @click="deleteAll">
+            <span>delete</span>   <i class="fas fa-trash"> </i>
+            </button>
+            <button class="active btn  " @click="desactivateAll">
+              <span>disable</span> <i class="fas fa-ban"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col-lg-8 col-xxxl-9">
+
+    <div class="col-lg-8 col-xxxl-9" >
       <div class="row" v-if="selected.length > 0">
         <VehicleItem
           v-for="vehicle in selected"
@@ -28,17 +50,11 @@
         />
       </div>
 
+
       <div
         class="pagination-area d-md-flex mb-25 justify-content-between align-items-center"
       >
-        <div class="button" v-if="selected.length > 0">
-          <button class="delete btn" @click="deleteAll">
-            <i class="fas fa-trash"> </i> Delete the Selected elements
-          </button>
-          <button class="active btn" @click="desactivateAll">
-            <i class="fas fa-ban"></i> disable the seleted elements
-          </button>
-        </div>
+
         <p class="mb-0 text-paragraph">
           Showing <span class="fw-bold">{{ vehicles.length }}</span> out of
           <span class="fw-bold">{{ vehicles.length }}</span> results
@@ -116,7 +132,7 @@ export default {
       );
     },
 
-    async fetchData(start = 0, limit = 2) {
+    async fetchData(start = 0, limit = 8) {
   try {
     const data = await fetchVehicles(start, limit);
     this.vehicles = data.data;
@@ -141,8 +157,8 @@ export default {
     // },
     async filtredData(searchInput) {
   try {
-    if (searchInput) {
-      console.log("Search input:", searchInput);
+    if (searchInput.trim()) {
+       console.log("Search input:", searchInput);
       console.log("New data:", this.newData);
       this.vehicles = this.vehicles.filter(vehicle => vehicle.attributes.make.toLowerCase().includes(searchInput.toLowerCase()));
     } else {
@@ -200,7 +216,7 @@ export default {
       });
     },
     async fetchPage(pageNumber) {
-      const start = (pageNumber - 1) * 2;
+      const start = (pageNumber - 1) * 8;
       this.fetchData(start);
       this.currentPage = pageNumber;
     },
@@ -226,60 +242,6 @@ async created() {
 }
 }
  </script>
-<style scoped>
-.button {
-  position: fixed;
-  left: 85%;
-  top: 40%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  animation: fadeIn 1s ease forwards;
-  opacity: 0;
-}
+ <style scoped>
 
-.button-container.show {
-  opacity: 1;
-}
-
-.delete.btn {
-  background-color: #2b2a3f; /* Red */
-}
-
-.active.btn {
-  background-color: #2b2a3f; /* Blue */
-}
-
-.button .btn {
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.button .btn:hover {
-  opacity: 0.8;
-}
-
-.button .btn i {
-  margin-right: 5px;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-</style>
+ </style>

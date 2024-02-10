@@ -309,7 +309,46 @@
                         />
                       </div>
                     </div>
-
+                    <div class="col-md-6">
+                      <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                        <label class="d-block text-black fw-semibold mb-10">
+                          Partner
+                        </label>
+                        <ul
+                          style="
+                            display: flex;
+                            flex-direction: row;
+                            gap: 10px;
+                            justify-content: flex-start;
+                            align-items: center;
+                          "
+                        >
+                          <li v-if="partner"
+                          >
+ {{getSelectedPartnerName}}                            <i
+                              class="fas fa-times-circle"
+                              @click="partner = ''"
+                            ></i>
+                          </li>
+                        </ul>
+                        <select
+                          v-model="partner"
+                          class="form-select shadow-none fw-semibold rounded-0"
+                         >
+                          <option selected>Select a Partner</option>
+                          <option
+                            v-for="partner in partnerData"
+                            :key="partner.id"
+                            :value="partner.id"
+                          >
+                            {{ partner.name}}
+                          </option>
+                        </select>
+                        <div v-if="categoryError" class="text-danger">
+                          {{ categoryError }}
+                        </div>
+                      </div>
+                    </div>
 
                     <div class="col-md-12 text-danger"></div>
                     <!-- <div class="col-md-6">
@@ -380,7 +419,7 @@ import {
   fetchVehicleCategories,
   uploadFiles,
   deleteFiles,
-   fetchPartnerData,
+  fetchPartners,
   updateVehicle,
 } from "@/services/apiService";
 import { toast } from "vue3-toastify";
@@ -410,7 +449,7 @@ export default {
     msrp: this.vehicle.attributes.msrp,
     style: this.vehicle.attributes.style,
     deposit: this.vehicle.attributes.deposit,
-    partner: this.vehicle.attributes.partner,
+    partner: this.vehicle.attributes.partner.data ? this.vehicle.attributes.partner.data.id : null,
     showUploadedFiles: false,
     previousPhotos: this.vehicle,
     selectedFiles: [],
@@ -427,7 +466,15 @@ export default {
       deep: true,
     },
   },
-
+  computed: {
+     getSelectedPartnerName() {
+      if (this.partnerData && this.partnerData.length > 0) {
+        const selectedPartner = this.partnerData.find(partner => partner.id === this.partner);
+        return selectedPartner ? selectedPartner.name : '';
+      }
+      return '';
+    }
+  },
   methods: {
     closeModal() {
       this.$emit("close");
@@ -476,6 +523,7 @@ export default {
       this.selectedFiles = Array.from(input.files || []);
       this.previewImages();
     },
+
     previewImages() {
       this.imageUrls = [];
 
@@ -513,7 +561,7 @@ export default {
     //   console.log(result);
     // },
     async fetchPartner(){
-  this.partnerData = await fetchPartnerData();
+  this.partnerData = await fetchPartners();
   console.log(this.partnerData, 'partners');
 },
 
@@ -539,6 +587,7 @@ export default {
           owner: this.owner,
           category_vehicles: allCategories,
           seats: parseInt(this.seats),
+          partner:this.partner
         },
       };
       if (this.selectedFiles.length > 0) {
@@ -565,8 +614,8 @@ export default {
   },
   mounted() {
     this.fetchCategories();
-    console.log(this.partner,"partner")
-  },
+    this.fetchPartner()
+   },
 };
 </script>
 

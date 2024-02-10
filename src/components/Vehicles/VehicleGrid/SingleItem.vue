@@ -18,7 +18,7 @@
           :src="getFullImageUrl(vehicle.attributes.photos.data[0].attributes.url)"
           class="imagev"
           alt="vehicle"
-          style="max-width: 100%; max-height: 200px"
+          style="max-width: 100%; height: 200px"
         />
 
           <button
@@ -44,26 +44,27 @@
           <h4 class="mb-10 fw-semibold fs-16 fs-lg-18">
            Name:    {{ vehicle.attributes.make }} {{ vehicle.attributes.brand }}
           </h4>
-          <div class="lockbtn reviews d-flex align-items-center">
-            <button
-              @click="active(false)"
-              class="lock"
-              v-if="vehicle.attributes.isActive"
-            >
-              <i class="fas fa-solid fa-eye-slash"></i>
-            </button>
-            <button
-              @click="active(true)"
-              class="lock"
-              v-if="!vehicle.attributes.isActive"
-            >
-              <i class="fas fa-eye"></i>
-            </button>
-          </div>
-          <div class="mt-10 price d-flex align-items-center">
+
+          <div class="mt-10 price d-flex align-items-center justify-content-between"  >
             <span class="text-primary fw-bold fs-md-15 fs-lg-16">{{
               vehicle.attributes.msrp
             }}</span>
+            <div class="lockbtn reviews d-flex align-items-center">
+              <button
+                @click="active(false)"
+                class="lock"
+                v-if="vehicle.attributes.isActive"
+              >
+                <i class="fas fa-solid fa-eye-slash"></i>
+              </button>
+              <button
+                @click="active(true)"
+                class="lock"
+                v-if="!vehicle.attributes.isActive"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
           </div>
           <span>
             published : <span v-date="vehicle.attributes.publishedAt"></span>
@@ -220,10 +221,37 @@ export default {
   background-color: #2b2a3f;
   color: white;
 }
-.seletedElement {
-  border-radius: 5px;
-  background-color: rgb(9, 126, 221);
-  margin-right: 0.5px;
+
+
+.lock {
+  color: #2b2a3f;
+  background-color: white;
+  border: 1px solid gray;
+  width: 50px;
+  height: 40px;
+  margin-right: 3px;
+  border-radius: 40%;
+}
+
+.lockbtn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.lock:hover {
+  background-color: #2b2a3f;
   color: white;
+}
+
+
+
+/* Add shadow effect */
+.single-product-box {
+  transition: box-shadow 0.3s ease;
+}
+
+.single-product-box:hover {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 6px 20px rgba(0, 0, 0, 0.19);
 }
 </style>

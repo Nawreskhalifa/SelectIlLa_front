@@ -4,7 +4,7 @@
       <transition name="modal-animation-inner">
         <div v-show="modalActive" class="modal">
           <div class="card product-details-box">
-            <i class="fas fa-times-circle close_icon" @click="closeModal"></i>
+            <i class="fas fa-times-circle close-button " @click="closeModal"></i>
 
             <div class="card-body">
               <div class="row align-items-center">
@@ -261,37 +261,22 @@ export default defineComponent({
       0 2px 4px -1px rgba(0, 0, 0, 0.06);
     background-color: #fff;
     padding: 64px 16px;
-
-    .close-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      cursor: pointer;
-      font-size: 24px;
-      color: crimson;
-
-      &:hover {
-        color: #fff;
-      }
-    }
   }
 }
 .close-button {
   position: absolute;
-  bottom: 20px;
+  top: 20px;
   right: 20px;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 70px;
   color: rgb(25, 79, 113);
+  transition: color 0.3s ease;
 
   &:hover {
-    color: #fff;
+    color: #000000;
+    z-index: 1;
   }
 }
-.close_icon {
-  position: absolute;
-  top: 0px;
-  right: 5px;
-  font-size: 60px;
-}
+
+
 </style>
