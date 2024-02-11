@@ -4,69 +4,173 @@
       <transition name="modal-animation-inner">
         <div v-show="show" class="modal-inner">
           <button class="close_icon" @click="closeModal">×</button>
-          <div class="d-flex align-items-start">
+          <div class="d-flex align-items-start" v-if="dataProp">
             <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-              <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" :aria-controls="v-pills-home" :aria-selected="true">Home</button>
-              <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" :aria-controls="v-pills-profile" :aria-selected="false">Profile</button>
-              <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" :aria-controls="v-pills-messages" :aria-selected="false">Messages</button>
-              <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" :aria-controls="v-pills-settings" :aria-selected="false">Settings</button>
+              <button :class="{ active: openedOne.profile }" @click="openSection('profile')" id="v-pills-home-tab" data-bs-toggle="pill" :aria-controls="v-pills-home" :aria-selected="openedOne.profile">Reservation Details </button>
+              <button :class="{ active: openedOne.customer }" @click="openSection('customer')" id="v-pills-profile-tab" data-bs-toggle="pill" :aria-controls="v-pills-profile" :aria-selected="openedOne.customer">Customer Details </button>
+              <button :class="{ active: openedOne.documents }" @click="openSection('documents')" id="v-pills-messages-tab" data-bs-toggle="pill" :aria-controls="v-pills-messages" :aria-selected="openedOne.documents">Reservation Documents</button>
+              <button :class="{ active: openedOne.ressource }" @click="openSection('ressource')" id="v-pills-settings-tab" data-bs-toggle="pill" :aria-controls="v-pills-settings" :aria-selected="openedOne.ressource">Resource Details </button>
             </div>
-            <div class="tab-content" id="v-pills-tabContent">
-              <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" :aria-labelledby="v-pills-home-tab " style="display: flex; justify-content: flex-end; align-items: center;">
-                <div class="user-card">
+            <div class="tab-content" id="v-pills-tabContent" style="width: 100%;" >
+              <div class="tab-pane fade     "   style="width: 100%;" :class="{ 'show active': openedOne.profile }" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                <div class="user-card" style="width: 100% !important ;display:flex ;justify-content: center; align-items: center;" >
                   <span class="avatar-holder">
-                    <img  src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxNDU4OXwwfDF8cmFuZG9tfHx8fHx8fHx8MTY0Mzk4NjU1Mw&ixlib=rb-1.2.1&q=80&w=200" alt="Avatar">
+
+                   </span>
+                  <span class="user-info-holder">
+                    <h2 class="name">Reservation  </h2>
+                    <span style="display: flex; flex-direction: row;  align-items: center; justify-content: space-around;">
+                      <span>{{dataProp.attributes.pickup_date}}</span>
+                      <span>{{dataProp.attributes.drop_off_date}}</span>
+                  </span>
+
+                    <hr style="margin-top: -10px;" />
+                    <!-- <span class="skill">    pickup location : pickup
+                      drop_off_location :drop</span> -->
+
+                    <div class="evaluations" style="display: flex; flex-direction: row;">
+                      <div style="display: flex; justify-content: flex-start; align-items: center ;flex-direction:column">
+                        <span class="stars evaluation">
+                          <span class="star-icon evaluation-icon">
+ <!-- icon -->
+                          </span>
+                          <span class="star-text evaluation-text">  total amount  :{{dataProp.attributes.total_amount}} $ </span>
+                        </span>
+                        <span class="reviews evaluation">
+                          <span class="reviews-icon evaluation-icon">
+                       <!-- icon -->
+
+                          </span>
+                          <span class="reviews-text evaluation-text">  added amount : {{dataProp.attributes.added_amount}} $ </span>
+                        </span>
+                      </div>
+
+                      <div style="display: flex; justify-content: center; align-items: center ;flex-direction:column">
+                        <span class="student evaluation">
+      <span class="student-icon evaluation-icon">
+                               <!-- icon -->
+
+      </span>
+      <span class="student-text evaluation-text">tax : {{dataProp.attributes.tax}} </span>
+    </span>
+    <span class="student evaluation">
+      <span class="student-icon evaluation-icon">
+       <!-- phone -->
+      </span>
+      <span class="student-text evaluation-text">phone  : {{dataProp.attributes.phone}}  </span>
+    </span>
+  </div>
+
+
+
+                    </div>
+
+                    <span class="desc">
+                      <p>drop off location : {{dataProp.attributes.drop_off_location}}  </p>
+                    </span>
+
+                    <!-- <span class="button">
+                      <button class="show-more-btn">Show More</button>
+                    </span> -->
+
+                  </span>
+                </div>
+              </div>
+              <div class="tab-pane fade" :class="{ 'show active': openedOne.customer }" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                <div class="user-card" v-if="dataProp.attributes.customer && dataProp.attributes.customer.data && dataProp.attributes.customer.data.attributes &&  dataProp.attributes.customer.data.attributes.user && dataProp.attributes.customer.data.attributes.user.data && dataProp.attributes.customer.data.attributes.user.data.attributes ">
+                  <span class="avatar-holder">
+                    <img style="width: 120px; height : 120px "  :src="getFullImageUrl( dataProp.attributes.customer.data.attributes.user.data.attributes.photo.data.attributes.url)" alt="Avatar">
                   </span>
                   <span class="user-info-holder">
-                    <h2 class="name">David Grant</h2>
-                    <span class="skill">3D artist</span>
+                    <h2 class="name">{{dataProp.attributes.customer.data.attributes.name}} {{dataProp.attributes.customer.data.attributes.surname}}</h2>
+                    <span class="skill">{{dataProp.attributes.customer.data.attributes.user.data.attributes.email}}</span>
 
                     <div class="evaluations">
                       <span class="stars evaluation">
                         <span class="star-icon evaluation-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
-                            <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-                          </svg>
+                       <!-- icon -->
                         </span>
-                        <span class="star-text evaluation-text">4.7 Rating</span>
+                        <span class="star-text evaluation-text">Driver Licence :  {{dataProp.attributes.customer.data.attributes.driver_license}}</span>
                       </span>
 
                       <span class="reviews evaluation">
                         <span class="reviews-icon evaluation-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-award" viewBox="0 0 16 16">
+                          <!-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-award" viewBox="0 0 16 16">
                             <path d="M9.669.864 8 0 6.331.864l-1.858.282-.842 1.68-1.337 1.32L2.6 6l-.306 1.854 1.337 1.32.842 1.68 1.858.282L8 12l1.669-.864 1.858-.282.842-1.68 1.337-1.32L13.4 6l.306-1.854-1.337-1.32-.842-1.68L9.669.864zm1.196 1.193.684 1.365 1.086 1.072L12.387 6l.248 1.506-1.086 1.072-.684 1.365-1.51.229L8 10.874l-1.355-.702-1.51-.229-.684-1.365-1.086-1.072L3.614 6l-.25-1.506 1.087-1.072.684-1.365 1.51-.229L8 1.126l1.356.702 1.509.229z" />
                             <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z" />
-                          </svg>
+                          </svg> -->
                         </span>
-                        <span class="reviews-text evaluation-text">4,447 Reviews</span>
+                        <span class="reviews-text evaluation-text">phone :  {{dataProp.attributes.customer.data.attributes.phone}}</span>
                       </span>
 
                       <span class="student evaluation">
                         <span class="student-icon evaluation-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
-                          </svg>
+                          Insurance :   {{dataProp.attributes.customer.data.attributes.Insurance}}
                         </span>
-                        <span class="student-text evaluation-text">478 Students</span>
-                      </span>
+                       </span>
                     </div>
-
-                    <span class="desc">
-                      <p>David Grant has been making video games for a living for more than 14 years as a Designer, Producer, Creative Director, and Executive Producer, creating games for console, mobile, PC and Facebook.</p>
-                    </span>
-
-                    <span class="button">
-                      <button class="show-more-btn">Show More</button>
-                    </span>
-
                   </span>
                 </div>
 
-                <!-- Buy me a coffe script -->
-               </div>
-              <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" :aria-labelledby="v-pills-profile-tab">..qsdfsqdf.</div>
-              <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" :aria-labelledby="v-pills-messages-tab">...sqdfqsfd</div>
-              <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" :aria-labelledby="v-pills-settings-tab">..sqdfsqdf.</div>
+                </div>
+               <div class="tab-pane fade" :class="{ 'show active': openedOne.documents }" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                <div class="user-card" v-if="dataProp.attributes.documents" >
+                  <FileManager :documents="dataProp.attributes.documents" />
+                </div>
+
+              </div>
+              <div class="tab-pane fade" :class="{ 'show active': openedOne.ressource }" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+                <div class="user-card" style="width: 100% !important;" v-if="dataProp.attributes.villa && dataProp.attributes.villa.data && dataProp.attributes.villa.data.attributes">
+                  <div class="card mb-3">
+                    <div class="row g-0">
+                      <div class="col-md-8">
+                        <div class="card-body">
+                          <h5 class="card-title">Card Title</h5>
+                          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                          <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <img src="" class="img-fluid rounded-start" alt="Card image cap">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="user-card" style="width: 100% !important;" v-if="dataProp.attributes.vehicle && dataProp.attributes.vehicle && dataProp.attributes.vehicle.data && dataProp.attributes.vehicle.data.attributes && dataProp.attributes.vehicle.data.attributes.photos && dataProp.attributes.vehicle.data.attributes.photos.data">
+                  <div class="">
+                    <div class="row g-0">
+                      <div class="col-md-8">
+                        <div class="card-body">
+                          <h5 class="card-title">{{dataProp.attributes.vehicle.data.attributes.make}}</h5>
+                          <p class="card-text">{{dataProp.attributes.vehicle.data.attributes.description}}</p>
+                          <p class="card-text"><small class="text-muted">Daily : {{dataProp.attributes.vehicle.data.attributes.daily}}$</small></p>
+                          <p class="card-text"><small class="text-muted" v-if="dataProp.attributes.vehicle.data.attributes.partner  && dataProp.attributes.vehicle.data.attributes.partner.data">Partner : {{dataProp.attributes.vehicle.data.attributes.partner.data.attributes.name}}</small></p>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                         <img style="width: 100%; height: 100% !important; "  :src="getFullImageUrl(dataProp.attributes.vehicle.data.attributes.photos.data[0].attributes.url)" alt="Card image cap">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="user-card" style="width: 100% !important;" v-if="dataProp.attributes.event && dataProp.attributes.event.data && dataProp.attributes.event.data.attributes">
+                  <div class="card mb-3">
+                    <div class="row g-0">
+                      <div class="col-md-8">
+                        <div class="card-body">
+                          <h5 class="card-title">Card Title</h5>
+                          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                          <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <img src="" class="img-fluid rounded-start" alt="Card image cap">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
          </div>
@@ -75,8 +179,10 @@
   </transition>
 </template>
 
+
+
 <script>
-import { updateVillaCategory , acceptReservation ,deleteAcceptedReservation,updateInReservation} from "@/services/apiService";
+import FileManager from "../FileManagar/FileManager.vue"
 export default {
   props: {
     show: Boolean,
@@ -85,82 +191,51 @@ export default {
       required: true,
     },
   },
+  components:{
+    FileManager
+  },
   data() {
     return {
-      dataAtt:this.dataProp,
+      dataAtt: this.dataProp,
       name: "",
+      openedOne: {
+        profile: true,
+        customer: false,
+        documents: false,
+        ressource: false
+      }
     };
   },
-  methods:{
+  methods: {
+    getFullImageUrl(relativePath) {
+      console.log(relativePath,"relativePath")
+      return `http://localhost:1337${relativePath}`;
+    },
     closeModal() {
       this.$emit("close");
     },
+    openSection(section) {
+      // Reset all sections to false
+      for (let key in this.openedOne) {
+        this.openedOne[key] = false;
+      }
+      // Set the clicked section to true
+      this.openedOne[section] = true;
+    },
+  },
+  mounted() {
+    console.log('openedOne.customer:', this.openedOne.customer);
+    console.log(this.dataProp,'reservation')
   }
-//   methods: {
-//    async  acceptVilla(villa){
-//        const  postedData= {
-//         data : {
-//           reservation_demand : this.dataAtt.id,
-//           villa: villa.id,
-//           Price:villa.attributes.daily,
-//           customer:this.dataAtt.attributes.customer.data.id
-//         }
-//        }
-//  const res =  await  acceptReservation(postedData)
-//  console.log(res,"res")
-//     } ,
-//        async  refuseVilla(villa) {
-//   try {
-
-//       this.dataAtt.attributes.villas.data = this.dataAtt.attributes.villas.data.filter(item => item.id !== villa.id);
-
-//       // Update the reservation with the modified list of villas
-//       const updatedReservationData = {
-//         data: {
-//           villas: this.dataAtt.attributes.villas.data.map(item => item.id)
-//         }
-//       };
-
-//        const updateReservationResponse = await updateInReservation(this.dataAtt.id, updatedReservationData);
-
-//       if (updateReservationResponse.success) {
-//         console.log('Reservation updated successfully.');
-//       } else {
-//         console.error('Failed to update reservation:', updateReservationResponse.error);
-//       }
-
-//   } catch (error) {
-//     console.error('Error handling refused villa:', error);
-//   }
-// }
-// ,
-//     closeModal() {
-//       this.$emit("close");
-//     },
-//     async confirmUpdate() {
-//       const updatedData = {
-//         data: {
-//           Name: this.name,
-//         },
-//       };
-//       const res = await updateVillaCategory(this.category.id, updatedData);
-//       console.log(res);
-//       if (res) {
-//         this.$emit("updated");
-//       }
-//     },
-//   },
-//   mounted() {
-//     console.log(this.dataAtt)
-//    },
 };
 </script>
-
 <style lang="scss" scoped>
 .active{
+  background-color:#6560F0!important;
+  color: white !important;
  }
  .nav-link:hover {
-  background-color: #1c2b62 !important;
+  background-color:#6560F0!important;
   color: white !important;
 }
 
@@ -277,15 +352,15 @@ border: 1px solid #34495e;
 
 
 .user-card {
-  max-width:100%;
+   width: 100%;
   height: auto;
   display: flex;
-  justify-content: flex;
-  padding: 2rem;
+   padding: 2rem;
   background: #fff;
   border-radius: 0.5rem;
   gap: 1rem;
- }
+  color: #333;
+  }
 
 .avatar-holder img {
   width: 36rem;
@@ -355,4 +430,10 @@ border: 1px solid #34495e;
   color: #fff;
 }
 
+@media screen and (max-width: 768px) {
+  .user-card {
+    flex-direction: column;
+    align-items: center;
+  }
+}
 </style>

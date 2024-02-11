@@ -710,7 +710,7 @@ export async function fetchUserByPartner(id) {
 
 export async function fetchReservations(start = 0, limit = 16) {
   try {
-    const response = await axios.get(`${endPoints.reservations}?_start=${start}&_limit=${limit}&populate=*`);
+    const response = await axios.get(`${endPoints.reservations}?_start=${start}&_limit=${limit}&populate=deep`);
     if (response) {
       console.log(response.data);
       return response.data;

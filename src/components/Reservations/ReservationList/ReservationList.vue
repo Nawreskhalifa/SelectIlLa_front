@@ -142,6 +142,7 @@ export default {
     showDetail(reservation) {
       this.ModalVisible = true;
       this.reserveData = reservation;
+      console.log(reservation)
     },
     async acceptReservation(reservation) {
       // Handle accept reservation action
