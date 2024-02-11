@@ -13,7 +13,7 @@ export default defineComponent({
   name: "CategoriesEventPage",
   components: {
     BreadCrumb,
-    CategoriesEventList,
+    CategoriesEventList ,
   },
 });
 </script>

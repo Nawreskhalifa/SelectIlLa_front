@@ -96,22 +96,26 @@
       <AcceptRef :show="ModalVisible" :dataProp="reserveData" @close="closeModal" @updated="updated" />
     </div>
   </div>
+     <RefuseModal :show="isOpenRefuse" ></RefuseModal>
+
 </template>
 
 <script>
 import { fetchReservations, deleteReservation, fetchAcceptedReservations } from "@/services/apiService";
 import AcceptRef from "../ReservationModal/ReservationModal.vue";
-
+import RefuseModal from "../ReservationModal/RefuseModal.vue"
 export default {
   name: "ReservationList",
   components: {
     AcceptRef,
+    RefuseModal
   },
   data() {
     return {
       reservations: [],
       searchInput: "",
       reserveData: "",
+      isOpenRefuse : false ,
       ModalVisible: false,
     };
   },
@@ -148,7 +152,8 @@ export default {
       // Handle accept reservation action
     },
     async refuseReservation(reservation) {
-      // Handle refuse reservation action
+         this.isOpenRefuse = !this.isOpenRefuse
+         console.log("ok")
     },
     async fetchAccepted() {
       const res = await fetchAcceptedReservations();

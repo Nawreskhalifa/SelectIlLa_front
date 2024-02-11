@@ -840,3 +840,13 @@ export async function fetchAcceptedReservations(start = 0, limit = 16) {
     throw error;
   }
 }
+
+export async function getFile(id) {
+  try {
+    const response = await axios.get(`${endPoints.upload}/files/${id}`);
+    return response;
+  } catch (error) {
+    console.error(`Error getting files with ID ${id}:`, error);
+    throw error;
+  }
+}

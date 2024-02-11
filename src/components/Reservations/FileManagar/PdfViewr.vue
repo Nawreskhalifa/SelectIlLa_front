@@ -1,39 +1,44 @@
 <template>
-    <div>
-      <h1>File</h1>
+  <div class="pdf">
+    <PDFViewer
+      :source="url"
+      style="height: 100px; width: 100vw"
+      @download="handleDownload"
+    />
+  </div>
+</template>
 
-      <PDFViewer
-        :source="url"
-        style="height: 100vh; width: 100vw"
-        @download="handleDownload"
-      />
+<script>
+import PDFViewer from "pdf-viewer-vue";
 
-      <h1>Base64</h1>
-
-      <PDFViewer
-        :source="base64"
-        style="height: 100vh; width: 100vw"
-        @download="handleDownload"
-      />
-    </div>
-  </template>
-
-  <script>
-  import PDFViewer from 'pdf-viewer-vue'
-
-  // OR THE FOLLOWING IMPORT FOR VUE 2
-  // import PDFViewer from 'pdf-viewer-vue/dist/vue2-pdf-viewer'
-
-  export default {
-    components: {
-      PDFViewer,
+export default {
+  components: {
+    PDFViewer,
+  },
+  props: {
+    urlLink: {
+      type: String,
+      required: true,
     },
-
-    data() {
-      return {
-        url: '<PDF_URL>',
-        // base64: '<BASE64_ENCODED_PDF>',
-      }
+  },
+  data() {
+    return {
+      url: `http://localhost:1337${this.urlLink}`,
+    };
+  },
+  methods: {
+    handleDownload() {
+      // Handle download event if needed
     },
-  }
-  </script>
+  },
+  mounted() {
+    console.log(this.url, "url");
+  },
+};
+</script>
+<style scoped>
+.pdf {
+  position: fixed;
+  width: 100%;
+}
+</style>

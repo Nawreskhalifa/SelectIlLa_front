@@ -5,92 +5,219 @@
         <div v-show="show" class="modal-inner">
           <button class="close_icon" @click="closeModal">×</button>
           <div class="d-flex align-items-start" v-if="dataProp">
-            <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-              <button :class="{ active: openedOne.profile }" @click="openSection('profile')" id="v-pills-home-tab" data-bs-toggle="pill" :aria-controls="v-pills-home" :aria-selected="openedOne.profile">Reservation Details </button>
-              <button :class="{ active: openedOne.customer }" @click="openSection('customer')" id="v-pills-profile-tab" data-bs-toggle="pill" :aria-controls="v-pills-profile" :aria-selected="openedOne.customer">Customer Details </button>
-              <button :class="{ active: openedOne.documents }" @click="openSection('documents')" id="v-pills-messages-tab" data-bs-toggle="pill" :aria-controls="v-pills-messages" :aria-selected="openedOne.documents">Reservation Documents</button>
-              <button :class="{ active: openedOne.ressource }" @click="openSection('ressource')" id="v-pills-settings-tab" data-bs-toggle="pill" :aria-controls="v-pills-settings" :aria-selected="openedOne.ressource">Resource Details </button>
+            <div
+              class="nav flex-column nav-pills me-3"
+              id="v-pills-tab"
+              role="tablist"
+              aria-orientation="vertical"
+            >
+              <button
+                :class="{ active: openedOne.profile }"
+                @click="openSection('profile')"
+                id="v-pills-home-tab"
+                data-bs-toggle="pill"
+                :aria-controls="v - pills - home"
+                :aria-selected="openedOne.profile"
+              >
+                Reservation Details
+              </button>
+              <button
+                :class="{ active: openedOne.customer }"
+                @click="openSection('customer')"
+                id="v-pills-profile-tab"
+                data-bs-toggle="pill"
+                :aria-controls="v - pills - profile"
+                :aria-selected="openedOne.customer"
+              >
+                Customer Details
+              </button>
+              <button
+                :class="{ active: openedOne.documents }"
+                @click="openSection('documents')"
+                id="v-pills-messages-tab"
+                data-bs-toggle="pill"
+                :aria-controls="v - pills - messages"
+                :aria-selected="openedOne.documents"
+              >
+                Reservation Documents
+              </button>
+              <button
+                :class="{ active: openedOne.ressource }"
+                @click="openSection('ressource')"
+                id="v-pills-settings-tab"
+                data-bs-toggle="pill"
+                :aria-controls="v - pills - settings"
+                :aria-selected="openedOne.ressource"
+              >
+                Resource Details
+              </button>
             </div>
-            <div class="tab-content" id="v-pills-tabContent" style="width: 100%;" >
-              <div class="tab-pane fade     "   style="width: 100%;" :class="{ 'show active': openedOne.profile }" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                <div class="user-card" style="width: 100% !important ;display:flex ;justify-content: center; align-items: center;" >
-                  <span class="avatar-holder">
-
-                   </span>
+            <div
+              class="tab-content"
+              id="v-pills-tabContent"
+              style="width: 100%"
+            >
+              <div
+                class="tab-pane fade"
+                style="width: 100%"
+                :class="{ 'show active': openedOne.profile }"
+                id="v-pills-home"
+                role="tabpanel"
+                aria-labelledby="v-pills-home-tab"
+              >
+                <div
+                  class="user-card"
+                  style="
+                    width: 100% !important ;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <span class="avatar-holder"> </span>
                   <span class="user-info-holder">
-                    <h2 class="name">Reservation  </h2>
-                    <span style="display: flex; flex-direction: row;  align-items: center; justify-content: space-around;">
-                      <span>{{dataProp.attributes.pickup_date}}</span>
-                      <span>{{dataProp.attributes.drop_off_date}}</span>
-                  </span>
+                    <h2 class="name">Reservation</h2>
+                    <span
+                      style="
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-around;
+                      "
+                    >
+                      <span>{{ dataProp.attributes.pickup_date }}</span>
+                      <span>{{ dataProp.attributes.drop_off_date }}</span>
+                    </span>
 
-                    <hr style="margin-top: -10px;" />
+                    <hr style="margin-top: -10px" />
                     <!-- <span class="skill">    pickup location : pickup
                       drop_off_location :drop</span> -->
 
-                    <div class="evaluations" style="display: flex; flex-direction: row;">
-                      <div style="display: flex; justify-content: flex-start; align-items: center ;flex-direction:column">
+                    <div
+                      class="evaluations"
+                      style="display: flex; flex-direction: row"
+                    >
+                      <div
+                        style="
+                          display: flex;
+                          justify-content: flex-start;
+                          align-items: center;
+                          flex-direction: column;
+                        "
+                      >
                         <span class="stars evaluation">
                           <span class="star-icon evaluation-icon">
- <!-- icon -->
+                            <!-- icon -->
                           </span>
-                          <span class="star-text evaluation-text">  total amount  :{{dataProp.attributes.total_amount}} $ </span>
+                          <span class="star-text evaluation-text">
+                            total amount :{{ dataProp.attributes.total_amount }}
+                            $
+                          </span>
                         </span>
                         <span class="reviews evaluation">
                           <span class="reviews-icon evaluation-icon">
-                       <!-- icon -->
-
+                            <!-- icon -->
                           </span>
-                          <span class="reviews-text evaluation-text">  added amount : {{dataProp.attributes.added_amount}} $ </span>
+                          <span class="reviews-text evaluation-text">
+                            added amount :
+                            {{ dataProp.attributes.added_amount }} $
+                          </span>
                         </span>
                       </div>
 
-                      <div style="display: flex; justify-content: center; align-items: center ;flex-direction:column">
+                      <div
+                        style="
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          flex-direction: column;
+                        "
+                      >
                         <span class="student evaluation">
-      <span class="student-icon evaluation-icon">
-                               <!-- icon -->
-
-      </span>
-      <span class="student-text evaluation-text">tax : {{dataProp.attributes.tax}} </span>
-    </span>
-    <span class="student evaluation">
-      <span class="student-icon evaluation-icon">
-       <!-- phone -->
-      </span>
-      <span class="student-text evaluation-text">phone  : {{dataProp.attributes.phone}}  </span>
-    </span>
-  </div>
-
-
-
+                          <span class="student-icon evaluation-icon">
+                            <!-- icon -->
+                          </span>
+                          <span class="student-text evaluation-text"
+                            >tax : {{ dataProp.attributes.tax }}
+                          </span>
+                        </span>
+                        <span class="student evaluation">
+                          <span class="student-icon evaluation-icon">
+                            <!-- phone -->
+                          </span>
+                          <span class="student-text evaluation-text"
+                            >phone : {{ dataProp.attributes.phone }}
+                          </span>
+                        </span>
+                      </div>
                     </div>
 
                     <span class="desc">
-                      <p>drop off location : {{dataProp.attributes.drop_off_location}}  </p>
+                      <p>
+                        drop off location :
+                        {{ dataProp.attributes.drop_off_location }}
+                      </p>
                     </span>
 
                     <!-- <span class="button">
                       <button class="show-more-btn">Show More</button>
                     </span> -->
-
                   </span>
                 </div>
               </div>
-              <div class="tab-pane fade" :class="{ 'show active': openedOne.customer }" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
-                <div class="user-card" v-if="dataProp.attributes.customer && dataProp.attributes.customer.data && dataProp.attributes.customer.data.attributes &&  dataProp.attributes.customer.data.attributes.user && dataProp.attributes.customer.data.attributes.user.data && dataProp.attributes.customer.data.attributes.user.data.attributes ">
+              <div
+                class="tab-pane fade"
+                :class="{ 'show active': openedOne.customer }"
+                id="v-pills-profile"
+                role="tabpanel"
+                aria-labelledby="v-pills-profile-tab"
+              >
+                <div
+                  class="user-card"
+                  v-if="
+                    dataProp.attributes.customer &&
+                    dataProp.attributes.customer.data &&
+                    dataProp.attributes.customer.data.attributes &&
+                    dataProp.attributes.customer.data.attributes.user &&
+                    dataProp.attributes.customer.data.attributes.user.data &&
+                    dataProp.attributes.customer.data.attributes.user.data
+                      .attributes
+                  "
+                >
                   <span class="avatar-holder">
-                    <img style="width: 120px; height : 120px "  :src="getFullImageUrl( dataProp.attributes.customer.data.attributes.user.data.attributes.photo.data.attributes.url)" alt="Avatar">
+                    <img
+                      style="width: 120px; height: 120px"
+                      :src="
+                        getFullImageUrl(
+                          dataProp.attributes.customer.data.attributes.user.data
+                            .attributes.photo.data.attributes.url
+                        )
+                      "
+                      alt="Avatar"
+                    />
                   </span>
                   <span class="user-info-holder">
-                    <h2 class="name">{{dataProp.attributes.customer.data.attributes.name}} {{dataProp.attributes.customer.data.attributes.surname}}</h2>
-                    <span class="skill">{{dataProp.attributes.customer.data.attributes.user.data.attributes.email}}</span>
+                    <h2 class="name">
+                      {{ dataProp.attributes.customer.data.attributes.name }}
+                      {{ dataProp.attributes.customer.data.attributes.surname }}
+                    </h2>
+                    <span class="skill">{{
+                      dataProp.attributes.customer.data.attributes.user.data
+                        .attributes.email
+                    }}</span>
 
                     <div class="evaluations">
                       <span class="stars evaluation">
                         <span class="star-icon evaluation-icon">
-                       <!-- icon -->
+                          <!-- icon -->
                         </span>
-                        <span class="star-text evaluation-text">Driver Licence :  {{dataProp.attributes.customer.data.attributes.driver_license}}</span>
+                        <span class="star-text evaluation-text"
+                          >Driver Licence :
+                          {{
+                            dataProp.attributes.customer.data.attributes
+                              .driver_license
+                          }}</span
+                        >
                       </span>
 
                       <span class="reviews evaluation">
@@ -100,89 +227,197 @@
                             <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z" />
                           </svg> -->
                         </span>
-                        <span class="reviews-text evaluation-text">phone :  {{dataProp.attributes.customer.data.attributes.phone}}</span>
+                        <span class="reviews-text evaluation-text"
+                          >phone :
+                          {{
+                            dataProp.attributes.customer.data.attributes.phone
+                          }}</span
+                        >
                       </span>
 
                       <span class="student evaluation">
                         <span class="student-icon evaluation-icon">
-                          Insurance :   {{dataProp.attributes.customer.data.attributes.Insurance}}
+                          Insurance :
+                          {{
+                            dataProp.attributes.customer.data.attributes
+                              .Insurance
+                          }}
                         </span>
-                       </span>
+                      </span>
                     </div>
                   </span>
                 </div>
-
-                </div>
-               <div class="tab-pane fade" :class="{ 'show active': openedOne.documents }" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
-                <div class="user-card" v-if="dataProp.attributes.documents" >
+              </div>
+              <div
+                class="tab-pane fade"
+                :class="{ 'show active': openedOne.documents }"
+                id="v-pills-messages"
+                role="tabpanel"
+                aria-labelledby="v-pills-messages-tab"
+              >
+                <div class="user-card" v-if="dataProp.attributes.documents">
                   <FileManager :documents="dataProp.attributes.documents" />
                 </div>
-
               </div>
-              <div class="tab-pane fade" :class="{ 'show active': openedOne.ressource }" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
-                <div class="user-card" style="width: 100% !important;" v-if="dataProp.attributes.villa && dataProp.attributes.villa.data && dataProp.attributes.villa.data.attributes">
+              <div
+                class="tab-pane fade"
+                :class="{ 'show active': openedOne.ressource }"
+                id="v-pills-settings"
+                role="tabpanel"
+                aria-labelledby="v-pills-settings-tab"
+              >
+                <div
+                  class="user-card"
+                  style="width: 100% !important"
+                  v-if="
+                    dataProp.attributes.villa &&
+                    dataProp.attributes.villa.data &&
+                    dataProp.attributes.villa.data.attributes
+                  "
+                >
                   <div class="card mb-3">
                     <div class="row g-0">
                       <div class="col-md-8">
                         <div class="card-body">
                           <h5 class="card-title">Card Title</h5>
-                          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                          <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                          <p class="card-text">
+                            This is a wider card with supporting text below as a
+                            natural lead-in to additional content. This content
+                            is a little bit longer.
+                          </p>
+                          <p class="card-text">
+                            <small class="text-muted"
+                              >Last updated 3 mins ago</small
+                            >
+                          </p>
                         </div>
                       </div>
                       <div class="col-md-4">
-                        <img src="" class="img-fluid rounded-start" alt="Card image cap">
+                        <img
+                          src=""
+                          class="img-fluid rounded-start"
+                          alt="Card image cap"
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="user-card" style="width: 100% !important;" v-if="dataProp.attributes.vehicle && dataProp.attributes.vehicle && dataProp.attributes.vehicle.data && dataProp.attributes.vehicle.data.attributes && dataProp.attributes.vehicle.data.attributes.photos && dataProp.attributes.vehicle.data.attributes.photos.data">
+                <div
+                  class="user-card"
+                  style="width: 100% !important"
+                  v-if="
+                    dataProp.attributes.vehicle &&
+                    dataProp.attributes.vehicle &&
+                    dataProp.attributes.vehicle.data &&
+                    dataProp.attributes.vehicle.data.attributes &&
+                    dataProp.attributes.vehicle.data.attributes.photos &&
+                    dataProp.attributes.vehicle.data.attributes.photos.data
+                  "
+                >
                   <div class="">
                     <div class="row g-0">
                       <div class="col-md-8">
                         <div class="card-body">
-                          <h5 class="card-title">{{dataProp.attributes.vehicle.data.attributes.make}}</h5>
-                          <p class="card-text">{{dataProp.attributes.vehicle.data.attributes.description}}</p>
-                          <p class="card-text"><small class="text-muted">Daily : {{dataProp.attributes.vehicle.data.attributes.daily}}$</small></p>
-                          <p class="card-text"><small class="text-muted" v-if="dataProp.attributes.vehicle.data.attributes.partner  && dataProp.attributes.vehicle.data.attributes.partner.data">Partner : {{dataProp.attributes.vehicle.data.attributes.partner.data.attributes.name}}</small></p>
+                          <h5 class="card-title">
+                            {{
+                              dataProp.attributes.vehicle.data.attributes.make
+                            }}
+                          </h5>
+                          <p class="card-text">
+                            {{
+                              dataProp.attributes.vehicle.data.attributes
+                                .description
+                            }}
+                          </p>
+                          <p class="card-text">
+                            <small class="text-muted"
+                              >Daily :
+                              {{
+                                dataProp.attributes.vehicle.data.attributes
+                                  .daily
+                              }}$</small
+                            >
+                          </p>
+                          <p class="card-text">
+                            <small
+                              class="text-muted"
+                              v-if="
+                                dataProp.attributes.vehicle.data.attributes
+                                  .partner &&
+                                dataProp.attributes.vehicle.data.attributes
+                                  .partner.data
+                              "
+                              >Partner :
+                              {{
+                                dataProp.attributes.vehicle.data.attributes
+                                  .partner.data.attributes.name
+                              }}</small
+                            >
+                          </p>
                         </div>
                       </div>
                       <div class="col-md-4">
-                         <img style="width: 100%; height: 100% !important; "  :src="getFullImageUrl(dataProp.attributes.vehicle.data.attributes.photos.data[0].attributes.url)" alt="Card image cap">
+                        <img
+                          style="width: 100%; height: 100% !important"
+                          :src="
+                            getFullImageUrl(
+                              dataProp.attributes.vehicle.data.attributes.photos
+                                .data[0].attributes.url
+                            )
+                          "
+                          alt="Card image cap"
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="user-card" style="width: 100% !important;" v-if="dataProp.attributes.event && dataProp.attributes.event.data && dataProp.attributes.event.data.attributes">
+                <div
+                  class="user-card"
+                  style="width: 100% !important"
+                  v-if="
+                    dataProp.attributes.event &&
+                    dataProp.attributes.event.data &&
+                    dataProp.attributes.event.data.attributes
+                  "
+                >
                   <div class="card mb-3">
                     <div class="row g-0">
                       <div class="col-md-8">
                         <div class="card-body">
                           <h5 class="card-title">Card Title</h5>
-                          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                          <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                          <p class="card-text">
+                            This is a wider card with supporting text below as a
+                            natural lead-in to additional content. This content
+                            is a little bit longer.
+                          </p>
+                          <p class="card-text">
+                            <small class="text-muted"
+                              >Last updated 3 mins ago</small
+                            >
+                          </p>
                         </div>
                       </div>
                       <div class="col-md-4">
-                        <img src="" class="img-fluid rounded-start" alt="Card image cap">
+                        <img
+                          src=""
+                          class="img-fluid rounded-start"
+                          alt="Card image cap"
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
-         </div>
+        </div>
       </transition>
     </div>
   </transition>
 </template>
 
-
-
 <script>
-import FileManager from "../FileManagar/FileManager.vue"
+import FileManager from "../FileManagar/FileManager.vue";
 export default {
   props: {
     show: Boolean,
@@ -191,8 +426,8 @@ export default {
       required: true,
     },
   },
-  components:{
-    FileManager
+  components: {
+    FileManager,
   },
   data() {
     return {
@@ -202,13 +437,13 @@ export default {
         profile: true,
         customer: false,
         documents: false,
-        ressource: false
-      }
+        ressource: false,
+      },
     };
   },
   methods: {
     getFullImageUrl(relativePath) {
-      console.log(relativePath,"relativePath")
+      console.log(relativePath, "relativePath");
       return `http://localhost:1337${relativePath}`;
     },
     closeModal() {
@@ -224,21 +459,20 @@ export default {
     },
   },
   mounted() {
-    console.log('openedOne.customer:', this.openedOne.customer);
-    console.log(this.dataProp,'reservation')
-  }
+    console.log("openedOne.customer:", this.openedOne.customer);
+    console.log(this.dataProp, "reservation");
+  },
 };
 </script>
 <style lang="scss" scoped>
-.active{
-  background-color:#6560F0!important;
-  color: white !important;
- }
- .nav-link:hover {
-  background-color:#6560F0!important;
+.active {
+  background-color: #6560f0 !important;
   color: white !important;
 }
-
+.nav-link:hover {
+  background-color: #6560f0 !important;
+  color: white !important;
+}
 
 .modal-animation-enter-active,
 .modal-animation-leave-active {
@@ -307,9 +541,6 @@ export default {
       font-size: 16px;
       transition: background-color 0.3s ease;
 
-
-
-
       &:hover {
         background-color: #34495e;
       }
@@ -325,42 +556,38 @@ export default {
     cursor: pointer;
   }
 }
-button{
+button {
   background-color: white !important;
   color: #34495e !important;
-  border: none  !important;
-padding : 3px !important;
+  border: none !important;
+  padding: 3px !important;
 }
-.buttons{
+.buttons {
   display: flex !important;
   flex-direction: row !important;
-  gap:5px !important;
+  gap: 5px !important;
 }
 button :hover {
-background-color:#333 !important ;
-color: white !important;
-border: none !important;
+  background-color: #333 !important ;
+  color: white !important;
+  border: none !important;
 }
-.confirm-button{
-background-color:#fff ;
-color: #34495e;
-border: 1px solid #34495e;
+.confirm-button {
+  background-color: #fff;
+  color: #34495e;
+  border: 1px solid #34495e;
 }
-
-
-
-
 
 .user-card {
-   width: 100%;
+  width: 100%;
   height: auto;
   display: flex;
-   padding: 2rem;
+  padding: 2rem;
   background: #fff;
   border-radius: 0.5rem;
   gap: 1rem;
   color: #333;
-  }
+}
 
 .avatar-holder img {
   width: 36rem;

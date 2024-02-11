@@ -1,88 +1,94 @@
 <template>
     <div v-if="documents.data">
       <div v-if="!selectedFile">
-        <div class="file-card" v-for="(file, index) in documents.data" :key="index"  >
-          <div class="file-card-int" @click="selectFile(file)">
+        <div class="file-card" v-for="(file, index) in documents.data" :key="index" @click="selectFile(file)">
+          <div class="file-card-int">
             <img class="file-icon" src="../../../assets/file.png" alt="File Icon">
-          <div class="file-name">{{ file.attributes.name }}</div>
+            <div class="file-name">{{ file.attributes.name }}</div>
           </div>
-<div class="download">
-    <i class="fas fa-download" aria-hidden="true"></i>
-
-</div>
+          <div class="download">
+            <i class="fas fa-download" aria-hidden="true"></i>
+          </div>
         </div>
       </div>
       <div v-else>
-        <button @click="goBack" class="back-button">Back</button>
+        <button @click="goBack" class="back-button">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
         <div class="file-content">
-          <!-- <h2>{{ selectedFile.name }}</h2>
-          <p>{{ selectedFile.content }}</p> -->
-<PdfViewr></PdfViewr>
-        </div>
+          <PdfViewer v-if="isPdf(selectedFile)" :urlLink="selectedFile.attributes.url"></PdfViewer>
+          <img v-else-if="isImage(selectedFile)" :src="ImageWithurl(selectedFile.attributes.url)" alt="File Image" class="file-image">
+         </div>
       </div>
     </div>
   </template>
 
   <script>
-  import PdfViewr from './PdfViewr.vue';
+  import PdfViewer from './PdfViewr.vue';
+
   export default {
-    components:{
-        PdfViewr
+    components: {
+      PdfViewer
     },
-    props:{
-        documents:{
-            type:Array,
-            required :true
-        }
+    props: {
+      documents: {
+        type: Array,
+        required: true
+      }
     },
     data() {
       return {
-        files: [
-          { name: "file1.txt", content: "Content of file 1" },
-          { name: "file2.txt", content: "Content of file 2" },
-          { name: "file3.txt", content: "Content of file 3" }
-        ],
         selectedFile: null
       };
     },
     methods: {
+        ImageWithurl(url){
+             return `${process.env.VUE_APP_STORAGE_URL}${url}`
+        },
       selectFile(file) {
-        this.selectedFile = file;
+        if (this.isPdf(file)) {
+          window.open(`/pdf/${file.id}`, '_blank');
+        } else {
+          this.selectedFile = file;
+        }
+      },
+      isPdf(file) {
+        if (!file || !file.attributes || !file.attributes.name) {
+          return false;
+        }
+        const extension = file.attributes.name.split('.').pop().toLowerCase();
+        return extension === 'pdf';
+      },
+      isImage(file) {
+        if (!file || !file.attributes || !file.attributes.name) {
+          return false;
+        }
+        const extension = file.attributes.name.split('.').pop().toLowerCase();
+        return extension === 'jpg' || extension === 'jpeg' || extension === 'png' || extension === 'gif';
       },
       goBack() {
         this.selectedFile = null;
-      },
-      getFileIcon(file) {
-        const extension = file.name.split('.').pop().toLowerCase();
-        // if (extension === 'txt') {
-        //   return require('@/assets/txt-icon.png'); // Change the path to your file icons directory
-        // } else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png' || extension === 'gif') {
-        //   return require('@/assets/image-icon.png'); // Change the path to your file icons directory
-        // } else if (extension === 'pdf') {
-        //   return require('@/assets/pdf-icon.png'); // Change the path to your file icons directory
-        // } else {
-        //   return require('@/assets/default-icon.png'); // Change the path to your default file icon
-        // }
       }
     }
   };
   </script>
 
   <style scoped>
-  .file-card-int{
+  .file-card-int {
     display: flex;
     align-items: center;
     padding: 10px;
-     cursor: pointer;
-gap: 3px;
+    cursor: pointer;
+    gap: 3px;
   }
+
   .file-card {
     display: flex;
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #ccc;
     cursor: pointer;
-gap: 3px;
+    gap: 3px;
   }
 
   .file-icon {
@@ -106,9 +112,16 @@ gap: 3px;
     cursor: pointer;
   }
 
+  .back-button i {
+    margin-right: 5px;
+  }
+
   .file-content {
     margin-top: 20px;
   }
 
-  /* Add more styling as needed */
+  .file-image {
+    max-width: 100%;
+    height: auto;
+  }
   </style>

@@ -30,6 +30,7 @@ import ReservationListPage from "../pages/Reservation/ReservationList.vue"
 import AcceptReservation from "../pages/Reservation/AcceptedReservation.vue"
 import ErrorPage from "../pages/ErrorPage.vue"
 import LogOut from "../pages/LogoutPage.vue"
+import PdfViewer from "../pages/PDF/PdfVww.vue"
 function guardMyroute(to, from, next) {
   const isAuthenticated = localStorage.getItem('user');
 
@@ -196,6 +197,13 @@ function guardMyroute(to, from, next) {
 
   },
   {
+    path: "/pdf/:id",
+    name: "pdf",
+    component: PdfViewer,
+    beforeEnter: guardMyroute,
+    meta: { auth: true }
+  },
+  {
     path: "/villalist",
     name: "villalist",
     component: VillaList,
@@ -292,17 +300,15 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-   if (to.path === '/') {
-    next('/dashboard');
-  } else {
-     const found = routes.some(route => route.path.trim() === to.path);
-    if (!found) {
-      next('/error');
-    } else {
-      next();
-    }
-  }
+  if (to.path === '/') {
+   next('/dashboard');
+ } else if (to.matched.length === 0) {
+    next('/error');
+ } else {
+    next();
+ }
 });
+
 
 
 export default router;
