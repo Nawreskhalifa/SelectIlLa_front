@@ -178,30 +178,25 @@
               />
             </div>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Promoter Name
+                Partner
               </label>
-              <input
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. AI Machine Learning"
-                v-model="promoterName"
-              />
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Promoter Information's
-              </label>
-              <input
-                type="text-area"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. AI Machine Learning"
-                v-model="promoterInfo"
-              />
+              <select
+                class="form-select shadow-none fw-semibold rounded-0 select-same-width"
+                style="height: 47px; border-color: #eeeee4"
+                v-model="selectedPartner"
+              >
+                <option value="" selected>Select a partner</option>
+                <option
+                  v-for="partner in getPartners"
+                  :key="partner.id"
+                  :value="partner.id"
+                >
+                  {{ partner.name }}
+                </option>
+              </select>
             </div>
           </div>
           <div class="col-md-12">
@@ -332,6 +327,7 @@ export default defineComponent({
       photos: [],
       categoriesEvent: [],
       categoriesSelected: [],
+      selectedPartner:[]
     };
   },
   methods: {
@@ -340,6 +336,7 @@ export default defineComponent({
       "updateEvent",
       "fetchOneCategoryEvent",
       "fetchOneEvent",
+      "fetchAllPartners",
     ]),
     objetExisteDansListe(objetRecherche, listeObjets) {
       // Parcourir la liste d'objets
@@ -471,10 +468,12 @@ export default defineComponent({
       "getCategoriesLoading",
       "getCategoriesEvent",
       "getEvent",
+      "getPartners"
     ]),
   },
   async mounted() {
     await this.fetchAllCategoriesEvent({ page: null });
+    await this.fetchAllPartners();
     // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
     const today = new Date();
     const year = today.getFullYear();
@@ -511,6 +510,8 @@ export default defineComponent({
       this.promoterName = this.getEvent.namePromoter;
       this.promoterInfo = this.getEvent.promotingInfo;
       this.photosFromDatabase = this.getEvent.photos;
+      if(this.getEvent.partner)
+      {this.selectedPartner=this.getEvent.partner.id}
     }
   },
 });
@@ -613,5 +614,8 @@ li > label {
 li > label:hover,
 li > label:has(input:checked) {
   background-color: var(--dk-gray);
+}
+.select-same-width {
+  width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
 }
 </style>

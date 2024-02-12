@@ -1,5 +1,5 @@
 import { EventCategory, decodeApiToEventCategory } from "../EventCategory/EventCategory";
-import { Partner, decodePartner } from "../Partner/Partner";
+import { Partner, decodePart, decodePartner } from "../Partner/Partner";
 import { PhotoApi } from "./EventApi";
 export interface Photo {
     id: number;
@@ -52,8 +52,7 @@ export const decodeApiToEvent = (eventApi): Event => {
         endTime: eventApi.attributes.end_time,
         location: eventApi.attributes.location,
         photos: eventApi.attributes.photos.data ? eventApi.attributes.photos.data.map(decodeApiToPhoto) : null,
-        // partner:null,
-       partner: eventApi.attributes.partner.data ? decodePartner(eventApi.attributes.partner.data) : null,
+        partner: eventApi.attributes.partner.data ? decodePart(eventApi.attributes.partner.data) : null,
         categoryEvents: eventApi.attributes.category_events.data.map(decodeApiToEventCategory),
         active: eventApi.attributes.active
     };

@@ -10,7 +10,7 @@ const state = {
   event: null,
   totalPages: 1,
   totalItems: 0,
-  open : false
+  open: false
 };
 const getters = {
   getEventsError: (state) => state.eventsError,
@@ -19,7 +19,7 @@ const getters = {
   getEvent: (state) => state.event,
   getTotalPages: (state) => state.totalPages,
   getTotalItems: (state) => state.totalItems,
-  isOpen: (state)=> state.open
+  isOpen: (state) => state.open
 };
 const mutations = {
   SET_TOTAL_ITEMS(state, payload = 0) {
@@ -49,9 +49,9 @@ const mutations = {
   UPDATE_EVENT(state, { event, data }) {
     event.updateEvent(data);
   },
-    updateOpen(state){
-    console.log(state,"state")
-    state.open=!state.open
+  updateOpen(state) {
+    console.log(state, "state")
+    state.open = !state.open
   }
 };
 const actions = {

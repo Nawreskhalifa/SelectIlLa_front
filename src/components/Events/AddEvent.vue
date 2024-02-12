@@ -191,7 +191,7 @@
               />
             </div>
           </div>
-          <div class="col-md-12">
+          <!-- <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
                 Promoter Name
@@ -203,8 +203,30 @@
                 v-model="promoterName"
               />
             </div>
+          </div> -->
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Partner
+              </label>
+              <select
+                class="form-select shadow-none fw-semibold rounded-0 select-same-width"
+                style="height: 47px; border-color: #eeeee4"
+                v-model="selectedPartner"
+              >
+                <option value="" selected>Select a partner</option>
+                <option
+                  v-for="partner in getPartners"
+                  :key="partner.id"
+                  :value="partner.id"
+                >
+                  {{ partner.name }}
+                </option>
+              </select>
+            </div>
           </div>
-          <div class="col-md-12">
+
+          <!-- <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
                 Promoter Information's
@@ -216,7 +238,7 @@
                 v-model="promoterInfo"
               />
             </div>
-          </div>
+          </div> -->
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
@@ -315,6 +337,7 @@ export default defineComponent({
       promoterInfo: "",
       photos: [],
       categoriesEvent: [],
+      selectedPartner: [],
     };
   },
   methods: {
@@ -371,7 +394,7 @@ export default defineComponent({
             );
           }
         }
-
+        formData.append("partner", this.selectedPartner);
         // Ajouter chaque champ du formulaire à l'objet FormData
         formData.append("name", this.eventName);
         formData.append("description", this.description);
@@ -419,7 +442,7 @@ export default defineComponent({
       "getCategoriesEvent",
       "getEventsLoading",
       "getEventsError",
-      "getPartners"
+      "getPartners",
     ]),
     categoriesOptions() {
       if (this.getCategoriesEvent && this.getCategoriesEvent.length) {
@@ -436,7 +459,7 @@ export default defineComponent({
   async mounted() {
     await this.fetchAllCategoriesEvent({ page: null });
     await this.fetchAllPartners();
-    console.log('qgdh',this.getPartners)
+    console.log("qgdh", this.getPartners);
     // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
     const today = new Date();
     const year = today.getFullYear();
@@ -546,5 +569,8 @@ li > label:has(input:checked) {
   overflow-x: auto;
   max-height: 200px;
   /* Ajustez la hauteur maximale si nécessaire */
+}
+.select-same-width {
+  width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
 }
 </style>

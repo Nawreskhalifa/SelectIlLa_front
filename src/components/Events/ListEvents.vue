@@ -211,7 +211,7 @@
               <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14">
                 PROMOTE BY:
                 <span class="fw-semibold text-primary">
-                  {{ event.namePromoter }}
+                  {{ event.partner?.name + event.partner?.surname }}
                 </span>
               </span>
               <!-- <span class="badge text-outline-danger ms-10">{{
@@ -525,6 +525,7 @@ export default {
       perPage: 4,
       name: null,
     });
+    console.log(this.getEvents);
   },
 };
 </script>
