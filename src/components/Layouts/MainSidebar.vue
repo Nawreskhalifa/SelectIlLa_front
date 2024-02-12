@@ -322,11 +322,8 @@
             <div class="accordion-body">
               <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
                 <li class="sidebar-sub-menu-item">
-                  <router-link
-                    to="/partnersList"
-                    class="sidebar-nav-link d-block"
-                  >
-                    <span class="sidebar-sub-menu-link">partners</span>
+                  <router-link class="sidebar-sub-menu-link" to="/partnersList">
+                    partners
                   </router-link>
                 </li>
                 <li class="sidebar-sub-menu-item">
