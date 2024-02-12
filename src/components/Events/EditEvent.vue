@@ -13,6 +13,7 @@
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. AI Machine Learning"
                 v-model="eventName"
+                required
               />
             </div>
           </div>
@@ -59,7 +60,9 @@
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">Price</label>
+              <label class="d-block text-black fw-semibold mb-10"
+                >Ticket Price</label
+              >
               <div class="input-group">
                 <span
                   class="input-group-text rounded-0 fs-14 fw-bold text-primary"
@@ -229,6 +232,7 @@
                 >
                   <img :src="storageUrl + photo.url" alt="Selected Image" />
                   <button
+                    type="button"
                     @click="removeImageFromDatabase(photo, index)"
                     class="delete_icon"
                   >
@@ -245,7 +249,11 @@
                   class="image-item"
                 >
                   <img :src="newPhoto.url" :alt="newPhoto.name" />
-                  <button @click="removeNewImage(index)" class="delete_icon">
+                  <button
+                    @click="removeNewImage(index)"
+                    class="delete_icon"
+                    type="button"
+                  >
                     <i class="fas fa-times-circle"></i>
                     <!-- Icône de suppression -->
                   </button>
@@ -466,7 +474,7 @@ export default defineComponent({
     ]),
   },
   async mounted() {
-    await this.fetchAllCategoriesEvent();
+    await this.fetchAllCategoriesEvent({ page: null });
     // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
     const today = new Date();
     const year = today.getFullYear();

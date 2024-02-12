@@ -8,9 +8,9 @@ const state = {
   eventsLoading: false,
   events: [],
   event: null,
-  open : false ,
   totalPages: 1,
   totalItems: 0,
+  open : false
 };
 const getters = {
   getEventsError: (state) => state.eventsError,
@@ -49,7 +49,7 @@ const mutations = {
   UPDATE_EVENT(state, { event, data }) {
     event.updateEvent(data);
   },
-  updateOpen(state){
+    updateOpen(state){
     console.log(state,"state")
     state.open=!state.open
   }
@@ -85,22 +85,58 @@ const actions = {
     commit("SET_EVENTS_ERROR");
 
     try {
-      let filters: {
+      const filters: {
+        populate: any[];
         pagination?: { page: number; pageSize: number };
-        filters?: { name?: { $contains: string }; isActive?: { $eq: boolean } };
-      } = {}
+        filters?: {
+          $or?: Array<{
+            name?: { $contains: string };
+            description?: { $contains: string };
+            location?: { $contains: string };
+            category_events?: { name?: { $contains: string } };
+            partner?: { name?: { $contains: string }; surname?: { $contains: string } };
+          }>;
+          active?: { $eq: boolean };
+        };
+      } = {
+        populate: [],
+      };
+
+      filters.populate = [
+        'category_events',
+        'photos',
+        'partner',
+        // 'seoData.sharedImage.media',
+      ];
+
       if (page) {
-        filters = { pagination: { page: page, pageSize: perPage } };
+        filters.pagination = { page: page, pageSize: perPage };
       }
-      // Add the name filter if specified
+
+      // Add the filters if name is specified
       if (name) {
-        filters.filters = { ...(filters.filters || {}), name: { $contains: name } };
+        filters.filters = {
+          ...(filters.filters || {}),
+          $or: [
+            { name: { $contains: name } },
+            { description: { $contains: name } },
+            { location: { $contains: name } },
+            { category_events: { name: { $contains: name } } },
+            { partner: { name: { $contains: name } } },
+            { partner: { surname: { $contains: name } } }
+          ]
+        };
       }
 
       // Add the active filter if specified
       if (isActive !== 'All') {
-        filters.filters = { ...(filters.filters || {}), isActive: { $eq: isActive === 'true' } };
+        filters.filters = {
+          ...(filters.filters || {}),
+          active: { $eq: isActive === 'true' }
+        };
       }
+
+
 
       const response = await makeApiRequest(
         methodsHttpNames.GET,
@@ -110,7 +146,7 @@ const actions = {
       );
 
       if (response.success) {
-        console.log("dd", response.data);
+        console.log("dd", response.data.data);
         commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
         commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
         commit("SET_EVENTS", response.data.data.map(decodeApiToEvent));

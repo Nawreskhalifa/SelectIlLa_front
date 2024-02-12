@@ -1,4 +1,3 @@
-import { User, decodeUser } from "../User/User"
 import { PartnerApi } from "./PartnerApi";
 
 
@@ -9,7 +8,7 @@ export interface Partner {
     surname: string,
     phone: string,
     address: string,
-    user: User
+    // user: User
 }
 
 
@@ -17,11 +16,11 @@ export interface Partner {
 export const decodePartner = (PartnerApi: PartnerApi): Partner => {
     return {
         id: PartnerApi.id,
-        name: PartnerApi.name,
-        surname: PartnerApi.surname,
-        phone: PartnerApi.phone,
-        address: PartnerApi.address,
-        user: decodeUser(PartnerApi.user),
+        name: PartnerApi.attributes.name,
+        surname: PartnerApi.attributes.surname,
+        phone: PartnerApi.attributes.phone,
+        address: PartnerApi.attributes.address,
+        // user: decodeUser(PartnerApi.user),
     };
 };
 
