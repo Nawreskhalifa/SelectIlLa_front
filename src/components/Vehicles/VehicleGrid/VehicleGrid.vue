@@ -4,6 +4,7 @@
       <VehicleFiltre
         @newFiltredData="filtredData"
         @allSelected="selectedData"
+        @byCategory="filtreByCat"
       />
       <div class="products-sidebar-filter bg-white letter-spacing mb-25" v-if="selected.length > 0 ">
           <div class="products-sidebar-filter bg-white letter-spacing mb-25" v-if="selected.length > 0">
@@ -120,6 +121,21 @@ export default {
         return item;
       });
     },
+    async  filtreByCat(event) {
+
+   if (event) {
+                  await   this.fetchData()
+
+    this.vehicles = await this.vehicles.filter(item => {
+      console.log(item?.attributes.category_vehicles.data);
+      return item?.attributes.category_vehicles.data.some(vitem => vitem.id === event.id);
+    });
+  }else{
+    this.fetchData()
+  }
+},
+
+
     clickOnSelected() {
       console.log(
         "You already clicked on the selectt all desactivate it first "

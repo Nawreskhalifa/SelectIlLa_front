@@ -33,10 +33,10 @@
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Categories</h6>
       <ul class="categories-list ps-0 mb-0 list-unstyled">
-        <li class="cat">
-          <span class="d-block fs-md-15 fw-medium">All</span>
+        <li class="cat" @click="byCategory(null)">
+          <span class="d-block fs-md-15 fw-medium" >All</span>
         </li>
-        <li v-for="category in categories" :key="category.id" @click="byCategory" class="cat">
+        <li v-for="category in categories" :key="category.id" @click="byCategory(category)" class="cat">
           <span class="d-block fs-md-15 fw-medium">{{
             category.attributes.name
           }}</span>
@@ -85,6 +85,9 @@ export default {
         console.error("Error fetching categories:", error);
       }
     },
+    async byCategory(categorie){
+      this.$emit("byCategory", categorie)
+    }
   },
   mounted() {
     this.fetchCategories();

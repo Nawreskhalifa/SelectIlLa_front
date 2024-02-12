@@ -85,6 +85,9 @@ export default {
         console.error("Error fetching categories:", error);
       }
     },
+      async byCategory(categorie){
+      this.$emit(" filtreBycategory", categorie)
+    }
   },
   mounted() {
     this.fetchCategories();
