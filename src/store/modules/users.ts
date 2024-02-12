@@ -3,7 +3,7 @@ import { makeApiRequest } from '@/services/apiService'
 import { endPoints } from '@/utils/endPoints'
 import { methodsHttpNames } from '@/utils/methods'
 import { decodeCustomer, decodeCustomers } from '@/models/Customer/Customer'
-import { decodePartners } from '@/models/Partner/Partner'
+import { decodePartner, decodePartners } from '@/models/Partner/Partner'
 
 const state = {
     userError: null,
@@ -189,10 +189,9 @@ const actions = {
             );
 
             if (response.success) {
-                                commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
-                 console.log(response);
+                console.log(response);
                 commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
-                 commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
+                commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
                 commit('SET_CUSTOMERS', response.data.data.map(decodeCustomer));
                 commit('SET_USERS_LOADING', false);
             }
@@ -220,7 +219,7 @@ const actions = {
             );
             console.log(response.data)
             if (response.success) {
-                commit('SET_PARTNERS', response.data.map(decodePartners))
+                commit('SET_PARTNERS', response.data.map(decodePartner))
                 commit('SET_USERS_LOADING')
             }
 

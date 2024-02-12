@@ -124,14 +124,14 @@
           <thead>
             <tr>
               <th
-              scope="col"
-              class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
-              @click="toggleSortDirection"
-            >
-              USER NAME
-              <span v-if="sortDirection === 'asc'" class="arrow-up"></span>
-              <span v-if="sortDirection === 'desc'" class="arrow-down"></span>
-            </th>
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+                @click="toggleSortDirection"
+              >
+                USER NAME
+                <span v-if="sortDirection === 'asc'" class="arrow-up"></span>
+                <span v-if="sortDirection === 'desc'" class="arrow-down"></span>
+              </th>
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
@@ -143,7 +143,6 @@
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
               >
                 PHONE
-
               </th>
               <th
                 scope="col"
@@ -152,7 +151,10 @@
               >
                 LOCATIONS
                 <span v-if="sortDirectionLoc === 'asc'" class="arrow-up"></span>
-                <span v-if="sortDirectionLoc === 'desc'" class="arrow-down"></span>
+                <span
+                  v-if="sortDirectionLoc === 'desc'"
+                  class="arrow-down"
+                ></span>
               </th>
               <th
                 scope="col"
@@ -327,8 +329,8 @@ export default defineComponent({
       genderFilter: "All",
       startYear: "",
       endYear: "",
-      sortDirection: 'asc',
-      sortDirectionLoc:'asc'
+      sortDirection: "asc",
+      sortDirectionLoc: "asc",
     };
   },
   methods: {
@@ -346,8 +348,8 @@ export default defineComponent({
         gender: this.genderFilter,
         startYear: this.startYear,
         endYear: this.endYear,
-        sortDirectionUserName:this.sortDirection,
-        sortDirectionLocation:this.sortDirectionLoc
+        sortDirectionUserName: this.sortDirection,
+        sortDirectionLocation: this.sortDirectionLoc,
       });
     },
     toggleSortDirection() {
@@ -470,16 +472,17 @@ export default defineComponent({
   },
   async mounted() {
     await this.fetchAllCustomers({ page: 1, perPage: 4 });
+    console.log(this.getCustomers);
     this.storageUrl = storageUrl;
   },
 });
 </script>
 <style scoped>
 .arrow-up::before {
-  content: '\25B2'; /* Code Unicode pour la flèche vers le haut */
+  content: "\25B2"; /* Code Unicode pour la flèche vers le haut */
 }
 
 .arrow-down::before {
-  content: '\25BC'; /* Code Unicode pour la flèche vers le bas */
+  content: "\25BC"; /* Code Unicode pour la flèche vers le bas */
 }
- </style>
+</style>
