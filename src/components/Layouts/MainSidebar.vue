@@ -296,11 +296,52 @@
             </div>
           </div>
         </li>
-        <li class="sidebar-nav-item">
+        <!-- <li class="sidebar-nav-item">
           <router-link to="/partnersList" class="sidebar-nav-link d-block">
             <i class="flaticon-more-1"></i>
             <span class="title">partners</span>
           </router-link>
+        </li> -->
+        <li
+          class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
+        >
+          <a
+            href="#"
+            class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
+            data-bs-toggle="collapse"
+            data-bs-target="#sidebarCollapseSeven"
+            aria-expanded="false"
+            aria-controls="sidebarCollapseSeven"
+          >
+            <i class="flaticon-layer-2"></i>
+            <span class="title">Categories Events</span>
+          </a>
+          <div
+            id="sidebarCollapseSeven"
+            class="accordion-collapse collapse"
+            data-bs-parent="#sidebarNavAccordion"
+          >
+            <div class="accordion-body">
+              <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/categories-event"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Categories List
+                  </router-link>
+                </li>
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/create-new-category-event"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Create New Category
+                  </router-link>
+                </li>
+              </ul>
+            </div>
+          </div>
         </li>
         <li
         class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"

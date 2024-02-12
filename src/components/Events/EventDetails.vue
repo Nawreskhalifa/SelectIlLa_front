@@ -399,8 +399,7 @@ export default defineComponent({
 .card-image {
   height: 500px;
   width: 100%; /* Redimensionner l'image à 100% de la largeur du conteneur */
-<<<<<<< HEAD
-=======
+
 }
 /* Ajouter un espace entre les images */
 .swiper-slide {
@@ -448,8 +447,7 @@ export default defineComponent({
 }
 .swiper-button-next {
   right: 10px; /* Adjust as needed */
->>>>>>> 215675fdea40de49b30c45f2e76211af8c8ddec5
-}
+ }
 /* Ajouter un espace entre les images */
 .swiper-slide {
   margin-right: 70px; /* Espacement entre les images */
