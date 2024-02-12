@@ -556,8 +556,4 @@ export default {
   color: #ff001e; /* Change the hover color */
   text-decoration: none; /* Remove default underline on hover */
 }
-<<<<<<< HEAD
 </style>
-=======
-</style>
->>>>>>> 215675fdea40de49b30c45f2e76211af8c8ddec5

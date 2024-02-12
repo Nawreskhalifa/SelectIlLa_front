@@ -3,11 +3,7 @@ import { makeApiRequest } from '@/services/apiService'
 import { endPoints } from '@/utils/endPoints'
 import { methodsHttpNames } from '@/utils/methods'
 import { decodeCustomer, decodeCustomers } from '@/models/Customer/Customer'
-<<<<<<< HEAD
 import { decodePartners } from '@/models/Partner/Partner'
-=======
-import { decodePartner, decodePartners } from '@/models/Partner/Partner'
->>>>>>> 215675fdea40de49b30c45f2e76211af8c8ddec5
 
 const state = {
     userError: null,
@@ -193,13 +189,10 @@ const actions = {
             );
 
             if (response.success) {
-<<<<<<< HEAD
-                 commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
-=======
-                console.log(response);
+                                commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
+                 console.log(response);
                 commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
->>>>>>> 215675fdea40de49b30c45f2e76211af8c8ddec5
-                commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
+                 commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
                 commit('SET_CUSTOMERS', response.data.data.map(decodeCustomer));
                 commit('SET_USERS_LOADING', false);
             }
@@ -227,7 +220,7 @@ const actions = {
             );
             console.log(response.data)
             if (response.success) {
-                commit('SET_PARTNERS', response.data.map(decodePartner))
+                commit('SET_PARTNERS', response.data.map(decodePartners))
                 commit('SET_USERS_LOADING')
             }
 
