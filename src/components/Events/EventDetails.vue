@@ -399,6 +399,56 @@ export default defineComponent({
 .card-image {
   height: 500px;
   width: 100%; /* Redimensionner l'image à 100% de la largeur du conteneur */
+<<<<<<< HEAD
+=======
+}
+/* Ajouter un espace entre les images */
+.swiper-slide {
+  margin-right: 70px; /* Espacement entre les images */
+}
+.swiper-container {
+  position: relative;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px; /* Adjust as needed */
+  height: 40px; /* Adjust as needed */
+  background-color: rgba(255, 255, 255, 0.5); /* Adjust as needed */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background-color: rgba(255, 255, 255, 0.8); /* Adjust as needed */
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-family: "swiper-icons";
+  font-size: 20px;
+  color: #000; /* Adjust as needed */
+}
+
+.swiper-button-prev {
+  left: 10px; /* Adjust as needed */
+}
+
+.swiper-button-prev {
+  left: 0;
+}
+.swiper-button-next {
+  right: 10px; /* Adjust as needed */
+>>>>>>> 215675fdea40de49b30c45f2e76211af8c8ddec5
 }
 /* Ajouter un espace entre les images */
 .swiper-slide {

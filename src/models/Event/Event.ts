@@ -58,6 +58,3 @@ export const decodeApiToEvent = (eventApi): Event => {
         active: eventApi.attributes.active
     };
 };
-
-
-

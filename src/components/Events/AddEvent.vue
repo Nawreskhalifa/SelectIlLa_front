@@ -280,7 +280,10 @@
 
 <script>
 import { defineComponent } from "vue";
+<<<<<<< HEAD
 import Multiselect from "vue-multiselect";
+=======
+>>>>>>> 215675fdea40de49b30c45f2e76211af8c8ddec5
 import { mapActions, mapGetters } from "vuex";
 import { makeApiRequest } from "@/services/apiService";
 import { methodsHttpNames } from "@/utils/methods";
@@ -323,6 +326,10 @@ export default defineComponent({
       "fetchAllCategoriesEvent",
       "addEvent",
       "fetchOneCategoryEvent",
+<<<<<<< HEAD
+=======
+      "fetchAllPartners",
+>>>>>>> 215675fdea40de49b30c45f2e76211af8c8ddec5
     ]),
     addCategoryEvent(category) {
       this.getCategoriesEvent.map((item, key) => {
@@ -419,6 +426,10 @@ export default defineComponent({
       "getCategoriesEvent",
       "getEventsLoading",
       "getEventsError",
+<<<<<<< HEAD
+=======
+      "getPartners"
+>>>>>>> 215675fdea40de49b30c45f2e76211af8c8ddec5
     ]),
     categoriesOptions() {
       if (this.getCategoriesEvent && this.getCategoriesEvent.length) {
@@ -434,7 +445,12 @@ export default defineComponent({
 
   async mounted() {
     await this.fetchAllCategoriesEvent({ page: null });
+<<<<<<< HEAD
 
+=======
+    await this.fetchAllPartners();
+    console.log('qgdh',this.getPartners)
+>>>>>>> 215675fdea40de49b30c45f2e76211af8c8ddec5
     // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
     const today = new Date();
     const year = today.getFullYear();
