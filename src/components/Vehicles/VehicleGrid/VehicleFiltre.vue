@@ -125,10 +125,13 @@ export default {
 }
 
 .cat:hover {
-  background-color: #999999;
+  background-color: #6560F0;
+  border-radius: 5px;
+  color: white
 }
 
 .cat {
+  padding:6px;
   cursor: pointer;
 }
 </style>

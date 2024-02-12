@@ -672,6 +672,22 @@ export async function fetchEvents(start=0,limit=16) {
  }
 }
 
+// http://localhost:1337/api/partners/1?populate=deep
+export async function fetchPartnersById(id,start=0,limit=16) {
+  try {
+    const response = await axios.get(`${endPoints.partners}/${id}?populate=deep`);
+   if (response) {
+     console.log(response.data)
+     return response.data;
+   } else {
+     console.error("Failed to fetch partners:");
+     throw new Error("Failed to fetch partners");
+   }
+ } catch (error) {
+   console.error("Error fetching partners:", error);
+   throw error;
+ }
+}
 export async function fetchPartners(start=0,limit=16) {
   try {
     const response = await axios.get(`${endPoints.partners}?populate=deep`);
@@ -827,7 +843,7 @@ export async function updateInReservation(reservationId, updatedData) {
 
 export async function fetchAcceptedReservations(start = 0, limit = 16) {
   try {
-    const response = await axios.get(`${endPoints.accepted_reservations}?_start=${start}&_limit=${limit}&populate=*`);
+    const response = await axios.get(`${endPoints.accepted_reservations}?_start=${start}&_limit=${limit}&populate=deep`);
     if (response) {
       console.log(response.data);
       return response.data;
@@ -848,5 +864,42 @@ export async function getFile(id) {
   } catch (error) {
     console.error(`Error getting files with ID ${id}:`, error);
     throw error;
+  }
+}
+
+export async function updateReservation(id, updatedData) {
+  try {
+    const response = await axios.put(
+      `${endPoints.reservations}/${id}`,
+      updatedData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } else {
+      console.error('Failed to update reservation data:', response);
+      return {
+        data:response,
+        success: false,
+        error: 'Failed to update reservation data',
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error('Error updating reservation:', error);
+    return {
+      success: false,
+      error,
+    };
   }
 }

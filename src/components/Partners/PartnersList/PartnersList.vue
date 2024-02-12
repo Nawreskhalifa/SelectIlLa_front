@@ -95,7 +95,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="partner in partners" :key="partner.id">
+            <tr v-for="partner in chechIfPartner" :key="partner.id">
               <td class="shadow-none lh-1 fw-medium text-paragraph">  {{ partner.name }}
               </td>
               <td class="shadow-none lh-1 fw-medium text-paragraph">
@@ -161,14 +161,24 @@
                     <i class="flaticon-dots"></i>
                   </button>
                   <ul class="dropdown-menu">
-                    <li>
+                    <!-- <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
                         @click.prevent="openEdit(partner)"
                         ><i
                           class="flaticon-pen lh-1 me-8 position-relative top-1"
                         ></i>
-                        Edit</a
+                        Add</a
+                      >
+                    </li> -->
+                     <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        @click.prevent="openDetails(partner)"
+                        ><i
+                          class="flaticon-pen lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Details</a
                       >
                     </li>
                     <li>
@@ -243,7 +253,7 @@ import {
   deleteVillaCategory,
   search,
 } from "@/services/apiService";
-import UpdateModal from "../EditPartners/EditPartners.vue";
+import UpdateModal from "../AddPartner/EditPartners.vue";
 import {fetchPartners, fetchUserByPartner} from "@/services/apiService"
 import RessourcesModal from '../Ressources/RessourcesModal.vue'
 export default {
@@ -293,6 +303,10 @@ export default {
       await this.fetchAllPartners();
       this.ModalVisible = !this.ModalVisible;
     },
+      openDetails(partner) {
+        console.log(partner)
+     this.$router.push({ name: 'partnerdetails', params: { id: partner.id } });
+  },
     async change() {
       try {
         console.log("searchinput", this.searchInput);
@@ -354,22 +368,32 @@ openRessources(partner){
  this.ressourcesModalVisible  = true;
 }
   },
-  computed:{
-    allCheckboxesChecked() {
-      return this.checkList.vehicle && this.checkList.villa && this.checkList.event;
-    },
-    vehicleSelected(){
-      return this.checkList.vehicle === true
-    },
-    villaSelected(){
-      return this.checkList.villa === true
-
-    },
-     eventSelected(){
-      return this.checkList.event === true
-
-    }
+ computed:{
+  allCheckboxesChecked() {
+    return this.checkList.vehicle && this.checkList.villa && this.checkList.event;
   },
+  vehicleSelected(){
+    return this.checkList.vehicle === true;
+  },
+  villaSelected(){
+    return this.checkList.villa === true;
+  },
+  eventSelected(){
+    return this.checkList.event === true;
+  },
+  chechIfPartner(){
+    if(this.partners){
+      const onlyPartner =  this.partners.filter((item)=> {
+        if(item.user?.role?.name === "Partner"){
+          return item;
+        }
+      });
+      return onlyPartner;
+    } else {
+      return [];
+    }
+  }
+},
   directives: {
     date: {
       mounted(el, binding) {

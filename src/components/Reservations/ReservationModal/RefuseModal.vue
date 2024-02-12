@@ -3,8 +3,21 @@
     <div v-show="show" class="modal">
       <transition name="modal-animation-inner">
         <div v-show="show" class="modal-inner">
-          <div class="card product-details-box">
-
+          <div class="  product-details-box">
+          <div class="col-md-12">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Rejection Reason
+              </label>
+              <div class="mb-0">
+                <textarea
+                  v-model="rejection"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="Write your rejection reason"
+                ></textarea>
+              </div>
+            </div>
+          </div>
             <div class="buttons">
               <button class="confirm-button" @click="confirmUpdate">
                 Confirm
@@ -19,20 +32,37 @@
 </template>
 
 <script>
+import {updateReservation} from "@/services/apiService"
  export default {
   props: {
+    reservation : {
+      type:Object,
+      required : true
+    },
     show: Boolean,
 
   },
   data() {
     return {
-      name: "",
+      rejection: "",
     };
   },
   methods: {
     closeModal() {
       this.$emit("close");
     },
+   async  confirmUpdate(){
+        const dataRefus ={
+          data :{
+            status :'Canceled' ,
+            rejection_reason: this.rejection
+          }
+        }
+      const res = await updateReservation(this.reservation.id,dataRefus)
+      if(res){
+        this.$emit("changedReservation",res.data)
+      }
+    }
 
   },
 

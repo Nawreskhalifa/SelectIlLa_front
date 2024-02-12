@@ -26,6 +26,7 @@ import Dashboard from "../pages/Dashboard/EcommercePage.vue";
 import EditEventPage from "../pages/Events/EditEventPage.vue";
 import store from "../store/modules/users"
 import PartnersPage from "../pages/Partners/PartnersList/PartnersList.vue"
+import PartnerDetails from "../pages/Partners/PartnerDetails/PartnerDetails.vue"
 import ReservationListPage from "../pages/Reservation/ReservationList.vue"
 import AcceptReservation from "../pages/Reservation/AcceptedReservation.vue"
 import ErrorPage from "../pages/ErrorPage.vue"
@@ -270,6 +271,15 @@ function guardMyroute(to, from, next) {
     path: "/edit-event/:idEvent",
     name: "EditEventPage",
     component: EditEventPage,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
+  },
+    {
+    path: "/partner/:id",
+    name: "partnerdetails",
+    component: PartnerDetails,
     beforeEnter : guardMyroute,
 
     meta :{auth : true}

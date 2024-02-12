@@ -1,7 +1,7 @@
 <template>
-    <div v-if="documents.data">
+    <div v-if="documents && documents.data">
       <div v-if="!selectedFile">
-        <div class="file-card" v-for="(file, index) in documents.data" :key="index" @click="selectFile(file)">
+        <div class="file-card" v-for="(file, index) in documents?.data" :key="index" @click="selectFile(file)">
           <div class="file-card-int">
             <img class="file-icon" src="../../../assets/file.png" alt="File Icon">
             <div class="file-name">{{ file.attributes.name }}</div>

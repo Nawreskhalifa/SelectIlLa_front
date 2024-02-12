@@ -218,13 +218,15 @@ export default {
   align-items: center;
   justify-content: flex-end;
 }
-.lock{
- background-color: white;
- border: none;
- color: gray;
- font-size: 20px;
+.lock {
+  color: #2b2a3f;
+  background-color: white;
+  border: none ;
+  width: 50px;
+  height: 40px;
+  margin-right: 3px;
+  border-radius: 40%;
 }
-
 
 
 /* Add shadow effect */

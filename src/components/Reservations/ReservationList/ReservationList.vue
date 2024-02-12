@@ -1,7 +1,12 @@
 <template>
   <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
-    <div class="card-head box-shadow bg-white d-md-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25">
-      <div class="search-box position-relative" style="display: flex; align-items: center;">
+    <div
+      class="card-head box-shadow bg-white d-md-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
+    >
+      <div
+        class="search-box position-relative"
+        style="display: flex; align-items: center"
+      >
         <input
           @input="change"
           type="text"
@@ -74,50 +79,102 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="reservation in reservations" :key="reservation.id">
-              <td class="shadow-none lh-1 fw-medium text-paragraph">{{ reservation.attributes.pickup_date }}</td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">{{ reservation.attributes.drop_off_date }}</td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">{{ reservation.attributes.pickup_location }}</td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">{{ reservation.attributes.drop_off_location }}</td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">{{ reservation.attributes.phone }}</td>
+            <tr
+              v-for="reservation in filteredReservations"
+              :key="reservation.id"
+            >
+              <td class="shadow-none lh-1 fw-medium text-paragraph">
+                {{ reservation.attributes.pickup_date }}
+              </td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">
+                {{ reservation.attributes.drop_off_date }}
+              </td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">
+                {{ reservation.attributes.pickup_location }}
+              </td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">
+                {{ reservation.attributes.drop_off_location }}
+              </td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">
+                {{ reservation.attributes.phone }}
+              </td>
               <td class="shadow-none lh-1 fw-medium text-paragraph btns">
-                <button @click="showDetail(reservation)" class="btn-action detail">Detail</button>
-                <button @click="acceptReservation(reservation)" class="btn-action accept">Accept</button>
-                <button @click="refuseReservation(reservation)" class="btn-action refuse">Refuse</button>
+                <button
+                  @click="showDetail(reservation)"
+                  class="btn-action detail"
+                >
+                  Detail
+                </button>
+                <button
+                  @click="acceptReservation(reservation)"
+                  class="btn-action accept"
+                >
+                  Accept
+                </button>
+                <button
+                  @click="refuseReservation(reservation)"
+                  class="btn-action refuse"
+                >
+                  Refuse
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"></div>
+      <div
+        class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
+      ></div>
     </div>
     <div v-if="reserveData">
-      <AcceptRef :show="ModalVisible" :dataProp="reserveData" @close="closeModal" @updated="updated" />
+      <AcceptRef
+        :show="ModalVisible"
+        :dataProp="reserveData"
+        @close="closeModal"
+        @updated="updated"
+      />
     </div>
   </div>
-     <RefuseModal :show="isOpenRefuse" ></RefuseModal>
-
+  <RefuseModal
+    :show="isOpenRefuse"
+    :reservation="reserveData"
+    @close="closeRefus"
+    @changedReservation="changeStatus"
+  ></RefuseModal>
 </template>
 
 <script>
-import { fetchReservations, deleteReservation, fetchAcceptedReservations } from "@/services/apiService";
+import {
+  fetchReservations,
+  deleteReservation,
+  fetchAcceptedReservations,
+  updateReservation,
+  acceptReservation,
+} from "@/services/apiService";
 import AcceptRef from "../ReservationModal/ReservationModal.vue";
-import RefuseModal from "../ReservationModal/RefuseModal.vue"
+import RefuseModal from "../ReservationModal/RefuseModal.vue";
 export default {
   name: "ReservationList",
   components: {
     AcceptRef,
-    RefuseModal
+    RefuseModal,
   },
   data() {
     return {
       reservations: [],
       searchInput: "",
       reserveData: "",
-      isOpenRefuse : false ,
+      isOpenRefuse: false,
       ModalVisible: false,
     };
+  },
+  computed: {
+    filteredReservations() {
+      return this.reservations.filter(
+        (reservation) => reservation.attributes.status === "Pending"
+      );
+    },
   },
   methods: {
     async fetchReservationsData() {
@@ -131,7 +188,9 @@ export default {
     },
     async deleteReservation(id) {
       try {
-        this.reservations = this.reservations.filter((reservation) => reservation.id !== id);
+        this.reservations = this.reservations.filter(
+          (reservation) => reservation.id !== id
+        );
         await deleteReservation(id);
       } catch (error) {
         console.error(`Error deleting reservation with ID ${id}:`, error);
@@ -146,14 +205,51 @@ export default {
     showDetail(reservation) {
       this.ModalVisible = true;
       this.reserveData = reservation;
-      console.log(reservation)
+      console.log(reservation);
     },
     async acceptReservation(reservation) {
-      // Handle accept reservation action
+      const updatedData = {
+        data: {
+          status: "Confirmed",
+        },
+      };
+      const res = await updateReservation(reservation.id, updatedData);
+      if (res) {
+        console.log(reservation);
+        this.reservations = this.reservations.filter((item) => {
+          item.id !== res.data.id;
+        });
+        if (
+          reservation.attributes &&
+          reservation.attributes.customer &&
+          reservation.attributes.customer.data
+        ) {
+          const acceptedRes = {
+            data: {
+              customer: reservation.attributes.customer.data.id,
+              reservation_demand: reservation.id,
+            },
+          };
+          const accept = await acceptReservation(acceptedRes);
+          if (accept) {
+            this.$router.push({ path: "/acceptedres" });
+          }
+        }
+      }
     },
     async refuseReservation(reservation) {
-         this.isOpenRefuse = !this.isOpenRefuse
-         console.log("ok")
+      this.reserveData = reservation;
+      this.isOpenRefuse = !this.isOpenRefuse;
+      console.log("ok");
+    },
+    changeStatus(event) {
+      this.reservations = this.reservations.filter((item) => {
+        item.id !== event.data.id;
+      });
+      this.isOpenRefuse = false;
+    },
+    closeRefus() {
+      this.isOpenRefuse = false;
     },
     async fetchAccepted() {
       const res = await fetchAcceptedReservations();

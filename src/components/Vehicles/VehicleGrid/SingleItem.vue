@@ -206,7 +206,7 @@ export default {
 .lock {
   color: #2b2a3f;
   background-color: white;
-  border: 1px solid gray;
+  border: none ;
   width: 50px;
   height: 40px;
   margin-right: 3px;
@@ -217,32 +217,7 @@ export default {
   align-items: center;
   justify-content: flex-end;
 }
-.lock:hover {
-  background-color: #2b2a3f;
-  color: white;
-}
 
-
-.lock {
-  color: #2b2a3f;
-  background-color: white;
-  border: 1px solid gray;
-  width: 50px;
-  height: 40px;
-  margin-right: 3px;
-  border-radius: 40%;
-}
-
-.lockbtn {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.lock:hover {
-  background-color: #2b2a3f;
-  color: white;
-}
 
 
 
