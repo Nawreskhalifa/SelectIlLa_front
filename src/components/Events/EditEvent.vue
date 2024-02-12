@@ -15,6 +15,9 @@
                 v-model="eventName"
                 required
               />
+              <span v-if="!eventName" class="text-danger"
+                >Event Name is required!</span
+              >
             </div>
           </div>
           <div class="col-md-12">
@@ -53,22 +56,27 @@
                   {{ category?.name }}
                 </option>
               </select>
-              <div class="members-list" v-if="selectedCategories &&  selectedCategories.length > 0" >
-                <div v-for="(perv,i) in selectedCategories"
+              <div
+                class="members-list"
+                v-if="selectedCategories && selectedCategories.length > 0"
+              >
+                <div
+                  v-for="(perv, i) in selectedCategories"
                   class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
                   :key="i"
                 >
-                  {{perv?.name}}
+                  {{ perv?.name }}
                   <button
                     type="button"
                     class="bg-transparent p-0 border-0 lh-1 transition"
                     @click="deleteFromCategories(perv)"
-                    >
+                  >
                     <i class="flaticon-close"></i>
                   </button>
                 </div>
-
               </div>
+              <span v-if="selectedCategories.length === 0" class="text-danger">Please select at least one category!</span>
+
             </div>
           </div>
           <div class="col-md-6">
@@ -90,6 +98,8 @@
                   {{ partner.name }}
                 </option>
               </select>
+              <span v-if="!selectedPartner" class="text-danger">Partner is required!</span>
+
             </div>
           </div>
           <!-- <div class="col-md-12">
@@ -127,20 +137,17 @@
               <label class="d-block text-black fw-semibold mb-10"
                 >Ticket Price</label
               >
-              <div class="input-group">
-                <span
-                  class="input-group-text rounded-0 fs-14 fw-bold text-primary"
-                >
-                  $
-                </span>
-                <input
-                  type="text"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="e.g. 120.00"
-                  required
-                  v-model="price"
-                />
-              </div>
+
+              <input
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 120.00"
+                required
+                v-model="price"
+              />
+              <span v-if="isNaN(price)" class="text-danger"
+                >Please enter a valid number for the price.</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -154,6 +161,9 @@
                 required
                 v-model="location"
               />
+              <span v-if="!location" class="text-danger"
+                >Location is required!</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -167,6 +177,12 @@
                 required
                 v-model="startDate"
               />
+              <span v-if="!startDate" class="text-danger"
+              >Start Date is required!</span
+            >
+            <span v-else-if="startDate < currentDate" class="text-danger"
+              >Start Date must be today or later</span
+            >
             </div>
           </div>
           <div class="col-md-6">
@@ -181,6 +197,8 @@
                 v-model="startTime"
                 :min="currentDate"
               />
+              <span v-if="!startTime" class="text-danger">Start Time is required!</span>
+
             </div>
           </div>
           <div class="col-md-6">
@@ -195,6 +213,12 @@
                 v-model="endDate"
                 :min="startDate"
               />
+              <span v-if="!endDate" class="text-danger"
+              >End Date is required!</span
+            >
+            <span v-else-if="endDate < startDate" class="text-danger"
+            >endDate Date must be today or later</span
+          >
             </div>
           </div>
           <div class="col-md-6">
@@ -208,6 +232,8 @@
                 required
                 v-model="endTime"
               />
+              <span v-if="!endTime" class="text-danger">End Time is required!</span>
+
             </div>
           </div>
           <div class="col-md-6">
@@ -224,6 +250,12 @@
                 required
                 v-model="seats"
               />
+              <span v-if="!seats" class="text-danger"
+              >Number of Seats is required!</span
+            >
+            <span v-else-if="seats < 1" class="text-danger"
+              >Number of Seats must be at least 1</span
+            >
             </div>
           </div>
           <div class="col-md-6">
@@ -240,6 +272,12 @@
                 required
                 v-model="bottles"
               />
+              <span v-if="!bottles" class="text-danger"
+              >Number of bottles is required!</span
+            >
+            <span v-else-if="bottles < 1" class="text-danger"
+              >Number of bottles must be at least 1</span
+            >
             </div>
           </div>
 
@@ -253,6 +291,7 @@
                   type="file"
                   multiple
                   v-on:change="handleFileUpload"
+                  accept="image/*"
                   class="d-block shadow-none border-0 position-absolute start-0 end-0 top-0 bottom-0 z-1 opacity-0"
                 />
                 <i class="flaticon-image"></i>
@@ -346,7 +385,7 @@ export default defineComponent({
       newPhotos: [],
       photosFromDatabase: [],
       selectedPhotos: [],
-      category:"",
+      category: "",
       selectedCategories: [],
       currentDate: new Date().toISOString().split("T")[0], // Date actuelle
       eventName: "",
@@ -372,7 +411,7 @@ export default defineComponent({
       photos: [],
       categoriesEvent: [],
       categoriesSelected: [],
-      selectedPartner:[]
+      selectedPartner: [],
     };
   },
   methods: {
@@ -395,10 +434,9 @@ export default defineComponent({
       // Retourner false si l'objet n'est pas trouvé dans la liste
       return false;
     },
-   async  addCategoryEvent(category) {
-
-     await  this.selectedCategories.push(category)
-      },
+    async addCategoryEvent(category) {
+      await this.selectedCategories.push(category);
+    },
 
     removeNewImage(index) {
       this.newPhotos.splice(index, 1);
@@ -423,10 +461,10 @@ export default defineComponent({
       }
     },
     deleteFromCategories(cat) {
-  this.selectedCategories = this.selectedCategories.filter(item => {
-    return item.id !== cat.id;
-  });
-},
+      this.selectedCategories = this.selectedCategories.filter((item) => {
+        return item.id !== cat.id;
+      });
+    },
 
     removeImage(index) {
       // Supprimer l'image à l'index spécifié
@@ -504,7 +542,7 @@ export default defineComponent({
       "getCategoriesLoading",
       "getCategoriesEvent",
       "getEvent",
-      "getPartners"
+      "getPartners",
     ]),
   },
   async mounted() {
@@ -546,10 +584,11 @@ export default defineComponent({
       this.promoterName = this.getEvent.namePromoter;
       this.promoterInfo = this.getEvent.promotingInfo;
       this.photosFromDatabase = this.getEvent.photos;
-      if(this.getEvent.partner)
-      {this.selectedPartner=this.getEvent.partner.id}
+      if (this.getEvent.partner) {
+        this.selectedPartner = this.getEvent.partner.id;
+      }
     }
-    console.log(this.selectedCategories,"ok")
+    console.log(this.selectedCategories, "ok");
   },
 });
 </script>

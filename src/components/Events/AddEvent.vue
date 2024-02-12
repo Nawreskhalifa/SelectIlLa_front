@@ -189,7 +189,7 @@
                 v-model="bottles"
               />
               <span v-if="!bottles" class="text-danger"
-                >Number of Seats is required!</span
+                >Number of bottles is required!</span
               >
               <span v-else-if="bottles < 1" class="text-danger"
                 >Number of bottles must be at least 1</span
