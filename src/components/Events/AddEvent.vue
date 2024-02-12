@@ -182,7 +182,7 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Category Vehicle
+                Categories
               </label>
 
               <select
@@ -370,14 +370,12 @@ export default defineComponent({
       "fetchAllPartners",
     ]),
     deleteFromCategories(cat) {
-      console.log(cat, " cat it self ");
       this.selectedCategoryNames = this.selectedCategoryNames.filter((item) => {
         item.id !== cat.id;
       });
     },
     addToAllCat: () => {
       this.AllSelected.push(this.selectedCategory);
-      console.log(this.AllSelected);
     },
     addCategoryEvent(category) {
       this.getCategoriesEvent.map((item, key) => {
@@ -394,13 +392,11 @@ export default defineComponent({
       this.photos.push(...newPhotos);
       this.selectedPhotos = [];
       this.photos.forEach((item) => {
-        console.log(item);
         this.selectedPhotos.push({
           id: item.name,
           url: URL.createObjectURL(item),
         });
       });
-      console.log(this.selectedPhotos);
     },
     removeImage(index) {
       // Supprimer l'image à l'index spécifié
@@ -411,11 +407,9 @@ export default defineComponent({
       const formData = new FormData();
 
       try {
-        console.log(this.selectedCategories);
         this.selectedCategoryNames.forEach((item) => {
           this.AllSelected.push(item.id);
         });
-        console.log(this.AllSelected);
 
         formData.append("category_events", this.AllSelected);
         formData.append("partner", this.selectedPartner);
@@ -483,7 +477,6 @@ export default defineComponent({
   async mounted() {
     await this.fetchAllCategoriesEvent({ page: null });
     await this.fetchAllPartners();
-    console.log("qgdh", this.getPartners);
     // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
     const today = new Date();
     const year = today.getFullYear();

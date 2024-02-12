@@ -50,7 +50,6 @@ const mutations = {
     event.updateEvent(data);
   },
   updateOpen(state) {
-    console.log(state, "state")
     state.open = !state.open
   }
 };
@@ -146,7 +145,6 @@ const actions = {
       );
 
       if (response.success) {
-        console.log("dd", response.data.data);
         commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
         commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
         commit("SET_EVENTS", response.data.data.map(decodeApiToEvent));
@@ -179,7 +177,6 @@ const actions = {
         undefined,
         undefined
       );
-      console.log("dfg", response);
       if (response.success) {
         commit("REMOVE_EVENT", id);
         commit("SET_EVENTS_LOADING");
@@ -232,7 +229,6 @@ const actions = {
     commit("SET_EVENTS_LOADING", true);
     commit("SET_EVENTS_ERROR");
     try {
-      console.log(payload);
       commit("ADD_EVENT", decodeApiToEvent(payload));
       commit("SET_EVENTS_LOADING");
     } catch (error: any) {

@@ -35,7 +35,7 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Category Vehicle
+                Categories
               </label>
 
               <select
@@ -53,54 +53,49 @@
                   {{ category?.name }}
                 </option>
               </select>
-              <div class="members-list" v-if="selectedCategories &&  selectedCategories.length > 0" >
-                <div v-for="(perv,i) in selectedCategories"
+              <div
+                class="members-list"
+                v-if="selectedCategories && selectedCategories.length > 0"
+              >
+                <div
+                  v-for="(perv, i) in selectedCategories"
                   class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
                   :key="i"
                 >
-                  {{perv?.name}}
+                  {{ perv?.name }}
                   <button
                     type="button"
                     class="bg-transparent p-0 border-0 lh-1 transition"
                     @click="deleteFromCategories(perv)"
-                    >
+                  >
                     <i class="flaticon-close"></i>
                   </button>
                 </div>
-
               </div>
             </div>
           </div>
-          <!-- <div class="col-md-12">
+
+          <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <fieldset>
-                <details>
-                  <summary>Select categories:</summary>
-                  <div class="col-md-6">
-                    <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                      <label class="d-block text-black fw-semibold mb-10">
-                        Categories
-                      </label>
-                      <select
-                        class="form-select shadow-none fw-semibold rounded-0 select-same-width"
-                        style="height: 47px; border-color: #eeeee4"
-                        v-model="selectedCategories"
-                      >
-                        <option value="" selected>Select a partner</option>
-                        <option
-                          v-for="category in getCategoriesEvent"
-                          :key="category.id"
-                          :value="category.id"
-                        >
-                          {{ category.name }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </details>
-              </fieldset>
+              <label class="d-block text-black fw-semibold mb-10">
+                Partner
+              </label>
+              <select
+                class="form-select shadow-none fw-semibold rounded-0 select-same-width"
+                style="height: 47px; border-color: #eeeee4"
+                v-model="selectedPartner"
+              >
+                <option value="" selected>Select a partner</option>
+                <option
+                  v-for="partner in getPartners"
+                  :key="partner.id"
+                  :value="partner.id"
+                >
+                  {{ partner.name }}
+                </option>
+              </select>
             </div>
-          </div> -->
+          </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10"
@@ -221,27 +216,7 @@
               />
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Partner
-              </label>
-              <select
-                class="form-select shadow-none fw-semibold rounded-0 select-same-width"
-                style="height: 47px; border-color: #eeeee4"
-                v-model="selectedPartner"
-              >
-                <option value="" selected>Select a partner</option>
-                <option
-                  v-for="partner in getPartners"
-                  :key="partner.id"
-                  :value="partner.id"
-                >
-                  {{ partner.name }}
-                </option>
-              </select>
-            </div>
-          </div>
+
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
@@ -345,7 +320,7 @@ export default defineComponent({
       newPhotos: [],
       photosFromDatabase: [],
       selectedPhotos: [],
-      category:"",
+      category: "",
       selectedCategories: [],
       currentDate: new Date().toISOString().split("T")[0], // Date actuelle
       eventName: "",
@@ -371,7 +346,7 @@ export default defineComponent({
       photos: [],
       categoriesEvent: [],
       categoriesSelected: [],
-      selectedPartner:[]
+      selectedPartner: [],
     };
   },
   methods: {
@@ -394,10 +369,9 @@ export default defineComponent({
       // Retourner false si l'objet n'est pas trouvé dans la liste
       return false;
     },
-   async  addCategoryEvent(category) {
-
-     await  this.selectedCategories.push(category)
-      },
+    async addCategoryEvent(category) {
+      await this.selectedCategories.push(category);
+    },
 
     removeNewImage(index) {
       this.newPhotos.splice(index, 1);
@@ -422,10 +396,10 @@ export default defineComponent({
       }
     },
     deleteFromCategories(cat) {
-  this.selectedCategories = this.selectedCategories.filter(item => {
-    return item.id !== cat.id;
-  });
-},
+      this.selectedCategories = this.selectedCategories.filter((item) => {
+        return item.id !== cat.id;
+      });
+    },
 
     removeImage(index) {
       // Supprimer l'image à l'index spécifié
@@ -436,7 +410,6 @@ export default defineComponent({
       const formData = new FormData();
 
       try {
-        console.log(this.selectedCategories);
         if (this.selectedCategories && this.selectedCategories.length) {
           for (let index = 0; index < this.selectedCategories.length; index++) {
             // Ajouter l'objet temporaire à formData
@@ -460,6 +433,7 @@ export default defineComponent({
         formData.append("total_bottles", this.bottles.toString());
         formData.append("name_promoter", this.promoterName);
         formData.append("promiting_info", this.promoterInfo);
+        formData.append("partner", this.selectedPartner);
         if (this.newPhotos && this.newPhotos.length >= 1) {
           this.newPhotos.forEach((photo) => {
             formData.append("files.photos", photo);
@@ -472,7 +446,6 @@ export default defineComponent({
           undefined
         );
         if (response.success) {
-          console.log(this.photos, response.data.id);
           if (this.photos && this.photos.length) {
             const responseUpload = await uploadFiles(
               this.photos,
@@ -503,7 +476,7 @@ export default defineComponent({
       "getCategoriesLoading",
       "getCategoriesEvent",
       "getEvent",
-      "getPartners"
+      "getPartners",
     ]),
   },
   async mounted() {
@@ -517,11 +490,8 @@ export default defineComponent({
     this.currentDate = `${year}-${month}-${day}`;
     // Initialise startDate avec la date actuelle
     this.startDate = this.currentDate;
-    console.log("dfd", this.getCategoriesEvent);
     if (this.$route.params && this.$route.params.idEvent) {
       await this.fetchOneEvent(this.$route.params.idEvent);
-      console.log("dd", this.getEvent);
-      console.log("ss", this.getEvent.categoryEvents);
 
       this.eventName = this.getEvent.name;
       this.description = this.getEvent.description;
@@ -545,10 +515,10 @@ export default defineComponent({
       this.promoterName = this.getEvent.namePromoter;
       this.promoterInfo = this.getEvent.promotingInfo;
       this.photosFromDatabase = this.getEvent.photos;
-      if(this.getEvent.partner)
-      {this.selectedPartner=this.getEvent.partner.id}
+      if (this.getEvent.partner) {
+        this.selectedPartner = this.getEvent.partner.id;
+      }
     }
-    console.log(this.selectedCategories,"ok")
   },
 });
 </script>
