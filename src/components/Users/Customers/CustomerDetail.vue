@@ -7,20 +7,21 @@
       <div class="leads-details-tabs">
         <ul class="nav nav-tabs border-0 mb-25" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100"
-              id="deals-tab" data-bs-toggle="tab" data-bs-target="#creditCards-tab-pane" type="button" role="tab"
-              aria-controls="creditCards-tab-pane" aria-selected="false">
-              Credit Cards
-            </button>
-          </li>
-
-          <li class="nav-item" role="presentation">
-            <button class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100"
+            <button class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100  active"
               id="emails-tab" data-bs-toggle="tab" data-bs-target="#reservations-tab-pane" type="button" role="tab"
               aria-controls="reservations-tab-pane" aria-selected="false">
               Reservations
             </button>
           </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100 "
+              id="creditCards-tab" data-bs-toggle="tab" data-bs-target="#creditCards-tab-pane" type="button" role="tab"
+              aria-controls="creditCards-tab-pane" aria-selected="true">
+              Credit Cards
+            </button>
+          </li>
+
+
           <li class="nav-item" role="presentation">
             <button class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100"
               id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments-tab-pane" type="button" role="tab"
@@ -30,7 +31,7 @@
           </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-          <div class="tab-pane fade" id="creditCards-tab-pane" role="tabpanel" tabindex="0">
+          <div class="tab-pane fade " id="creditCards-tab-pane" role="tabpanel" tabindex="1">
             <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
               <div
                 class="card-head bg-white d-md-flex align-items-center justify-content-between pt-15 pb-15 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30">
@@ -128,7 +129,7 @@
             </div>
           </div>
 
-          <div class="tab-pane fade" id="reservations-tab-pane" role="tabpanel" tabindex="0">
+          <div class="tab-pane fade show active" id="reservations-tab-pane" role="tabpanel" tabindex="0">
             <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
               <div
                 class="card-head bg-white d-md-flex align-items-center justify-content-between pt-15 pb-15 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30">
@@ -232,7 +233,7 @@
               </div>
             </div>
           </div>
-          <div class="tab-pane fade" id="attachments-tab-pane" role="tabpanel" tabindex="0">
+          <div class="tab-pane fade" id="attachments-tab-pane" role="tabpanel" tabindex="2">
             <div class="card mb-25 border-0 rounded-0 bg-white attachments-box">
               <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
                 <div class="mb-15 mb-md-20 mb-lg-25 d-sm-flex align-items-center justify-content-between">

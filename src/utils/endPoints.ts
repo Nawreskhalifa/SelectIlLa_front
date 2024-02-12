@@ -8,7 +8,7 @@ export const endPoints = {
     allCategoriesEvent: `${API_BASE_URL}category-events`,
     detailCategoryEvent: `${API_BASE_URL}category-events`,
     createCategoryEvent: `${API_BASE_URL}category-events`,
-    allEvents: `${API_BASE_URL}events?populate=*`,
+    allEvents: `${API_BASE_URL}events`,
     findEvent: `${API_BASE_URL}events`,
     findCategoryEventByName: `${API_BASE_URL}category-events/category/`,
     findCustomer: `${API_BASE_URL}customers/`,

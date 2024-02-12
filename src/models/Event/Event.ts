@@ -25,7 +25,7 @@ export interface Event {
     photos: Photo[] | null;
     partner: Partner | null;
     categoryEvents: EventCategory[];
-    active:boolean
+    active: boolean
 }
 export const decodeApiToPhoto = (photoApi: PhotoApi): Photo => {
     return {
@@ -52,11 +52,9 @@ export const decodeApiToEvent = (eventApi): Event => {
         endTime: eventApi.attributes.end_time,
         location: eventApi.attributes.location,
         photos: eventApi.attributes.photos.data ? eventApi.attributes.photos.data.map(decodeApiToPhoto) : null,
-        partner: eventApi.attributes.partner.data ? decodePartner(eventApi.attributes.partner.data) : null,
+        // partner:null,
+       partner: eventApi.attributes.partner.data ? decodePartner(eventApi.attributes.partner.data) : null,
         categoryEvents: eventApi.attributes.category_events.data.map(decodeApiToEventCategory),
-        active:eventApi.attributes.isActive
+        active: eventApi.attributes.active
     };
 };
-
-
-

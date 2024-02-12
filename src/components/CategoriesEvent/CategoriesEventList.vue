@@ -4,17 +4,30 @@
       class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-20 p-md-25 p-lg-30"
     >
       <div class="d-sm-flex align-items-center">
-        <form class="search-box position-relative">
+        <form
+          class="search-box position-relative"
+          @submit.prevent="handleSearch"
+        >
           <input
             type="text"
             class="form-control shadow-none text-black rounded-0 border-0"
-            placeholder="Search Category"
+            placeholder="Search event"
+            v-model="searchText"
           />
           <button
+            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
             type="submit"
-            class="bg-transparent text-primary transition p-0 border-0"
+            :disabled="getCategoriesLoading"
           >
-            <i class="flaticon-search-interface-symbol"></i>
+            <i
+              v-if="!getCategoriesLoading"
+              class="flaticon-search-interface-symbol"
+            ></i>
+            <div
+              v-if="getCategoriesLoading"
+              class="spinner-border"
+              role="status"
+            ></div>
           </button>
         </form>
       </div>
@@ -170,16 +183,26 @@ export default defineComponent({
   data() {
     return {
       currentPage: 1,
+      searchText: "",
     };
   },
   methods: {
     ...mapActions(["fetchAllCategoriesEvent", "deleteCategoryEvent"]),
+    async handleSearch() {
+      console.log(this.searchText);
+      await this.fetchAllCategoriesEvent({
+        page: this.currentPage,
+        perPage: 4,
+        name: this.searchText,
+      });
+      console.log("q:", this.getCategoriesEvent);
+    },
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;
-      await this.fetchAllCategoriesEvent(pageNumber);
+      await this.fetchAllCategoriesEvent({ page: pageNumber, perPage: 4 });
     },
     truncateDescription(description) {
-      const maxLength = 65;
+      const maxLength = 200;
       if (description.length <= maxLength) {
         return description;
       } else {
@@ -234,7 +257,7 @@ export default defineComponent({
     ]),
   },
   async mounted() {
-    await this.fetchAllCategoriesEvent(this.currentPage);
+    await this.fetchAllCategoriesEvent({ page: this.currentPage, perPage: 4 });
   },
 });
 </script>

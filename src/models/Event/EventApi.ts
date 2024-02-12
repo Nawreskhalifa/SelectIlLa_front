@@ -29,7 +29,7 @@ export interface EventApi {
         photos: PhotoApi[] | null,
         partner: PartnerApi | null,
         category_events: EventCategoryApi[],
-        isActive:boolean
+        active:boolean
 
     }
 }

@@ -56,12 +56,48 @@
           <option value="false">Inactive</option>
         </select>
       </div>
+      <div class="dropdown">
+        <button
+          class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="flaticon-dots"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="selectAllEvents"
+            >
+              <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
+              {{ selectAllChecked ? "Deselect All" : "Select All" }}
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="deleteSelectedCustomers"
+            >
+              <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
+              Delete Selected
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="row row-cols-1 row-cols-md-2 row-cols-xxxl-3 g-4">
     <div class="col" v-for="event in getEvents" :key="event.id">
       <div class="card h-100 mb-15 border-0 rounded-0 bg-white event-card">
         <div class="card-body p-10 letter-spacing">
+          <div class="form-check mb-2">
+            <input class="form-check-input shadow-none" type="checkbox" />
+          </div>
+
           <router-link :to="`/event-details/${event.id}`">
             <img
               v-if="storageUrl && event?.photos"
@@ -77,51 +113,34 @@
               <div class="d-lg-flex align-items-center">
                 <div class="date rounded-1 text-center">
                   <span class="d-block bg-primary text-white fs-md-15 fw-bold">
-                    {{ getDayAbbreviation(event.startDate) }}
+                    {{ getDayAbbreviation(event?.startDate) }}
                   </span>
                   <span class="d-block text-black fw-black">{{
-                    getDayOfMonth(event.startDate)
+                    getDayOfMonth(event?.startDate)
                   }}</span>
                 </div>
-                <div>
-                  <h2 class="fs-15 fs-md-16 fs-lg-18 mb-8 mb-md-12 fw-bold">
+                <div class="ms-lg-20 mt-15 mt-lg-0">
+                  <h5 class="fs-15 fs-md-16 fs-lg-18 mb-8 mb-md-12 fw-bold">
                     <router-link
-                      :to="'/event-details/' + event.id"
+                      :to="`/event-details/${event.id}`"
                       class="text-black text-decoration-none"
                     >
-                      {{ event.name }}
+                      {{ event?.name }}
                     </router-link>
-                  </h2>
+                  </h5>
                 </div>
-
-                <div class="ms-lg-20 mt-15 mt-lg-0">
-                  <div style="display: flex; justify-content: space-between">
-                    <span class="d-block text-muted"> Categories: </span>
-                    <div v-for="(e, index) in event.categoryEvents" :key="e.id">
-                      <span class="d-inline-block text-primary">{{
-                        e.name
-                      }}</span>
-                      <!-- Ajouter un séparateur sauf pour le dernier élément -->
-                      <span
-                        v-if="index !== event.categoryEvents.length - 1"
-                        class="text-muted"
-                      >
-                        -
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="d-flex align-items-center">
-                    <span class="d-block text-muted">
-                      Promote by
-                      <span class="fw-semibold text-primary">
-                        {{ event.namePromoter }}
-                      </span>
-                    </span>
-                    <span class="badge text-outline-danger ms-10">Closed</span>
-                  </div>
-                </div>
+                <span
+                  v-if="event?.active == true"
+                  class="badge text-outline-success ms-10"
+                  >Active</span
+                >
+                <span
+                  v-if="event?.active == false"
+                  class="badge text-outline-danger ms-10"
+                  >Inactive</span
+                >
               </div>
+
               <div class="dropdown">
                 <button
                   class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
@@ -171,8 +190,36 @@
                 </ul>
               </div>
             </div>
+            <div class="d-flex align-items-center">
+              <div style="display: flex; justify-content: space-between">
+                <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14">
+                  CATEGORIES:
+                </span>
+                <div v-for="(e, index) in event.categoryEvents" :key="e.id">
+                  <span class="text-primary">{{ e.name }}</span>
+                  <!-- Ajouter un séparateur sauf pour le dernier élément -->
+                  <span
+                    v-if="index !== event.categoryEvents.length - 1"
+                    class="text-muted"
+                  >
+                    -
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center">
+              <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14">
+                PROMOTE BY:
+                <span class="fw-semibold text-primary">
+                  {{ event.namePromoter }}
+                </span>
+              </span>
+              <!-- <span class="badge text-outline-danger ms-10">{{
+                event.active
+              }}</span> -->
+            </div>
             <p class="text-paragraph lh-base fs-md-15">
-              {{ event.description }}
+              {{ truncateDescription(event.description) }}
             </p>
             <ul class="info-list ps-0 mb-15 list-unstyled">
               <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
@@ -194,15 +241,30 @@
                   LOCATION:
                 </span>
                 {{ event.location }}
+
+                <!-- Add Google Maps icon and make it clickable -->
+                <a
+                  :href="'https://maps.google.com/?q=' + event.location"
+                  target="_blank"
+                  class="google-maps-icon"
+                >
+                  <i class="fas fa-map-marker-alt"></i>
+                </a>
               </li>
             </ul>
-            <router-link
+            <!-- <router-link
               :to="`/event-details/${event.id}`"
-              class="link-btn closed p-12 p-sm-15 p-md-20 d-flex align-items-center justify-content-between w-100 text-decoration-none fw-medium text-muted"
+              class="link-btn p-12 p-sm-15 p-md-20 d-flex align-items-center justify-content-between w-100 text-decoration-none fw-medium text-muted"
             >
-              <span class="position-relative">Closed</span>
+              <span v-if="event.active == true" class="position-relative"
+                >Active</span
+              >
+              <span v-if="event.active == false" class="position-relative"
+                >Inactive</span
+              >
+
               <i class="ph ph-arrow-right"></i>
-            </router-link>
+            </router-link> -->
           </div>
         </div>
       </div>
@@ -271,11 +333,54 @@ export default {
       currentPage: 1,
       isHovered: false,
       searchText: "",
-      isActiveFilter : "All",
+      isActiveFilter: "All",
+      selectAllChecked: false,
     };
   },
   methods: {
     ...mapActions(["fetchAllEvents", "deleteEvent"]),
+    deleteSelectedCustomers() {
+      const selectedEvents = [];
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+          selectedEvents.push(this.getEvents[index].id);
+        }
+      });
+
+      if (selectedEvents.length === 0) {
+        swal("Please select at least one customer to delete.");
+        return;
+      }
+
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover these events!",
+        icon: "warning",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          // Call the deleteEvent action or API endpoint to delete the selected events
+          await Promise.all(selectedEvents.map((id) => this.deleteEvent(id)));
+          // After deletion, fetch events again to update the list
+          await this.fetchAllEvents({ page: this.currentPage, perPage: 4 });
+          swal("Selected events have been deleted!", {
+            icon: "success",
+          });
+        } else {
+          swal("Selected events are safe!");
+        }
+      });
+    },
+    truncateDescription(description) {
+      const maxLength = 200;
+      if (description && description.length <= maxLength) {
+        return description;
+      } else {
+        return description.slice(0, maxLength) + "...";
+      }
+    },
     async handleFilterChange() {
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
@@ -283,23 +388,30 @@ export default {
       // Appeler fetchAllEvents avec le filtre actif
       await this.fetchAllEvents({
         page: this.currentPage,
-        perPage: 10,
+        perPage: 4,
         name: this.searchText,
-        isActive: this.isActiveFilter ,
+        isActive: this.isActiveFilter,
+      });
+    },
+    selectAllEvents() {
+      this.selectAllChecked = !this.selectAllChecked;
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = this.selectAllChecked;
       });
     },
     async handleSearch() {
       console.log(this.searchText);
       await this.fetchAllEvents({
         page: this.currentPage,
-        perPage: 10,
+        perPage: 4,
         name: this.searchText,
       });
       console.log("q:", this.getEvents);
     },
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;
-      await this.fetchAllEvents({ page: pageNumber, perPage: 10, name: null });
+      await this.fetchAllEvents({ page: pageNumber, perPage: 4, name: null });
     },
     getDayOfMonth(inputDate) {
       // Création d'un objet Date à partir de la chaîne de date d'entrée
@@ -355,14 +467,6 @@ export default {
       return day + "-" + month + "-" + year;
     },
 
-    truncateDescription(description) {
-      const maxLength = 65;
-      if (description.length <= maxLength) {
-        return description;
-      } else {
-        return description.slice(0, maxLength) + "...";
-      }
-    },
     navigateToEditEventPage(idEvent) {
       if (idEvent !== null && idEvent !== undefined) {
         this.$router.push({
@@ -418,7 +522,7 @@ export default {
     this.storageUrl = storageUrl;
     await this.fetchAllEvents({
       page: this.currentPage,
-      perPage: 10,
+      perPage: 4,
       name: null,
     });
   },
@@ -441,5 +545,15 @@ export default {
 .event-card:hover {
   /* Box shadow on hover */
   box-shadow: 0 8px 12px #7d6ff0;
+}
+/* Add this CSS to your existing style section or CSS file */
+.google-maps-icon {
+  color: #ff2f00; /* Change the color to suit your design */
+  margin-right: 5px; /* Adjust margin as needed */
+}
+
+.google-maps-icon:hover {
+  color: #ff001e; /* Change the hover color */
+  text-decoration: none; /* Remove default underline on hover */
 }
 </style>

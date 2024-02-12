@@ -8,7 +8,7 @@ const state = {
     categoriesLoading: false,
     categoriesEvent: [],
     categoryEvent: null,
-    totalPages:1,
+    totalPages: 1,
     totalItems: 0,
 }
 const getters = {
@@ -16,7 +16,7 @@ const getters = {
     getCategoriesLoading: state => state.categoriesLoading,
     getCategoriesEvent: state => state.categoriesEvent,
     getCategoryEvent: state => state.categoryEvent,
-    getTotalPages:state=>state.totalPages,
+    getTotalPages: state => state.totalPages,
     getTotalItems: (state) => state.totalItems,
 
 
@@ -24,8 +24,8 @@ const getters = {
 const mutations = {
     SET_TOTAL_ITEMS(state, payload = 0) {
         state.totalItems = payload;
-      },
-    SET_TOTAL_PAGES(state, payload =1) {
+    },
+    SET_TOTAL_PAGES(state, payload = 1) {
         state.totalPages = payload
     },
     SET_CATEGORIES_LOADING(state, payload = false) {
@@ -93,19 +93,56 @@ const actions = {
         }
         return true
     },
-    async fetchAllCategoriesEvent({ commit },page,perPage=25) {
+    async fetchAllCategoriesEvent({ commit }, { page = null, perPage = 25, name = null }: { page?: number | null, perPage?: number, name: string | null }) {
         commit('SET_CATEGORIES_LOADING', true)
         commit('SET_CATEGORIES_ERROR')
         try {
+            let filters: {
+                pagination?: { page: number; pageSize: number };
+                filters?: {
+                    $or?: Array<{
+                        name?: { $contains: string };
+                        description?: { $contains: string };
+                    }>;
+                };
+            } = {}
+            if (page !== null) {
+                filters = { pagination: { page: page, pageSize: perPage } };
+            }
+            // Add the name filter if specified
+            if (name) {
+                filters.filters = {
+                    ...(filters.filters || {}), $or: [
+                        { name: { $contains: name } },
+                        { description: { $contains: name } },
+                    ]
+                };
+            }
+            const params: any = {};
+
+            // Ajouter la pagination si spécifiée
+            if (page && perPage) {
+                params.pagination = {
+                    page: page,
+                    pageSize: perPage
+                };
+            }
+
+            // Ajouter la recherche (filtre par nom) si spécifiée
+            if (name) {
+                params.filters = {
+                    name: {
+                        $contains: name
+                    }
+                };
+            }
+
 
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
                 endPoints.allCategoriesEvent,
                 undefined,
-                { pagination: {
-                    page: page,
-                    pageSize: perPage,
-                  }}
+                filters
             );
             console.log(response.data.data)
             if (response.success) {
