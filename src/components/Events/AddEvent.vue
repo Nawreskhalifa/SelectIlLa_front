@@ -32,45 +32,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-12">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <!-- <label class="d-block text-black fw-semibold mb-10"
-                >Select categories:</label
-              >
-              <multiselect
-                v-model="selectedCategories"
-                :options="getCategoriesEvent"
-                track-by="id"
-                label="name"
-                placeholder="Select categories"
-                :multiple="true"
-                :close-on-select="false"
-                :clear-on-select="false"
-                :hide-selected="true"
-              ></multiselect> -->
-              <fieldset>
-                <details>
-                  <summary>Select categories:</summary>
-                  <ul>
-                    <li
-                      v-for="(category, index) in getCategoriesEvent"
-                      :key="category.id"
-                    >
-                      <label
-                        ><input
-                          type="checkbox"
-                          v-model="selectedCategories[index]"
-                          :value="selectedCategories[index]"
-                          @change="addCategoryEvent(category)"
-                          required
-                        />{{ category.name }}</label
-                      >
-                    </li>
-                  </ul>
-                </details>
-              </fieldset>
-            </div>
-          </div>
+
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10"
@@ -193,17 +155,74 @@
           </div>
           <!-- <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Promoter Name
-              </label>
-              <input
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. AI Machine Learning"
-                v-model="promoterName"
-              />
+
+              <fieldset>
+                <details>
+                  <summary>Select categories:</summary>
+                  <ul>
+                    <li
+                      v-for="(category, index) in getCategoriesEvent"
+                      :key="category.id"
+                    >
+                      <label
+                        ><input
+                          type="checkbox"
+                          v-model="selectedCategories[index]"
+                          :value="selectedCategories[index]"
+                          @change="addCategoryEvent(category)"
+                          required
+                        />{{ category.name }}</label
+                      >
+                    </li>
+                  </ul>
+                </details>
+              </fieldset>
             </div>
           </div> -->
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Category Vehicle
+              </label>
+
+              <select
+                v-model="selectedCategories"
+                class="form-select shadow-none fw-semibold rounded-0 select-same-width"
+                style="height: 47px; border-color: #eeeee4"
+                @change="addCategoryEvent(category)"
+              >
+                <option selected>Select a Category</option>
+                <option
+                  v-for="category in getCategoriesEvent"
+                  :key="category.id"
+                  :value="category.id"
+                >
+                  {{ category.name }}
+                </option>
+              </select>
+              <ul
+                style="
+                  display: flex;
+                  flex-direction: row;
+                  gap: 10px;
+                  justify-content: flex-start;
+                  align-items: center;
+                "
+              >
+                <li
+                  class="single_cat"
+                  v-for="cat in selectedCategoryNames"
+                  :key="cat.id"
+                >
+                  <span> {{ cat.name }}</span>
+                  <i
+                    class="fas fa-times-circle"
+                    @click="deleteFromCategories(cat)"
+                  ></i>
+                </li>
+              </ul>
+            </div>
+          </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
@@ -301,7 +320,7 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import { makeApiRequest } from "@/services/apiService";
 import { methodsHttpNames } from "@/utils/methods";
@@ -338,6 +357,9 @@ export default defineComponent({
       photos: [],
       categoriesEvent: [],
       selectedPartner: [],
+      selectedCategory: "",
+      AllSelected: [],
+      selectedCategoryNames: [],
     };
   },
   methods: {
@@ -347,9 +369,20 @@ export default defineComponent({
       "fetchOneCategoryEvent",
       "fetchAllPartners",
     ]),
+    deleteFromCategories(cat) {
+      console.log(cat, " cat it self ");
+      this.selectedCategoryNames = this.selectedCategoryNames.filter((item) => {
+        item.id !== cat.id;
+      });
+    },
+    addToAllCat: () => {
+      this.AllSelected.push(this.selectedCategory);
+      console.log(this.AllSelected);
+    },
     addCategoryEvent(category) {
       this.getCategoriesEvent.map((item, key) => {
         item.check = this.selectedCategories[key];
+        this.selectedCategoryNames.push(item);
         return item;
       });
     },
@@ -379,21 +412,12 @@ export default defineComponent({
 
       try {
         console.log(this.selectedCategories);
-        //
-        if (this.getCategoriesEvent && this.getCategoriesEvent.length) {
-          this.categoriesEvent = this.getCategoriesEvent.filter(
-            (item) => item.check == true
-          );
-          for (let index = 0; index < this.categoriesEvent.length; index++) {
-            // Créer un objet temporaire contenant uniquement la propriété 'id'
-            const tempObj = { id: this.categoriesEvent[index].id };
-            // Ajouter l'objet temporaire à formData
-            formData.append(
-              `category_events`,
-              JSON.stringify(this.categoriesEvent[index].id)
-            );
-          }
-        }
+        this.selectedCategoryNames.forEach((item) => {
+          this.AllSelected.push(item.id);
+        });
+        console.log(this.AllSelected);
+
+        formData.append("category_events", this.AllSelected);
         formData.append("partner", this.selectedPartner);
         // Ajouter chaque champ du formulaire à l'objet FormData
         formData.append("name", this.eventName);

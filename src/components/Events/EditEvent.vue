@@ -32,32 +32,75 @@
               </div>
             </div>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Category Vehicle
+              </label>
+
+              <select
+                v-model="category"
+                class="form-select shadow-none fw-semibold rounded-0 select-same-width"
+                style="height: 47px; border-color: #eeeee4"
+                @change="addCategoryEvent(category)"
+              >
+                <option selected>Select a Category</option>
+                <option
+                  v-for="category in getCategoriesEvent"
+                  :key="category.id"
+                  :value="category"
+                >
+                  {{ category?.name }}
+                </option>
+              </select>
+              <div class="members-list" v-if="selectedCategories &&  selectedCategories.length > 0" >
+                <div v-for="(perv,i) in selectedCategories"
+                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
+                  :key="i"
+                >
+                  {{perv?.name}}
+                  <button
+                    type="button"
+                    class="bg-transparent p-0 border-0 lh-1 transition"
+                    @click="deleteFromCategories(perv)"
+                    >
+                    <i class="flaticon-close"></i>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <!-- <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <fieldset>
                 <details>
                   <summary>Select categories:</summary>
-                  <ul>
-                    <li
-                      v-for="category in getCategoriesEvent"
-                      :key="category.id"
-                    >
-                      <label>
-                        <input
-                          type="checkbox"
-                          :checked="
-                            objetExisteDansListe(category, selectedCategories)
-                          "
-                          @change="addCategoryEvent(category)"
-                        />
-                        {{ category.name }}
+                  <div class="col-md-6">
+                    <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                      <label class="d-block text-black fw-semibold mb-10">
+                        Categories
                       </label>
-                    </li>
-                  </ul>
+                      <select
+                        class="form-select shadow-none fw-semibold rounded-0 select-same-width"
+                        style="height: 47px; border-color: #eeeee4"
+                        v-model="selectedCategories"
+                      >
+                        <option value="" selected>Select a partner</option>
+                        <option
+                          v-for="category in getCategoriesEvent"
+                          :key="category.id"
+                          :value="category.id"
+                        >
+                          {{ category.name }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
                 </details>
               </fieldset>
             </div>
-          </div>
+          </div> -->
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10"
@@ -302,6 +345,7 @@ export default defineComponent({
       newPhotos: [],
       photosFromDatabase: [],
       selectedPhotos: [],
+      category:"",
       selectedCategories: [],
       currentDate: new Date().toISOString().split("T")[0], // Date actuelle
       eventName: "",
@@ -350,25 +394,10 @@ export default defineComponent({
       // Retourner false si l'objet n'est pas trouvé dans la liste
       return false;
     },
-    addCategoryEvent(category) {
-      // Vérifier si la catégorie est déjà dans la liste
-      const existingCategoryIndex = this.selectedCategories.findIndex(
-        (cat) => cat.id === category.id
-      );
-      if (existingCategoryIndex === -1) {
-        // Si la catégorie n'est pas déjà dans la liste, l'ajouter avec checked à true
-        this.selectedCategories.push({ ...category, checked: true });
-      } else {
-        // Si la catégorie est déjà dans la liste, inverser l'état de checked
-        this.selectedCategories[existingCategoryIndex].checked =
-          !this.selectedCategories[existingCategoryIndex].checked;
-        // Si la catégorie est désélectionnée, la supprimer de la liste
-        if (!this.selectedCategories[existingCategoryIndex].checked) {
-          this.selectedCategories.splice(existingCategoryIndex, 1);
-        }
-      }
-      console.log(this.selectedCategories);
-    },
+   async  addCategoryEvent(category) {
+
+     await  this.selectedCategories.push(category)
+      },
 
     removeNewImage(index) {
       this.newPhotos.splice(index, 1);
@@ -392,6 +421,12 @@ export default defineComponent({
         this.photos.push(...Array.from(event.target.files));
       }
     },
+    deleteFromCategories(cat) {
+  this.selectedCategories = this.selectedCategories.filter(item => {
+    return item.id !== cat.id;
+  });
+},
+
     removeImage(index) {
       // Supprimer l'image à l'index spécifié
       this.photos.splice(index, 1);
@@ -513,6 +548,7 @@ export default defineComponent({
       if(this.getEvent.partner)
       {this.selectedPartner=this.getEvent.partner.id}
     }
+    console.log(this.selectedCategories,"ok")
   },
 });
 </script>
