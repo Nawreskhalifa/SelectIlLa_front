@@ -2,7 +2,7 @@ import { API_BASE_URL } from './constants';
 export const endPoints = {
     login: `${API_BASE_URL}auth/local`,
     allUsers: `${API_BASE_URL}users?populate=*`,
-    allCustomers: `${API_BASE_URL}customers?populate=*`,
+    allCustomers: `${API_BASE_URL}customers`,
     deleteCustomer: `${API_BASE_URL}customers/`,
     deleteCategoryEvent: `${API_BASE_URL}category-events`,
     allCategoriesEvent: `${API_BASE_URL}category-events`,
@@ -12,7 +12,7 @@ export const endPoints = {
     findEvent: `${API_BASE_URL}events`,
     findCategoryEventByName: `${API_BASE_URL}category-events/category/`,
     findCustomer: `${API_BASE_URL}customers/`,
-    allPartners: `${API_BASE_URL}partners?populate=*`,
+    allPartners: `${API_BASE_URL}partners`,
     register: `${API_BASE_URL}auth/local/register`,
     logout: `${API_BASE_URL}auth/logout`,
     forgetPassword: `${API_BASE_URL}forgetPassword`,
