@@ -17,7 +17,7 @@ export interface Customer {
     Insurance: string,
     address: string,
     creditCards: creditCards[] | null,
-    user: User
+    user: User | null
 }
 
 export const decodeCreditCard = (creditCardApi: creditCardsApi): creditCards => {
@@ -32,16 +32,17 @@ export const decodeCreditCard = (creditCardApi: creditCardsApi): creditCards => 
 export const decodeCustomer = (customerApi: CustomerApi): Customer => {
     return {
         id: customerApi.id,
-        name: customerApi.name,
-        surname: customerApi.surname,
-        phone: customerApi.phone,
-        driverLicense: customerApi.driver_license,
-        Insurance: customerApi.Insurance,
-        address: customerApi.address,
-        creditCards: customerApi.credit_cards
-            ? customerApi.credit_cards.map(decodeCreditCard)
+        name: customerApi.attributes.name,
+        surname: customerApi.attributes.surname,
+        phone: customerApi.attributes.phone,
+        driverLicense: customerApi.attributes.driver_license,
+        Insurance: customerApi.attributes.Insurance,
+        address: customerApi.attributes.address,
+        creditCards: customerApi.attributes.credit_cards
+            ? customerApi.attributes.credit_cards.map(decodeCreditCard)
             : null,
-        user: decodeUser(customerApi.user),
+        user: decodeUser(customerApi.attributes.user),
+        // user:null
     };
 };
 export const decodeCustomers = (customerApi: CustomerApi[]): Customer[] => {

@@ -482,4 +482,8 @@ export default defineComponent({
 .arrow-down::before {
   content: '\25BC'; /* Code Unicode pour la flèche vers le bas */
 }
+<<<<<<< HEAD
 </style>
+=======
+</style>
+>>>>>>> 215675fdea40de49b30c45f2e76211af8c8ddec5

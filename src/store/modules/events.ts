@@ -8,9 +8,9 @@ const state = {
   eventsLoading: false,
   events: [],
   event: null,
-  open : false ,
   totalPages: 1,
   totalItems: 0,
+  open : false
 };
 const getters = {
   getEventsError: (state) => state.eventsError,
@@ -49,7 +49,7 @@ const mutations = {
   UPDATE_EVENT(state, { event, data }) {
     event.updateEvent(data);
   },
-  updateOpen(state){
+    updateOpen(state){
     console.log(state,"state")
     state.open=!state.open
   }

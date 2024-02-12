@@ -15,7 +15,7 @@ export interface User {
     email: string;
     gender: string;
     dateOfBirth: string;
-    role: Role;
+    role: Role|null;
     photo: Photo | null;
     password: string;
     passwordConfirmation: string;
@@ -28,9 +28,9 @@ export interface UserWithToken {
 // Decode  of Photo
 export const decodePhoto = (photoApi: PhotoApi): Photo => {
     return {
-        id: photoApi.id,
-        name: photoApi.name,
-        url: photoApi.url,
+        id: photoApi.data.id,
+        name: photoApi.data.attributes.name,
+        url: photoApi.data.attributes.url,
     };
 };
 // Decode  of Role
@@ -43,15 +43,16 @@ export const decodeRole = (RoleApi: RoleApi): Role => {
 // Decode  of User
 export const decodeUser = (userApi: UserApi): User => {
     return {
-        id: userApi.id,
-        username: userApi.username,
-        email: userApi.email,
-        gender: userApi.gender,
-        dateOfBirth: userApi.date_of_birth,
-        role: decodeRole(userApi.role),
-        photo: userApi.photo ? decodePhoto(userApi.photo) : null,
-        password: userApi.password,
-        passwordConfirmation: userApi.password_confirmation,
+        id: userApi.data.id,
+        username: userApi.data.attributes.username,
+        email: userApi.data.attributes.email,
+        gender: userApi.data.attributes.gender,
+        dateOfBirth: userApi.data.attributes.date_of_birth,
+        role:null,
+        // role: decodeRole(userApi.data.attributes.role),
+        photo: userApi.data.attributes.photo ? decodePhoto(userApi.data.attributes.photo) : null,
+        password: userApi.data.attributes.password,
+        passwordConfirmation: userApi.data.attributes.password_confirmation,
     };
 };
 // Decode of UserWithToken
