@@ -50,7 +50,7 @@
               ></multiselect> -->
               <fieldset>
                 <details>
-                  <label>Select categories:</label>
+                  <summary>Select categories:</summary>
                   <ul>
                     <li
                       v-for="(category, index) in getCategoriesEvent"
@@ -280,8 +280,7 @@
 
 <script>
 import { defineComponent } from "vue";
- import Multiselect from "vue-multiselect";
-  import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { makeApiRequest } from "@/services/apiService";
 import { methodsHttpNames } from "@/utils/methods";
 import { endPoints } from "@/utils/endPoints";
@@ -420,8 +419,8 @@ export default defineComponent({
       "getCategoriesEvent",
       "getEventsLoading",
       "getEventsError",
-        "getPartners"
-     ]),
+      "getPartners"
+    ]),
     categoriesOptions() {
       if (this.getCategoriesEvent && this.getCategoriesEvent.length) {
         // Formattez les catégories pour les options de vue-multiselect
@@ -436,10 +435,9 @@ export default defineComponent({
 
   async mounted() {
     await this.fetchAllCategoriesEvent({ page: null });
-
-     await this.fetchAllPartners();
+    await this.fetchAllPartners();
     console.log('qgdh',this.getPartners)
-     // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
+    // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, "0");
