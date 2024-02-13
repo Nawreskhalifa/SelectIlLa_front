@@ -10,7 +10,7 @@ const state = {
   event: null,
   totalPages: 1,
   totalItems: 0,
-  open : false
+  open: false
 };
 const getters = {
   getEventsError: (state) => state.eventsError,
@@ -19,7 +19,7 @@ const getters = {
   getEvent: (state) => state.event,
   getTotalPages: (state) => state.totalPages,
   getTotalItems: (state) => state.totalItems,
-  isOpen: (state)=> state.open
+  isOpen: (state) => state.open
 };
 const mutations = {
   SET_TOTAL_ITEMS(state, payload = 0) {
@@ -49,9 +49,8 @@ const mutations = {
   UPDATE_EVENT(state, { event, data }) {
     event.updateEvent(data);
   },
-    updateOpen(state){
-    console.log(state,"state")
-    state.open=!state.open
+  updateOpen(state) {
+    state.open = !state.open
   }
 };
 const actions = {
@@ -146,7 +145,6 @@ const actions = {
       );
 
       if (response.success) {
-        console.log("dd", response.data.data);
         commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
         commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
         commit("SET_EVENTS", response.data.data.map(decodeApiToEvent));
@@ -179,7 +177,6 @@ const actions = {
         undefined,
         undefined
       );
-      console.log("dfg", response);
       if (response.success) {
         commit("REMOVE_EVENT", id);
         commit("SET_EVENTS_LOADING");
@@ -232,7 +229,6 @@ const actions = {
     commit("SET_EVENTS_LOADING", true);
     commit("SET_EVENTS_ERROR");
     try {
-      console.log(payload);
       commit("ADD_EVENT", decodeApiToEvent(payload));
       commit("SET_EVENTS_LOADING");
     } catch (error: any) {

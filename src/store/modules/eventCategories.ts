@@ -144,7 +144,7 @@ const actions = {
                 undefined,
                 filters
             );
-            console.log(response.data.data)
+            console.log(response.data.data.map(decodeApiToEventCategory))
             if (response.success) {
                 console.log("dd", response.data.meta.pagination);
                 commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);

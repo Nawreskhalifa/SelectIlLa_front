@@ -190,7 +190,7 @@
                   </div>
                   <div class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16">
                     <img
-                      v-if="storageUrl && customer.user.photo.url"
+                      v-if="storageUrl && customer.user.photo"
                       :src="storageUrl + customer.user.photo.url"
                       class="rounded-circle me-8"
                       width="24"

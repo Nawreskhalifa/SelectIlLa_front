@@ -15,6 +15,9 @@
                 v-model="eventName"
                 required
               />
+              <span v-if="!eventName" class="text-danger"
+                >Event Name is required!</span
+              >
             </div>
           </div>
           <div class="col-md-12">
@@ -32,51 +35,121 @@
               </div>
             </div>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Categories
+              </label>
+
+              <select
+                v-model="category"
+                class="form-select shadow-none fw-semibold rounded-0 select-same-width"
+                style="height: 47px; border-color: #eeeee4"
+                @change="addCategoryEvent"
+              >
+                <option selected>Select a Category</option>
+                <option
+                  v-for="category in getCategoriesEvent"
+                  :key="category.id"
+                  :value="category"
+                >
+                  {{ category?.name }}
+                </option>
+              </select>
+              <div
+                class="members-list"
+                v-if="selectedCategories && selectedCategories.length > 0"
+              >
+                <div
+                  v-for="(perv, i) in selectedCategories"
+                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
+                  :key="i"
+                >
+                  {{ perv?.name }}
+                  <button
+                    type="button"
+                    class="bg-transparent p-0 border-0 lh-1 transition"
+                    @click="deleteFromCategories(perv)"
+                  >
+                    <i class="flaticon-close"></i>
+                  </button>
+                </div>
+              </div>
+              <span v-if="selectedCategories.length === 0" class="text-danger"
+                >Please select at least one category!</span
+              >
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Partner
+              </label>
+              <select
+                class="form-select shadow-none fw-semibold rounded-0 select-same-width"
+                style="height: 47px; border-color: #eeeee4"
+                v-model="selectedPartner"
+              >
+                <option value="" selected>Select a partner</option>
+                <option
+                  v-for="partner in getPartners"
+                  :key="partner.id"
+                  :value="partner.id"
+                >
+                  {{ partner.name }}
+                </option>
+              </select>
+              <span v-if="!selectedPartner" class="text-danger"
+                >Partner is required!</span
+              >
+            </div>
+          </div>
+          <!-- <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <fieldset>
                 <details>
                   <summary>Select categories:</summary>
-                  <ul>
-                    <li
-                      v-for="category in getCategoriesEvent"
-                      :key="category.id"
-                    >
-                      <label>
-                        <input
-                          type="checkbox"
-                          :checked="
-                            objetExisteDansListe(category, selectedCategories)
-                          "
-                          @change="addCategoryEvent(category)"
-                        />
-                        {{ category.name }}
+                  <div class="col-md-6">
+                    <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                      <label class="d-block text-black fw-semibold mb-10">
+                        Categories
                       </label>
-                    </li>
-                  </ul>
+                      <select
+                        class="form-select shadow-none fw-semibold rounded-0 select-same-width"
+                        style="height: 47px; border-color: #eeeee4"
+                        v-model="selectedCategories"
+                      >
+                        <option value="" selected>Select a partner</option>
+                        <option
+                          v-for="category in getCategoriesEvent"
+                          :key="category.id"
+                          :value="category.id"
+                        >
+                          {{ category.name }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
                 </details>
               </fieldset>
             </div>
-          </div>
+          </div> -->
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10"
                 >Ticket Price</label
               >
-              <div class="input-group">
-                <span
-                  class="input-group-text rounded-0 fs-14 fw-bold text-primary"
-                >
-                  $
-                </span>
-                <input
-                  type="text"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="e.g. 120.00"
-                  required
-                  v-model="price"
-                />
-              </div>
+
+              <input
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 120.00"
+                required
+                v-model="price"
+              />
+              <span v-if="isNaN(price)" class="text-danger"
+                >Please enter a valid number for the price.</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -90,6 +163,9 @@
                 required
                 v-model="location"
               />
+              <span v-if="!location" class="text-danger"
+                >Location is required!</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -103,6 +179,12 @@
                 required
                 v-model="startDate"
               />
+              <span v-if="!startDate" class="text-danger"
+                >Start Date is required!</span
+              >
+              <span v-else-if="startDate < currentDate" class="text-danger"
+                >Start Date must be today or later</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -117,6 +199,9 @@
                 v-model="startTime"
                 :min="currentDate"
               />
+              <span v-if="!startTime" class="text-danger"
+                >Start Time is required!</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -131,6 +216,12 @@
                 v-model="endDate"
                 :min="startDate"
               />
+              <span v-if="!endDate" class="text-danger"
+                >End Date is required!</span
+              >
+              <span v-else-if="endDate < startDate" class="text-danger"
+                >endDate Date must be today or later</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -144,6 +235,9 @@
                 required
                 v-model="endTime"
               />
+              <span v-if="!endTime" class="text-danger"
+                >End Time is required!</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -160,6 +254,12 @@
                 required
                 v-model="seats"
               />
+              <span v-if="!seats" class="text-danger"
+                >Number of Seats is required!</span
+              >
+              <span v-else-if="seats < 1" class="text-danger"
+                >Number of Seats must be at least 1</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -176,34 +276,15 @@
                 required
                 v-model="bottles"
               />
+              <span v-if="!bottles" class="text-danger"
+                >Number of bottles is required!</span
+              >
+              <span v-else-if="bottles < 1" class="text-danger"
+                >Number of bottles must be at least 1</span
+              >
             </div>
           </div>
-          <div class="col-md-12">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Promoter Name
-              </label>
-              <input
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. AI Machine Learning"
-                v-model="promoterName"
-              />
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Promoter Information's
-              </label>
-              <input
-                type="text-area"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. AI Machine Learning"
-                v-model="promoterInfo"
-              />
-            </div>
-          </div>
+
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
@@ -214,6 +295,7 @@
                   type="file"
                   multiple
                   v-on:change="handleFileUpload"
+                  accept="image/*"
                   class="d-block shadow-none border-0 position-absolute start-0 end-0 top-0 bottom-0 z-1 opacity-0"
                 />
                 <i class="flaticon-image"></i>
@@ -307,6 +389,7 @@ export default defineComponent({
       newPhotos: [],
       photosFromDatabase: [],
       selectedPhotos: [],
+      category: "",
       selectedCategories: [],
       currentDate: new Date().toISOString().split("T")[0], // Date actuelle
       eventName: "",
@@ -332,6 +415,7 @@ export default defineComponent({
       photos: [],
       categoriesEvent: [],
       categoriesSelected: [],
+      selectedPartner: [],
     };
   },
   methods: {
@@ -340,6 +424,7 @@ export default defineComponent({
       "updateEvent",
       "fetchOneCategoryEvent",
       "fetchOneEvent",
+      "fetchAllPartners",
     ]),
     objetExisteDansListe(objetRecherche, listeObjets) {
       // Parcourir la liste d'objets
@@ -353,24 +438,26 @@ export default defineComponent({
       // Retourner false si l'objet n'est pas trouvé dans la liste
       return false;
     },
-    addCategoryEvent(category) {
-      // Vérifier si la catégorie est déjà dans la liste
-      const existingCategoryIndex = this.selectedCategories.findIndex(
-        (cat) => cat.id === category.id
+    async addCategoryEvent() {
+      // Vous pouvez accéder à la catégorie sélectionnée via selectedCategories
+      // selectedCategories contiendra l'identifiant de la catégorie sélectionnée
+      // Vous pouvez rechercher l'objet de catégorie complet à partir de getCategoriesEvent
+      const selectedCategory = this.getCategoriesEvent.find(
+        (category) => category.id === this.category
       );
-      if (existingCategoryIndex === -1) {
-        // Si la catégorie n'est pas déjà dans la liste, l'ajouter avec checked à true
-        this.selectedCategories.push({ ...category, checked: true });
-      } else {
-        // Si la catégorie est déjà dans la liste, inverser l'état de checked
-        this.selectedCategories[existingCategoryIndex].checked =
-          !this.selectedCategories[existingCategoryIndex].checked;
-        // Si la catégorie est désélectionnée, la supprimer de la liste
-        if (!this.selectedCategories[existingCategoryIndex].checked) {
-          this.selectedCategories.splice(existingCategoryIndex, 1);
+
+      // Assurez-vous que la catégorie sélectionnée existe
+      if (selectedCategory) {
+        // Vérifiez si la catégorie sélectionnée est déjà dans selectedCategoryNames
+        const isCategoryAlreadySelected = this.selectedCategories.some(
+          (category) => category.id === selectedCategory.id
+        );
+
+        // Si la catégorie n'est pas déjà sélectionnée, ajoutez-la à selectedCategoryNames
+        if (!isCategoryAlreadySelected) {
+          this.selectedCategories.push(selectedCategory);
         }
       }
-      console.log(this.selectedCategories);
     },
 
     removeNewImage(index) {
@@ -395,6 +482,12 @@ export default defineComponent({
         this.photos.push(...Array.from(event.target.files));
       }
     },
+    deleteFromCategories(cat) {
+      this.selectedCategories = this.selectedCategories.filter((item) => {
+        return item.id !== cat.id;
+      });
+    },
+
     removeImage(index) {
       // Supprimer l'image à l'index spécifié
       this.photos.splice(index, 1);
@@ -471,10 +564,12 @@ export default defineComponent({
       "getCategoriesLoading",
       "getCategoriesEvent",
       "getEvent",
+      "getPartners",
     ]),
   },
   async mounted() {
     await this.fetchAllCategoriesEvent({ page: null });
+    await this.fetchAllPartners();
     // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
     const today = new Date();
     const year = today.getFullYear();
@@ -511,7 +606,11 @@ export default defineComponent({
       this.promoterName = this.getEvent.namePromoter;
       this.promoterInfo = this.getEvent.promotingInfo;
       this.photosFromDatabase = this.getEvent.photos;
+      if (this.getEvent.partner) {
+        this.selectedPartner = this.getEvent.partner.id;
+      }
     }
+    console.log(this.selectedCategories, "ok");
   },
 });
 </script>
@@ -613,5 +712,8 @@ li > label {
 li > label:hover,
 li > label:has(input:checked) {
   background-color: var(--dk-gray);
+}
+.select-same-width {
+  width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
 }
 </style>

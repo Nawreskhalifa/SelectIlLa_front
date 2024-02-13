@@ -13,6 +13,7 @@ const state = {
     partners: [],
     totalPages: 1,
     totalItems: 0,
+    customer: null
 }
 const getters = {
     getUsersError: state => state.userError,
@@ -22,6 +23,7 @@ const getters = {
     getPartners: state => state.partners,
     getTotalPages: (state) => state.totalPages,
     getTotalItems: (state) => state.totalItems,
+    getCustomer: (state) => state.customer,
 }
 const mutations = {
     SET_TOTAL_ITEMS(state, payload = 0) {
@@ -42,15 +44,18 @@ const mutations = {
     SET_CUSTOMERS(state, payload) {
         state.customers = payload
     },
+    SET_CUSTOMER(state, payload) {
+        state.customer = payload
+    },
     SET_PARTNERS(state, payload) {
         state.partners = payload
     },
     REMOVE_CUSTOMER(state, id) {
         state.customers = state.customers.filter(customer => customer.id != id)
-    }
-    //   ADD_user(state, payload) {
-    //     state.userOfProject.push(user.create(payload))
-    //   },
+    },
+    ADD_CUSTOMER(state, payload) {
+        state.customers.push(payload)
+    },
     //   SET_ONE_user_OF_PROJECT(state, payload) {
     //     state.userOfProject = payload
     //       ? payload.map(user => user.create(user))
@@ -189,7 +194,7 @@ const actions = {
             );
 
             if (response.success) {
-                console.log(response);
+                console.log(response.data.data);
                 commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
                 commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
                 commit('SET_CUSTOMERS', response.data.data.map(decodeCustomer));
@@ -206,7 +211,35 @@ const actions = {
         }
         return true;
     },
+    async AddNewCustomer({ commit },) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
+        try {
 
+            const response = await makeApiRequest(
+                methodsHttpNames.POST,
+                endPoints.allCustomers,
+                undefined,
+                undefined
+            );
+
+            if (response.success) {
+                console.log(response);
+
+                commit('ADD_CUSTOMER', decodeCustomer(response.data.data));
+                commit('SET_USERS_LOADING', false)
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages);
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
+            }
+            return false;
+        }
+        return true;
+    },
     async fetchAllPartners({ commit }) {
         commit('SET_USERS_LOADING', true)
         commit('SET_USERS_ERROR')

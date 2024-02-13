@@ -2,14 +2,11 @@
 
 export interface PartnerApi {
     id: number,
-    attributes: {
-        name: string,
-        surname: string,
-        phone: string,
-        address: string,
-    };
-
-}
+    name: string,
+    surname: string,
+    phone: string,
+    address: string,
+};
 
 
 // export const encodePartner = (Partner: Partner): PartnerApi => {
