@@ -419,7 +419,7 @@ export default defineComponent({
         { filters: { email: { $eq: this.email } } }
       );
       console.log("fetch:", response);
-      if (response.data && response.data.length>0) {
+      if (response.data && response.data.length > 0) {
         swal({
           text: "Email already exists!",
           icon: "error",
