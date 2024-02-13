@@ -13,7 +13,8 @@ const state = {
     partners: [],
     totalPages: 1,
     totalItems: 0,
-    customer: null
+    customer: null,
+    documents: [],
 }
 const getters = {
     getUsersError: state => state.userError,
@@ -24,6 +25,7 @@ const getters = {
     getTotalPages: (state) => state.totalPages,
     getTotalItems: (state) => state.totalItems,
     getCustomer: (state) => state.customer,
+    getDocuments: (state) => state.documents,
 }
 const mutations = {
     SET_TOTAL_ITEMS(state, payload = 0) {
@@ -55,6 +57,9 @@ const mutations = {
     },
     ADD_CUSTOMER(state, payload) {
         state.customers.push(payload)
+    },
+    SET_DOCUMENTS(state, payload) {
+        state.documents = payload
     },
     //   SET_ONE_user_OF_PROJECT(state, payload) {
     //     state.userOfProject = payload
@@ -102,7 +107,7 @@ const actions = {
         }
         return true
     },
-    async fetchAllCustomers({ commit }, { page, perPage = 25, name, gender = 'All', startYear, endYear, sortDirectionUserName, sortDirectionLocation }: { page: number; perPage?: number; name: string | null, gender?: string, startYear?: number, endYear?: number, sortDirectionUserName?: string, sortDirectionLocation?: string }) {
+    async fetchAllCustomers({ commit }, { page = null, perPage = 25, name, gender = 'All', startYear, endYear, sortDirectionUserName, sortDirectionLocation }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startYear?: number, endYear?: number, sortDirectionUserName?: string, sortDirectionLocation?: string }) {
         commit('SET_USERS_LOADING', true);
         commit('SET_USERS_ERROR', null);
         try {
@@ -194,7 +199,6 @@ const actions = {
             );
 
             if (response.success) {
-                console.log(response.data.data);
                 commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
                 commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
                 commit('SET_CUSTOMERS', response.data.data.map(decodeCustomer));
@@ -304,7 +308,36 @@ const actions = {
         }
         return true
     },
-
+    async fetchAllAttachmentsByCustomer({ commit }, idCustomer) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.reservations}?populate=*`,
+                undefined,
+                { filters: { customer: { id: { $eq: idCustomer } } } }
+            );
+            if (response.success) {
+                console.log(response.data.data)
+                for (const attachment of response.data.data) {
+                    // Traitez chaque pièce jointe ici
+                    console.log(attachment.attributes.documents.data);
+                }
+                commit('SET_DOCUMENTS', response.data.data);
+                commit('SET_USERS_LOADING', false);
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages);
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
+            }
+            return false;
+        }
+        return true;
+    },
     //   async fetchOneTypeuserOfProject({ commit }, user_id) {
     //     commit('SET_user_LOADING', true)
     //     commit('SET_user_ERROR')
