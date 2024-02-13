@@ -18,7 +18,7 @@
           >
             <i class="flaticon-menu-3"></i>
           </button>
-          <form class="search-box">
+          <!-- <form class="search-box">
             <div class="input-group">
               <input
                 type="text"
@@ -35,7 +35,7 @@
                 ></i>
               </button>
             </div>
-          </form>
+          </form> -->
         </div>
       </div>
       <div class="col-xl-8 col-lg-7 col-md-6">
@@ -43,7 +43,7 @@
           class="header-right-side d-flex align-items-center justify-content-center justify-content-md-end"
         >
           <LightDarkSwtichBtn />
-          <div class="dropdown apps-dropdown">
+          <!-- <div class="dropdown apps-dropdown">
             <button
               class="dropdown-toggle p-0 position-relative bg-transparent border-0 transition lh-1"
               type="button"
@@ -140,7 +140,7 @@
                 </li>
               </ul>
             </div>
-          </div>
+          </div> -->
           <div class="dropdown email-dropdown">
             <button
               class="dropdown-toggle p-0 position-relative bg-transparent border-0 transition lh-1"
@@ -354,8 +354,13 @@
                 height="44"
                 alt="admin"
               />
-              <span class="title d-none d-lg-block ms-10 ms-lg-15" v-if="getCurrentUser && getCurrentUser.username">
-                <span class="d-block fw-bold mb-5 mb-md-8">{{getCurrentUser.username}}</span>
+              <span
+                class="title d-none d-lg-block ms-10 ms-lg-15"
+                v-if="getCurrentUser && getCurrentUser.username"
+              >
+                <span class="d-block fw-bold mb-5 mb-md-8">{{
+                  getCurrentUser.username
+                }}</span>
                 <span class="text-body-emphasis fw-semibold fs-13">Admin</span>
               </span>
             </button>
@@ -399,7 +404,6 @@
                 >
                   <i class="flaticon-logout"></i>
                   Logout
-
                 </li>
               </ul>
             </div>
@@ -423,31 +427,26 @@ export default defineComponent({
   components: {
     LightDarkSwtichBtn,
   },
-  data(){
-    return{
-currentUser : null ,
-router  : useRouter()
-    }
+  data() {
+    return {
+      currentUser: null,
+      router: useRouter(),
+    };
   },
   methods: {
-    ...mapMutations(['SET_LOG_OUT', 'updateOpen']),
-   async  logout(){
-     await  localStorage.clear()
-      await  this.$router.push({ name: "LoginPage" });
-
-     }
- ,
+    ...mapMutations(["SET_LOG_OUT", "updateOpen"]),
+    async logout() {
+      await localStorage.clear();
+      await this.$router.push({ name: "LoginPage" });
+    },
 
     // ...mapActions(["fetchCurrentUser"]),
-  } ,
-computed:{
-...mapGetters(["getCurrentUser"])
-
-},
-async mounted(){
-//  await this.fetchCurrentUser()
- }
-
-
+  },
+  computed: {
+    ...mapGetters(["getCurrentUser"]),
+  },
+  async mounted() {
+    //  await this.fetchCurrentUser()
+  },
 });
 </script>

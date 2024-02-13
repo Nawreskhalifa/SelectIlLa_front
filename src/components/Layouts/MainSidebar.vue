@@ -1,18 +1,17 @@
 <template>
   <div
-  :class="[
-    'sidebar-area position-fixed start-0 top-0 bg-black h-100vh transition',
-    { active: isOpen },
-  ]"
-  id="sidebar-area"
->
-
+    :class="[
+      'sidebar-area position-fixed start-0 top-0 bg-black h-100vh transition',
+      { active: isOpen },
+    ]"
+    id="sidebar-area"
+  >
     <div class="logo position-absolute start-0 end-0 top-0 bg-black">
       <router-link
         to="/"
         class="d-flex align-items-center text-white text-decoration-none"
       >
-        <img src="../../assets/selectIt.png" />
+        <img src="../../assets/selectIt.png" alt="logo-icon" />
       </router-link>
       <div class="border-bottom"></div>
       <button
@@ -65,10 +64,7 @@
                   </router-link>
                 </li>
                 <li class="sidebar-sub-menu-item">
-                  <router-link
-                    to="/add-customer"
-                    class="sidebar-sub-menu-link"
-                  >
+                  <router-link to="/add-customer" class="sidebar-sub-menu-link">
                     Add Customer
                   </router-link>
                 </li>
@@ -97,6 +93,22 @@
           >
             <div class="accordion-body">
               <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/categories-event"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Categories List
+                  </router-link>
+                </li>
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/create-new-category-event"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Create New Category
+                  </router-link>
+                </li>
                 <li class="sidebar-sub-menu-item">
                   <router-link to="/events" class="sidebar-sub-menu-link">
                     Events List
@@ -262,9 +274,8 @@
             </div>
           </div>
         </li>
-        <li
-          class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
-        >
+        <!-- <li
+          class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0">
           <a
             href="#"
             class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
@@ -302,7 +313,7 @@
               </ul>
             </div>
           </div>
-        </li>
+        </li> -->
         <!-- <li class="sidebar-nav-item">
           <router-link to="/partnersList" class="sidebar-nav-link d-block">
             <i class="flaticon-more-1"></i>
@@ -351,46 +362,43 @@
           </div>
         </li>
         <li
-        class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
-      >
-        <a
-          href="#"
-          class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
-          data-bs-toggle="collapse"
-          data-bs-target="#sidebarCollapse"
-          aria-expanded="false"
-          aria-controls="sidebarCollapse"
+          class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
         >
-          <i class="flaticon-layer-2"></i>
-          <span class="title">Reservations</span>
-        </a>
-        <div
-          id="sidebarCollapse"
-          class="accordion-collapse collapse"
-          data-bs-parent="#sidebarNavAccordion"
-        >
-          <div class="accordion-body">
-            <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
-              <li class="sidebar-sub-menu-item">
-                <router-link
-                  to="/reservationList"
-                  class="sidebar-sub-menu-link"
-                >
-                  Reservation Lists
-                </router-link>
-              </li>
-              <li class="sidebar-sub-menu-item">
-                <router-link
-                  to="/acceptedres"
-                  class="sidebar-sub-menu-link"
-                >
-                  Accepted Reservations
-                </router-link>
-              </li>
-            </ul>
+          <a
+            href="#"
+            class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
+            data-bs-toggle="collapse"
+            data-bs-target="#sidebarCollapse"
+            aria-expanded="false"
+            aria-controls="sidebarCollapse"
+          >
+            <i class="flaticon-layer-2"></i>
+            <span class="title">Reservations</span>
+          </a>
+          <div
+            id="sidebarCollapse"
+            class="accordion-collapse collapse"
+            data-bs-parent="#sidebarNavAccordion"
+          >
+            <div class="accordion-body">
+              <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/reservationList"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Reservation Lists
+                  </router-link>
+                </li>
+                <li class="sidebar-sub-menu-item">
+                  <router-link to="/acceptedres" class="sidebar-sub-menu-link">
+                    Accepted Reservations
+                  </router-link>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
-      </li>
+        </li>
         <li class="sidebar-nav-item">
           <router-link to="/contacts" class="sidebar-nav-link d-block">
             <i class="fa fa-address-book" aria-hidden="true"></i>
@@ -414,15 +422,15 @@ export default defineComponent({
     const open = ref(false); // Initialize with false
     return {
       stateStoreInstance,
-      open
+      open,
     };
   },
-computed:{
-...mapGetters(['isOpen'])
-},
+  computed: {
+    ...mapGetters(["isOpen"]),
+  },
 
   methods: {
-    ...mapMutations(['SET_LOG_OUT', 'updateOpen']),
+    ...mapMutations(["SET_LOG_OUT", "updateOpen"]),
     openSlider() {
       this.open = !this.open;
     },
@@ -434,7 +442,6 @@ computed:{
   },
 });
 </script>
-
 
 <style scoped>
 .customSide {
