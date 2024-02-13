@@ -113,8 +113,9 @@
                 v-model="startTime"
                 :min="currentDate"
               />
-              <span v-if="!startTime" class="text-danger">Start Time is required!</span>
-
+              <span v-if="!startTime" class="text-danger"
+                >Start Time is required!</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -130,11 +131,11 @@
                 :min="startDate"
               />
               <span v-if="!endDate" class="text-danger"
-              >End Date is required!</span
-            >
-            <span v-else-if="endDate < startDate" class="text-danger"
-            >endDate Date must be today or later</span
-          >
+                >End Date is required!</span
+              >
+              <span v-else-if="endDate < startDate" class="text-danger"
+                >endDate Date must be today or later</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -148,8 +149,9 @@
                 required
                 v-model="endTime"
               />
-              <span v-if="!endTime" class="text-danger">End Time is required!</span>
-
+              <span v-if="!endTime" class="text-danger"
+                >End Time is required!</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -206,7 +208,7 @@
                 v-model="selectedCategories"
                 class="form-select shadow-none fw-semibold rounded-0 select-same-width"
                 style="height: 47px; border-color: #eeeee4"
-                @change="addCategoryEvent(category)"
+                @change="addCategoryEvent"
               >
                 <option selected>Select a Category</option>
                 <option
@@ -218,24 +220,24 @@
                 </option>
               </select>
               <div
-              class="members-list"
-              v-if="selectedCategoryNames && selectedCategoryNames.length > 0"
-            >
-              <div
-                v-for="(perv, i) in selectedCategoryNames"
-                class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
-                :key="i"
+                class="members-list"
+                v-if="selectedCategoryNames && selectedCategoryNames.length > 0"
               >
-                {{ perv?.name }}
-                <button
-                  type="button"
-                  class="bg-transparent p-0 border-0 lh-1 transition"
-                  @click="deleteFromCategories(perv)"
+                <div
+                  v-for="(perv, i) in selectedCategoryNames"
+                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
+                  :key="i"
                 >
-                  <i class="flaticon-close"></i>
-                </button>
+                  {{ perv?.name }}
+                  <button
+                    type="button"
+                    class="bg-transparent p-0 border-0 lh-1 transition"
+                    @click="deleteFromCategories(perv)"
+                  >
+                    <i class="flaticon-close"></i>
+                  </button>
+                </div>
               </div>
-            </div>
               <!-- <ul
                 style="
                   display: flex;
@@ -257,8 +259,11 @@
                   ></i>
                 </li>
               </ul> -->
-              <span v-if="selectedCategoryNames.length === 0" class="text-danger">Please select at least one category!</span>
-
+              <span
+                v-if="selectedCategoryNames.length === 0"
+                class="text-danger"
+                >Please select at least one category!</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -280,8 +285,9 @@
                   {{ partner.name }}
                 </option>
               </select>
-              <span v-if="!selectedPartner" class="text-danger">Partner is required!</span>
-
+              <span v-if="!selectedPartner" class="text-danger"
+                >Partner is required!</span
+              >
             </div>
           </div>
           <div class="col-md-12">
@@ -404,12 +410,26 @@ export default defineComponent({
     addToAllCat: () => {
       this.AllSelected.push(this.selectedCategory);
     },
-    addCategoryEvent(category) {
-      this.getCategoriesEvent.map((item, key) => {
-        item.check = this.selectedCategories[key];
-        this.selectedCategoryNames.push(item);
-        return item;
-      });
+    addCategoryEvent() {
+      // Vous pouvez accéder à la catégorie sélectionnée via selectedCategories
+      // selectedCategories contiendra l'identifiant de la catégorie sélectionnée
+      // Vous pouvez rechercher l'objet de catégorie complet à partir de getCategoriesEvent
+      const selectedCategory = this.getCategoriesEvent.find(
+        (category) => category.id === this.selectedCategories
+      );
+
+      // Assurez-vous que la catégorie sélectionnée existe
+      if (selectedCategory) {
+        // Vérifiez si la catégorie sélectionnée est déjà dans selectedCategoryNames
+        const isCategoryAlreadySelected = this.selectedCategoryNames.some(
+          (category) => category.id === selectedCategory.id
+        );
+
+        // Si la catégorie n'est pas déjà sélectionnée, ajoutez-la à selectedCategoryNames
+        if (!isCategoryAlreadySelected) {
+          this.selectedCategoryNames.push(selectedCategory);
+        }
+      }
     },
     handleFileUpload(event) {
       // this.testphoto = event.target.files[0]
@@ -435,10 +455,10 @@ export default defineComponent({
 
       try {
         this.selectedCategoryNames.forEach((item) => {
-          this.AllSelected.push(item.id);
+          // Ajouter le tableau d'identifiants de catégories à formData
+          formData.append("category_events", JSON.stringify(item.id));
         });
 
-        formData.append("category_events", this.AllSelected);
         formData.append("partner", this.selectedPartner);
         // Ajouter chaque champ du formulaire à l'objet FormData
         formData.append("name", this.eventName);
@@ -453,7 +473,7 @@ export default defineComponent({
         formData.append("total_bottles", this.bottles.toString());
         formData.append("name_promoter", this.promoterName);
         formData.append("promiting_info", this.promoterInfo);
-        if (this.photos && this.photos.length >= 1) {
+        if (this.photos && this.photos.length) {
           this.photos.forEach((photo) => {
             formData.append("files.photos", photo);
           });

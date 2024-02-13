@@ -45,7 +45,7 @@
                 v-model="category"
                 class="form-select shadow-none fw-semibold rounded-0 select-same-width"
                 style="height: 47px; border-color: #eeeee4"
-                @change="addCategoryEvent(category)"
+                @change="addCategoryEvent"
               >
                 <option selected>Select a Category</option>
                 <option
@@ -75,8 +75,9 @@
                   </button>
                 </div>
               </div>
-              <span v-if="selectedCategories.length === 0" class="text-danger">Please select at least one category!</span>
-
+              <span v-if="selectedCategories.length === 0" class="text-danger"
+                >Please select at least one category!</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -98,8 +99,9 @@
                   {{ partner.name }}
                 </option>
               </select>
-              <span v-if="!selectedPartner" class="text-danger">Partner is required!</span>
-
+              <span v-if="!selectedPartner" class="text-danger"
+                >Partner is required!</span
+              >
             </div>
           </div>
           <!-- <div class="col-md-12">
@@ -178,11 +180,11 @@
                 v-model="startDate"
               />
               <span v-if="!startDate" class="text-danger"
-              >Start Date is required!</span
-            >
-            <span v-else-if="startDate < currentDate" class="text-danger"
-              >Start Date must be today or later</span
-            >
+                >Start Date is required!</span
+              >
+              <span v-else-if="startDate < currentDate" class="text-danger"
+                >Start Date must be today or later</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -197,8 +199,9 @@
                 v-model="startTime"
                 :min="currentDate"
               />
-              <span v-if="!startTime" class="text-danger">Start Time is required!</span>
-
+              <span v-if="!startTime" class="text-danger"
+                >Start Time is required!</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -214,11 +217,11 @@
                 :min="startDate"
               />
               <span v-if="!endDate" class="text-danger"
-              >End Date is required!</span
-            >
-            <span v-else-if="endDate < startDate" class="text-danger"
-            >endDate Date must be today or later</span
-          >
+                >End Date is required!</span
+              >
+              <span v-else-if="endDate < startDate" class="text-danger"
+                >endDate Date must be today or later</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -232,8 +235,9 @@
                 required
                 v-model="endTime"
               />
-              <span v-if="!endTime" class="text-danger">End Time is required!</span>
-
+              <span v-if="!endTime" class="text-danger"
+                >End Time is required!</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -251,11 +255,11 @@
                 v-model="seats"
               />
               <span v-if="!seats" class="text-danger"
-              >Number of Seats is required!</span
-            >
-            <span v-else-if="seats < 1" class="text-danger"
-              >Number of Seats must be at least 1</span
-            >
+                >Number of Seats is required!</span
+              >
+              <span v-else-if="seats < 1" class="text-danger"
+                >Number of Seats must be at least 1</span
+              >
             </div>
           </div>
           <div class="col-md-6">
@@ -273,11 +277,11 @@
                 v-model="bottles"
               />
               <span v-if="!bottles" class="text-danger"
-              >Number of bottles is required!</span
-            >
-            <span v-else-if="bottles < 1" class="text-danger"
-              >Number of bottles must be at least 1</span
-            >
+                >Number of bottles is required!</span
+              >
+              <span v-else-if="bottles < 1" class="text-danger"
+                >Number of bottles must be at least 1</span
+              >
             </div>
           </div>
 
@@ -434,8 +438,26 @@ export default defineComponent({
       // Retourner false si l'objet n'est pas trouvé dans la liste
       return false;
     },
-    async addCategoryEvent(category) {
-      await this.selectedCategories.push(category);
+    async addCategoryEvent() {
+      // Vous pouvez accéder à la catégorie sélectionnée via selectedCategories
+      // selectedCategories contiendra l'identifiant de la catégorie sélectionnée
+      // Vous pouvez rechercher l'objet de catégorie complet à partir de getCategoriesEvent
+      const selectedCategory = this.getCategoriesEvent.find(
+        (category) => category.id === this.category
+      );
+
+      // Assurez-vous que la catégorie sélectionnée existe
+      if (selectedCategory) {
+        // Vérifiez si la catégorie sélectionnée est déjà dans selectedCategoryNames
+        const isCategoryAlreadySelected = this.selectedCategories.some(
+          (category) => category.id === selectedCategory.id
+        );
+
+        // Si la catégorie n'est pas déjà sélectionnée, ajoutez-la à selectedCategoryNames
+        if (!isCategoryAlreadySelected) {
+          this.selectedCategories.push(selectedCategory);
+        }
+      }
     },
 
     removeNewImage(index) {
