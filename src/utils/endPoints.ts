@@ -28,4 +28,8 @@ export const endPoints = {
     users: `${API_BASE_URL}users`,
     reservations: `${API_BASE_URL}reservations`,
     accepted_reservations: `${API_BASE_URL}accepted-reservations`,
+    roles:`${API_BASE_URL}users-permissions/roles`,
+    registreUser :`${API_BASE_URL}auth/local/register`,
+
+
 };
