@@ -1,6 +1,7 @@
 <template>
   <div class="card mb-25 border-0 rounded-0 bg-white add-product-box">
-    <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
+
+     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
       <form @submit.prevent="submitForm">
         <div class="row">
           <div class="col-md-6">
@@ -19,38 +20,11 @@
                   {{ make.attributes.name }}
                 </option>
               </select>
-<div class="accordion" id="basicAccordion">
+              <div style="display: flex; flex-direction: row;"><span>+</span>
+ <p class="fs-md-15 fs-lg-16"><a @click.prevent="addMake"  style="cursor: pointer;" class="link-secondary">Add new make</a></p>
+              </div>
 
 
-<div class="accordion-item mb-0">
-
-
-<button class="accordion-button shadow-none fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#basicCollapseOne" aria-expanded="true" aria-controls="basicCollapseOne">
-
-
-Accordion Item #1
-
-
-</button>
-
-
-<div id="basicCollapseOne" class="accordion-collapse collapse" data-bs-parent="#basicAccordion">
-
-
-<div class="accordion-body">
-
-
-<p class="lh-base fs-md-15 fs-lg-16 text-paragraph mb-0"><strong class="text-black">This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.</p>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-</div>
               <div v-if="makeError" class="text-danger">{{ makeError }}</div>
             </div>
           </div>
@@ -70,7 +44,9 @@ Accordion Item #1
     <option disabled>Select A Make First</option>
   </template>
 </select>
-
+ <div   v-if="make"  style="display: flex; flex-direction: row;"><span>+</span>
+ <p class="fs-md-15 fs-lg-16"><a @click.prevent="addBrand"  style="cursor: pointer;" class="link-secondary">Add Brand To {{make.attributes.name}}</a></p>
+              </div>
 
 
               <div v-if="brandError" class="text-danger">{{ brandError }}</div>
@@ -132,7 +108,7 @@ Accordion Item #1
             </div>
           </div>
 
-          <div class="col-md-12">
+          <!-- <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
                 Category Vehicle
@@ -172,7 +148,7 @@ Accordion Item #1
                 {{ categoryError }}
               </div>
             </div>
-          </div>
+          </div> -->
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -320,31 +296,82 @@ Accordion Item #1
         </div>
       </form>
     </div>
-  </div>
+</div>
+<div class="modal" :class="{ 'hide': !modal }">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Make & Brand</h5>
+            <button type="button" class="btn-close" @click="closeModal"></button>
+          </div>
+          <div class="modal-body">
+            <label class="d-block text-black fw-semibold mb-10">Make :</label>
+            <input v-model="newMake" type="text" class="form-control" placeholder="e.g Ford" />
+            <label class="d-block text-black fw-semibold mb-10">Brand :</label>
+            <input v-model="newBrand" type="text" class="form-control" placeholder="e.g F -150" />
+          </div>
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
+            <button type="button" class="btn btn-primary" @click="saveChanges">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="make " class="modal" :class="{ 'hide': !modalBrand }">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Brand To  {{make.attributes.name}}</h5>
+            <button type="button" class="btn-close" @click="closeModalBrand"></button>
+          </div>
+          <div class="modal-body">
+            <label class="d-block text-black fw-semibold mb-10">Make :</label>
+            <input   type="text" class="form-control" :value="make.attributes.name" disabled />
+            <label class="d-block text-black fw-semibold mb-10">Brand :</label>
+            <input v-model="newBrand" type="text" class="form-control" placeholder="e.g F -150" />
+          </div>
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="closeModalBrand">Close</button>
+            <button type="button" class="btn btn-primary" @click="saveOnlyBrand">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <loading
+        v-model:active="isLoading"
+        :can-cancel="true"
+         :is-full-page="true"
+      />
 </template>
 <script lang="ts">
 import { defineComponent, ref  ,computed } from "vue";
 import BlotFormatter from "quill-blot-formatter";
 import ImageUploader from "quill-image-uploader";
-import { fetchVehicleCategories  , fetchPartners,fetchMakes, fetchBrands,fetchBrandMyMake} from "@/services/apiService";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
+import { fetchVehicleCategories  , fetchPartners,fetchMakes, fetchBrands,fetchBrandMyMake,postBrand , postMake} from "@/services/apiService";
 import { postVehicle } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useRouter } from "vue-router";
+ import MakeModal from "../AddMake/MakeModal.vue"
 
 export default defineComponent({
   name: "AddProduct",
-
+   components:{Loading},
 
   setup() {
     const router = useRouter();
     const allPartners = ref();
+    const  isLoading=  ref(false);
+     const  fullPage= ref(true) ;
     const selectedPartner = ref("");
     const categories = ref();
-     const brand = ref("");
+     const brand = ref();
     const description = ref("");
-    const selectedCategory = ref("");
-    const selectedFiles = ref([]);
+     const selectedFiles = ref([]);
     const AllSelected = ref<string[]>([]);
     const makes =  ref([]) ;
     const brands=  ref([]);
@@ -356,7 +383,11 @@ export default defineComponent({
     const msrp = ref("");
     const style = ref("");
     const deposit = ref("");
-    const make = ref("")
+    const make = ref();
+       const newMake = ref("");
+    const newBrand = ref("");
+    const modal = ref(false)
+    const modalBrand = ref(false )
     const modules = {
       module: BlotFormatter,
       ImageUploader,
@@ -368,21 +399,24 @@ export default defineComponent({
         },
       },
     };
-    const  addToAllCat = () => {
-    AllSelected.value.push(selectedCategory.value)
-    console.log(AllSelected.value)
-}
+    /////const  addToAllCat = () => {
+  /// // AllSelected.value.push(selectedCategory.value)
+    //console.log(AllSelected.value)
+////}
     const fetchPartnersList = async () => {
       const data = await fetchPartners();
       allPartners.value = data;
       console.log(data, allPartners, "data");
     };
-    const selectedCategoryNames = computed(() => {
-    return AllSelected.value.map((categoryId) => {
-      const selectedCategory = categories.value.find(category => category.id === categoryId);
-      return selectedCategory ? selectedCategory.attributes.name : '';
-    });
-  });
+    const addBrand = async () => {
+      modalBrand.value = true
+    }
+  //   const selectedCategoryNames = computed(() => {
+  //   return AllSelected.value.map((categoryId) => {
+  //     const selectedCategory = categories.value.find(category => category.id === categoryId);
+  //     return selectedCategory ? selectedCategory.attributes.name : '';
+  //   });
+  // });
     const makeError = ref("");
     const brandError = ref("");
     const descriptionError = ref("");
@@ -463,21 +497,11 @@ export default defineComponent({
       dailyError.value = "";
       miceError.value = "";
       newDailyError.value = "";
-      if (!make.value.trim()) {
-        makeError.value = "Make is required.";
-      }
-
-      if (!brand.value.trim()) {
-        brandError.value = "Brand is required.";
-      }
 
       if (!description.value.trim()) {
         descriptionError.value = "Description is required.";
       }
 
-      if (!selectedCategory.value) {
-        categoryError.value = "Please select a category.";
-      }
 
       if (selectedFiles.value.length === 0) {
         imageError.value = "Please upload at least one image.";
@@ -515,8 +539,8 @@ export default defineComponent({
   console.log(selectedC,"sele")
       const vehicleData = {
         data: {
-          make: make.value,
-          brand: brand.value,
+          make: make.value.id,
+          brand: brand.value.id,
           style: style.value,
           msrp: msrp.value,
           daily: parseFloat(daily.value),
@@ -525,7 +549,7 @@ export default defineComponent({
           deposit: parseFloat(deposit.value),
           description: description.value,
           owner: owner.value,
-          category_vehicles: selectedC ,
+          // category_vehicles: selectedC ,
           seats: parseInt(seats.value),
           partner: [parseInt(selectedPartner.value)]
         },
@@ -549,27 +573,72 @@ export default defineComponent({
   }
 };
 
+const closeModal = () => {
+    console.log("Closing modal...");
+    modal.value = false ;
+};
+const closeModalBrand =() => {
+ modalBrand.value = false
+}
+    const saveChanges =async  () => {
+        console.log("New Make:", newMake.value);
+      console.log("New Brand:", newBrand.value);
+      isLoading.value = true
+        const  newMakePost = await postMake({data:{name :newMake.value}})
+        console.log(newMakePost.data,"posted make")
+        if(newMakePost.data){
+    const newBrandPost= await postBrand({data:{name:newBrand.value , make:newMakePost.data.id}})
+    if(newBrandPost){
+     console.log("already")
+           setTimeout(() => {
+isLoading.value = false
+           fetchMakesCat()
+           }, 2000);
+    }
+        }
+      closeModal();
+    };
+const saveOnlyBrand= async () => {
+  console.log(newBrand.value , make.value.id)
+     const data = await  postBrand({data :{name : newBrand.value , make : make.value?.id}})
+     console.log(data)
+}
+
+ const addMake = () => {
+    modal.value = true;
+    console.log(modal.value ," add make ")
+}
+
+
 
     fetchPartnersList() ;
-    fetchCategories();
+      // fetchCategories();
 fetchMakesCat()
     return {
       modules,
-      categories,
-      make,
+      fullPage,
+      addMake,
+       make,
       allPartners,
       brand,
       description,
-      selectedCategory,
       selectedFiles,
       owner,
+      modal,
+      isLoading,
+saveOnlyBrand,
       seats,
       daily,
+          newMake,
+      newBrand,
+      closeModal,
+      saveChanges,
       makes,
       brands,
       getBrands,
        deposit,
       style,
+      addBrand,
       msrp,
       showToatSuccess,
       mice,
@@ -578,21 +647,22 @@ fetchMakesCat()
       makeError,
       brandError,
       descriptionError,
-      selectedCategoryNames,
-      categoryError,
+       categoryError,
       ownerError,
       seatsError,
       dailyError,
       miceError,
-      newDailyError,
+       newDailyError,
+       closeModalBrand,
       selectedPartner,
       submitForm,
       selectedFilesRef,
-      addToAllCat,
-      AllSelected ,
+      // addToAllCat,
+       AllSelected ,
       imageUrls,
       handleFileChange,
       uploadImage,
+      modalBrand
     };
   },
 });
@@ -602,5 +672,76 @@ fetchMakesCat()
   max-width: 100%;
   max-height: 300px;
   margin-bottom: 10px;
+}
+ .modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  z-index: 1050;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 10px;
+  max-width: 500px;
+}
+
+.hide{
+  visibility: hidden;
+}
+.modal-content {
+  position: relative;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.3rem;
+  outline: 0;
+}
+
+.modal.show {
+  display: block;
+}
+
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 10px;
+}
+
+
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: 1rem;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.btn-close {
+  padding: 0.5rem 0.75rem;
+  margin: -0.5rem -0.75rem -0.5rem auto;
 }
 </style>

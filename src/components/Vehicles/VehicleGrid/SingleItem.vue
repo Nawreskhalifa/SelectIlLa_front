@@ -42,7 +42,7 @@
         </div>
         <div class="content p-20">
           <h4 class="mb-10 fw-semibold fs-16 fs-lg-18">
-           Name:    {{ vehicle.attributes.make }} {{ vehicle.attributes.brand }}
+          <span>   {{ vehicle.attributes.make?.data.attributes.name }}</span>  - <span>{{ vehicle.attributes.brand?.data.attributes.name }} </span>
           </h4>
 
           <div class="mt-10 price d-flex align-items-center justify-content-between"  >
@@ -89,7 +89,7 @@
           ></VehicleDetails>
           <DeleteModal
             :show="deleteModalVisible"
-            :propToDelete="vehicle.attributes.brand"
+            :propToDelete="vehicle.attributes.brand.data.attributes?.name"
             @delete="handleDelete"
           />
           <UpdateVehicle

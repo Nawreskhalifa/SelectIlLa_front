@@ -30,34 +30,89 @@
         />
       </div>
     </div>
+
     <div class="sidebar-item">
-      <h6 class="text-black fw-bold fs-md-15">Categories</h6>
+      <h6 class="text-black fw-bold fs-md-15">Makes</h6>
       <ul class="categories-list ps-0 mb-0 list-unstyled">
-        <li class="cat" @click="byCategory(null)">
-          <span class="d-block fs-md-15 fw-medium" >All</span>
-        </li>
-        <li v-for="category in categories" :key="category.id" @click="byCategory(category)" class="cat">
-          <span class="d-block fs-md-15 fw-medium">{{
-            category.attributes.name
-          }}</span>
-          <span
-            class="d-block fw-medium text-muted"
-            v-if="
-              category.attributes &&
-              category.attributes.vehicles &&
-              category.attributes.vehicles.data
-            "
-            >{{ category.attributes.vehicles.data.length }}
-          </span>
-        </li>
+        <li>
+            <span class="d-block fs-md-15 fw-medium">All</span>
+            <span class="d-block fw-medium text-muted">{{makes.length}}</span>
+         </li>
+<li v-for="item in makes" :key="item.id">
+    <span class="d-block fs-md-15 fw-medium">{{item.attributes.name}}</span>
+            <span class="d-block fw-medium text-muted">{{item?.attributes?.vehicles?.data?.length }}</span>
+</li>
+    <button
+        type="button"
+        class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
+@click="seeMoreMakes"
+      >
+        See More
+      </button>
       </ul>
+      <!-- <button
+        type="button"
+        class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
+      >
+        See More
+      </button> -->
     </div>
+    <div class="sidebar-item">
+      <h6 class="text-black fw-bold fs-md-15">Brands</h6>
+      <ul class="brands-list ps-0 mb-0 list-unstyled">
+        <li
+          class="d-flex align-items-center justify-content-between text-paragraph"
+        >
+          <div class="form-check mb-0">
+            <input
+              class="form-check-input shadow-none"
+              type="checkbox"
+              id="allBrands"
+            />
+            <label class="form-check-label fs-md-15 fw-medium" for="allBrands">
+              All
+            </label>
+          </div>
+          <span class="d-block fw-medium text-muted">{{brands.length}}</span>
+        </li>
+
+        <li
+          class="d-flex align-items-center justify-content-between text-paragraph"
+          v-for="item in brands" :key="item.id"
+        >
+          <div class="form-check mb-0">
+            <input
+              class="form-check-input shadow-none"
+              type="checkbox"
+              id="sugarBrand"
+            />
+            <label class="form-check-label fs-md-15 fw-medium" for="sugarBrand">
+              {{item.attributes.name}}
+            </label>
+          </div>
+          <span class="d-block fw-medium text-muted">{{item.attributes?.vehicles?.data?.length}}</span>
+        </li>
+           <button
+        type="button"
+        class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
+    @click="seeMoreBrands"
+        >
+        See More
+      </button>
+      </ul>
+      <!-- <button
+        type="button"
+        class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
+      >
+        See More
+      </button> -->
+     </div>
   </div>
 
 </template>
 
 <script>
-import { fetchVehicleCategories } from "@/services/apiService";
+import { fetchVehicleCategories ,fetchBrands,fetchMakes } from "@/services/apiService";
 
 export default {
   data() {
@@ -65,6 +120,8 @@ export default {
       categories: [],
       searchInput: "",
       selectAll: false,
+      makes : [],
+      brands :[]
     };
   },
   watch: {
@@ -76,21 +133,35 @@ export default {
     },
   },
   methods: {
-    async fetchCategories() {
-      try {
-        const data = await fetchVehicleCategories("populate=*");
-        this.categories = data.data;
-        console.log("Categories:", this.categories);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
+    // async fetchCategories() {
+    //   try {
+    //     const data = await fetchVehicleCategories("populate=*");
+    //     this.categories = data.data;
+    //     console.log("Categories:", this.categories);
+    //   } catch (error) {
+    //     console.error("Error fetching categories:", error);
+    //   }
+    // },
+    async seeMoreBrands(){
+      this.getMakesAndBrands("pagination[start]=4&pagination[limit]=4","")
     },
+    async seeMoreMakes(){
+      this.getMakesAndBrands("","pagination[start]=4&pagination[limit]=4")
+
+    },
+async getMakesAndBrands(queryMakes="" , queryBrands=""){
+  const {data} = await fetchMakes(queryMakes)
+    this.makes = data
+  const br = await fetchBrands(queryBrands)
+   this.brands = br.data
+} ,
     async byCategory(categorie){
       this.$emit("byCategory", categorie)
     }
   },
   mounted() {
-    this.fetchCategories();
+    console.log("ok")
+    this.getMakesAndBrands("pagination[start]=4&pagination[limit]=4","pagination[start]=4&pagination[limit]=5")
   },
 };
 </script>

@@ -978,7 +978,7 @@ export async function postPartner(partner) {
 }
   export async function fetchMakes(query="") {
     try {
-      const response = await axios.get(`${endPoints.makes}&${query}`);
+      const response = await axios.get(`${endPoints.makes}?populate=*&${query}`);
       if (response) {
          return response.data;
       } else {
@@ -991,7 +991,7 @@ export async function postPartner(partner) {
   }
     export async function fetchBrands(query="") {
     try {
-      const response = await axios.get(`${endPoints.brands}?${query}`);
+      const response = await axios.get(`${endPoints.brands}?populate=*&${query}`);
       if (response) {
          return response.data;
       } else {
@@ -1013,6 +1013,42 @@ try {
       }
     } catch (error) {
       console.error("Error fetching brands:", error);
+      throw error;
+    }
+  }
+    export async function  postMake(make){
+try {
+       const postDataResponse = await axios.post(endPoints.makes,make, {
+        headers: {
+          'Content-Type': 'application/json',
+          "Accept": "application/json"
+        },
+      });
+      if (postDataResponse) {
+         return postDataResponse.data;
+      } else {
+         throw new Error("Failed to post make ");
+      }
+    } catch (error) {
+      console.error("Error posting  make:", error);
+      throw error;
+    }
+  }
+      export async function  postBrand(brand){
+try {
+       const postDataResponse = await axios.post(endPoints.brands,brand, {
+        headers: {
+          'Content-Type': 'application/json',
+          "Accept": "application/json"
+        },
+      });
+      if (postDataResponse) {
+         return postDataResponse.data;
+      } else {
+         throw new Error("Failed to post brand ");
+      }
+    } catch (error) {
+      console.error("Error posting  brand:", error);
       throw error;
     }
   }

@@ -173,7 +173,7 @@
             </div>
           </div>
         </li>
-        <li
+        <!-- <li
           class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
         >
           <a
@@ -212,7 +212,7 @@
               </ul>
             </div>
           </div>
-        </li>
+        </li> -->
         <li
           class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
         >

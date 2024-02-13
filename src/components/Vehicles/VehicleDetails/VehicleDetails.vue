@@ -65,9 +65,12 @@
                 </div>
                 <div class="col-lg-5 col-md-12">
                   <div class="product-details-content">
+                    <h1> {{ vehicle.attributes?.make?.data?.attributes?.name }} </h1>
                     <h3 class="text-black fw-semibold">
-                      {{ vehicle.attributes.brand }}
+                        <span>{{ vehicle?.attributes?.brand?.data?.attributes?.name }} </span>
                     </h3>
+
+
                     <div class="reviews d-flex align-items-center">
                       <span class="text-black fw-bold fs-13 ms-5 me-5">
                         Style :
@@ -102,7 +105,7 @@
                         </span>
                         Labila
                       </li>
-                      <li
+                      <!-- <li
                         class="text-paragraph fs-md-15 fs-xxxl-16"
                         v-if="
                           vehicle.attributes.category_vehicles.data.length > 0
@@ -117,7 +120,7 @@
                           :key="categorie.id"
                           >{{ categorie.attributes.name }}
                         </span>
-                      </li>
+                      </li> -->
                       <li class="text-paragraph fs-md-15 fs-xxxl-16">
                         <span class="text-black fw-semibold d-inline-block"
                           >seats:</span

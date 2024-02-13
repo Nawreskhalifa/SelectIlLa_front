@@ -14,15 +14,42 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25">
+
                         <label class="d-block text-black fw-semibold mb-10"
                           >Make</label
                         >
-                        <input
+                         <ul
+                          style="
+                            display: flex;
+                            flex-direction: row;
+                            gap: 10px;
+                            justify-content: flex-start;
+                            align-items: center;
+                          "
+                        >
+                          <li v-if="perviousMake">
+                            {{ perviousMake.data.attributes.name }}
+                            <i
+                              class="fas fa-times-circle"
+                              @click="perviousMake = ''"
+                            ></i>
+                          </li>
+                        </ul>
+                        <select
                           v-model="make"
-                          type="text"
-                          class="form-control shadow-none rounded-0 text-black"
-                          placeholder="e.g. Sensung Smart Watch"
-                        />
+                          class="form-select shadow-none fw-semibold rounded-0"
+                          @change="getBrands(make)"
+                        >
+                          <option
+                            v-for="mk in makes"
+                            :key="mk?.id"
+                            :value="mk"
+                            >
+                            {{ mk.attributes.name }}
+                          </option>
+                        </select>
+
+
                         <div v-if="makeError" class="text-danger">
                           {{ makeError }}
                         </div>
@@ -34,12 +61,27 @@
                         <label class="d-block text-black fw-semibold mb-10">
                           Brand
                         </label>
-                        <input
+                        <select
                           v-model="brand"
-                          type="text"
-                          class="form-control shadow-none rounded-0 text-black"
-                          placeholder="e.g. Sensung Smart Watch"
-                        />
+                          class="form-select shadow-none fw-semibold rounded-0"
+                          :disabled="!make"
+                        >
+                          <template v-if="brands && brands.length > 0">
+                            <option
+                              v-for="br in brands"
+                              :key="br?.id"
+                              :value="br"
+
+                            >
+                              {{ br?.attributes?.name }}
+                            </option>
+                          </template>
+                          <template v-else>
+                            <option disabled>Select A Make First</option>
+                          </template>
+                        </select>
+
+
                         <div v-if="brandError" class="text-danger">
                           {{ brandError }}
                         </div>
@@ -207,53 +249,6 @@
                         </div>
                       </div>
                     </div>
-
-                    <div class="col-md-12">
-                      <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                        <label class="d-block text-black fw-semibold mb-10">
-                          Category Vehicles
-                        </label>
-                        <ul
-                          style="
-                            display: flex;
-                            flex-direction: row;
-                            gap: 10px;
-                            justify-content: flex-start;
-                            align-items: center;
-                          "
-                        >
-                          <li
-                            class="single_cat"
-                            v-for="cat in previousCategories"
-                            :key="cat.id"
-                          >
-                            <span> {{ cat.attributes.name }}</span>
-                            <i
-                              class="fas fa-times-circle"
-                              @click="deleteFromCategories(cat)"
-                            ></i>
-                          </li>
-                        </ul>
-                        <select
-                          v-model="selectedCategory"
-                          class="form-select shadow-none fw-semibold rounded-0"
-                          @change="addToPrevious"
-                        >
-                          <option selected>Select a Category</option>
-                          <option
-                            v-for="category in categories"
-                            :key="category.id"
-                            :value="category.id"
-                          >
-                            {{ category.attributes.name }}
-                          </option>
-                        </select>
-                        <div v-if="categoryError" class="text-danger">
-                          {{ categoryError }}
-                        </div>
-                      </div>
-                    </div>
-
                     <div class="col-md-6">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25">
                         <label class="d-block text-black fw-semibold mb-10"
@@ -323,9 +318,9 @@
                             align-items: center;
                           "
                         >
-                          <li v-if="partner"
-                          >
- {{getSelectedPartnerName}}                            <i
+                          <li v-if="partner">
+                            {{ getSelectedPartnerName }}
+                            <i
                               class="fas fa-times-circle"
                               @click="partner = ''"
                             ></i>
@@ -334,14 +329,14 @@
                         <select
                           v-model="partner"
                           class="form-select shadow-none fw-semibold rounded-0"
-                         >
+                        >
                           <option selected>Select a Partner</option>
                           <option
                             v-for="partner in partnerData"
                             :key="partner.id"
                             :value="partner.id"
                           >
-                            {{ partner.name}}
+                            {{ partner.name }}
                           </option>
                         </select>
                         <div v-if="categoryError" class="text-danger">
@@ -416,10 +411,10 @@
 
 <script>
 import {
-  fetchVehicleCategories,
   uploadFiles,
   deleteFiles,
   fetchPartners,
+  fetchMakes, fetchBrands,fetchBrandMyMake,
   updateVehicle,
 } from "@/services/apiService";
 import { toast } from "vue3-toastify";
@@ -434,29 +429,37 @@ export default {
     },
   },
   data() {
-  return {
-    categories: [],
-    make: this.vehicle.attributes.make,
-    brand: this.vehicle.attributes.brand,
-    description: this.vehicle.attributes.description,
-    previousCategories: this.vehicle.attributes.category_vehicles.data,
-    selectedCategory: "",
-    owner: this.vehicle.attributes.owner,
-    seats: this.vehicle.attributes.seats,
-    daily: this.vehicle.attributes.daily,
-    mice: this.vehicle.attributes.mice,
-    newDaily: this.vehicle.attributes.new_daily,
-    msrp: this.vehicle.attributes.msrp,
-    style: this.vehicle.attributes.style,
-    deposit: this.vehicle.attributes.deposit,
-    partner: this.vehicle.attributes.partner.data ? this.vehicle.attributes.partner.data.id : null,
-    showUploadedFiles: false,
-    previousPhotos: this.vehicle,
-    selectedFiles: [],
-    imageUrls: [],
-    partnerData: []
-  };
-},
+    return {
+// this.vehicle.attributes.make?.data.attributes.name
+//
+      categories: [],
+      makes:[],
+      brands:[] ,
+      perviousMake : this.vehicle.attributes.make,
+      previousBrand :this.vehicle.attributes.brand,
+make:  "" ,
+        brand: "",
+      description: this.vehicle.attributes.description,
+      // previousCategories: this.vehicle.attributes.category_vehicles.data,
+      selectedCategory: "",
+      owner: this.vehicle.attributes.owner,
+      seats: this.vehicle.attributes.seats,
+      daily: this.vehicle.attributes.daily,
+      mice: this.vehicle.attributes.mice,
+      newDaily: this.vehicle.attributes.new_daily,
+      msrp: this.vehicle.attributes.msrp,
+      style: this.vehicle.attributes.style,
+      deposit: this.vehicle.attributes.deposit,
+      partner: this.vehicle.attributes.partner.data
+        ? this.vehicle.attributes.partner.data.id
+        : null,
+      showUploadedFiles: false,
+      previousPhotos: this.vehicle,
+      selectedFiles: [],
+      imageUrls: [],
+      partnerData: [],
+    };
+  },
 
   watch: {
     previousCategories: {
@@ -467,50 +470,71 @@ export default {
     },
   },
   computed: {
-     getSelectedPartnerName() {
+    getSelectedPartnerName() {
       if (this.partnerData && this.partnerData.length > 0) {
-        const selectedPartner = this.partnerData.find(partner => partner.id === this.partner);
-        return selectedPartner ? selectedPartner.name : '';
+        const selectedPartner = this.partnerData.find(
+          (partner) => partner.id === this.partner
+        );
+        return selectedPartner ? selectedPartner.name : "";
       }
-      return '';
-    }
+      return "";
+    },
   },
   methods: {
+// perviousMakeAndBrand(){
+//   if(this.vehicle? && this.vehicle?.attributes?.make &&  this.vehicle?.attributes?.make.data && this.vehicle?.attributes?.make.data.attributes &&   this.vehicle?.attributes?.make.data.attributes.name )
+// }
     closeModal() {
       this.$emit("close");
     },
-    async fetchCategories() {
-      const data = await fetchVehicleCategories();
-      this.categories = data.data;
-    },
-    deleteFromCategories(cat) {
-      this.previousCategories = this.previousCategories.filter(
-        (item) => item !== cat
-      );
-    },
+    // async fetchCategories() {
+    //   const data = await fetchVehicleCategories();
+    //   this.categories = data.data;
+    // },
+    // deleteFromCategories(cat) {
+    //   this.previousCategories = this.previousCategories.filter(
+    //     (item) => item !== cat
+    //   );
+    // },
 
-    addToPrevious() {
-      if (this.selectedCategory !== "" || this.selectedCategory !== null) {
-        console.log(this.selectedCategory);
-        const selectedCategory = this.categories.find(
-          (category) => category.id === this.selectedCategory
-        );
-        if (this.selectedCategory) {
-          const exists = this.previousCategories.some(
-            (category) => category.id === this.selectedCategory
-          );
+    // addToPrevious() {
+    //   if (this.selectedCategory !== "" || this.selectedCategory !== null) {
+    //     console.log(this.selectedCategory);
+    //     const selectedCategory = this.categories.find(
+    //       (category) => category.id === this.selectedCategory
+    //     );
+    //     if (this.selectedCategory) {
+    //       const exists = this.previousCategories.some(
+    //         (category) => category.id === this.selectedCategory
+    //       );
 
-          if (!exists) {
-            const selectedCategory = this.categories.find(
-              (category) => category.id === this.selectedCategory
-            );
+    //       if (!exists) {
+    //         const selectedCategory = this.categories.find(
+    //           (category) => category.id === this.selectedCategory
+    //         );
 
-            if (selectedCategory) {
-              this.previousCategories.push(selectedCategory);
-            }
-          }
-        }
-      }
+    //         if (selectedCategory) {
+    //           this.previousCategories.push(selectedCategory);
+    //         }
+    //       }
+    //     }
+    //   }
+    // },
+
+     async getBrands(selectedMake){
+  try {
+    console.log(selectedMake,"selected make ")
+    this.perviousMake.attributes.name=selectedMake.attributes.name
+     const { data } = await fetchBrandMyMake(selectedMake.id);
+    this.brands = data;
+  } catch (error) {
+    console.error("Error fetching brands:", error);
+  }
+},
+   async  fetchMakesCat (){
+       const  {data}= await fetchMakes()
+       this.makes = data
+
     },
     getFullPhotoUrl(relativeUrl) {
       return `http://localhost:1337${relativeUrl}`;
@@ -560,19 +584,19 @@ export default {
     //   const result =
     //   console.log(result);
     // },
-    async fetchPartner(){
-  this.partnerData = await fetchPartners();
-  console.log(this.partnerData, 'partners');
-},
+    async fetchPartner() {
+      this.partnerData = await fetchPartners();
+      console.log(this.partnerData, "partners");
+    },
 
     async submitForm() {
       const allCategories = this.previousCategories.map((item) => {
         return item.id;
       });
-// let partnerUpdate
-//       if(partner && partner.data ){
+      // let partnerUpdate
+      //       if(partner && partner.data ){
 
-//       }
+      //       }
       const vehicleData = {
         data: {
           make: this.make,
@@ -585,9 +609,9 @@ export default {
           deposit: parseFloat(this.deposit),
           description: this.description,
           owner: this.owner,
-          category_vehicles: allCategories,
+          // category_vehicles: allCategories,
           seats: parseInt(this.seats),
-          partner:this.partner
+          partner: this.partner,
         },
       };
       if (this.selectedFiles.length > 0) {
@@ -613,9 +637,11 @@ export default {
     },
   },
   mounted() {
-    this.fetchCategories();
-    this.fetchPartner()
-   },
+    // this.fetchCategories();
+    console.log(this.vehicle,"vehicle")
+    this.fetchPartner();
+    this.fetchMakesCat();
+  },
 };
 </script>
 

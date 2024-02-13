@@ -170,7 +170,7 @@ export default {
     if (searchInput.trim()) {
        console.log("Search input:", searchInput);
       console.log("New data:", this.newData);
-      this.vehicles = this.vehicles.filter(vehicle => vehicle.attributes.make.toLowerCase().includes(searchInput.toLowerCase()));
+      this.vehicles = this.vehicles.filter(vehicle => vehicle.attributes?.make?.data?.attributes?.name?.toLowerCase().includes(searchInput.toLowerCase()));
     } else {
       console.log("No search input provided.");
        await this.fetchData();
