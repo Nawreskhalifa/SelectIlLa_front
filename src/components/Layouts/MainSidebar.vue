@@ -401,44 +401,7 @@
               </ul>
             </div>
           </div>
-        </li>
-          class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
-        >
-          <a
-            href="#"
-            class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
-            data-bs-toggle="collapse"
-            data-bs-target="#sidebarCollapse"
-            aria-expanded="false"
-            aria-controls="sidebarCollapse"
-          >
-            <i class="flaticon-layer-2"></i>
-            <span class="title">Reservations</span>
-          </a>
-          <div
-            id="sidebarCollapse"
-            class="accordion-collapse collapse"
-            data-bs-parent="#sidebarNavAccordion"
-          >
-            <div class="accordion-body">
-              <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
-                <li class="sidebar-sub-menu-item">
-                  <router-link
-                    to="/reservationList"
-                    class="sidebar-sub-menu-link"
-                  >
-                    Reservation Lists
-                  </router-link>
-                </li>
-                <li class="sidebar-sub-menu-item">
-                  <router-link to="/acceptedres" class="sidebar-sub-menu-link">
-                    Accepted Reservations
-                  </router-link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </li>
+</li>
         <li class="sidebar-nav-item">
           <router-link to="/contacts" class="sidebar-nav-link d-block">
             <i class="fa fa-address-book" aria-hidden="true"></i>
@@ -463,15 +426,12 @@ export default defineComponent({
     return {
       stateStoreInstance,
       open,
-      open,
-    };
+     };
   },
   computed: {
     ...mapGetters(["isOpen"]),
   },
-  computed: {
-    ...mapGetters(["isOpen"]),
-  },
+
 
   methods: {
     ...mapMutations(["SET_LOG_OUT", "updateOpen"]),

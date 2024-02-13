@@ -80,25 +80,6 @@ export async function RegistreUser(user) {
   }
 }
 
-export async function getRole(RoleName) {
-  try {
-    const res = await axios(`${endPoints.roles}`)
-    if (res.data) {
-      res.data.roles = res.data.roles.filter(item => {
-
-        return item.name.trim() === RoleName.trim()
-      })
-    }
-    return {
-      roles: res.data
-    }
-  } catch (error) {
-    return {
-      success: false,
-      error,
-    };
-  }
-}
 export async function makeApiRequest(
   method: string,
   endpoint: string,
@@ -393,31 +374,6 @@ export async function uploadFiles(files, ref, field, refId) {
     }
   }
 
-    if (postFilesResponse.status === httpCodes.HTTP_OK) {
-      return {
-        success: true,
-        data: {
-          filesData: postFilesResponse.data,
-        },
-        status: httpCodes.HTTP_OK,
-      };
-    } else {
-      console.error('Failed to post files:', postFilesResponse);
-      return {
-        success: false,
-        error: 'Failed to post files',
-        status: postFilesResponse.status,
-        data: postFilesResponse
-      };
-    }
-  } catch (error) {
-    console.error('Error uploading files:', error);
-    return {
-      success: false,
-      error,
-    };
-  }
-}
 
 export async function deleteFiles(id) {
   try {
@@ -1018,42 +974,6 @@ export async function updateReservation(id, updatedData) {
         data: response,
         success: false,
         error: 'Failed to update reservation data',
-        status: response.status,
-      };
-    }
-  } catch (error) {
-    console.error('Error updating reservation:', error);
-    return {
-      success: false,
-      error,
-    };
-  }
-}
-export async function RegistreUser(user) {
-   try {
-    const response = await axios.post(
-      `${endPoints.registreUser} `,
-      user,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      }
-    );
-
-    if (response.status === httpCodes.HTTP_OK) {
-      return {
-        success: true,
-        data: response.data,
-        status: response.status,
-      };
-    } else {
-      console.error('Failed to  registre new user data:', response);
-      return {
-        data:response,
-        success: false,
-        error: 'Failed to  registre new user data',
         status: response.status,
       };
     }

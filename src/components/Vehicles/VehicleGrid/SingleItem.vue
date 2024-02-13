@@ -130,7 +130,8 @@ export default {
 
   methods: {
     getFullImageUrl(relativePath) {
-      return `http://localhost:1337${relativePath}`;
+      const stockage = process.env.VUE_APP_STORAGE_URL
+      return `${stockage}${relativePath}`;
     },
     addToFavorites() {
       console.log("Add to favorites:", this.vehicle);

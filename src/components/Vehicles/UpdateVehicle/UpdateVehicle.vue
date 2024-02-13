@@ -537,7 +537,9 @@ make:  "" ,
 
     },
     getFullPhotoUrl(relativeUrl) {
-      return `http://localhost:1337${relativeUrl}`;
+                                    const stockage = process.env.VUE_APP_STORAGE_URL
+
+      return `${stockage}${relativeUrl}`;
     },
     checkUploadedFiles() {
       this.showUploadedFiles = !this.showUploadedFiles;

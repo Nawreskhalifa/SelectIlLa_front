@@ -1,43 +1,91 @@
 <template>
-
+  <transition name="modal-animation">
+    <div v-show="show" class="modal">
+      <transition name="modal-animation-inner">
+        <div v-show="show" class="modal-inner">
+          <div class="card product-details-box">
+            <p class="confirmation-text mb-10 fw-semibold fs-16 fs-lg-18">
+              Add Vehicle Make and Brand
+            </p>
+            <div class="col-md-12">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <input
+                  v-model="makeName"
+                  type="text"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="Enter make name"
+                />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <input
+                  v-model="brandName"
+                  type="text"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="Enter brand name"
+                  :disabled="!makeName.trim()"
+                />
+              </div>
+            </div>
+            <div class="buttons">
+              <button class="confirm-button" @click="confirmMakeAndBrand">Add Make and Brand</button>
+              <button class="cancel-button" @click="closeModal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+  </transition>
 </template>
 
 <script>
-import { updateVehicleCategory } from "@/services/apiService";
+import { addVehicleMake, addVehicleBrand } from "@/services/apiService";
 export default {
   props: {
     show: Boolean,
-    category: {
-      type: Object,
-      required: true,
-    },
   },
   data() {
     return {
-      name: "",
+      makeName: "",
+      brandName: "",
     };
   },
   methods: {
     closeModal() {
       this.$emit("close");
     },
-    async confirmUpdate() {
-      const updatedData = {
+    async confirmMakeAndBrand() {
+      if (!this.makeName.trim()) {
+         return;
+      }
+      const makeData = {
         data: {
-          name: this.name,
+          name: this.makeName,
         },
       };
-      const res = await updateVehicleCategory(this.category.id, updatedData);
-      if (res) {
-        this.$emit("updated");
+      const makeRes = await addVehicleMake(makeData);
+      if (makeRes) {
+         if (this.brandName.trim()) {
+          const brandData = {
+            data: {
+              name: this.brandName,
+              make_id: makeRes.id,
+            },
+          };
+          const brandRes = await addVehicleBrand(brandData);
+          if (brandRes) {
+             this.$emit("brandAdded", brandRes);
+          }
+        }
+        this.makeName = "";
+        this.brandName = "";
       }
     },
   },
-  created() {
-    console.log(this.category);
-  },
 };
 </script>
+
 
 <style lang="scss" scoped>
 .modal-animation-enter-active,
