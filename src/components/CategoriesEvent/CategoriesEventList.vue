@@ -114,7 +114,16 @@
           <tbody>
             <tr v-for="category in getCategoriesEvent" :key="category.id">
               <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ category.name }}
+                <div class="d-flex align-items-center">
+                  <div class="form-check mb-0">
+                    <input
+                      class="form-check-input shadow-none"
+                      type="checkbox"
+                    />
+                  </div>
+                  {{ category.name }}
+                </div>
+
               </td>
               <td class="shadow-none lh-1 fw-medium text-paragraph">
                 {{ truncateDescription(category.description) }}
@@ -235,14 +244,13 @@ export default defineComponent({
         perPage: 4,
         name: this.searchText,
       });
-      console.log("q:", this.getCategoriesEvent);
     },
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;
       await this.fetchAllCategoriesEvent({ page: pageNumber, perPage: 4 });
     },
     truncateDescription(description) {
-      const maxLength = 200;
+      const maxLength = 80;
       if (description.length <= maxLength) {
         return description;
       } else {
