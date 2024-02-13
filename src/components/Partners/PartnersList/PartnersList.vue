@@ -232,11 +232,11 @@
     </div>
   </div>
   <div v-if="partnerEdit">
-    <UpdateModal
+    <!-- <UpdateModal
       :show="ModalVisible"
       :partner="partnerEdit"
       @close="closeModal"
-     />
+     /> -->
      <RessourcesModal
      :show="ressourcesModalVisible"
      @close="closeRessources"
@@ -253,13 +253,12 @@ import {
   deleteVillaCategory,
   search,
 } from "@/services/apiService";
-import UpdateModal from "../AddPartner/EditPartners.vue";
+// import UpdateModal from "../AddPartner/EditPartners.vue";
 import {fetchPartners, fetchUserByPartner} from "@/services/apiService"
 import RessourcesModal from '../Ressources/RessourcesModal.vue'
 export default {
   name: "PartnersList ",
   components: {
-    UpdateModal,
     RessourcesModal
   },
   data() {

@@ -31,8 +31,10 @@ import ReservationListPage from "../pages/Reservation/ReservationList.vue"
 import AcceptReservation from "../pages/Reservation/AcceptedReservation.vue"
 import ErrorPage from "../pages/ErrorPage.vue"
 import LogOut from "../pages/LogoutPage.vue"
+import AddPartner from "@/pages/Partners/AddPartner/AddPartner.vue" ;
 import PdfViewer from "../pages/PDF/PdfVww.vue"
-function guardMyroute(to, from, next) {
+
+ function guardMyroute(to, from, next) {
   const isAuthenticated = localStorage.getItem('user');
 
   if (to.name === 'LoginPage') {
@@ -280,6 +282,15 @@ function guardMyroute(to, from, next) {
     path: "/partner/:id",
     name: "partnerdetails",
     component: PartnerDetails,
+    beforeEnter : guardMyroute,
+
+    meta :{auth : true}
+
+  },
+      {
+    path: "/add-partner",
+    name: "addpartner",
+    component: AddPartner,
     beforeEnter : guardMyroute,
 
     meta :{auth : true}

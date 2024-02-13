@@ -319,6 +319,7 @@ export async function fetchVehicles(start=0,limit=2) {
     }
   }
 
+
   export async function deleteFiles(id) {
     try {
       const response = await axios.delete(`${endPoints.upload}/files/${id}`);
@@ -866,7 +867,25 @@ export async function getFile(id) {
     throw error;
   }
 }
+export async function getRole(RoleName){
+  try{
+     const res = await axios(`${endPoints.roles}`)
+    if(res.data){
+         res.data.roles =res.data.roles.filter(item => {
 
+return item.name.trim() === RoleName.trim()
+         })
+    }
+  return {
+ roles : res.data
+  }
+  }catch(error){
+      return {
+      success: false,
+      error,
+    };
+  }
+}
 export async function updateReservation(id, updatedData) {
   try {
     const response = await axios.put(
@@ -903,3 +922,97 @@ export async function updateReservation(id, updatedData) {
     };
   }
 }
+export async function RegistreUser(user) {
+   try {
+    const response = await axios.post(
+      `${endPoints.registreUser} `,
+      user,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } else {
+      console.error('Failed to  registre new user data:', response);
+      return {
+        data:response,
+        success: false,
+        error: 'Failed to  registre new user data',
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error('Error updating reservation:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
+}
+
+export async function postPartner(partner) {
+  try {
+       const response = await axios.post(endPoints.partners, partner, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+      return { success: response.status === httpCodes.HTTP_OK, data: response.data, status: response.status };
+  } catch (error: any) {
+      return {
+          status: error?.response?.status,
+          success: error?.response?.data?.success,
+          error: error?.response?.data?.message,
+      };
+  }
+}
+  export async function fetchMakes(query="") {
+    try {
+      const response = await axios.get(`${endPoints.makes}&${query}`);
+      if (response) {
+         return response.data;
+      } else {
+         throw new Error("Failed to fetch makes");
+      }
+    } catch (error) {
+      console.error("Error fetching makes:", error);
+      throw error;
+    }
+  }
+    export async function fetchBrands(query="") {
+    try {
+      const response = await axios.get(`${endPoints.brands}?${query}`);
+      if (response) {
+         return response.data;
+      } else {
+         throw new Error("Failed to fetch brands ");
+      }
+    } catch (error) {
+      console.error("Error fetching brands:", error);
+      throw error;
+    }
+  }
+// http://localhost:1337/api/brands
+  export async function  fetchBrandMyMake(id){
+try {
+      const response = await axios.get(`${endPoints.brands}?populate=*&filters[make][id][$eq]=${id}`);
+      if (response) {
+         return response.data;
+      } else {
+         throw new Error("Failed to fetch brands ");
+      }
+    } catch (error) {
+      console.error("Error fetching brands:", error);
+      throw error;
+    }
+  }

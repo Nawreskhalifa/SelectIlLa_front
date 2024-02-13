@@ -6,12 +6,51 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">Make</label>
-              <input
+                <select
                 v-model="make"
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. Sensung Smart Watch"
-              />
+                class="form-select shadow-none fw-semibold rounded-0"
+                @change="getBrands(make)"
+              >
+                 <option
+                  v-for="make in makes"
+                  :key="make?.id"
+                  :value="make"
+                >
+                  {{ make.attributes.name }}
+                </option>
+              </select>
+<div class="accordion" id="basicAccordion">
+
+
+<div class="accordion-item mb-0">
+
+
+<button class="accordion-button shadow-none fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#basicCollapseOne" aria-expanded="true" aria-controls="basicCollapseOne">
+
+
+Accordion Item #1
+
+
+</button>
+
+
+<div id="basicCollapseOne" class="accordion-collapse collapse" data-bs-parent="#basicAccordion">
+
+
+<div class="accordion-body">
+
+
+<p class="lh-base fs-md-15 fs-lg-16 text-paragraph mb-0"><strong class="text-black">This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+</div>
               <div v-if="makeError" class="text-danger">{{ makeError }}</div>
             </div>
           </div>
@@ -21,12 +60,19 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Brand
               </label>
-              <input
-                v-model="brand"
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. Sensung Smart Watch"
-              />
+ <select v-model="brand" class="form-select shadow-none fw-semibold rounded-0" :disabled="!make">
+  <template v-if="brands && brands.length > 0">
+    <option v-for="br in brands" :key="br?.id" :value="br">
+      {{ br?.attributes?.name }}
+    </option>
+  </template>
+  <template v-else>
+    <option disabled>Select A Make First</option>
+  </template>
+</select>
+
+
+
               <div v-if="brandError" class="text-danger">{{ brandError }}</div>
             </div>
           </div>
@@ -114,8 +160,7 @@
                 class="form-select shadow-none fw-semibold rounded-0"
                 @change="addToAllCat"
               >
-                <option selected>Select a Category</option>
-                <option
+                 <option
                   v-for="category in categories"
                   :key="category.id"
                   :value="category.id"
@@ -281,7 +326,7 @@
 import { defineComponent, ref  ,computed } from "vue";
 import BlotFormatter from "quill-blot-formatter";
 import ImageUploader from "quill-image-uploader";
-import { fetchVehicleCategories  , fetchPartners} from "@/services/apiService";
+import { fetchVehicleCategories  , fetchPartners,fetchMakes, fetchBrands,fetchBrandMyMake} from "@/services/apiService";
 import { postVehicle } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -296,13 +341,13 @@ export default defineComponent({
     const allPartners = ref();
     const selectedPartner = ref("");
     const categories = ref();
-    const make = ref("");
-    const brand = ref("");
+     const brand = ref("");
     const description = ref("");
     const selectedCategory = ref("");
     const selectedFiles = ref([]);
     const AllSelected = ref<string[]>([]);
-
+    const makes =  ref([]) ;
+    const brands=  ref([]);
     const owner = ref("");
     const seats = ref("");
     const daily = ref("");
@@ -311,7 +356,7 @@ export default defineComponent({
     const msrp = ref("");
     const style = ref("");
     const deposit = ref("");
-
+    const make = ref("")
     const modules = {
       module: BlotFormatter,
       ImageUploader,
@@ -378,6 +423,11 @@ export default defineComponent({
         reader.readAsDataURL(file);
       }
     };
+    const fetchMakesCat = async () => {
+       const  {data}= await fetchMakes()
+       makes.value = data
+
+    }
     const uploadImage = async () => {
       const formData = new FormData();
       selectedFilesRef.value.forEach((file, index) => {
@@ -490,9 +540,19 @@ export default defineComponent({
         router.push("/vehiclelist");
       }
     };
+   const getBrands = async (selectedMake) => {
+  try {
+     const { data } = await fetchBrandMyMake(selectedMake.id);
+    brands.value = data;
+  } catch (error) {
+    console.error("Error fetching brands:", error);
+  }
+};
+
+
     fetchPartnersList() ;
     fetchCategories();
-
+fetchMakesCat()
     return {
       modules,
       categories,
@@ -505,7 +565,10 @@ export default defineComponent({
       owner,
       seats,
       daily,
-      deposit,
+      makes,
+      brands,
+      getBrands,
+       deposit,
       style,
       msrp,
       showToatSuccess,

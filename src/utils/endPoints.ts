@@ -3,6 +3,7 @@ export const endPoints = {
     login: `${API_BASE_URL}auth/local`,
     allUsers: `${API_BASE_URL}users?populate=*`,
     allCustomers: `${API_BASE_URL}customers`,
+    roles:`${API_BASE_URL}users-permissions/roles`,
     deleteCustomer: `${API_BASE_URL}customers/`,
     deleteCategoryEvent: `${API_BASE_URL}category-events`,
     allCategoriesEvent: `${API_BASE_URL}category-events`,
@@ -28,4 +29,7 @@ export const endPoints = {
     users: `${API_BASE_URL}users`,
     reservations: `${API_BASE_URL}reservations`,
     accepted_reservations: `${API_BASE_URL}accepted-reservations`,
+    registreUser :`${API_BASE_URL}auth/local/register`,
+brands:`${API_BASE_URL}brands`,
+makes:`${API_BASE_URL}makes?populate=*`
 };

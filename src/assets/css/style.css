@@ -9313,9 +9313,7 @@ textarea.form-control {
   margin-top: 1.5px;
 }
 .chat-sidebar .card-body .chat-users-list {
-  height: 705px;
-  overflow: hidden;
-  overflow-y: scroll;
+  height: 10%;
   margin-top: 30px;
   margin-left: -15px;
   margin-right: -15px;

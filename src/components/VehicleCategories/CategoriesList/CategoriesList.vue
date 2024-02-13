@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
     <div
       class="card-head box-shadow bg-white d-md-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
@@ -147,19 +147,218 @@
       @updated="updated"
     />
   </div>
-</template>
+</template> -->
+ <template>
+  <div class="row">
+    <div class="col-lg-4 col-xxxl-3">
+      <div
+        class="card mb-25 border-0 rounded-0 bg-white letter-spacing chat-sidebar"
+      >
+        <div class="card-body">
+          <form class="search-box position-relative">
+            <input
+              type="text"
+              class="form-control shadow-none text-black rounded-0 border-0"
+              placeholder="Search message"
+            />
+            <button
+              type="submit"
+              class="bg-transparent text-primary transition p-0 border-0"
+            >
+              <i class="flaticon-search-interface-symbol"></i>
+            </button>
+          </form>
 
+          <div class="chat-users-list">
+
+
+            <div class="single-user-item position-relative">
+              <div class="d-flex align-items-center">
+
+                <div class="ms-12">
+                  <span
+                    class="title d-block text-black fs-md-15 fs-lg-16 fw-medium"
+                  >
+                    Make
+                  </span>
+
+                </div>
+              </div>
+            </div>
+            <div class="single-user-item position-relative">
+              <div class="d-flex align-items-center">
+
+                <div class="ms-12">
+                  <span
+                    class="title d-block text-black fs-md-15 fs-lg-16 fw-medium"
+                  >
+                    Brand
+                  </span>
+                </div>
+              </div>
+            </div>
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8 col-xxxl-9">
+      <div
+        class="card mb-25 border-0 rounded-0 bg-white letter-spacing chat-card"
+      >
+        <div
+          class="card-head box-shadow bg-white d-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
+        >
+            <div class="card-body p-15 p-sm-20 p-md-25">
+
+         <div class="table-responsive">
+        <table class="table text-nowrap align-middle mb-0">
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+              >
+               Name
+              </th>
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+              >
+                Description
+              </th>
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
+              ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th
+                class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
+              >
+                <div class="d-flex align-items-center">
+                  <div class="form-check mb-0">
+                    <input
+                      class="form-check-input shadow-none"
+                      type="checkbox"
+                    />
+                  </div>
+                  <div class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16">
+
+                    K. Hong
+                  </div>
+                </div>
+              </th>
+
+
+
+              <td class="shadow-none lh-1 fw-medium text-black-emphasis">35</td>
+              <td
+                class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
+              >
+                <div class="dropdown">
+                  <button
+                    class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i class="flaticon-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        href="javascript:void(0);"
+                        ><i
+                          class="flaticon-view lh-1 me-8 position-relative top-1"
+                        ></i>
+                        View</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        href="javascript:void(0);"
+                        ><i
+                          class="flaticon-pen lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Edit</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        href="javascript:void(0);"
+                        ><i
+                          class="flaticon-delete lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Delete</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+      <!-- <div
+        class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
+      >
+        <p class="mb-0 text-paragraph">
+          Showing <span class="fw-bold">11</span> out of
+          <span class="fw-bold">134</span> results
+        </p>
+        <nav class="mt-15 mt-md-0">
+          <ul class="pagination mb-0">
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <i class="flaticon-chevron-1"></i>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link active" href="#">1</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#">2</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#">3</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next">
+                <i class="flaticon-chevron"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div> -->
+ </div>
+      </div>
+    </div>
+
+  </div>
+
+
+</template>
 <script>
 import {
   fetchVehicleCategories,
   deleteVehicleCategory,
   search,
 } from "@/services/apiService";
-import UpdateModal from "@/components/VehicleCategories/EditCategory/EditCategory.vue";
+// import UpdateModal from "@/components/VehicleCategories/EditCategory/EditCategory.vue";
 export default {
   name: "CategoryList",
   components: {
-    UpdateModal,
+    // UpdateModal,
   },
   data() {
     return {

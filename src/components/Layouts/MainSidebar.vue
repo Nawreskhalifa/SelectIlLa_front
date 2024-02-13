@@ -328,7 +328,7 @@
                 </li>
                 <li class="sidebar-sub-menu-item">
                   <router-link
-                    to="/create-new-category-event"
+                    to="/add-partner"
                     class="sidebar-sub-menu-link"
                   >
                     add New Partner
