@@ -64,7 +64,14 @@
                     Customers List
                   </router-link>
                 </li>
-
+                <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/add-customer"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Add Customer
+                  </router-link>
+                </li>
               </ul>
             </div>
           </div>
