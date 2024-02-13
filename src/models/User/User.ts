@@ -26,12 +26,14 @@ export interface UserWithToken {
 }
 
 // Decode  of Photo
-export const decodePhoto = (photoApi: PhotoApi): Photo => {
-    return {
+export const decodePhoto = (photoApi: PhotoApi): Photo|null => {
+    if( photoApi.data)
+  {  return {
         id: photoApi.data.id,
         name: photoApi.data.attributes.name,
         url: photoApi.data.attributes.url,
-    };
+    };}
+    return null
 };
 // Decode  of Role
 export const decodeRole = (RoleApi: RoleApi): Role => {

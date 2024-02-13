@@ -1,4 +1,3 @@
-import { Photo, Role } from "./User";
 
 export interface PhotoApi {
   data: {

@@ -41,8 +41,7 @@ export const decodeCustomer = (customerApi: CustomerApi): Customer => {
         creditCards: customerApi.attributes.credit_cards
             ? customerApi.attributes.credit_cards.map(decodeCreditCard)
             : null,
-        user: decodeUser(customerApi.attributes.user),
-        // user:null
+         user: decodeUser(customerApi.attributes.user),
     };
 };
 export const decodeCustomers = (customerApi: CustomerApi[]): Customer[] => {

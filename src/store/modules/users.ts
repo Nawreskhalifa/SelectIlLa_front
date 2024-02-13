@@ -194,7 +194,7 @@ const actions = {
             );
 
             if (response.success) {
-                console.log(response);
+                console.log(response.data.data);
                 commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
                 commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
                 commit('SET_CUSTOMERS', response.data.data.map(decodeCustomer));
