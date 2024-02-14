@@ -254,13 +254,13 @@ const actions = {
         try {
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
-                endPoints.allPartners,
+               endPoints.allPartners,
                 undefined,
                 undefined
             );
             console.log(response.data)
             if (response.success) {
-                commit('SET_PARTNERS', response.data.map(decodePartner))
+                commit('SET_PARTNERS', response.data)
                 commit('SET_USERS_LOADING')
             }
 

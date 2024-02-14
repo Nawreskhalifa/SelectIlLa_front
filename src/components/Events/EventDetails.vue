@@ -224,36 +224,48 @@
             <div class="mb-15 mb-md-20 mb-lg-25 d-flex justify-content-between">
               <div class="position-relative rounded-circle">
                 <img
-                  v-if="storageUrl && getEvent?.partner?.user?.photo?.url"
-                  :src="storageUrl + getEvent?.partner?.user?.photo?.url"
+                  v-if="
+                    storageUrl &&
+                    getEvent?.partner?.attributes.user?.data.attributes.photo
+                      ?.data.attributes.url
+                  "
+                  :src="
+                    storageUrl +
+                    getEvent?.partner?.attributes.user?.data.attributes.photo
+                      ?.data.attributes.url
+                  "
                   class="rounded-circle"
-                  width="80"
-                  height="80"
+                  width="40"
+                  height="40"
                   alt="user"
                 />
               </div>
             </div>
             <h5 class="fs-15 fs-md-18 fw-bold text-black mb-0">
-              {{ getEvent?.partner?.name + " " + getEvent?.partner?.surname }}
+              {{
+                getEvent?.partner?.attributes.name +
+                " " +
+                getEvent?.partner?.attributes.surname
+              }}
             </h5>
             <ul class="info-list ps-0 mb-0 list-unstyled">
               <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
                 <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
                   >PHONE:</span
                 >
-                {{ getEvent?.partner?.phone }}
+                {{ getEvent?.partner.attributes?.phone }}
               </li>
               <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
                 <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
                   >EMAIL:</span
                 >
-                {{ getEvent?.partner?.user?.email }}
+                {{ getEvent?.partner?.attributes.user?.data.attributes.email }}
               </li>
               <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
                 <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
                   >ADDRESS:</span
                 >
-                {{ getEvent?.partner.address }}
+                {{ getEvent?.partner.attributes.address }}
               </li>
             </ul>
           </div>

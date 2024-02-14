@@ -211,7 +211,7 @@
               <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14">
                 PROMOTE BY:
                 <span class="fw-semibold text-primary">
-                  {{ event.partner?.name + event.partner?.surname }}
+                  {{ event.partner?.attributes.name + event.partner?.attributes.surname }}
                 </span>
               </span>
               <!-- <span class="badge text-outline-danger ms-10">{{
