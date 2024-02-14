@@ -202,6 +202,16 @@
                 class="card-head bg-white d-md-flex align-items-center justify-content-between pt-15 pb-15 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30"
               >
                 <h5 class="card-title fw-bold mb-0">Reservations</h5>
+                <select
+                  v-model="statusFilter"
+                  @change="handleFilterChange"
+                  class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+                >
+                  <option selected value="">All</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Canceled">Canceled</option>
+                </select>
                 <div class="d-flex align-items-center mt-10 mt-md-0">
                   <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
                     <button
@@ -306,7 +316,7 @@
                               v-if="reservation.attributes.vehicle.data"
                               >{{
                                 reservation.attributes.vehicle.data.attributes
-                                  .style
+                                  .make.data?.attributes.name
                               }}</span
                             >
                             <span
@@ -529,6 +539,7 @@ export default defineComponent({
       customer: {},
       currentPage: 1,
       selectAllChecked: false,
+      statusFilter:''
     };
   },
   methods: {
@@ -602,6 +613,7 @@ export default defineComponent({
   },
   async mounted() {
     await this.fetchAllAttachmentsByCustomer(this.customerId);
+    console.log(this.getDocuments);
     if (!this.getCustomers || !this.getCustomers.length) {
       await this.fetchAllCustomers({ page: null });
     }

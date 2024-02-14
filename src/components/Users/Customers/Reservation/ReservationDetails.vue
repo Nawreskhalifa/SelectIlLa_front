@@ -4,12 +4,56 @@
       <div
         class="card mb-25 border-0 rounded-0 bg-white order-details-box letter-spacing"
       >
-        <div class="card-head bg-white d-flex align-items-center">
-          <i class="flaticon-sterile-box text-primary"></i>
-          <h5 class="mb-0 fw-bold text-black ms-10 ms-md-15">
-            Reservation Details
-          </h5>
+        <div
+          class="card-head bg-white d-flex align-items-center justify-content-between"
+        >
+          <div>
+            <!-- <i class="flaticon-sterile-box text-primary"></i> -->
+            <h5 class="mb-0 fw-bold text-black ms-10 ms-md-15">
+              Reservation Details
+            </h5>
+          </div>
+          <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+            <button
+              class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="flaticon-dots"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center"
+                  href="javascript:void(0);"
+                  @click="ConfirmReservation"
+                >
+                  <i
+                    class="flaticon-check-mark lh-1 me-6 position-relative top-1"
+                    style="font-size: 20px"
+                  ></i>
+                  Confirm
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center"
+                  href="#"
+                  data-bs-toggle="modal"
+                  data-bs-target="#RefuseReservationModal"
+                >
+                  <i
+                    class="flaticon-cancel lh-1 me-6 position-relative top-1"
+                    style="font-size: 20px"
+                  ></i>
+                  Cancel
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
+
         <div class="card-body">
           <ul class="list ps-0 mb-0 list-unstyled">
             <li class="d-flex align-items-center justify-content-between">
@@ -242,18 +286,68 @@
             Product
           </h5>
           <div class="row ms-0 me-0 product-box">
-            <div class="col-md-6 ps-0 pe-0">
+            <div
+              class="col-md-6 ps-0 pe-0"
+              v-if="
+                getReservation?.attributes.villa.data?.attributes.photos.data
+              "
+            >
               <div
                 class="image"
                 :style="{
-                  'background-image':
-                    'url(' +
-                    require(`../../../../assets/images/products/review-product.jpg`) +
-                    ')',
+                  'background-image': `url(${Url}${getReservation?.attributes.villa.data?.attributes.photos.data[0].attributes.url})`,
                 }"
               >
                 <img
-                  src="../../../../assets/images/products/review-product.jpg"
+                  :src="
+                    Url +
+                    getReservation?.attributes.villa.data?.attributes.photos
+                      .data[0].attributes.url
+                  "
+                  alt="review-product"
+                />
+              </div>
+            </div>
+            <div
+              class="col-md-6 ps-0 pe-0"
+              v-if="
+                getReservation?.attributes.event.data?.attributes.photos.data
+              "
+            >
+              <div
+                class="image"
+                :style="{
+                  'background-image': `url(${Url}${getReservation?.attributes.event.data?.attributes.photos.data[0].attributes.url})`,
+                }"
+              >
+                <img
+                  :src="
+                    Url +
+                    getReservation?.attributes.event.data?.attributes.photos
+                      .data[0].attributes.url
+                  "
+                  alt="review-product"
+                />
+              </div>
+            </div>
+            <div
+              class="col-md-6 ps-0 pe-0"
+              v-if="
+                getReservation?.attributes.villa.vehicle?.attributes.photos.data
+              "
+            >
+              <div
+                class="image"
+                :style="{
+                  'background-image': `url(${Url}${getReservation?.attributes.vehicle.data?.attributes.photos.data[0].attributes.url})`,
+                }"
+              >
+                <img
+                  :src="
+                    Url +
+                    getReservation?.attributes.vehicle.data?.attributes.photos
+                      .data[0].attributes.url
+                  "
                   alt="review-product"
                 />
               </div>
@@ -265,7 +359,8 @@
                   v-if="getReservation?.attributes.vehicle.data"
                 >
                   {{
-                    getReservation?.attributes.vehicle.data?.attributes.style
+                    getReservation?.attributes.vehicle.data?.attributes.make
+                      .data?.attributes.name
                   }}
                 </h5>
                 <h5
@@ -291,8 +386,8 @@
                       getReservation?.attributes.vehicle.data?.attributes
                         .partner.data?.attributes.name +
                       " " +
-                      getReservation?.attributes.villa.data?.attributes.partner
-                        .data?.attributes.surname
+                      getReservation?.attributes.vehicle.data?.attributes
+                        .partner.data?.attributes.surname
                     }}
                   </span>
                   <span
@@ -303,7 +398,7 @@
                       getReservation?.attributes.event.data?.attributes.partner
                         .data?.attributes.name +
                       " " +
-                      getReservation?.attributes.villa.data?.attributes.partner
+                      getReservation?.attributes.event.data?.attributes.partner
                         .data?.attributes.surname
                     }}
                   </span>
@@ -385,32 +480,97 @@
         </div>
       </div>
     </div>
+    <loading
+      v-model:active="isLoading"
+      :can-cancel="true"
+      :on-cancel="onCancel"
+      :is-full-page="fullPage"
+    />
   </div>
+  <RefuseReservationModal :idReservation="idReservation" />
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
 import { defineComponent } from "vue";
 import Media from "./FileManager.vue";
+import { storageUrl } from "../../../../utils/constants";
+import { updateReservation, acceptReservation } from "@/services/apiService";
+import Loading from "vue-loading-overlay";
+import RefuseReservationModal from "./RefuseReservationModal.vue";
+import swal from "sweetalert";
 
 export default defineComponent({
   name: "ReservationDetails",
-  components: { Media },
+  components: { Media, Loading, RefuseReservationModal },
   props: {
     // Define the 'customer id' prop
     reservationId: {
       required: true,
     },
   },
-
+  data() {
+    return {
+      Url: storageUrl,
+      isLoading: false,
+      fullPage: true,
+      idReservation: null,
+    };
+  },
   methods: {
     ...mapActions(["fetchOneReservation"]),
+    onCancel() {
+      console.log("User cancelled the loader.");
+    },
+    async ConfirmReservation() {
+      this.isLoading = true;
+      if (this.$route.params && this.$route.params.reservationId) {
+        const res = await updateReservation(this.$route.params.reservationId, {
+          data: {
+            status: "Confirmed",
+          },
+        });
+        if (res) {
+          if (
+            this.getReservation.attributes &&
+            this.getReservation.attributes.customer &&
+            this.getReservation.attributes.customer.data
+          ) {
+            const acceptedRes = {
+              data: {
+                customer: this.getReservation.attributes.customer.data.id,
+                reservation_demand: this.getReservation.id,
+              },
+            };
+            const accept = await acceptReservation(acceptedRes);
+            if (accept) {
+              this.isLoading = false;
+
+              this.$router.push({
+                name: "CustomerDetailPage",
+                params: {
+                  customerId: this.getReservation.attributes.customer.data.id,
+                },
+              });
+              // Afficher un message de succès
+              swal({
+                text: "Reservation Confirmed Successfully!",
+                icon: "success",
+                closeOnClickOutside: false,
+              });
+            }
+            this.isLoading = false;
+          }
+        }
+      }
+    },
   },
   computed: {
     ...mapGetters(["getReservation"]),
   },
   async mounted() {
     if (this.$route.params && this.$route.params.reservationId) {
+      this.idReservation = this.$route.params.reservationId;
       await this.fetchOneReservation(this.$route.params.reservationId);
       console.log(this.getReservation);
     }

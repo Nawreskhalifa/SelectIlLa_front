@@ -346,7 +346,7 @@ const actions = {
         try {
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
-                `${endPoints.reservations}?populate=*`,
+                `${endPoints.reservations}?populate=deep`,
                 undefined,
                 { filters: { customer: { id: { $eq: idCustomer } } }, pagination: { page: page, pageSize: perPage } }
             );
