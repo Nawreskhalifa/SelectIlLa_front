@@ -203,25 +203,42 @@
               >
                 <h5 class="card-title fw-bold mb-0">Reservations</h5>
                 <div class="d-flex align-items-center mt-10 mt-md-0">
-                  <!-- <form class="search-box position-relative me-15">
-                    <input
-                      type="text"
-                      class="form-control shadow-none text-black rounded-0 border-0"
-                      placeholder="Search email"
-                    />
+                  <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
                     <button
-                      type="submit"
-                      class="bg-transparent text-primary transition p-0 border-0"
+                      class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
                     >
-                      <i class="flaticon-search-interface-symbol"></i>
+                      <i class="flaticon-dots"></i>
                     </button>
-                  </form> -->
-                  <!-- <button
-                    class="dot-btn lh-1 position-relative top-3 bg-transparent border-0 shadow-none p-0 transition d-inline-block mt-10 mt-sm-0"
-                    type="button"
-                  >
-                    <i class="flaticon-dots"></i>
-                  </button> -->
+                    <ul class="dropdown-menu">
+                      <li>
+                        <a
+                          class="dropdown-item d-flex align-items-center"
+                          href="javascript:void(0);"
+                          @click="selectAllReservations"
+                        >
+                          <i
+                            class="fas fa-check lh-1 me-8 position-relative top-1"
+                          ></i>
+                          {{ selectAllChecked ? "Deselect All" : "Select All" }}
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          class="dropdown-item d-flex align-items-center"
+                          href="javascript:void(0);"
+                          @click="AcceptSelectedReservations"
+                        >
+                          <i
+                            class="flaticon-delete lh-1 me-8 position-relative top-1"
+                          ></i>
+                          Delete Selected
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
               <div
@@ -277,28 +294,38 @@
                         <th
                           class="shadow-none lh-1 fw-medium text-black-emphasis title fs-md-15 fs-lg-16 ps-0"
                         >
-                          <span
-                            class="d-block fs-13 mt-10 text-muted fw-normal"
-                            v-if="reservation.attributes.vehicle.data"
-                            >{{
-                              reservation.attributes.vehicle.data.attributes
-                                .style
-                            }}</span
-                          >
-                          <span
-                            class="d-block fs-13 mt-10 text-muted fw-normal"
-                            v-if="reservation.attributes.event.data"
-                            >{{
-                              reservation.attributes.event.data.attributes.name
-                            }}</span
-                          >
-                          <span
-                            class="d-block fs-13 mt-10 text-muted fw-normal"
-                            v-if="reservation.attributes.villa.data"
-                            >{{
-                              reservation.attributes.villa.data.attributes.name
-                            }}</span
-                          >
+                          <div class="d-flex align-items-center">
+                            <div class="form-check mb-0">
+                              <input
+                                class="form-check-input shadow-none"
+                                type="checkbox"
+                              />
+                            </div>
+                            <span
+                              class="d-block fs-13 mt-10 text-muted fw-normal"
+                              v-if="reservation.attributes.vehicle.data"
+                              >{{
+                                reservation.attributes.vehicle.data.attributes
+                                  .style
+                              }}</span
+                            >
+                            <span
+                              class="d-block fs-13 mt-10 text-muted fw-normal"
+                              v-if="reservation.attributes.event.data"
+                              >{{
+                                reservation.attributes.event.data.attributes
+                                  .name
+                              }}</span
+                            >
+                            <span
+                              class="d-block fs-13 mt-10 text-muted fw-normal"
+                              v-if="reservation.attributes.villa.data"
+                              >{{
+                                reservation.attributes.villa.data.attributes
+                                  .name
+                              }}</span
+                            >
+                          </div>
                         </th>
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
@@ -485,6 +512,7 @@ import CustomersInformation from "./CustomerInformation.vue";
 import { mapActions, mapGetters } from "vuex";
 import { defineComponent } from "vue";
 import Media from "./FileManagar/FileManager.vue";
+import swal from "sweetalert";
 
 export default defineComponent({
   name: "CustomerDetail",
@@ -500,10 +528,54 @@ export default defineComponent({
       idCustomer: this.customerId,
       customer: {},
       currentPage: 1,
+      selectAllChecked: false,
     };
   },
   methods: {
     ...mapActions(["fetchAllCustomers", "fetchAllAttachmentsByCustomer"]),
+    AcceptSelectedReservations() {
+      const selectedReservations = [];
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+          selectedReservations.push(this.getDocuments[index].id);
+        }
+      });
+
+      if (selectedReservations.length === 0) {
+        swal("Please select at least one reservation to delete.");
+        return;
+      }
+
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover these reservations!",
+        icon: "warning",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          // Call the deleteCustomer action or API endpoint to delete the selected customers
+          // await Promise.all(
+          //   selectedReservations.map((id) => this.deleteCustomer(id))
+          // );
+          // After deletion, fetch customers again to update the list
+          // await this.fetchAllCustomers({ page: this.currentPage, perPage: 4 });
+          swal("Selected reservations have been deleted!", {
+            icon: "success",
+          });
+        } else {
+          swal("Selected reservations are safe!");
+        }
+      });
+    },
+    selectAllReservations() {
+      this.selectAllChecked = !this.selectAllChecked;
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = this.selectAllChecked;
+      });
+    },
     navigateToReservationDetailPage(reservationId) {
       // Utilisez le routeur de Vue pour naviguer vers la page détaillée du reservation
       this.$router.push({

@@ -76,8 +76,36 @@ const mutations = {
     SET_RESERVATION(state, payload) {
         state.reservation = payload
     },
+    UPDATE_RESERVATION(state, { reservation, data }) {
+        reservation.updateReservation(data);
+    },
 }
 const actions = {
+    async updateReservation({ commit }, { body, reservation }) {
+        commit("SET_USERS_LOADING", true);
+        commit("SET_USERS_ERROR");
+        try {
+            commit("UPDATE_RESERVATION", {
+                reservation,
+                data: body,
+            });
+            commit("SET_USERS_LOADING", false);
+        } catch (error: any) {
+            commit("SET_USERS_LOADING");
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit("SET_USERS_ERROR", error.response.data.error.messages);
+            } else {
+                commit("SET_USERS_ERROR", ["Une erreur est survenue"]);
+            }
+            return false;
+        }
+        return true;
+    },
     async fetchAllUsers({ commit }) {
         commit('SET_USERS_LOADING', true)
         commit('SET_USERS_ERROR')
@@ -254,7 +282,7 @@ const actions = {
         try {
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
-               endPoints.allPartners,
+                endPoints.allPartners,
                 undefined,
                 undefined
             );
