@@ -350,6 +350,11 @@
                                 <a
                                   class="dropdown-item d-flex align-items-center"
                                   href="javascript:void(0);"
+                                  @click="
+                                    navigateToReservationDetailPage(
+                                      reservation.id
+                                    )
+                                  "
                                   ><i
                                     class="flaticon-view lh-1 me-8 position-relative top-1"
                                   ></i>
@@ -499,6 +504,13 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(["fetchAllCustomers", "fetchAllAttachmentsByCustomer"]),
+    navigateToReservationDetailPage(reservationId) {
+      // Utilisez le routeur de Vue pour naviguer vers la page détaillée du reservation
+      this.$router.push({
+        name: "ReservationDetailsPage",
+        params: { reservationId: reservationId },
+      });
+    },
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;
       await this.fetchAllCustomers({

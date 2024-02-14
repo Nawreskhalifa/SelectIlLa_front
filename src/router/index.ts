@@ -2,7 +2,7 @@
 import { createWebHistory, createRouter } from "vue-router";
 import AddVehicle from "@/pages/Vehicle/AddVehicle.vue"
 import VehicleList from "@/pages/Vehicle/VehicleList.vue"
- import VillaList from "@/pages/Villa/VillaList.vue"
+import VillaList from "@/pages/Villa/VillaList.vue"
 import AddVilla from "@/pages/Villa/AddVilla.vue"
 import AddVehicleCategory from "../pages/Categories/Vehicle/AddVehicleCategory.vue"
 import VehicleListCategory from "../pages/Categories/Vehicle/VehicleListCategory.vue"
@@ -15,7 +15,6 @@ import CategoryEventDetailsPage from "../pages/CategoriesEvent/CategoryEventDeta
 import EditCategoryEventPage from "../pages/CategoriesEvent/EditCategoryEventPage.vue";
 import EventListPage from "../pages/Events/EventListPage.vue";
 import AddEventPage from "../pages/Events/AddEventPage.vue";
-import EventsGridPage from "../pages/Events/EventsGridPage.vue";
 import EventDetailsPage from "../pages/Events/EventDetailsPage.vue";
 import CustomersListPage from "../pages/Users/Customers/CustomersListPage.vue";
 import CustomersPage from "../pages/Ecommerce/CustomersPage.vue";
@@ -24,27 +23,25 @@ import CustomerDetailPage from '../pages/Users/Customers/CustomerDetailPage.vue'
 import LoginPage from "../pages/Authentication/LoginPage.vue";
 import Dashboard from "../pages/Dashboard/EcommercePage.vue";
 import EditEventPage from "../pages/Events/EditEventPage.vue";
-import store from "../store/modules/users"
 import PartnersPage from "../pages/Partners/PartnersList/PartnersList.vue"
 import PartnerDetails from "../pages/Partners/PartnerDetails/PartnerDetails.vue"
 import ReservationListPage from "../pages/Reservation/ReservationList.vue"
 import AcceptReservation from "../pages/Reservation/AcceptedReservation.vue"
 import ErrorPage from "../pages/ErrorPage.vue"
-import LogOut from "../pages/LogoutPage.vue"
-import AddPartner from "@/pages/Partners/AddPartner/AddPartner.vue" ;
+import AddPartner from "@/pages/Partners/AddPartner/AddPartner.vue";
 import PdfViewer from "../pages/PDF/PdfVww.vue"
-
- function guardMyroute(to, from, next) {
+import ReservationDetailsPage from '../pages/Users/Customers/ReservationDetailsPage.vue'
+function guardMyroute(to, from, next) {
   const isAuthenticated = localStorage.getItem('user');
 
   if (to.name === 'LoginPage') {
-     if (isAuthenticated) {
+    if (isAuthenticated) {
       next('/dashboard');
     } else {
       next();
     }
   } else {
-     if (isAuthenticated) {
+    if (isAuthenticated) {
       next();
     } else {
       next('/login');
@@ -52,21 +49,21 @@ import PdfViewer from "../pages/PDF/PdfVww.vue"
   }
 }
 
- const routes = [
+const routes = [
   {
     path: "/login",
     name: "LoginPage",
     component: LoginPage,
-    beforeEnter : guardMyroute,
-     meta :{auth : false}
+    beforeEnter: guardMyroute,
+    meta: { auth: false }
   },
   {
     path: "/customers",
     name: "CustomersPage",
     component: CustomersPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
@@ -74,129 +71,134 @@ import PdfViewer from "../pages/PDF/PdfVww.vue"
     path: "/customersList",
     name: "CustomersListPage",
     component: CustomersListPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
   },
   {
     path: "/add-customer",
     name: "AddCustomerPage",
     component: AddCustomerPage,
-    beforeEnter : guardMyroute,
-    meta :{auth : true}
+    beforeEnter: guardMyroute,
+    meta: { auth: true }
 
+  },
+  {
+    path: "/reservation-details/:reservationId",
+    name: "ReservationDetailsPage",
+    component: ReservationDetailsPage,
   },
   {
     path: "/partnersList",
     name: "partnersList",
     component: PartnersPage,
-    beforeEnter : guardMyroute,
-    meta :{auth : true}
+    beforeEnter: guardMyroute,
+    meta: { auth: true }
 
   },
   {
     path: "/reservationList",
     name: "reservationList",
     component: ReservationListPage,
-    beforeEnter : guardMyroute,
-    meta :{auth : true}
+    beforeEnter: guardMyroute,
+    meta: { auth: true }
   },
   {
     path: "/acceptedres",
     name: "acceptedres",
     component: AcceptReservation,
-    beforeEnter : guardMyroute,
-    meta :{auth : true}
+    beforeEnter: guardMyroute,
+    meta: { auth: true }
   },
   {
     path: "/customer-detail/:customerId",
     name: "CustomerDetailPage",
     component: CustomerDetailPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
     props: true,
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/categories-event",
     name: "CategoriesEventPage",
     component: CategoriesEventPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/category-event-details/:idCategoryEvent",
     name: "CategoryEventDetails",
     component: CategoryEventDetailsPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/create-new-category-event",
     name: "CreateNewCategoryEventPage",
     component: CreateNewCategoryEventPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/edit-category-event/:idCategoryEvent",
     name: "EditCategoryEventPage",
     component: EditCategoryEventPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/events",
     name: "EventListPage",
     component: EventListPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/event-details/:idEvent",
     name: "EventDetailsPage",
     component: EventDetailsPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/add-event",
     name: "AddEventPage",
     component: AddEventPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/addvehicle",
     name: "addvehicle",
     component: AddVehicle,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/vehiclelist",
     name: "vehiclelist",
     component: VehicleList,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
@@ -210,104 +212,104 @@ import PdfViewer from "../pages/PDF/PdfVww.vue"
     path: "/villalist",
     name: "villalist",
     component: VillaList,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/addvilla",
     name: "addvilla",
     component: AddVilla,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/AddVehicleCategory",
     name: "AddVehicleCategory",
     component: AddVehicleCategory,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/VehicleListCategory",
     name: "VehicleListCategory",
     component: VehicleListCategory,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/AddVillaCategory",
     name: "AddVillaCategory",
     component: AddVillaCategory,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/VillaListCategory",
     name: "VillaListCategory",
     component: VillaListCategory,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/contacts",
     name: "contacts",
     component: ContactPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
     path: "/edit-event/:idEvent",
     name: "EditEventPage",
     component: EditEventPage,
-    beforeEnter : guardMyroute,
+    beforeEnter: guardMyroute,
 
-    meta :{auth : true}
-
-  },
-    {
-    path: "/partner/:id",
-    name: "partnerdetails",
-    component: PartnerDetails,
-    beforeEnter : guardMyroute,
-
-    meta :{auth : true}
-
-  },
-      {
-    path: "/add-partner",
-    name: "addpartner",
-    component: AddPartner,
-    beforeEnter : guardMyroute,
-
-    meta :{auth : true}
+    meta: { auth: true }
 
   },
   {
-      path: "/dashboard",
-      name: "dashboard",
-      beforeEnter : guardMyroute,
-      meta :{auth : true},
-       component: Dashboard,
+    path: "/partner/:id",
+    name: "partnerdetails",
+    component: PartnerDetails,
+    beforeEnter: guardMyroute,
+
+    meta: { auth: true }
+
+  },
+  {
+    path: "/add-partner",
+    name: "addpartner",
+    component: AddPartner,
+    beforeEnter: guardMyroute,
+
+    meta: { auth: true }
+
+  },
+  {
+    path: "/dashboard",
+    name: "dashboard",
+    beforeEnter: guardMyroute,
+    meta: { auth: true },
+    component: Dashboard,
   },
   {
     path: "/error",
     name: "error",
-       component: ErrorPage,
-},
+    component: ErrorPage,
+  },
 
 ];
 
@@ -322,12 +324,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.path === '/') {
-   next('/dashboard');
- } else if (to.matched.length === 0) {
+    next('/dashboard');
+  } else if (to.matched.length === 0) {
     next('/error');
- } else {
+  } else {
     next();
- }
+  }
 });
 
 
