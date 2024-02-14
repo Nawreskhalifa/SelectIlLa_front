@@ -233,155 +233,104 @@
     </div>
     <div class="col-lg-8">
       <div
-        class="card mb-25 border-0 rounded-0 bg-white order-details-box letter-spacing"
+        class="card mb-25 border-0 rounded-0 bg-white letter-spacing manage-reviews-box"
       >
-        <div class="card-head bg-white d-flex align-items-center">
-          <i class="flaticon-sterile-box text-primary"></i>
-          <h5 class="mb-0 fw-bold text-black ms-10 ms-md-15">
-            Order (ID #321456)
+        <div class="card-body p-15 p-sm-20 p-md-25">
+          <h5
+            class="text-black fw-bold fs-15 fs-md-16 fs-lg-18 fs-xl-20 mb-15 mb-sm-20"
+          >
+            Product
           </h5>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table text-nowrap align-middle mb-0">
-              <thead>
-                <tr>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 ps-0"
+          <div class="row ms-0 me-0 product-box">
+            <div class="col-md-6 ps-0 pe-0">
+              <div
+                class="image"
+                :style="{
+                  'background-image':
+                    'url(' +
+                    require(`../../../../assets/images/products/review-product.jpg`) +
+                    ')',
+                }"
+              >
+                <img
+                  src="../../../../assets/images/products/review-product.jpg"
+                  alt="review-product"
+                />
+              </div>
+            </div>
+            <div class="col-md-6 ps-0 pe-0">
+              <div class="content">
+                <h5
+                  class="fs-15 fs-md-16 fs-xxxl-18 mb-10"
+                  v-if="getReservation?.attributes.vehicle.data"
+                >
+                  {{
+                    getReservation?.attributes.vehicle.data?.attributes.style
+                  }}
+                </h5>
+                <h5
+                  class="fs-15 fs-md-16 fs-xxxl-18 mb-10"
+                  v-if="getReservation?.attributes.event.data"
+                >
+                  {{ getReservation?.attributes.event.data?.attributes.name }}
+                </h5>
+                <h5
+                  class="fs-15 fs-md-16 fs-xxxl-18 mb-10"
+                  v-if="getReservation?.attributes.villa.data"
+                >
+                  {{ getReservation?.attributes.villa.data?.attributes.name }}
+                </h5>
+
+                <span class="d-block text-muted mb-2"
+                  >Owner:
+                  <span
+                    class="d-block text-muted"
+                    v-if="getReservation?.attributes.vehicle.data"
                   >
-                    Product Name
-                  </th>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13"
+                    {{
+                      getReservation?.attributes.vehicle.data?.attributes
+                        .partner.data?.attributes.name +
+                      " " +
+                      getReservation?.attributes.villa.data?.attributes.partner
+                        .data?.attributes.surname
+                    }}
+                  </span>
+                  <span
+                    class="d-block text-muted"
+                    v-if="getReservation?.attributes.event.data"
                   >
-                    Price
-                  </th>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13"
+                    {{
+                      getReservation?.attributes.event.data?.attributes.partner
+                        .data?.attributes.name +
+                      " " +
+                      getReservation?.attributes.villa.data?.attributes.partner
+                        .data?.attributes.surname
+                    }}
+                  </span>
+                  <span
+                    class="d-block text-muted"
+                    v-if="getReservation?.attributes.villa.data"
                   >
-                    Quantity
-                  </th>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pe-0"
-                  >
-                    Total Amount
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th
-                    class="shadow-none fw-medium text-black product-title ps-0"
-                  >
-                    <router-link
-                      to="/product-details"
-                      class="d-flex align-items-center text-decoration-none text-black fs-md-15 fs-lg-16"
-                    >
-                      <img
-                        src="../../../../assets/images/products/product17.jpg"
-                        class="me-15"
-                        width="44"
-                        alt="product"
-                      />
-                      Sanung Airpods 3s Voltage <br />Multifunction
-                    </router-link>
-                  </th>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph">
-                    $125.00
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph">1</td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph pe-0">
-                    $125.00
-                  </td>
-                </tr>
-                <tr>
-                  <td
-                    class="shadow-none fw-medium text-black product-title ps-0"
-                  >
-                    <router-link
-                      to="/product-details"
-                      class="d-flex align-items-center text-decoration-none text-black fs-md-15 fs-lg-16"
-                    >
-                      <img
-                        src="../../../../assets/images/products/product18.jpg"
-                        class="me-15"
-                        width="44"
-                        alt="product"
-                      />
-                      Sanung Smart Watch With More <br />Multifunction
-                    </router-link>
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph">
-                    $225.00
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph">2</td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph pe-0">
-                    $450.00
-                  </td>
-                </tr>
-                <tr>
-                  <td
-                    class="shadow-none fw-medium text-black product-title ps-0"
-                  >
-                    <router-link
-                      to="/product-details"
-                      class="d-flex align-items-center text-decoration-none text-black fs-md-15 fs-lg-16"
-                    >
-                      <img
-                        src="../../../../assets/images/products/product19.jpg"
-                        class="me-15"
-                        width="44"
-                        alt="product"
-                      />
-                      Gaming Laptop With 32 GB Ram <br />& 1TB SSd
-                    </router-link>
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph">
-                    $205.00
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph">1</td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph pe-0">
-                    $205.00
-                  </td>
-                </tr>
-                <tr>
-                  <td
-                    class="shadow-none fw-medium text-black product-title ps-0"
-                  >
-                    <router-link
-                      to="/product-details"
-                      class="d-flex align-items-center text-decoration-none text-black fs-md-15 fs-lg-16"
-                    >
-                      <img
-                        src="../../../../assets/images/products/product20.jpg"
-                        class="me-15"
-                        width="44"
-                        alt="product"
-                      />
-                      VR Box With Advanced <br />Metaverse System
-                    </router-link>
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph">
-                    $25.00
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph">3</td>
-                  <td class="shadow-none lh-1 fw-medium text-paragraph pe-0">
-                    $75.00
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                    {{
+                      getReservation?.attributes.villa.data?.attributes.partner
+                        .data?.attributes.name +
+                      " " +
+                      getReservation?.attributes.villa.data?.attributes.partner
+                        .data?.attributes.surname
+                    }}
+                  </span>
+                </span>
+              </div>
+            </div>
           </div>
+          <div class="mt-25 mt-lg-35"></div>
         </div>
       </div>
     </div>
     <div class="col-lg-4">
       <div
-        class="card mb-25 border-0 rounded-0 bg-white order-details-box letter-spacing">
+        class="card mb-25 border-0 rounded-0 bg-white order-details-box letter-spacing"
+      >
         <div class="card-head bg-white d-flex align-items-center">
           <i class="flaticon-document text-info"></i>
           <h5 class="mb-0 fw-bold text-black ms-10 ms-md-15">Order Summary</h5>

@@ -82,8 +82,11 @@
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+                @click="toggleSortDirection"
               >
                 Category Name
+                <span v-if="sortDirection === 'asc'" class="arrow-up"></span>
+                <span v-if="sortDirection === 'desc'" class="arrow-down"></span>
               </th>
 
               <th
@@ -223,10 +226,17 @@ export default defineComponent({
       currentPage: 1,
       searchText: "",
       selectAllChecked: false,
+      sortDirection: "asc",
     };
   },
   methods: {
     ...mapActions(["fetchAllCategoriesEvent", "deleteCategoryEvent"]),
+    toggleSortDirection() {
+      // Basculer entre ascendant et descendant
+      this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      // Appeler handleFilterChange pour appliquer le nouveau tri
+      this.handleSearch();
+    },
     deleteSelectedCategories() {
       const selectedCategories = [];
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -279,6 +289,7 @@ export default defineComponent({
         page: this.currentPage,
         perPage: 4,
         name: this.searchText,
+        sortDirectionName: this.sortDirection,
       });
     },
     async onPageChange(pageNumber) {
@@ -351,7 +362,13 @@ export default defineComponent({
   transition: box-shadow 0.4s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+.arrow-up::before {
+  content: "\25B2"; /* Code Unicode pour la flèche vers le haut */
+}
 
+.arrow-down::before {
+  content: "\25BC"; /* Code Unicode pour la flèche vers le bas */
+}
 .event-card:hover {
   /* Box shadow on hover */
   box-shadow: 0 8px 12px #7d6ff0;
