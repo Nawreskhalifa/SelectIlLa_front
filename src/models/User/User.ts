@@ -46,7 +46,7 @@ export const decodeRole = (RoleApi: RoleApi): Role => {
 export const decodeUser = (userApi: UserApi): User => {
     return {
         id: userApi.data.id,
-        username: userApi.data.attributes.username,
+         username: userApi.data.attributes.email,
         email: userApi.data.attributes.email,
         gender: userApi.data.attributes.gender,
         dateOfBirth: userApi.data.attributes.date_of_birth,

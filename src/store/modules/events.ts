@@ -203,10 +203,11 @@ const actions = {
     try {
       const response = await makeApiRequest(
         methodsHttpNames.GET,
-        `${endPoints.findEvent}/${idCategory}?populate=*`,
+        `${endPoints.findEvent}/${idCategory}?populate=deep`,
         undefined,
         undefined
       );
+      console.log(response.data)
       commit("SET_EVENT", decodeApiToEvent(response.data.data));
       commit("SET_EVENTS_LOADING");
     } catch (error: any) {

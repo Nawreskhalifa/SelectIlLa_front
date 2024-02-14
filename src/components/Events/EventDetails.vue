@@ -212,15 +212,51 @@
         </div>
       </div>
       <div class="card mb-25 border-0 rounded-0 bg-white event-details-card">
-        <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
+        <div
+          class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing contact-card"
+        >
           <div class="mb-10 mb-sm-15 mb-lg-20">
-            <h5 class="card-title fw-bold mb-0 fs-15 fs-md-16 fs-lg-18">
+            <h3 class="card-title fw-bold mb-0 fs-15 fs-md-16 fs-lg-18">
               Promoter information's
-            </h5>
+            </h3>
           </div>
-          <p class="text-paragraph fs-md-15 fs-lg-16 text-paragraph lh-base">
-            {{ getEvent?.promotingInfo }}
-          </p>
+          <div class="card-body p-20 p-md-25 p-lg-30">
+            <div class="mb-15 mb-md-20 mb-lg-25 d-flex justify-content-between">
+              <div class="position-relative rounded-circle">
+                <img
+                  v-if="storageUrl && getEvent?.partner?.user?.photo?.url"
+                  :src="storageUrl + getEvent?.partner?.user?.photo?.url"
+                  class="rounded-circle"
+                  width="80"
+                  height="80"
+                  alt="user"
+                />
+              </div>
+            </div>
+            <h5 class="fs-15 fs-md-18 fw-bold text-black mb-0">
+              {{ getEvent?.partner?.name + " " + getEvent?.partner?.surname }}
+            </h5>
+            <ul class="info-list ps-0 mb-0 list-unstyled">
+              <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
+                <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
+                  >PHONE:</span
+                >
+                {{ getEvent?.partner?.phone }}
+              </li>
+              <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
+                <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
+                  >EMAIL:</span
+                >
+                {{ getEvent?.partner?.user?.email }}
+              </li>
+              <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
+                <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
+                  >ADDRESS:</span
+                >
+                {{ getEvent?.partner.address }}
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -399,7 +435,6 @@ export default defineComponent({
 .card-image {
   height: 500px;
   width: 100%; /* Redimensionner l'image à 100% de la largeur du conteneur */
-
 }
 /* Ajouter un espace entre les images */
 .swiper-slide {
@@ -447,7 +482,7 @@ export default defineComponent({
 }
 .swiper-button-next {
   right: 10px; /* Adjust as needed */
- }
+}
 /* Ajouter un espace entre les images */
 .swiper-slide {
   margin-right: 70px; /* Espacement entre les images */
