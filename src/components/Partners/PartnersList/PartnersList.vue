@@ -146,7 +146,7 @@
                </td>
 
                <td class="shadow-none lh-1 fw-medium text-paragraph">
-                <i @click="openRessources(partner)" class="fas fa-database" style="cursor: pointer;"></i>
+                <i @click="openRessources(partner)" class="fas fa-eye" style="cursor: pointer;"></i>
               </td>
               <td
                 class="shadow-none lh-1 fw-medium text-paragraph text-end pe-0"
@@ -413,7 +413,7 @@ openRessources(partner){
 
 <style scoped>
 .selected {
-  background-color: darkslategray !important ;
+    background-color: rgb(89, 64, 231) !important ;
   color: white !important;
 }
 

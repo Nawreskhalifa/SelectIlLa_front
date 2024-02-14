@@ -413,9 +413,16 @@
             </div>
           </div>
         </div>
+
       </transition>
     </div>
+
   </transition>
+              <loading
+        v-model:active="isLoading"
+        :can-cancel="true"
+         :is-full-page="true"
+      />
 </template>
 <script>
 import {
@@ -427,8 +434,13 @@ import {
 } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 
 export default {
+  components:{
+  Loading
+  },
   props: {
     show: Boolean,
     villa: {
@@ -460,7 +472,8 @@ export default {
       partner:this.villa.attributes.partner.data.attributes.id,
       selectedFiles: [],
       imageUrls: [],
-      partnerData :[]
+      partnerData :[] ,
+      isLoading:false
     };
   },
   computed: {
@@ -571,6 +584,7 @@ export default {
       console.log(this.partnerData ,"data")
     },
     async submitForm() {
+      this.isLoading= true
       const allCategories = this.previousCategories.map((item) => {
         return item.id;
       });
@@ -611,10 +625,12 @@ export default {
 
         toast.success("villa Updated  🚗 👍 ", {
           autoClose: 1000,
+
         });
         setTimeout(() => {
-          this.closeModal();
-        }, 1500);
+              this.isLoading= false
+         }, 1500);
+
       }
     },
   },

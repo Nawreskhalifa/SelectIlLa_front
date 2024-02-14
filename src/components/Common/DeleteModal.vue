@@ -3,7 +3,7 @@
     <div v-show="show" class="modal">
       <transition name="modal-animation-inner">
         <div v-show="show" class="modal-inner">
-          <div class="card product-details-box">
+          <div class=" product-details-box">
             <p class="confirmation-text mb-10 fw-semibold fs-16 fs-lg-18">
               Are you sure you want to delete {{ propToDelete }}?
             </p>

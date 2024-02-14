@@ -96,11 +96,13 @@
                 Description
               </label>
               <div class="mb-0">
-                <textarea
-                  v-model="description"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="Write your vehicle description"
-                ></textarea>
+                   <QuillEditor
+                  theme="snow"
+                  placeholder="Write your meta description"
+v-model:content="description"
+
+                   toolbar="full"
+                />
               </div>
               <div v-if="descriptionError" class="text-danger">
                 {{ descriptionError }}
@@ -370,7 +372,7 @@ export default defineComponent({
     const selectedPartner = ref("");
     const categories = ref();
      const brand = ref();
-    const description = ref("");
+    const description = ref();
      const selectedFiles = ref([]);
     const AllSelected = ref<string[]>([]);
     const makes =  ref([]) ;
@@ -462,6 +464,19 @@ export default defineComponent({
        makes.value = data
 
     }
+    const changeText = (event) => {
+  // Extracting text from delta
+  console.log(event )
+  const newText = event.delta.ops
+    .filter(op => op.insert)
+    .map(op => op.insert)
+    .join('');
+
+  // Updating description variable
+  description.value = newText;
+  console.log(newText)
+};
+
     const uploadImage = async () => {
       const formData = new FormData();
       selectedFilesRef.value.forEach((file, index) => {
@@ -488,6 +503,8 @@ export default defineComponent({
   AllSelected.value = AllSelected.value.filter((item) => item !== cat);
 };
     const submitForm = async () => {
+            isLoading.value = true
+
       makeError.value = "";
       brandError.value = "";
       descriptionError.value = "";
@@ -498,9 +515,7 @@ export default defineComponent({
       miceError.value = "";
       newDailyError.value = "";
 
-      if (!description.value.trim()) {
-        descriptionError.value = "Description is required.";
-      }
+
 
 
       if (selectedFiles.value.length === 0) {
@@ -547,7 +562,7 @@ export default defineComponent({
           mice: parseFloat(mice.value),
           new_daily: parseFloat(newDaily.value),
           deposit: parseFloat(deposit.value),
-          description: description.value,
+          description: description.value.ops[0].insert,
           owner: owner.value,
           // category_vehicles: selectedC ,
           seats: parseInt(seats.value),
@@ -558,9 +573,10 @@ export default defineComponent({
       console.log(vehicleData);
 
       const result = await postVehicle(selectedFilesRef, vehicleData);
-
       if (result.success) {
         showToatSuccess();
+              isLoading.value = false
+
         router.push("/vehiclelist");
       }
     };
@@ -598,11 +614,32 @@ isLoading.value = false
         }
       closeModal();
     };
-const saveOnlyBrand= async () => {
-  console.log(newBrand.value , make.value.id)
-     const data = await  postBrand({data :{name : newBrand.value , make : make.value?.id}})
-     console.log(data)
-}
+ const saveOnlyBrand = async () => {
+  try {
+    isLoading.value = true;
+
+    const response = await postBrand({ data: { name: newBrand.value, make: make.value?.id } });
+
+    if (response  ) {
+       await getBrands(make.value.id);
+
+       newBrand.value = '';
+
+      console.log("Brand added successfully:", response.data);
+
+       modalBrand.value = false;
+    } else {
+      console.error("Failed to add brand. Response:", response);
+    }
+  } catch (error) {
+    console.error("Error adding brand:", error);
+  } finally {
+     isLoading.value = false;
+  }
+};
+
+
+
 
  const addMake = () => {
     modal.value = true;
@@ -648,6 +685,7 @@ saveOnlyBrand,
       brandError,
       descriptionError,
        categoryError,
+changeText,
       ownerError,
       seatsError,
       dailyError,

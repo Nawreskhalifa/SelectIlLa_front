@@ -3,9 +3,9 @@
     <div v-show="show" class="modal">
       <transition name="modal-animation-inner">
         <div v-show="show" class="modal-inner">
-          <div class="card product-details-box">
+          <div class=" ">
             <p class="confirmation-text mb-10 fw-semibold fs-16 fs-lg-18">
-              Edit Category
+              Add A Make
             </p>
             <div class="col-md-12">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -16,12 +16,11 @@
                   v-model="name"
                   type="text"
                   class="form-control shadow-none rounded-0 text-black"
-                  :placeholder="category.attributes.name"
-                />
+                 />
               </div>
             </div>
             <div class="buttons">
-              <button class="confirm-button" @click="confirmUpdate">
+              <button class="confirm-button" @click="confirm"  >
                 Confirm
               </button>
               <button class="cancel-button" @click="closeModal">No</button>
@@ -34,14 +33,9 @@
 </template>
 
 <script>
-import { updateVehicleCategory } from "@/services/apiService";
-export default {
+ export default {
   props: {
     show: Boolean,
-    category: {
-      type: Object,
-      required: true,
-    },
   },
   data() {
     return {
@@ -52,17 +46,10 @@ export default {
     closeModal() {
       this.$emit("close");
     },
-    async confirmUpdate() {
-      const updatedData = {
-        data: {
-          name: this.name,
-        },
-      };
-      const res = await updateVehicleCategory(this.category.id, updatedData);
-      if (res) {
-        this.$emit("updated");
-      }
-    },
+    confirm(){
+this.$emit("addMake",{name : this.name})
+    }
+
   },
   created() {
     console.log(this.category);

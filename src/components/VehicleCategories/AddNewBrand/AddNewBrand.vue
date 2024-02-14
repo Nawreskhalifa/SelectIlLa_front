@@ -5,7 +5,7 @@
         <div v-show="show" class="modal-inner">
           <div class=" ">
             <p class="confirmation-text mb-10 fw-semibold fs-16 fs-lg-18">
-              Edit Category
+              Add A New Brand for {{make.attributes.name}}
             </p>
             <div class="col-md-12">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -16,12 +16,11 @@
                   v-model="name"
                   type="text"
                   class="form-control shadow-none rounded-0 text-black"
-                  :placeholder="category.attributes.Name"
-                />
+                 />
               </div>
             </div>
             <div class="buttons">
-              <button class="confirm-button" @click="confirmUpdate">
+              <button class="confirm-button" @click="confirm" >
                 Confirm
               </button>
               <button class="cancel-button" @click="closeModal">No</button>
@@ -34,14 +33,13 @@
 </template>
 
 <script>
-import { updateVillaCategory } from "@/services/apiService";
-export default {
+ export default {
   props: {
     show: Boolean,
-    category: {
-      type: Object,
-      required: true,
-    },
+    make : {
+        type:Object ,
+        required: true
+    }
   },
   data() {
     return {
@@ -52,18 +50,11 @@ export default {
     closeModal() {
       this.$emit("close");
     },
-    async confirmUpdate() {
-      const updatedData = {
-        data: {
-          Name: this.name,
-        },
-      };
-      const res = await updateVillaCategory(this.category.id, updatedData);
-      console.log(res);
-      if (res) {
-        this.$emit("updated");
-      }
-    },
+    confirm(){
+this.$emit("addBrand",{name : this.name , make : this.make.id})
+this.name =""
+    }
+
   },
   created() {
     console.log(this.category);

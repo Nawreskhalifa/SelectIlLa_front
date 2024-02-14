@@ -386,9 +386,9 @@ export async function deleteFiles(id) {
 }
 export async function search(table, field, query, searchInput) {
   try {
-    const url = "http://localhost:1337/api"
+    const url =process.env.VUE_APP_API_BASE_URL
     const response = await axios.get(
-      `${url}/${table}?filters[${field}]/[${query}]=${searchInput}`
+      `${url}${table}?filters[${field}][${query}]=${searchInput}`
     );
 
     if (response) {
@@ -1005,7 +1005,13 @@ export async function postPartner(partner) {
 }
   export async function fetchMakes(query="") {
     try {
-      const response = await axios.get(`${endPoints.makes}?populate=*&${query}`);
+      let response  ;
+  if(query){
+        response = await axios.get(`${endPoints.makes}?populate=*&${query}`);
+  }else{
+        response = await axios.get(`${endPoints.makes}?populate=deep`);
+
+  }
       if (response) {
          return response.data;
       } else {
@@ -1018,7 +1024,13 @@ export async function postPartner(partner) {
   }
     export async function fetchBrands(query="") {
     try {
-      const response = await axios.get(`${endPoints.brands}?populate=*&${query}`);
+      let response
+      if(query){
+        response = await axios.get(`${endPoints.brands}?populate=*&${query}`);
+      }else{
+        response = await axios.get(`${endPoints.brands}?populate=deep`);
+
+      }
       if (response) {
          return response.data;
       } else {
@@ -1079,3 +1091,96 @@ try {
       throw error;
     }
   }
+  export async function editMake(makeId, updatedMakeData) {
+  try {
+    const response = await axios.put(
+      `${endPoints.makes}/${makeId}`,
+      updatedMakeData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } else {
+      console.error('Failed to update make data:', response);
+      return {
+        data: response,
+        success: false,
+        error: 'Failed to update make data',
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error('Error updating make:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
+}
+
+export async function editBrand(brandId, updatedBrandData) {
+  try {
+    const response = await axios.put(
+      `${endPoints.brands}/${brandId}`,
+      updatedBrandData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } else {
+      console.error('Failed to update brand data:', response);
+      return {
+        data: response,
+        success: false,
+        error: 'Failed to update brand data',
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error('Error updating brand:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
+}
+
+export async function deleteMake(makeId) {
+  try {
+    const response = await axios.delete(`${endPoints.makes}/${makeId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting make with ID ${makeId}:`, error);
+    throw error;
+  }
+}
+
+export async function deleteBrand(brandId) {
+  try {
+    const response = await axios.delete(`${endPoints.brands}/${brandId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting brand with ID ${brandId}:`, error);
+    throw error;
+  }
+}

@@ -1,5 +1,5 @@
 <template>
-  <BreadCrumb PageTitle="Vehicle Category List" />
+  <BreadCrumb PageTitle=" Categories List" />
   <CategoriesList />
 </template>
 

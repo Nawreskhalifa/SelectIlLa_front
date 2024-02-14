@@ -23,7 +23,7 @@ export default {
   },
   data() {
     return {
-      url: `http://localhost:1337${this.urlLink}`,
+       url: `http://localhost:1337${this.urlLink}`,
     };
   },
   methods: {

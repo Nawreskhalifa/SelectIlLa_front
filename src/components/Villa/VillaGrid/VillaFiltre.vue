@@ -19,6 +19,8 @@
         </div>
       </div>
     </div>
+      <router-link to="/addvilla" class="btn btn-primary d-block w-100 mt-15 mb-25">ADD VILLA</router-link>
+
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Search</h6>
       <div class="search-box -relative mb-15">
@@ -34,9 +36,9 @@
       <h6 class="text-black fw-bold fs-md-15">Categories</h6>
       <ul class="categories-list ps-0 mb-0 list-unstyled">
         <li class="cat">
-          <span class="d-block fs-md-15 fw-medium">All</span>
+          <span class="d-block fs-md-15 fw-medium" @click="byCategory()">All</span>
         </li>
-        <li v-for="category in categories" :key="category.id" @click="byCategory" class="cat">
+        <li v-for="category in categories" :key="category.id" @click="byCategory(category)" class="cat">
           <span class="d-block fs-md-15 fw-medium">{{
             category.attributes.Name
           }}</span>
@@ -85,8 +87,9 @@ export default {
         console.error("Error fetching categories:", error);
       }
     },
-      async byCategory(categorie){
-      this.$emit(" filtreBycategory", categorie)
+      byCategory(categorie=""){
+        console.log("okay",categorie)
+this.$emit("filtreBycategory", { category: categorie });
     }
   },
   mounted() {

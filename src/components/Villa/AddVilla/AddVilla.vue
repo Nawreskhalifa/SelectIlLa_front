@@ -5,7 +5,7 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">name</label>
+              <label class="d-block text-black fw-semibold mb-10">Name</label>
               <input
                 v-model="name"
                 type="text"
@@ -18,7 +18,7 @@
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"> city </label>
+              <label class="d-block text-black fw-semibold mb-10"> City </label>
               <input
                 v-model="city"
                 type="text"
@@ -32,7 +32,7 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                rooms
+                Rooms
               </label>
               <input
                 v-model="rooms"
@@ -45,7 +45,7 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                baths
+                Baths
               </label>
               <input
                 v-model="baths"
@@ -57,7 +57,7 @@
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"> pool </label>
+              <label class="d-block text-black fw-semibold mb-10"> Pool </label>
               <input
                 v-model="pool"
                 type="number"
@@ -68,7 +68,7 @@
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"> view </label>
+              <label class="d-block text-black fw-semibold mb-10"> View </label>
               <input
                 v-model="view"
                 type="text"
@@ -93,7 +93,7 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                deposit
+                Deposit
               </label>
               <input
                 v-model="deposit"
@@ -106,7 +106,7 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                minioeuvre_daily
+                Minioeuvre daily
               </label>
               <input
                 v-model="minioeuvre_daily"
@@ -122,11 +122,13 @@
                 Description
               </label>
               <div class="mb-0">
-                <textarea
-                  v-model="description"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="Write your vehicle description"
-                ></textarea>
+                   <QuillEditor
+                  theme="snow"
+                  placeholder="Write your meta description"
+v-model:content="description"
+
+                   toolbar="full"
+                />
               </div>
               <div v-if="descriptionError" class="text-danger">
                 {{ descriptionError }}
@@ -134,12 +136,12 @@
             </div>
           </div>
 
-          <div class="col-md-12">
+          <div class="col-md-8">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
                 Category Villa
               </label>
-              <ul
+              <!-- <ul
               style="
                 display: flex;
                 flex-direction: row;
@@ -159,28 +161,66 @@
                   @click="deleteFromCategories(cat)"
                 ></i>
               </li>
-            </ul>
+            </ul> -->
               <select
                 v-model="selectedCategory"
                 class="form-select shadow-none fw-semibold rounded-0"
                 @change="addToAllCat"
               >
-                <option selected>Select a Category</option>
+                <option disabled>Select a Category</option>
                 <option
-                  v-for="category in categories"
-                  :key="category.id"
-                  :value="category.id"
-                >
-                  {{ category.attributes.Name }}
-                </option>
+  v-for="category in categories"
+  :key="category.id"
+  :value="category"
+>
+  {{ category.attributes.Name }}
+</option>
+
               </select>
+              <div
+                class="members-list"
+                v-if="AllSelected && AllSelected.length > 0"
+              >
+                <div
+                  v-for="(perv, i) in AllSelected"
+                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
+                  :key="i"
+                >
+                  {{ perv?.attributes.Name }}
+                  <button
+                    type="button"
+                    class="bg-transparent p-0 border-0 lh-1 transition"
+                    @click="deleteFromCategories(perv)"
+                  >
+                    <i class="flaticon-close"></i>
+                  </button>
+                </div>
+              </div>
               <div v-if="categoryError" class="text-danger">
                 {{ categoryError }}
+              </div>
+               <div    style="display: flex; flex-direction: row;"><span>+</span>
+ <p class="fs-md-15 fs-lg-16"><a   style="cursor: pointer;" class="link-secondary" @click="OpenVilla">add new category  </a></p>
               </div>
             </div>
           </div>
 
+
+
           <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"
+                >New Daily</label
+              >
+              <input
+                v-model="newDaily"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 50"
+              />
+            </div>
+          </div>
+<div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">Daily</label>
               <div class="input-group">
@@ -198,21 +238,6 @@
               </div>
             </div>
           </div>
-
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"
-                >New Daily</label
-              >
-              <input
-                v-model="newDaily"
-                type="number"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. 50"
-              />
-            </div>
-          </div>
-
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
@@ -270,7 +295,7 @@
                 v-model="selectedPartner"
                 class="form-select shadow-none fw-semibold rounded-0"
               >
-                <option selected>Select a partner</option>
+                <option disabled selected>Select a partner</option>
                 <option
                   v-for="partner in allPartners"
                   :key="partner.id"
@@ -286,7 +311,7 @@
               class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16"
               type="submit"
             >
-              Create Vehicle
+              Create Villa
             </button>
           </div>
         </div>
@@ -328,9 +353,15 @@
                   </button>
                 </div>
               </div> -->
-</template>
+                 <loading
+        v-model:active="isLoading"
+        :can-cancel="true"
+         :is-full-page="true"
+      />
+              <AddVillaCategoryModal @addedCat="addedCategory" :show="showModal" @close="closeModal" />
+ </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { Ref, defineComponent, ref } from "vue";
 import BlotFormatter from "quill-blot-formatter";
 import ImageUploader from "quill-image-uploader";
 import {
@@ -341,14 +372,23 @@ import {
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useRouter } from "vue-router";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
+ import AddVillaCategoryModal from "../AddVillaCategoryModal/AddVillaCategoryModal.vue"
 export default defineComponent({
-  name: "AddProduct",
+  name: "AddVilla",
+   components: {
+    AddVillaCategoryModal,
+    Loading
+   },
   setup() {
     const router = useRouter();
-    const AllSelected = ref<string[]>([]);
-    const selectedCategory = ref<string>("");
-    const selectedFiles = ref([]);
+   const AllSelected = ref<Array<any>>([]);
+const selectedCategory: Ref<any | null> = ref(null);
+     const selectedFiles = ref([]);
+         const  isLoading=  ref(false);
     const categories = ref();
+    const  started = ref(true )
     const allPartners = ref();
     const name = ref("");
     const city = ref("");
@@ -360,8 +400,9 @@ export default defineComponent({
     const daily = ref("");
     const newDaily = ref("");
     const deposit = ref("");
-    const description = ref("");
+    const description = ref();
     const minioeuvre_daily = ref("");
+    const showModal = ref(false)
     const owner = ref("");
     const selectedPartner = ref("");
     const modules = {
@@ -375,7 +416,18 @@ export default defineComponent({
         },
       },
     };
+    const closeModal = async ()=>{
+       showModal.value =false
 
+    }
+    const OpenVilla = async () => {
+      console.log("okay")
+       showModal.value =true
+       console.log(showModal.value)
+    }
+    const addedCategory = async(event) =>{
+categories.value.push(event)
+    }
     const nameError = ref("");
     const cityError = ref("");
     const descriptionError = ref("");
@@ -392,7 +444,7 @@ export default defineComponent({
     };
     const  addToAllCat = () => {
     AllSelected.value.push(selectedCategory.value)
-    console.log(AllSelected.value)
+    console.log(AllSelected.value,"are selected")
 }
     const fetchPartnersList = async () => {
       const data = await fetchPartners();
@@ -450,6 +502,7 @@ export default defineComponent({
 };
 
     const submitForm = async () => {
+        isLoading.value = true;
       nameError.value = "";
       cityError.value = "";
       descriptionError.value = "";
@@ -467,9 +520,7 @@ export default defineComponent({
         cityError.value = "city is required.";
       }
 
-      if (!description.value.trim()) {
-        descriptionError.value = "Description is required.";
-      }
+
 
       if (!selectedCategory.value) {
         categoryError.value = "Please select a category.";
@@ -498,8 +549,9 @@ export default defineComponent({
         return;
       }
       const selectedC= AllSelected.value.filter(item =>{
-    return parseInt(item)
+    return parseInt(item.id)
   })
+  console.log(selectedC,"categories check ")
       const vehicleData = {
         data: {
           name: name.value,
@@ -512,7 +564,7 @@ export default defineComponent({
           daily: parseFloat(daily.value),
           new_daily: parseFloat(newDaily.value),
           deposit: parseFloat(deposit.value),
-          description: description.value,
+           description: description.value.ops[0].insert,
           minioeuvre_daily: minioeuvre_daily.value.toString(),
           partner: [parseInt(selectedPartner.value)],
           category_villas: selectedC,
@@ -523,7 +575,12 @@ export default defineComponent({
 
       if (result.success) {
         showToatSuccess();
+                isLoading.value = false;
+
         router.push("/villalist");
+      }else{
+    console.error("Error:", result.error);
+
       }
     };
 
@@ -533,6 +590,7 @@ export default defineComponent({
 
     return {
       modules,
+      started,
       categories,
       addToAllCat,
       allPartners,
@@ -540,6 +598,7 @@ export default defineComponent({
       selectedCategory,
       selectedFiles,
       owner,
+      addedCategory,
       daily,
       deposit,
       showToatSuccess,
@@ -549,9 +608,12 @@ export default defineComponent({
       ownerError,
       seatsError,
       dailyError,
+      OpenVilla,
+  showModal,
       newDailyError,
       submitForm,
       selectedFilesRef,
+      isLoading ,
       imageUrls,
       handleFileChange,
       uploadImage,
@@ -568,6 +630,7 @@ export default defineComponent({
       selectedPartner,
       rooms,
       nameError,
+      closeModal
     };
   },
 });

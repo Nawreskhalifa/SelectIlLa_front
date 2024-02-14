@@ -318,10 +318,8 @@
                     <div class="row g-0">
                       <div class="col-md-8">
                         <div class="card-body">
-                          <h5 class="card-title">
-                            {{
-                              dataProp.attributes.vehicle.data.attributes.make
-                            }}
+                          <h5 class="card-title" v-if="dataProp.attributes.vehicle && dataProp.attributes.vehicle.data && dataProp.attributes.vehicle.data.attributes && dataProp.attributes.vehicle.data.attributes.make && dataProp.attributes.vehicle.data.attributes.make.data && dataProp.attributes.vehicle.data.attributes.make.data.attributes ">
+  {{   dataProp.attributes.vehicle.data.attributes.make.data.attributes.name }}
                           </h5>
                           <p class="card-text">
                             {{
@@ -444,7 +442,8 @@ export default {
   methods: {
     getFullImageUrl(relativePath) {
       console.log(relativePath, "relativePath");
-      return `http://localhost:1337${relativePath}`;
+      const stockage = process.env.VUE_APP_STORAGE_URL;
+      return `${stockage}${relativePath}`;
     },
     closeModal() {
       this.$emit("close");

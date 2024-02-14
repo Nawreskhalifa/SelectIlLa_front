@@ -27,7 +27,7 @@
                     <img :src="urlPic(villa)" class="card-img-top img" alt="">
                     <div class="card-body">
                       <h5 class="card-title">{{ villa.name }}</h5>
-                      <p class="card-text">{{villa.description}}</p>
+                      <p class="card-text">{{truncatedDescription(villa.description)}}</p>
                     </div>
                   </div>
                 </div>
@@ -38,8 +38,9 @@
                       <img :src="urlPic(vehicle)" class="card-img-top img " alt=""
                        >
                       <div class="card-body">
-                        <h5 class="card-title">{{ vehicle.make }}</h5>
-                        <p class="card-text">{{vehicle.description}}</p>
+                        <h5 class="card-title" v-if="vehicle.make && vehicle.make ">{{ vehicle.make.name }}</h5>
+                            <p class="card-text">{{ truncatedDescription(vehicle.description) }}</p>
+
                       </div>
                     </div>
                   </div>
@@ -51,7 +52,7 @@
                       <img :src="urlPic(event)" class="card-img-top img" alt="">
                       <div class="card-body">
                         <h5 class="card-title">{{ event.name }}</h5>
-                        <p class="card-text">{{event.description}}</p>
+                        <p class="card-text">{{truncatedDescription(event.description)}}</p>
                       </div>
                     </div>
                   </div>
@@ -87,7 +88,11 @@
     return '';
   }
 }
-,
+,truncatedDescription(description) {
+       const phrases = description.split(/[.,!?]/);
+
+       return phrases.slice(0, 4).join('. ') + '.';
+    },
       closeModal() {
         this.$emit("close");
       },

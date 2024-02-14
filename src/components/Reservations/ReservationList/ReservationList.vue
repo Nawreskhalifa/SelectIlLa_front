@@ -16,23 +16,23 @@
         />
       </div>
       <div class="filter-btn">
-        <button
+        <!-- <button
           class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
           type="button"
           @click="toggleFilterByDate"
         >
           Filter by Date
           <i class="fas fa-filter position-relative ms-2 top-1"></i>
-        </button>
+        </button> -->
       </div>
       <div class="d-sm-flex align-items-center">
-        <button
+        <!-- <button
           class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
           type="button"
         >
           Export
           <i class="flaticon-file-1 position-relative ms-5 top-2 fs-15"></i>
-        </button>
+        </button> -->
       </div>
     </div>
     <div class="card-body p-15 p-sm-20 p-md-25">
@@ -98,25 +98,50 @@
               <td class="shadow-none lh-1 fw-medium text-paragraph">
                 {{ reservation.attributes.phone }}
               </td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph btns">
-                <button
-                  @click="showDetail(reservation)"
-                  class="btn-action detail"
+              <td class="shadow-none lh-1 fw-medium text-paragraph ">
+                <div class="dropdown">
+            <button
+              class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="flaticon-dots"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center"
+                                  @click="showDetail(reservation)"
+
                 >
+                  <i class="flaticon-view lh-1 me-8"></i>
                   Detail
-                </button>
-                <button
-                  @click="acceptReservation(reservation)"
-                  class="btn-action accept"
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center"
+                                    @click="acceptReservation(reservation)"
+
                 >
+                  <i class="flaticon-pen lh-1 me-8"></i>
                   Accept
-                </button>
-                <button
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center"
                   @click="refuseReservation(reservation)"
-                  class="btn-action refuse"
                 >
+                  <i class="flaticon-delete lh-1 me-8"></i>
                   Refuse
-                </button>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+
               </td>
             </tr>
           </tbody>

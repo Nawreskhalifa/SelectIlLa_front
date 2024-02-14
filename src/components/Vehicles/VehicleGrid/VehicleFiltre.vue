@@ -17,9 +17,13 @@
              <i v-if="selectAll" class="fas fa-check"></i>
           </label>
         </div>
+
       </div>
+
     </div>
     <div class="sidebar-item">
+  <router-link to="/addvehicle" class="btn btn-primary d-block w-100 mt-15 mb-25">ADD VEHICLE</router-link>
+
       <h6 class="text-black fw-bold fs-md-15">Search</h6>
       <div class="search-box -relative mb-15">
         <input
@@ -34,19 +38,20 @@
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Makes</h6>
       <ul class="categories-list ps-0 mb-0 list-unstyled">
-        <li>
+        <li  @click="byCategory('All')">
             <span class="d-block fs-md-15 fw-medium">All</span>
             <span class="d-block fw-medium text-muted">{{makes.length}}</span>
          </li>
-<li v-for="item in makes" :key="item.id">
+<li v-for="item in makes" :key="item.id" @click="byCategory(item)">
     <span class="d-block fs-md-15 fw-medium">{{item.attributes.name}}</span>
             <span class="d-block fw-medium text-muted">{{item?.attributes?.vehicles?.data?.length }}</span>
 </li>
     <button
-        type="button"
-        class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
-@click="seeMoreMakes"
-      >
+          v-if="moreMakesAvailable"
+          type="button"
+          class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
+          @click="seeMoreMakes"
+        >
         See More
       </button>
       </ul>
@@ -62,6 +67,7 @@
       <ul class="brands-list ps-0 mb-0 list-unstyled">
         <li
           class="d-flex align-items-center justify-content-between text-paragraph"
+          @click="byBrand('All')"
         >
           <div class="form-check mb-0">
             <input
@@ -79,6 +85,7 @@
         <li
           class="d-flex align-items-center justify-content-between text-paragraph"
           v-for="item in brands" :key="item.id"
+          @click="byBrand(item)"
         >
           <div class="form-check mb-0">
             <input
@@ -93,9 +100,10 @@
           <span class="d-block fw-medium text-muted">{{item.attributes?.vehicles?.data?.length}}</span>
         </li>
            <button
-        type="button"
-        class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
-    @click="seeMoreBrands"
+          v-if="moreBrandsAvailable"
+          type="button"
+          class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
+          @click="seeMoreBrands"
         >
         See More
       </button>
@@ -120,8 +128,12 @@ export default {
       categories: [],
       searchInput: "",
       selectAll: false,
-      makes : [],
-      brands :[]
+    makes: [],
+      brands: [],
+      makeLimit: 4,
+      brandLimit: 4,
+      moreMakesAvailable: true,
+      moreBrandsAvailable: true
     };
   },
   watch: {
@@ -142,12 +154,15 @@ export default {
     //     console.error("Error fetching categories:", error);
     //   }
     // },
-    async seeMoreBrands(){
-      this.getMakesAndBrands("pagination[start]=4&pagination[limit]=4","")
+    async seeMoreMakes() {
+      const { data } = await fetchMakes(`pagination[start]=${this.makes.length}&pagination[limit]=${this.makeLimit}`);
+      this.makes = this.makes.concat(data);
+      this.moreMakesAvailable = data.length === this.makeLimit;
     },
-    async seeMoreMakes(){
-      this.getMakesAndBrands("","pagination[start]=4&pagination[limit]=4")
-
+    async seeMoreBrands() {
+      const { data } = await fetchBrands(`pagination[start]=${this.brands.length}&pagination[limit]=${this.brandLimit}`);
+      this.brands = this.brands.concat(data);
+      this.moreBrandsAvailable = data.length === this.brandLimit;
     },
 async getMakesAndBrands(queryMakes="" , queryBrands=""){
   const {data} = await fetchMakes(queryMakes)
@@ -155,12 +170,28 @@ async getMakesAndBrands(queryMakes="" , queryBrands=""){
   const br = await fetchBrands(queryBrands)
    this.brands = br.data
 } ,
-    async byCategory(categorie){
-      this.$emit("byCategory", categorie)
-    }
+   async byCategory(category) {
+    console.log(category)
+  if (category === "All") {
+    this.$emit("byCategory", "");
+  } else {
+    this.$emit("byCategory", category);
+  }
+},
+
+    async byBrand(brand) {
+  if (brand === "All") {
+    this.$emit("byBrand", "");
+  } else {
+    this.$emit("byBrand", brand);
+  }
+}
+
   },
   mounted() {
     console.log("ok")
+    this.seeMoreMakes();
+    this.seeMoreBrands();
     this.getMakesAndBrands("pagination[start]=4&pagination[limit]=4","pagination[start]=4&pagination[limit]=5")
   },
 };

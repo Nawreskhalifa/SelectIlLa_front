@@ -1,29 +1,40 @@
 <template>
-  <div class="row" style=" position: relative !important; ">
+  <div class="row" style="position: relative !important">
     <div class="col-lg-4 col-xxxl-3">
       <VehicleFiltre
         @newFiltredData="filtredData"
         @allSelected="selectedData"
-        @byCategory="filtreByCat"
+        @byCategory="getByCat"
+        @byBrand="getByBrand"
       />
-      <div class="products-sidebar-filter bg-white letter-spacing mb-25" v-if="selected.length > 0 ">
-          <div class="products-sidebar-filter bg-white letter-spacing mb-25" v-if="selected.length > 0">
-        <div class="title" style="display: flex; flex-direction: row;">
-          <h5 class="mb-0 fw-semibold text-secondary">Available Actions</h5>
-          <div class="button"  style="display: flex; flex-direction: row;">
-            <button class="active btn  " @click="deleteAll">
-            <i class="fas fa-trash"></i>
-            </button>
-            <button class="active btn" @click="desactivateAll">
+      <div
+        class="products-sidebar-filter bg-white letter-spacing mb-25"
+        v-if="selected.length > 0"
+      >
+        <div
+          class="products-sidebar-filter bg-white letter-spacing mb-25"
+          v-if="selected.length > 0"
+        >
+          <div class="title" style="display: flex; flex-direction: row">
+            <h5 class="mb-0 fw-semibold text-secondary">Available Actions</h5>
+            <div
+              class="button"
+              style="display: flex; flex-direction: row"
+              ref="buttonsContainer"
+            >
+              <button class="active btn" @click="deleteAll">
+                <i class="fas fa-trash"></i>
+              </button>
+              <button class="active btn" @click="desactivateAll">
                 <i class="fas fa-ban"></i>
-            </button>
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      </div>
     </div>
 
-    <div class="col-lg-8 col-xxxl-9" >
+    <div class="col-lg-8 col-xxxl-9">
       <div class="row" v-if="selected.length > 0">
         <VehicleItem
           v-for="vehicle in selected"
@@ -45,11 +56,9 @@
         />
       </div>
 
-
       <div
         class="pagination-area d-md-flex mb-25 justify-content-between align-items-center"
       >
-
         <p class="mb-0 text-paragraph">
           Showing <span class="fw-bold">{{ vehicles.length }}</span> out of
           <span class="fw-bold">{{ vehicles.length }}</span> results
@@ -57,21 +66,31 @@
         <nav class="mt-15 mt-md-0">
           <ul class="pagination mb-0">
             <li class="page-item">
-              <a class="page-link"   aria-label="Previous" @click="fetchPreviousPage">
+              <a
+                class="page-link"
+                aria-label="Previous"
+                @click="fetchPreviousPage"
+              >
                 <i class="flaticon-chevron-1"></i>
               </a>
             </li>
-            <li class="page-item" v-for="pageNumber in totalPages" :key="pageNumber" :class="{ 'active': currentPage === pageNumber }">
-              <a class="page-link"   @click="fetchPage(pageNumber)">{{ pageNumber }}</a>
+            <li
+              class="page-item"
+              v-for="pageNumber in totalPages"
+              :key="pageNumber"
+              :class="{ active: currentPage === pageNumber }"
+            >
+              <a class="page-link" @click="fetchPage(pageNumber)">{{
+                pageNumber
+              }}</a>
             </li>
             <li class="page-item">
-              <a class="page-link"   aria-label="Next" @click="fetchNextPage">
+              <a class="page-link" aria-label="Next" @click="fetchNextPage">
                 <i class="flaticon-chevron"></i>
               </a>
             </li>
           </ul>
         </nav>
-
       </div>
       <loading
         v-model:active="isLoading"
@@ -109,10 +128,52 @@ export default {
       isLoading: false,
       fullPage: true,
       currentPage: 1,
-    totalPages: []
+      totalPages: [],
     };
   },
   methods: {
+
+    async getByCat(event) {
+  try {
+    console.log("Filtering by category:", event);
+    if (event) {
+      this.vehicles = this.vehicles.filter(
+        (item) =>{
+if(item && item.attributes && item.attributes.make && item.attributes.make.data && item.attributes.make.data.id ){
+  return  item.attributes.make.data.id === event.id
+}
+        }
+      );
+    } else {
+       await this.fetchData();
+    }
+  } catch (error) {
+    console.error("Error in getByCat:", error);
+  }
+},
+
+
+     async getByBrand(brand) {
+  try {
+    console.log("Filtering by brand:", brand);
+    if (brand) {
+      this.vehicles = this.vehicles.filter(
+        (item) => {
+if(item && item.attributes && item.attributes.brand && item.attributes.brand.data && item.attributes.brand.data.id ){
+  return item.attributes.brand.data.id === brand.id
+}
+          }
+
+      );
+    } else {
+       await this.fetchData();
+    }
+  } catch (error) {
+    console.error("Error in getByBrand:", error);
+  }
+},
+
+
     changeStatus(event) {
       this.vehicles = this.vehicles.map((item) => {
         if (item.id === event.id) {
@@ -121,19 +182,7 @@ export default {
         return item;
       });
     },
-    async  filtreByCat(event) {
 
-   if (event) {
-                  await   this.fetchData()
-
-    this.vehicles = await this.vehicles.filter(item => {
-      console.log(item?.attributes.category_vehicles.data);
-      return item?.attributes.category_vehicles.data.some(vitem => vitem.id === event.id);
-    });
-  }else{
-    this.fetchData()
-  }
-},
 
 
     clickOnSelected() {
@@ -143,18 +192,17 @@ export default {
     },
 
     async fetchData(start = 0, limit = 8) {
-  try {
-    const data = await fetchVehicles(start, limit);
-    this.vehicles = data.data;
-    console.log(data,"data")
-     this.totalPages = Math.ceil(data.meta.pagination.total / limit);
-   console.log(this.totalPages,"toal")
-   console.log(data.meta.pagination.total ,"total",limit , "limit")
-  } catch (error) {
-    console.error("Error in fetchData:", error);
-  }
-},
-
+      try {
+        const data = await fetchVehicles(start, limit);
+        this.vehicles = data.data;
+        console.log(data, "data");
+        this.totalPages = Math.ceil(data.meta.pagination.total / limit);
+        console.log(this.totalPages, "toal");
+        console.log(data.meta.pagination.total, "total", limit, "limit");
+      } catch (error) {
+        console.error("Error in fetchData:", error);
+      }
+    },
 
     // async filtredData(searchInput) {
     //   try {
@@ -166,21 +214,24 @@ export default {
     //   }
     // },
     async filtredData(searchInput) {
-  try {
-    if (searchInput.trim()) {
-       console.log("Search input:", searchInput);
-      console.log("New data:", this.newData);
-      this.vehicles = this.vehicles.filter(vehicle => vehicle.attributes?.make?.data?.attributes?.name?.toLowerCase().includes(searchInput.toLowerCase()));
-    } else {
-      console.log("No search input provided.");
-       await this.fetchData();
-    }
-    console.log("Filtered vehicles:", this.vehicles);
-  } catch (error) {
-    console.error("Error in filtredData:", error);
-  }
-},
-
+      try {
+        if (searchInput.trim()) {
+          console.log("Search input:", searchInput);
+          console.log("New data:", this.newData);
+          this.vehicles = this.vehicles.filter((vehicle) =>
+            vehicle.attributes?.make?.data?.attributes?.name
+              ?.toLowerCase()
+              .includes(searchInput.toLowerCase())
+          );
+        } else {
+          console.log("No search input provided.");
+          await this.fetchData();
+        }
+        console.log("Filtered vehicles:", this.vehicles);
+      } catch (error) {
+        console.error("Error in filtredData:", error);
+      }
+    },
 
     async handleItemDeleted(vehicleId) {
       try {
@@ -196,13 +247,24 @@ export default {
     },
 
     selectedData() {
-      this.isSelected = !this.isSelected;
-      if (this.isSelected) {
+      if (!this.isSelected) {
         this.selected = [...this.vehicles];
       } else {
         this.selected = [];
       }
+
+      this.isSelected = !this.isSelected;
+
+      if (this.isSelected && this.selected.length === this.vehicles.length) {
+        setTimeout(() => {
+          const buttonsContainer = document.querySelector(".button");
+          if (buttonsContainer) {
+            buttonsContainer.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      }
     },
+
     handleItemUpdated() {
       this.fetchData();
     },
@@ -231,27 +293,21 @@ export default {
       this.currentPage = pageNumber;
     },
 
-
-
     async fetchNextPage() {
       if (this.currentPage < this.totalPages) {
         this.fetchPage(this.currentPage + 1);
       }
-    } ,
+    },
     async fetchPreviousPage() {
       if (this.currentPage > 1) {
         this.fetchPage(this.currentPage - 1);
       }
     },
   },
-  watch: {
-
-},
-async created() {
- await   this.fetchData();
-}
-}
- </script>
- <style scoped>
-
- </style>
+  watch: {},
+  async created() {
+    await this.fetchData();
+  },
+};
+</script>
+<style scoped></style>

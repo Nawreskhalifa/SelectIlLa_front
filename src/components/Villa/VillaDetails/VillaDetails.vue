@@ -103,18 +103,27 @@
                         Labila
                       </li>
                       <li
-                        class="text-paragraph fs-md-15 fs-xxxl-16"
+                        class="text-paragraph fs-md-15 fs-xxxl-16  members-list "
                         v-if="villa.attributes.category_villas.data.length > 0"
                       >
-                        <span class="text-black fw-semibold d-inline-block">
-                          Category:
-                        </span>
+                        <!--
                         <span
                           v-for="categorie in villa.attributes.category_villas
                             .data"
                           :key="categorie.id"
                           >{{ categorie.attributes.name }}
+                        </span> -->
+<span class="text-black fw-semibold d-inline-block">
+                          Categories:
                         </span>
+                       <div
+                  v-for="(perv, i) in villa.attributes.category_villas.data"
+                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
+                  :key="i"
+                >
+                  {{ perv?.attributes.Name }}
+
+                </div>
                       </li>
                       <li class="text-paragraph fs-md-15 fs-xxxl-16">
                         <span class="text-black fw-semibold d-inline-block"

@@ -12,14 +12,11 @@
           v-model="searchInput"
         />
       </div>
-      <div class="d-sm-flex align-items-center">
-        <button
-          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
-          type="button"
-        >
-          Export
-          <i class="flaticon-file-1 position-relative ms-5 top-2 fs-15"></i>
-        </button>
+        <div class="d-sm-flex align-items-center  addCat">
+         <router-link to="/AddVillaCategory" class=" default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0">
+          Add New Category
+          <i class="fas fa-plus position-relative ms-5 top-2 fs-15"></i>
+        </router-link>
       </div>
     </div>
     <div class="card-body p-15 p-sm-20 p-md-25">
@@ -55,7 +52,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="category in categories" :key="category.id">
+            <tr v-for="category in displayedItems" :key="category.id">
               <td class="shadow-none lh-1 fw-medium text-paragraph">
                 {{ category.attributes.Name }}
               </td>
@@ -109,33 +106,30 @@
       <div
         class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
       >
-        <p class="mb-0 text-paragraph">
-          Showing <span class="fw-bold">10</span> out of
-          <span class="fw-bold">134</span> results
-        </p>
-        <nav class="mt-15 mt-md-0">
-          <ul class="pagination mb-0">
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous">
-                <i class="flaticon-chevron-1"></i>
-              </a>
-            </li>
-            <li class="page-item">
-              <a class="page-link active" href="#">1</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">2</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">3</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Next">
-                <i class="flaticon-chevron"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
+
+         <nav class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center">
+    <p class="mb-0 text-paragraph">
+      Showing <span class="fw-bold">{{ displayedItems.length }}</span> out of
+      <span class="fw-bold">{{ totalItems }}</span> results
+    </p>
+    <nav class="mt-15 mt-md-0">
+      <ul class="pagination mb-0">
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <a class="page-link" href="#" aria-label="Previous" @click="prevPage">
+            <i class="flaticon-chevron-1"></i>
+          </a>
+        </li>
+        <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: page === currentPage }">
+          <a class="page-link" href="#" @click="goToPage(page)">{{ page }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+          <a class="page-link" href="#" aria-label="Next" @click="nextPage">
+            <i class="flaticon-chevron"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </nav>
       </div>
     </div>
   </div>
@@ -167,9 +161,42 @@ export default {
       ModalVisible: false,
       categoryEdit: "",
       searchInput: "",
+      currentPage: 1,
+      pageSize: 5,
+
     };
   },
+   computed: {
+    totalItems() {
+      return this.categories.length;
+    },
+
+    totalPages() {
+      return Math.ceil(this.totalItems / this.pageSize);
+    },
+
+    displayedItems() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.categories.slice(startIndex, endIndex);
+    },
+  },
   methods: {
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+
+    goToPage(page) {
+      this.currentPage = page;
+    },
     async fetchCategories() {
       const data = await fetchVillaCategories();
       console.log(data);
@@ -238,6 +265,11 @@ td {
 /* Apply styles to table cells when hovered */
 table tbody tr:hover td {
   background-color: #f5f5f5;
+}
+.addCat :hover{
+background-color: rgb(113, 113, 161);
+color: white;
+font-size : bolder
 }
 
 </style>

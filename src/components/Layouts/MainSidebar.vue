@@ -6,20 +6,17 @@
     ]"
     id="sidebar-area"
   >
-    :class="[
-      'sidebar-area position-fixed start-0 top-0 bg-black h-100vh transition',
-      { active: isOpen },
-    ]"
-    id="sidebar-area"
-  >
-    <div class="logo position-absolute start-0 end-0 top-0 bg-black">
+      <div class="logo position-absolute start-0 end-0 top-0 bg-black">
       <router-link
         to="/"
         class="d-flex align-items-center text-white text-decoration-none"
       >
-        <img src="../../assets/selectIt.png" alt="logo-icon" />
+        <img src="../../assets/images/favicon.png" alt="logo-icon" />
+        <span class="fw-bold ms-10">SELECTITLA</span>
       </router-link>
       <div class="border-bottom"></div>
+
+      <!-- <div class="border-bottom"></div> -->
       <button
         class="sidebar-burger-menu position-absolute lh-1 bg-transparent p-0 border-0"
         @click="updateOpen"
@@ -28,10 +25,9 @@
       </button>
     </div>
     <div class="sidebar-menu">
-      <!--/i> -->
 
       <ul
-        class="sidebar-navbar-nav ps-0 mb-0 list-unstyled accordion customSide"
+        class="sidebar-navbar-nav ps-0 mb-0 list-unstyled accordion "
         id="sidebarNavAccordion"
       >
         <li class="sidebar-nav-item">
@@ -161,6 +157,11 @@
                     Add Vehicle
                   </router-link>
                 </li>
+                <li class="sidebar-sub-menu-item">
+                  <router-link to="/VehicleListCategory" class="sidebar-sub-menu-link">
+                     Vehicle Categories
+                  </router-link>
+                </li>
               </ul>
             </div>
           </div>
@@ -196,6 +197,22 @@
                     Add Villa
                   </router-link>
                 </li>
+                 <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/VillaListCategory"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Villa Categories
+                  </router-link>
+                </li>
+                <!-- <li class="sidebar-sub-menu-item">
+                  <router-link
+                    to="/AddVillaCategory"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Add A Villa Category
+                  </router-link>
+                </li> -->
               </ul>
             </div>
           </div>
@@ -240,7 +257,7 @@
             </div>
           </div>
         </li> -->
-        <li
+        <!-- <li
           class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
         >
           <a
@@ -252,8 +269,8 @@
           >
             <i class="fa-solid fa-dungeon"></i>
             <span class="title">Villa Categories </span>
-          </a>
-          <div
+          </a> -->
+          <!-- <div
             id="sidebarCollapseFive"
             class="accordion-collapse collapse"
             data-bs-parent="#sidebarCollapseFive"
@@ -278,8 +295,8 @@
                 </li>
               </ul>
             </div>
-          </div>
-        </li>
+          </div> -->
+        <!-- </li> -->
         <!-- <li
           class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0">
           <a
@@ -330,14 +347,13 @@
           class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
         >
           <a
-            href="#"
-            class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
+             class="accordion-button collapsed rounded-0 shadow-none bg-transparent d-block"
             data-bs-toggle="collapse"
             data-bs-target="#sidebarCollapsepartner"
             aria-expanded="false"
             aria-controls="sidebarCollapsepartner"
           >
-            <i class="flaticon-layer-2"></i>
+           <i class="fas fa-handshake"></i>
             <span class="title">Partners</span>
           </a>
           <div
@@ -449,7 +465,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.customSide {
-  padding-top: 160px;
-}
+
 </style>

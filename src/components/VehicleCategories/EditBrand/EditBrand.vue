@@ -3,25 +3,25 @@
     <div v-show="show" class="modal">
       <transition name="modal-animation-inner">
         <div v-show="show" class="modal-inner">
-          <div class=" ">
+          <div class=" " v-if="brand && brand.attributes">
             <p class="confirmation-text mb-10 fw-semibold fs-16 fs-lg-18">
-              Edit Category
+              Edit Brand {{ brand.attributes.name }}
             </p>
             <div class="col-md-12">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <!-- <label class="d-block text-black fw-semibold mb-10">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25" v-if="brand && brand.attributes">
+                <!-- <label class="d-block text-black fw-semibold mb-10"d>
                   {{ category.attributes.name }}
                 </label> -->
                 <input
                   v-model="name"
+                  :placeholder="brand.attributes.name"
                   type="text"
                   class="form-control shadow-none rounded-0 text-black"
-                  :placeholder="category.attributes.Name"
-                />
+                 />
               </div>
             </div>
             <div class="buttons">
-              <button class="confirm-button" @click="confirmUpdate">
+              <button class="confirm-button" @click="confirm" >
                 Confirm
               </button>
               <button class="cancel-button" @click="closeModal">No</button>
@@ -34,14 +34,13 @@
 </template>
 
 <script>
-import { updateVillaCategory } from "@/services/apiService";
-export default {
+ export default {
   props: {
     show: Boolean,
-    category: {
-      type: Object,
-      required: true,
-    },
+    brand :{
+        type: Object,
+required : true
+    }
   },
   data() {
     return {
@@ -52,22 +51,23 @@ export default {
     closeModal() {
       this.$emit("close");
     },
-    async confirmUpdate() {
-      const updatedData = {
-        data: {
-          Name: this.name,
-        },
-      };
-      const res = await updateVillaCategory(this.category.id, updatedData);
-      console.log(res);
-      if (res) {
-        this.$emit("updated");
-      }
-    },
+    confirm(){
+        this.$emit('editedBrand',{name : this.name  , id : this.brand.id})
+
+    }
+    // async confirmUpdate() {
+    //   const updatedData = {
+    //     data: {
+    //       name: this.name,
+    //     },
+    //   };
+    //   const res = await updateVehicleCategory(this.category.id, updatedData);
+    //   if (res) {
+    //     this.$emit("updated");
+    //   }
+    // },
   },
-  created() {
-    console.log(this.category);
-  },
+
 };
 </script>
 

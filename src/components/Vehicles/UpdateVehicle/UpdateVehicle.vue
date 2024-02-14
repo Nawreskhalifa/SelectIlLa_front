@@ -18,49 +18,41 @@
                         <label class="d-block text-black fw-semibold mb-10"
                           >Make</label
                         >
-                         <ul
-                          style="
-                            display: flex;
-                            flex-direction: row;
-                            gap: 10px;
-                            justify-content: flex-start;
-                            align-items: center;
-                          "
-                        >
-                          <li v-if="perviousMake">
-                            {{ perviousMake.data.attributes.name }}
-                            <i
-                              class="fas fa-times-circle"
-                              @click="perviousMake = ''"
-                            ></i>
-                          </li>
-                        </ul>
+
                         <select
                           v-model="make"
                           class="form-select shadow-none fw-semibold rounded-0"
                           @change="getBrands(make)"
                         >
-                          <option
-                            v-for="mk in makes"
-                            :key="mk?.id"
-                            :value="mk"
-                            >
+                          <option v-for="mk in makes" :key="mk.id" :value="mk">
                             {{ mk.attributes.name }}
                           </option>
                         </select>
-
-
                         <div v-if="makeError" class="text-danger">
                           {{ makeError }}
+                        </div>
+                            <div
+                              v-if="make"
+                          class="item d-inline-block fw-medium fs-13 text-primary position-relative"
+                        >
+                          {{ make.attributes.name}}
+                          <button
+                            type="button"
+                            class="bg-transparent p-0 border-0 transition"
+@click="make=''"
+                          >
+                            <i class="flaticon-close"></i>
+                          </button>
                         </div>
                       </div>
                     </div>
 
+                    <!-- Brand Selection -->
                     <div class="col-md-6">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                        <label class="d-block text-black fw-semibold mb-10">
-                          Brand
-                        </label>
+                        <label class="d-block text-black fw-semibold mb-10"
+                          >Brand</label
+                        >
                         <select
                           v-model="brand"
                           class="form-select shadow-none fw-semibold rounded-0"
@@ -69,23 +61,35 @@
                           <template v-if="brands && brands.length > 0">
                             <option
                               v-for="br in brands"
-                              :key="br?.id"
+                              :key="br.id"
                               :value="br"
-
                             >
-                              {{ br?.attributes?.name }}
+                              {{ br.attributes.name }}
                             </option>
                           </template>
                           <template v-else>
                             <option disabled>Select A Make First</option>
                           </template>
                         </select>
-
-
                         <div v-if="brandError" class="text-danger">
                           {{ brandError }}
                         </div>
+                            <div
+                            v-if="brand"
+                          class="item d-inline-block fw-medium fs-13 text-primary position-relative"
+                        >
+                                                    {{ brand.attributes.name}}
+
+                          <button
+                            type="button"
+                            class="bg-transparent p-0 border-0 transition"
+                            @click="brand=''"
+                          >
+                            <i class="flaticon-close"></i>
+                          </button>
+                        </div>
                       </div>
+
                     </div>
 
                     <div class="col-md-6">
@@ -238,11 +242,13 @@
                           Description
                         </label>
                         <div class="mb-0">
-                          <textarea
-                            v-model="description"
-                            class="form-control shadow-none rounded-0 text-black"
-                            placeholder="Write your vehicle description"
-                          ></textarea>
+                           <QuillEditor
+                  theme="snow"
+                  :placeholder="description"
+v-model:content="description"
+
+                   toolbar="full"
+                />
                         </div>
                         <div v-if="descriptionError" class="text-danger">
                           {{ descriptionError }}
@@ -414,7 +420,9 @@ import {
   uploadFiles,
   deleteFiles,
   fetchPartners,
-  fetchMakes, fetchBrands,fetchBrandMyMake,
+  fetchMakes,
+  fetchBrands,
+  fetchBrandMyMake,
   updateVehicle,
 } from "@/services/apiService";
 import { toast } from "vue3-toastify";
@@ -430,15 +438,15 @@ export default {
   },
   data() {
     return {
-// this.vehicle.attributes.make?.data.attributes.name
-//
+      // this.vehicle.attributes.make?.data.attributes.name
+      //
       categories: [],
-      makes:[],
-      brands:[] ,
-      perviousMake : this.vehicle.attributes.make,
-      previousBrand :this.vehicle.attributes.brand,
-make:  "" ,
-        brand: "",
+      makes: [],
+      brands: [],
+      previousMake: this.vehicle.attributes.make,
+      previousBrand: this.vehicle.attributes.brand,
+      make: this.vehicle.attributes.make.data,
+      brand: this.vehicle.attributes.brand.data,
       description: this.vehicle.attributes.description,
       // previousCategories: this.vehicle.attributes.category_vehicles.data,
       selectedCategory: "",
@@ -481,9 +489,9 @@ make:  "" ,
     },
   },
   methods: {
-// perviousMakeAndBrand(){
-//   if(this.vehicle? && this.vehicle?.attributes?.make &&  this.vehicle?.attributes?.make.data && this.vehicle?.attributes?.make.data.attributes &&   this.vehicle?.attributes?.make.data.attributes.name )
-// }
+    // perviousMakeAndBrand(){
+    //   if(this.vehicle? && this.vehicle?.attributes?.make &&  this.vehicle?.attributes?.make.data && this.vehicle?.attributes?.make.data.attributes &&   this.vehicle?.attributes?.make.data.attributes.name )
+    // }
     closeModal() {
       this.$emit("close");
     },
@@ -521,23 +529,26 @@ make:  "" ,
     //   }
     // },
 
-     async getBrands(selectedMake){
-  try {
-    console.log(selectedMake,"selected make ")
-    this.perviousMake.attributes.name=selectedMake.attributes.name
-     const { data } = await fetchBrandMyMake(selectedMake.id);
-    this.brands = data;
-  } catch (error) {
-    console.error("Error fetching brands:", error);
-  }
-},
-   async  fetchMakesCat (){
-       const  {data}= await fetchMakes()
-       this.makes = data
-
+    async fetchMakesCat() {
+      try {
+        const { data } = await fetchMakes();
+        this.makes = data;
+      } catch (error) {
+        console.error("Error fetching makes:", error);
+      }
+    },
+    async getBrands(selectedMake) {
+      try {
+        console.log(selectedMake, "selected make ");
+        const data = await fetchBrandMyMake(selectedMake.id);
+        console.log(data, "brands", selectedMake, "vehicle");
+        this.brands = data.data;
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
     },
     getFullPhotoUrl(relativeUrl) {
-                                    const stockage = process.env.VUE_APP_STORAGE_URL
+      const stockage = process.env.VUE_APP_STORAGE_URL;
 
       return `${stockage}${relativeUrl}`;
     },
@@ -591,56 +602,94 @@ make:  "" ,
       console.log(this.partnerData, "partners");
     },
 
+    // async submitForm() {
+
+    //   // let partnerUpdate
+    //   //       if(partner && partner.data ){
+
+    //   //       }
+    //   const vehicleData = {
+    //     data: {
+    //       make: this.make.id,
+    //       brand: this.brand.id,
+    //       style: this.style,
+    //       msrp: this.msrp,
+    //       daily: parseFloat(this.daily),
+    //       mice: parseFloat(this.mice),
+    //       new_daily: parseFloat(this.newDaily),
+    //       deposit: parseFloat(this.deposit),
+    //       description: this.description.ops[0].insert,
+    //       owner: this.owner,
+    //        seats: parseInt(this.seats),
+    //       partner: this.partner,
+    //     },
+    //   };
+    //   if (this.selectedFiles.length > 0) {
+    //     await uploadFiles(
+    //       this.selectedFiles,
+    //       "api::vehicle.vehicle",
+    //       "photos",
+    //       this.vehicle.id
+    //     );
+    //   }
+    //   const result = await updateVehicle(this.vehicle.id, vehicleData);
+
+    //   if (result.success) {
+    //     this.$emit("updatedData", result.data.data);
+
+    //     toast.success("Vehicle Updated  🚗 👍 ", {
+    //       autoClose: 1000,
+    //     });
+    //     setTimeout(() => {
+    //       this.closeModal();
+    //     }, 1500);
+    //   }
+    // },
     async submitForm() {
-      const allCategories = this.previousCategories.map((item) => {
-        return item.id;
-      });
-      // let partnerUpdate
-      //       if(partner && partner.data ){
-
-      //       }
-      const vehicleData = {
-        data: {
-          make: this.make,
-          brand: this.brand,
-          style: this.style,
-          msrp: this.msrp,
-          daily: parseFloat(this.daily),
-          mice: parseFloat(this.mice),
-          new_daily: parseFloat(this.newDaily),
-          deposit: parseFloat(this.deposit),
-          description: this.description,
-          owner: this.owner,
-          // category_vehicles: allCategories,
-          seats: parseInt(this.seats),
-          partner: this.partner,
-        },
-      };
-      if (this.selectedFiles.length > 0) {
-        await uploadFiles(
-          this.selectedFiles,
-          "api::vehicle.vehicle",
-          "photos",
-          this.vehicle.id
-        );
-      }
-      const result = await updateVehicle(this.vehicle.id, vehicleData);
-
-      if (result.success) {
-        this.$emit("updatedData", result.data.data);
-
-        toast.success("Vehicle Updated  🚗 👍 ", {
-          autoClose: 1000,
-        });
-        setTimeout(() => {
-          this.closeModal();
-        }, 1500);
-      }
+  const vehicleData = {
+    data: {
+      make: this.make.id,
+      brand: this.brand.id,
+      style: this.style,
+      msrp: this.msrp,
+      daily: parseFloat(this.daily),
+      mice: parseFloat(this.mice),
+      new_daily: parseFloat(this.newDaily),
+      deposit: parseFloat(this.deposit),
+      owner: this.owner,
+      seats: parseInt(this.seats),
+      partner: this.partner,
+      description: this.description.ops && this.description.ops.length > 0
+        ? this.description.ops[0].insert
+        : this.vehicle.attributes.description, // Use the old description if there are no changes
     },
+  };
+  if (this.selectedFiles.length > 0) {
+    await uploadFiles(
+      this.selectedFiles,
+      "api::vehicle.vehicle",
+      "photos",
+      this.vehicle.id
+    );
+  }
+  const result = await updateVehicle(this.vehicle.id, vehicleData);
+
+  if (result.success) {
+    this.$emit("updatedData", result.data.data);
+
+    toast.success("Vehicle Updated  🚗 👍 ", {
+      autoClose: 1000,
+    });
+    setTimeout(() => {
+      this.closeModal();
+    }, 1500);
+  }
+},
+
   },
   mounted() {
     // this.fetchCategories();
-    console.log(this.vehicle,"vehicle")
+    console.log(this.vehicle, "vehicle");
     this.fetchPartner();
     this.fetchMakesCat();
   },

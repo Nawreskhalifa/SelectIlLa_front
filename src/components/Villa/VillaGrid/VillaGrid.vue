@@ -1,10 +1,8 @@
 <template>
   <div class="row">
     <div class="col-lg-4 col-xxxl-3">
-      <VillaFiltre
-        @newFiltredData="filtredData"
-        @allSelected="selectedData"
-      />
+     <VillaFiltre @newFiltredData="filtredData" @allSelected="selectedData" @filtreBycategory="byCategory" />
+
       <div class="products-sidebar-filter bg-white letter-spacing mb-25" v-if="selected.length > 0">
         <div class="title" style="display: flex; flex-direction: row;">
           <h5 class="mb-0 fw-semibold text-secondary">Available Actions</h5>
@@ -106,6 +104,29 @@ export default defineComponent({
         console.error("Error in fetchData:", error);
       }
     };
+ const byCategory = (event) => {
+  if (event.category !== "") {
+
+    const categoryId = event.category.id;
+    if (categoryId) {
+      const filteredVillas = villas.value.filter((villa) => {
+        if (
+          villa.attributes &&
+          villa.attributes.category_villas &&
+          villa.attributes.category_villas.data
+        ) {
+          return villa.attributes.category_villas.data.some(
+            (category) => category.id === categoryId
+          );
+        }
+        return false;
+      });
+      villas.value = filteredVillas;
+    }
+  } else {
+    fetchData();
+  }
+};
 
     const fetchPage = async (pageNumber) => {
       const start = (pageNumber - 1) * 8;
@@ -172,7 +193,7 @@ const desactivateAll = async () => {
     }
   }
 
-  isLoading.value = false; // Set isLoading to false
+  isLoading.value = false;
 };
 
     const filtredData = async (searchInput) => {
@@ -218,6 +239,7 @@ const desactivateAll = async () => {
       selectedData,
       filtredData,
       deleteAll,
+      byCategory,
       handleItemDeleted,
       handleItemUpdated,
       desactivateAll
