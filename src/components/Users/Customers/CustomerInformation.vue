@@ -143,7 +143,7 @@ export default {
   },
   async mounted() {
     if (!this.getCustomers || !this.getCustomers.length) {
-      await this.fetchAllCustomers();
+      await this.fetchAllCustomers({page:null});
     }
     if (this.getCustomers && this.getCustomers.length) {
       this.customer =

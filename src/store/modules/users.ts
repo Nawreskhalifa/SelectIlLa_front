@@ -15,6 +15,8 @@ const state = {
     totalItems: 0,
     customer: null,
     documents: [],
+    totalPagesReservation: 0,
+    totalItemsReservation: 0,
 }
 const getters = {
     getUsersError: state => state.userError,
@@ -26,6 +28,8 @@ const getters = {
     getTotalItems: (state) => state.totalItems,
     getCustomer: (state) => state.customer,
     getDocuments: (state) => state.documents,
+    getTotalPagesReservation: (state) => state.totalPagesReservation,
+    getTotalItemsReservation: (state) => state.totalItemsReservation,
 }
 const mutations = {
     SET_TOTAL_ITEMS(state, payload = 0) {
@@ -33,6 +37,12 @@ const mutations = {
     },
     SET_TOTAL_PAGES(state, payload = 1) {
         state.totalPages = payload;
+    },
+    SET_TOTAL_ITEMS_RESERVATION(state, payload = 0) {
+        state.totalItemsReservation = payload;
+    },
+    SET_TOTAL_PAGES_RESERVATION(state, payload = 1) {
+        state.totalPagesReservation = payload;
     },
     SET_USERS_LOADING(state, payload = false) {
         state.usersLoading = payload
@@ -113,7 +123,7 @@ const actions = {
         try {
             const filters: {
                 populate: any[];
-                pagination?: { page: number; pageSize: number };
+                pagination?: { page?: number; pageSize?: number };
                 filters?: {
                     $or?: Array<{
                         name?: { $contains: string };
@@ -134,7 +144,7 @@ const actions = {
                 sort: []
 
             };
-            if (page) {
+            if (page!==undefined && page !== null) {
                 filters.pagination = { page: page, pageSize: perPage };
             }
 
@@ -308,7 +318,7 @@ const actions = {
         }
         return true
     },
-    async fetchAllAttachmentsByCustomer({ commit }, idCustomer) {
+    async fetchAllAttachmentsByCustomer({ commit }, { page = 1, perPage = 25, idCustomer }: { page?: number, perPage?: number, idCustomer: number }) {
         commit('SET_USERS_LOADING', true);
         commit('SET_USERS_ERROR', null);
         try {
@@ -316,7 +326,7 @@ const actions = {
                 methodsHttpNames.GET,
                 `${endPoints.reservations}?populate=*`,
                 undefined,
-                { filters: { customer: { id: { $eq: idCustomer } } } }
+                { filters: { customer: { id: { $eq: idCustomer } } }, pagination: { page: page, pageSize: perPage } }
             );
             if (response.success) {
                 console.log(response.data.data)
@@ -324,6 +334,8 @@ const actions = {
                     // Traitez chaque pièce jointe ici
                     console.log(attachment.attributes.documents.data);
                 }
+                commit("SET_TOTAL_PAGES_RESERVATION", response.data.meta.pagination.pageCount);
+                commit("SET_TOTAL_ITEMS_RESERVATION", response.data.meta.pagination.total);
                 commit('SET_DOCUMENTS', response.data.data);
                 commit('SET_USERS_LOADING', false);
             }

@@ -144,7 +144,7 @@
                   data-bs-target="#createNewDealModal"
                   >Add A New Deal</a
                 > -->
-                  <div
+                  <!-- <div
                     class="pagination-area d-md-flex align-items-center mt-10 mt-md-0"
                   >
                     <p class="mb-0 text-paragraph">
@@ -185,7 +185,7 @@
                         </li>
                       </ul>
                     </nav>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -383,6 +383,69 @@
                     </tbody>
                   </table>
                 </div>
+                <div
+                  class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
+                >
+                  <p class="mb-0 text-paragraph">
+                    Showing
+                    <span class="fw-bold">{{
+                      Math.min(11, getDocuments.length)
+                    }}</span>
+                    out of
+                    <span class="fw-bold">{{ getDocuments.length }}</span>
+                    results
+                  </p>
+                  <nav class="mt-15 mt-md-0">
+                    <ul class="pagination mb-0">
+                      <li
+                        class="page-item"
+                        :class="{ disabled: currentPage === 1 }"
+                      >
+                        <a
+                          class="page-link"
+                          href="#"
+                          aria-label="Previous"
+                          @click="
+                            currentPage !== 1 && onPageChange(currentPage - 1)
+                          "
+                        >
+                          <i class="flaticon-chevron-1"></i>
+                        </a>
+                      </li>
+                      <li
+                        class="page-item"
+                        v-for="page in getTotalPagesReservation"
+                        :key="page"
+                        :class="{ active: page === currentPage }"
+                      >
+                        <a
+                          class="page-link"
+                          href="#"
+                          @click="onPageChange(page)"
+                          >{{ page }}</a
+                        >
+                      </li>
+                      <li
+                        class="page-item"
+                        :class="{
+                          disabled: currentPage === getTotalPagesReservation,
+                        }"
+                      >
+                        <a
+                          class="page-link"
+                          href="#"
+                          aria-label="Next"
+                          @click="
+                            currentPage !== getTotalPages &&
+                              onPageChange(currentPage + 1)
+                          "
+                        >
+                          <i class="flaticon-chevron"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
               </div>
             </div>
           </div>
@@ -431,17 +494,30 @@ export default defineComponent({
     return {
       idCustomer: this.customerId,
       customer: {},
+      currentPage: 1,
     };
   },
   methods: {
     ...mapActions(["fetchAllCustomers", "fetchAllAttachmentsByCustomer"]),
+    async onPageChange(pageNumber) {
+      this.currentPage = pageNumber;
+      await this.fetchAllCustomers({
+        page: pageNumber,
+        perPage: 4,
+        name: null,
+      });
+    },
   },
   computed: {
-    ...mapGetters(["getCustomers", "getDocuments"]),
+    ...mapGetters([
+      "getCustomers",
+      "getDocuments",
+      "getTotalPagesReservation",
+      "getTotalItemsReservation",
+    ]),
   },
   async mounted() {
     await this.fetchAllAttachmentsByCustomer(this.customerId);
-    console.log("doc:", this.getDocuments);
     if (!this.getCustomers || !this.getCustomers.length) {
       await this.fetchAllCustomers({ page: null });
     }
