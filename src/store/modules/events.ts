@@ -85,7 +85,6 @@ const actions = {
 
     try {
       const filters: {
-        populate: any[];
         pagination?: { page: number; pageSize: number };
         filters?: {
           $or?: Array<{
@@ -98,15 +97,14 @@ const actions = {
           active?: { $eq: boolean };
         };
       } = {
-        populate: [],
       };
 
-      filters.populate = [
-        'category_events',
-        'photos',
-        'partner',
-        // 'seoData.sharedImage.media',
-      ];
+      // filters.populate = [
+      //   'category_events',
+      //   'photos',
+      //   'partner',
+      //   'partner.sharedImage.media',
+      // ];
 
       if (page) {
         filters.pagination = { page: page, pageSize: perPage };
@@ -139,15 +137,15 @@ const actions = {
 
       const response = await makeApiRequest(
         methodsHttpNames.GET,
-        endPoints.allEvents,
+        `${endPoints.allEvents}/?populate=deep`,
         undefined,
         filters
       );
-
+      console.log(response)
       if (response.success) {
         commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
         commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
-        commit("SET_EVENTS", response.data.data.map(decodeApiToEvent));
+        commit("SET_EVENTS", (response.data.data).map(decodeApiToEvent));
         commit("SET_EVENTS_LOADING", false);
       }
       return true;

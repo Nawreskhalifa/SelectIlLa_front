@@ -14,13 +14,13 @@ export interface Partner {
 
 
 
-export const decodePartner = (PartnerApi: PartnerApi): Partner => {
+export const decodePartner = (PartnerApi): Partner => {
     return {
         id: PartnerApi.id,
-        name: PartnerApi.name,
-        surname: PartnerApi.surname,
-        phone: PartnerApi.phone,
-        address: PartnerApi.address,
+        name: PartnerApi.attributes.name,
+        surname: PartnerApi.attributes.surname,
+        phone: PartnerApi.attributes.phone,
+        address: PartnerApi.attributes.address,
         user: null,
     };
 };
