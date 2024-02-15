@@ -515,6 +515,12 @@
       </div>
     </div>
   </div>
+  <loading
+    v-model:active="isLoading"
+    :can-cancel="true"
+    :on-cancel="onCancel"
+    :is-full-page="fullPage"
+  />
 </template>
 
 <script>
@@ -523,10 +529,11 @@ import { mapActions, mapGetters } from "vuex";
 import { defineComponent } from "vue";
 import Media from "./FileManagar/FileManager.vue";
 import swal from "sweetalert";
+import Loading from "vue-loading-overlay";
 
 export default defineComponent({
   name: "CustomerDetail",
-  components: { CustomersInformation, Media },
+  components: { CustomersInformation, Media,Loading },
   props: {
     // Define the 'customer id' prop
     customerId: {
@@ -539,7 +546,9 @@ export default defineComponent({
       customer: {},
       currentPage: 1,
       selectAllChecked: false,
-      statusFilter:''
+      statusFilter: "",
+      isLoading: false,
+      fullPage: true,
     };
   },
   methods: {
@@ -602,6 +611,9 @@ export default defineComponent({
         name: null,
       });
     },
+    onCancel() {
+      console.log("User cancelled the loader.");
+    },
   },
   computed: {
     ...mapGetters([
@@ -609,12 +621,16 @@ export default defineComponent({
       "getDocuments",
       "getTotalPagesReservation",
       "getTotalItemsReservation",
+      "getUsersLoading",
     ]),
   },
   async mounted() {
+    try{
+    this.isLoading = this.getUsersLoading;
     await this.fetchAllAttachmentsByCustomer(this.customerId);
     console.log(this.getDocuments);
     if (!this.getCustomers || !this.getCustomers.length) {
+
       await this.fetchAllCustomers({ page: null });
     }
     if (this.getCustomers && this.getCustomers.length) {
@@ -623,6 +639,13 @@ export default defineComponent({
         this.getCustomers.filter((item) => item.id == this.customerId).length
           ? this.getCustomers.filter((item) => item.id == this.customerId)[0]
           : this.getCustomers.filter((item) => item.id == this.customerId);
+    }
+    this.isLoading = this.getUsersLoading;
+
+  } catch (error) {
+      console.error("Error loading data:", error);
+      // Gérer les erreurs ici
+      // Par exemple, afficher une alerte ou un message d'erreur
     }
   },
 });
