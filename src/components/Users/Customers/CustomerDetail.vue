@@ -136,8 +136,7 @@
                 </div>
                 <div
                   class="d-md-flex mt-15 mt-md-25 mb-0 justify-content-between align-items-center"
-                >
-                </div>
+                ></div>
               </div>
             </div>
           </div>
@@ -192,9 +191,7 @@
                           href="javascript:void(0);"
                           @click="AcceptSelectedReservations"
                         >
-
                           <i class="ph ph-check-square-offset"> </i>
-
 
                           Accept Selected
                         </a>
@@ -543,7 +540,7 @@ export default defineComponent({
 
       swal({
         title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover these reservations!",
+        text: "Once accepted, you will not be able to cancel these reservations!",
         icon: "warning",
         buttons: ["Cancel", "Delete"],
         dangerMode: true,
@@ -551,38 +548,26 @@ export default defineComponent({
         if (willDelete) {
           await Promise.all(
             selectedReservations.map(async (reservation) => {
-              const res = await updateReservation(reservation.id, {
-                data: {
-                  status: "Confirmed",
-                },
-              });
-              if (res) {
-                if (
-                  reservation.attributes &&
-                  reservation.attributes.customer &&
-                  reservation.attributes.customer.data
-                ) {
-                  const acceptedRes = {
-                    data: {
-                      customer: reservation.attributes.customer.data.id,
-                      reservation_demand: reservation.id,
-                    },
-                  };
-                  await acceptReservation(acceptedRes);
-                  // if (accept) {
-                  //   this.$router.push({
-                  //     name: "CustomerDetailPage",
-                  //     params: {
-                  //       customerId: reservation.attributes.customer.data.id,
-                  //     },
-                  //   });
-                  //   // Afficher un message de succès
-                  //   swal({
-                  //     text: "Reservation Confirmed Successfully!",
-                  //     icon: "success",
-                  //     closeOnClickOutside: false,
-                  //   });
-                  // }
+              if (reservation.status === "Pending") {
+                const res = await updateReservation(reservation.id, {
+                  data: {
+                    status: "Confirmed",
+                  },
+                });
+                if (res) {
+                  if (
+                    reservation.attributes &&
+                    reservation.attributes.customer &&
+                    reservation.attributes.customer.data
+                  ) {
+                    const acceptedRes = {
+                      data: {
+                        customer: reservation.attributes.customer.data.id,
+                        reservation_demand: reservation.id,
+                      },
+                    };
+                    await acceptReservation(acceptedRes);
+                  }
                 }
               }
             })
@@ -592,7 +577,7 @@ export default defineComponent({
             perPage: 4,
           });
 
-          swal("Selected reservations have been deleted!", {
+          swal("Selected pending reservations have been accepted!", {
             icon: "success",
           });
         } else {
