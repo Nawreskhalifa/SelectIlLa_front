@@ -520,6 +520,7 @@ import Media from "./FileManager.vue";
 import { storageUrl } from "../../../../utils/constants";
 import { updateReservation, acceptReservation } from "@/services/apiService";
 import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 import RefuseReservationModal from "./RefuseReservationModal.vue";
 import swal from "sweetalert";
 
