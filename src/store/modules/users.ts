@@ -340,15 +340,21 @@ const actions = {
         }
         return true
     },
-    async fetchAllAttachmentsByCustomer({ commit }, { page = 1, perPage = 25, idCustomer }: { page?: number, perPage?: number, idCustomer: number }) {
+    async fetchAllAttachmentsByCustomer({ commit }, { page = 1, perPage = 25, idCustomer, status }: { page?: number, perPage?: number, idCustomer: number, status?: string }) {
         commit('SET_USERS_LOADING', true);
         commit('SET_USERS_ERROR', null);
         try {
+            let filters: any = { customer: { id: { $eq: idCustomer } } };
+
+            // Ajouter la condition pour le statut uniquement s'il n'est pas nul
+            if (status) {
+                filters = { ...filters, status: { $eq: status } };
+            }
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
                 `${endPoints.reservations}?populate=deep`,
                 undefined,
-                { filters: { customer: { id: { $eq: idCustomer } } }, pagination: { page: page, pageSize: perPage } }
+                { filters, pagination: { page: page, pageSize: perPage } }
             );
             if (response.success) {
                 commit("SET_TOTAL_PAGES_RESERVATION", response.data.meta.pagination.pageCount);

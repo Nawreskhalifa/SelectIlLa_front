@@ -533,7 +533,7 @@ import Loading from "vue-loading-overlay";
 
 export default defineComponent({
   name: "CustomerDetail",
-  components: { CustomersInformation, Media,Loading },
+  components: { CustomersInformation, Media, Loading },
   props: {
     // Define the 'customer id' prop
     customerId: {
@@ -553,6 +553,22 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(["fetchAllCustomers", "fetchAllAttachmentsByCustomer"]),
+    async handleFilterChange() {
+      console.log(this.startYear, this.endYear);
+      // Réinitialiser la page actuelle à 1
+      this.currentPage = 1;
+      if (this.statusFilter !== "") {
+        await this.fetchAllAttachmentsByCustomer({
+          page: this.currentPage,
+          perPage: 5,
+          idCustomer: this.idCustomer,
+          status: this.statusFilter,
+        });
+      }
+      console.log(this.statusFilter);
+      console.log(this.getDocuments);
+
+    },
     AcceptSelectedReservations() {
       const selectedReservations = [];
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -625,24 +641,26 @@ export default defineComponent({
     ]),
   },
   async mounted() {
-    try{
-    this.isLoading = this.getUsersLoading;
-    await this.fetchAllAttachmentsByCustomer(this.customerId);
-    console.log(this.getDocuments);
-    if (!this.getCustomers || !this.getCustomers.length) {
-
-      await this.fetchAllCustomers({ page: null });
-    }
-    if (this.getCustomers && this.getCustomers.length) {
-      this.customer =
-        this.getCustomers.filter((item) => item.id == this.customerId) &&
-        this.getCustomers.filter((item) => item.id == this.customerId).length
-          ? this.getCustomers.filter((item) => item.id == this.customerId)[0]
-          : this.getCustomers.filter((item) => item.id == this.customerId);
-    }
-    this.isLoading = this.getUsersLoading;
-
-  } catch (error) {
+    try {
+      this.isLoading = this.getUsersLoading;
+      await this.fetchAllAttachmentsByCustomer({
+        page: this.currentPage,
+        perPage: 5,
+        idCustomer: this.idCustomer,
+      });
+      console.log(this.getDocuments);
+      if (!this.getCustomers || !this.getCustomers.length) {
+        await this.fetchAllCustomers({ page: null });
+      }
+      if (this.getCustomers && this.getCustomers.length) {
+        this.customer =
+          this.getCustomers.filter((item) => item.id == this.customerId) &&
+          this.getCustomers.filter((item) => item.id == this.customerId).length
+            ? this.getCustomers.filter((item) => item.id == this.customerId)[0]
+            : this.getCustomers.filter((item) => item.id == this.customerId);
+      }
+      this.isLoading = this.getUsersLoading;
+    } catch (error) {
       console.error("Error loading data:", error);
       // Gérer les erreurs ici
       // Par exemple, afficher une alerte ou un message d'erreur
