@@ -462,6 +462,24 @@
                   class="mb-15 mb-md-20 mb-lg-25 d-sm-flex align-items-center justify-content-between"
                 >
                   <h5 class="card-title fw-bold mb-0">Attachments</h5>
+                  <div class="d-sm-flex align-items-center">
+                    <button
+                      @click="openFileDialog"
+                      class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mb-10 mb-lg-0"
+                      type="button"
+                      :disabled="loadingFiles"
+                    >
+                      Upload
+                      <i
+                        class="ph ph-upload position-relative ms-5 top-2 fs-15"
+                      ></i>
+                      <div
+                        v-if="loadingFiles"
+                        class="spinner-border"
+                        role="status"
+                      ></div>
+                    </button>
+                  </div>
                 </div>
                 <div v-if="getDocuments"></div>
                 <Media :documents="getDocuments" />
@@ -485,6 +503,7 @@ import CustomersInformation from "./CustomerInformation.vue";
 import { mapActions, mapGetters } from "vuex";
 import { defineComponent } from "vue";
 import Media from "./FileManagar/FileManager.vue";
+import { uploadFiles } from "@/services/apiService";
 import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
@@ -508,10 +527,78 @@ export default defineComponent({
       statusFilter: "",
       isLoading: false,
       fullPage: true,
+      documents: [],
+      loadingFiles: false,
     };
   },
   methods: {
     ...mapActions(["fetchAllCustomers", "fetchAllAttachmentsByCustomer"]),
+    async openFileDialog() {
+      try {
+        // Créez un élément de type input de fichier
+        const input = document.createElement("input");
+        input.type = "file";
+        input.multiple = true;
+
+        // Définissez les attributs supplémentaires si nécessaire
+        // input.accept = 'image/*'; // Décommentez pour limiter les types de fichiers acceptés
+
+        // Créez une promesse pour attendre que l'utilisateur sélectionne les fichiers
+        const files = await new Promise((resolve, reject) => {
+          // Ajoutez un écouteur d'événements pour détecter lorsque des fichiers sont sélectionnés
+          input.addEventListener("change", (event) => {
+            const files = event.target.files;
+            resolve(Array.from(files));
+          });
+          // Cliquez sur l'élément input de fichier pour ouvrir la boîte de dialogue
+          input.click();
+        });
+
+        // Ajoutez les fichiers sélectionnés à la liste des documents
+        this.documents.push(...files);
+
+        // Vérifiez s'il y a des fichiers à télécharger
+        if (files.length > 0) {
+          // Mettez le chargement en cours
+          this.loadingFiles = true;
+
+          // Téléchargez les fichiers du client
+          const res = await uploadFiles(
+            files,
+            "api::customer.customer",
+            "documents",
+            this.customerId
+          );
+
+          // Arrêtez le chargement
+          this.loadingFiles = false;
+
+          // Vérifiez si le téléchargement a réussi
+          if (res.success) {
+            // Affichez un message de succès
+            swal({
+              text: "Files uploaded Successfully!",
+              icon: "success",
+              closeOnClickOutside: false,
+            });
+          } else {
+            // Affichez un message d'erreur
+            swal({
+              text: "An error occurred, please try again",
+              icon: "error",
+              closeOnClickOutside: false,
+            });
+          }
+        }
+      } catch (error) {
+        // Gérez les erreurs
+        swal({
+          text: "An error occurred, please try again",
+          icon: "error",
+          closeOnClickOutside: false,
+        });
+      }
+    },
     async handleFilterChange() {
       console.log(this.startYear, this.endYear);
       // Réinitialiser la page actuelle à 1
