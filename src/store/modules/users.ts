@@ -347,7 +347,7 @@ const actions = {
             let filters: any = { customer: { id: { $eq: idCustomer } } };
 
             // Ajouter la condition pour le statut uniquement s'il n'est pas nul
-            if (status) {
+            if (status && status!=='') {
                 filters = { ...filters, status: { $eq: status } };
             }
             const response = await makeApiRequest(

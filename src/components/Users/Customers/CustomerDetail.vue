@@ -557,14 +557,13 @@ export default defineComponent({
       console.log(this.startYear, this.endYear);
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
-      if (this.statusFilter !== "") {
         await this.fetchAllAttachmentsByCustomer({
           page: this.currentPage,
           perPage: 5,
           idCustomer: this.idCustomer,
           status: this.statusFilter,
         });
-      }
+
       console.log(this.statusFilter);
       console.log(this.getDocuments);
 
