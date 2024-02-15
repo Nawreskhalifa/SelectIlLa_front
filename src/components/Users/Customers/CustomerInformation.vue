@@ -113,14 +113,25 @@
         </li>
       </ul>
     </div>
+    <loading
+      v-model:active="getUsersLoading"
+      :can-cancel="true"
+      :on-cancel="onCancel"
+      :is-full-page="true"
+    />
   </div>
 </template>
 
 <script>
 import { storageUrl } from "../../../utils/constants";
 import { mapActions, mapGetters } from "vuex";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 export default {
   name: "CustomerInformation",
+  components: {
+    Loading,
+  },
   props: {
     // Define the 'customer id' prop
     customerId: {
@@ -137,9 +148,12 @@ export default {
   },
   methods: {
     ...mapActions(["fetchAllCustomers"]),
+    onCancel() {
+      console.log("User cancelled the loader.");
+    },
   },
   computed: {
-    ...mapGetters(["getCustomers"]),
+    ...mapGetters(["getCustomers","getUsersLoading",]),
   },
   async mounted() {
     if (!this.getCustomers || !this.getCustomers.length) {

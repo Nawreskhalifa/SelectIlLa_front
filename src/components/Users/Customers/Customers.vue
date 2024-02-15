@@ -252,7 +252,8 @@
         </table>
       </div>
       <div
-        class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center">
+        class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
+      >
         <p class="mb-0 text-paragraph">
           Showing
           <span class="fw-bold">{{ Math.min(11, getCustomers.length) }}</span>
@@ -299,16 +300,27 @@
         </nav>
       </div>
     </div>
+    <loading
+      v-model:active="getEventLoading"
+      :can-cancel="true"
+      :on-cancel="onCancel"
+      :is-full-page="true"
+    />
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
 import { mapGetters, mapActions } from "vuex";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 import { storageUrl } from "@/utils/constants";
 import swal from "sweetalert";
 export default defineComponent({
   name: "CustomersList",
+  components: {
+    Loading,
+  },
   data() {
     return {
       storageUrl: "",
@@ -324,6 +336,9 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(["fetchAllCustomers", "deleteCustomer"]),
+    onCancel() {
+      console.log("User cancelled the loader.");
+    },
     async handleFilterChange() {
       console.log(this.startYear, this.endYear);
       // Réinitialiser la page actuelle à 1

@@ -211,6 +211,12 @@
         </nav>
       </div>
     </div>
+    <loading
+      v-model:active="getCategoriesLoading"
+      :can-cancel="true"
+      :on-cancel="onCancel"
+      :is-full-page="true"
+    />
   </div>
 </template>
 
@@ -218,9 +224,13 @@
 import swal from "sweetalert";
 import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
-
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 export default defineComponent({
   name: "CategoriesEventList",
+  components: {
+    Loading,
+  },
   data() {
     return {
       currentPage: 1,
@@ -230,7 +240,11 @@ export default defineComponent({
     };
   },
   methods: {
-    ...mapActions(["fetchAllCategoriesEvent", "deleteCategoryEvent"]),
+    ...mapActions([
+      "fetchAllCategoriesEvent",
+      "deleteCategoryEvent",
+      "getCategoriesLoading",
+    ]),
     toggleSortDirection() {
       // Basculer entre ascendant et descendant
       this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";

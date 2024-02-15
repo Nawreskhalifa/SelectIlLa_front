@@ -490,6 +490,12 @@
                 </div>
               </div>
             </div>
+            <loading
+              v-model:active="getUsersLoading"
+              :can-cancel="true"
+              :on-cancel="onCancel"
+              :is-full-page="true"
+            />
           </div>
           <div
             class="tab-pane fade"
@@ -516,10 +522,10 @@
     </div>
   </div>
   <loading
-    v-model:active="isLoading"
+    v-model:active="getUsersLoading"
     :can-cancel="true"
     :on-cancel="onCancel"
-    :is-full-page="fullPage"
+    :is-full-page="true"
   />
 </template>
 
@@ -530,6 +536,7 @@ import { defineComponent } from "vue";
 import Media from "./FileManagar/FileManager.vue";
 import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 
 export default defineComponent({
   name: "CustomerDetail",
@@ -557,16 +564,15 @@ export default defineComponent({
       console.log(this.startYear, this.endYear);
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
-        await this.fetchAllAttachmentsByCustomer({
-          page: this.currentPage,
-          perPage: 5,
-          idCustomer: this.idCustomer,
-          status: this.statusFilter,
-        });
+      await this.fetchAllAttachmentsByCustomer({
+        page: this.currentPage,
+        perPage: 5,
+        idCustomer: this.idCustomer,
+        status: this.statusFilter,
+      });
 
       console.log(this.statusFilter);
       console.log(this.getDocuments);
-
     },
     AcceptSelectedReservations() {
       const selectedReservations = [];
@@ -590,12 +596,6 @@ export default defineComponent({
         dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
-          // Call the deleteCustomer action or API endpoint to delete the selected customers
-          // await Promise.all(
-          //   selectedReservations.map((id) => this.deleteCustomer(id))
-          // );
-          // After deletion, fetch customers again to update the list
-          // await this.fetchAllCustomers({ page: this.currentPage, perPage: 4 });
           swal("Selected reservations have been deleted!", {
             icon: "success",
           });
@@ -641,7 +641,6 @@ export default defineComponent({
   },
   async mounted() {
     try {
-      this.isLoading = this.getUsersLoading;
       await this.fetchAllAttachmentsByCustomer({
         page: this.currentPage,
         perPage: 5,
@@ -658,7 +657,6 @@ export default defineComponent({
             ? this.getCustomers.filter((item) => item.id == this.customerId)[0]
             : this.getCustomers.filter((item) => item.id == this.customerId);
       }
-      this.isLoading = this.getUsersLoading;
     } catch (error) {
       console.error("Error loading data:", error);
       // Gérer les erreurs ici
