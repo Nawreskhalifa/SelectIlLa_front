@@ -137,55 +137,6 @@
                 <div
                   class="d-md-flex mt-15 mt-md-25 mb-0 justify-content-between align-items-center"
                 >
-                  <!-- <a
-                  href="#"
-                  class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block"
-                  data-bs-toggle="modal"
-                  data-bs-target="#createNewDealModal"
-                  >Add A New Deal</a
-                > -->
-                  <!-- <div
-                    class="pagination-area d-md-flex align-items-center mt-10 mt-md-0"
-                  >
-                    <p class="mb-0 text-paragraph">
-                      Showing
-                      <span
-                        class="fw-bold"
-                        v-if="
-                          customer?.creditCards && customer?.creditCards?.length
-                        "
-                        >{{ Math.min(11, customer?.creditCards?.length) }}</span
-                      >
-                      out of
-                      <span class="fw-bold">{{
-                        customer?.creditCards?.length
-                      }}</span>
-                      results
-                    </p>
-                    <nav class="mt-12 mt-md-0 ms-md-20">
-                      <ul class="pagination mb-0">
-                        <li class="page-item">
-                          <a class="page-link" href="#" aria-label="Previous">
-                            <i class="flaticon-chevron-1"></i>
-                          </a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link active" href="#">1</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#" aria-label="Next">
-                            <i class="flaticon-chevron"></i>
-                          </a>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div> -->
                 </div>
               </div>
             </div>
@@ -241,10 +192,11 @@
                           href="javascript:void(0);"
                           @click="AcceptSelectedReservations"
                         >
-                          <i
-                            class="flaticon-delete lh-1 me-8 position-relative top-1"
-                          ></i>
-                          Delete Selected
+
+                          <i class="ph ph-check-square-offset"> </i>
+
+
+                          Accept Selected
                         </a>
                       </li>
                     </ul>
@@ -537,6 +489,7 @@ import Media from "./FileManagar/FileManager.vue";
 import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import { updateReservation, acceptReservation } from "@/services/apiService";
 
 export default defineComponent({
   name: "CustomerDetail",
@@ -579,7 +532,7 @@ export default defineComponent({
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
       checkboxes.forEach((checkbox, index) => {
         if (checkbox.checked) {
-          selectedReservations.push(this.getDocuments[index].id);
+          selectedReservations.push(this.getDocuments[index]);
         }
       });
 
@@ -596,6 +549,49 @@ export default defineComponent({
         dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
+          await Promise.all(
+            selectedReservations.map(async (reservation) => {
+              const res = await updateReservation(reservation.id, {
+                data: {
+                  status: "Confirmed",
+                },
+              });
+              if (res) {
+                if (
+                  reservation.attributes &&
+                  reservation.attributes.customer &&
+                  reservation.attributes.customer.data
+                ) {
+                  const acceptedRes = {
+                    data: {
+                      customer: reservation.attributes.customer.data.id,
+                      reservation_demand: reservation.id,
+                    },
+                  };
+                  await acceptReservation(acceptedRes);
+                  // if (accept) {
+                  //   this.$router.push({
+                  //     name: "CustomerDetailPage",
+                  //     params: {
+                  //       customerId: reservation.attributes.customer.data.id,
+                  //     },
+                  //   });
+                  //   // Afficher un message de succès
+                  //   swal({
+                  //     text: "Reservation Confirmed Successfully!",
+                  //     icon: "success",
+                  //     closeOnClickOutside: false,
+                  //   });
+                  // }
+                }
+              }
+            })
+          );
+          await this.fetchAllAttachmentsByCustomer({
+            page: this.currentPage,
+            perPage: 4,
+          });
+
           swal("Selected reservations have been deleted!", {
             icon: "success",
           });
