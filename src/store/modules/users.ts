@@ -18,6 +18,7 @@ const state = {
     totalPagesReservation: 0,
     totalItemsReservation: 0,
     reservation: null,
+    documentsCustomer: [],
 }
 const getters = {
     getUsersError: state => state.userError,
@@ -32,8 +33,13 @@ const getters = {
     getTotalPagesReservation: (state) => state.totalPagesReservation,
     getTotalItemsReservation: (state) => state.totalItemsReservation,
     getReservation: (state) => state.reservation,
+    getDocumentsCustomer: (state) => state.documentsCustomer,
+
 }
 const mutations = {
+    SET_DOCUMENTS_CUSTOMER(state, payload) {
+        state.documentsCustomer = payload;
+    },
     SET_TOTAL_ITEMS(state, payload = 0) {
         state.totalItems = payload;
     },
@@ -340,6 +346,37 @@ const actions = {
         }
         return true
     },
+    async fetchDocumentsCustomer({ commit }, id) {
+        commit('SET_USERS_LOADING', true)
+        commit('SET_USERS_ERROR')
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.deleteCustomer}${id}`,
+                undefined,
+                { populate: { documents: true } }
+            );
+            if (response.success) {
+                commit('SET_DOCUMENTS_CUSTOMER', response.data.data.attributes.documents.data)
+                commit('SET_USERS_LOADING')
+            }
+
+        } catch (error: any) {
+            commit('SET_USERS_LOADING')
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
     async fetchAllAttachmentsByCustomer({ commit }, { page = 1, perPage = 25, idCustomer, status }: { page?: number, perPage?: number, idCustomer: number, status?: string }) {
         commit('SET_USERS_LOADING', true);
         commit('SET_USERS_ERROR', null);
@@ -347,7 +384,7 @@ const actions = {
             let filters: any = { customer: { id: { $eq: idCustomer } } };
 
             // Ajouter la condition pour le statut uniquement s'il n'est pas nul
-            if (status && status!=='') {
+            if (status && status !== '') {
                 filters = { ...filters, status: { $eq: status } };
             }
             const response = await makeApiRequest(

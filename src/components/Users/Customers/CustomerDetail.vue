@@ -481,8 +481,10 @@
                     </button>
                   </div>
                 </div>
-                <div v-if="getDocuments"></div>
-                <Media :documents="getDocuments" />
+                <Media
+                  :documentsReservations="getDocuments"
+                  :documentsCustomer="getDocumentsCustomer"
+                />
               </div>
             </div>
           </div>
@@ -532,7 +534,11 @@ export default defineComponent({
     };
   },
   methods: {
-    ...mapActions(["fetchAllCustomers", "fetchAllAttachmentsByCustomer"]),
+    ...mapActions([
+      "fetchAllCustomers",
+      "fetchAllAttachmentsByCustomer",
+      "fetchDocumentsCustomer",
+    ]),
     async openFileDialog() {
       try {
         // Créez un élément de type input de fichier
@@ -704,6 +710,7 @@ export default defineComponent({
       "getTotalPagesReservation",
       "getTotalItemsReservation",
       "getUsersLoading",
+      "getDocumentsCustomer",
     ]),
   },
   async mounted() {
@@ -713,7 +720,7 @@ export default defineComponent({
         perPage: 5,
         idCustomer: this.idCustomer,
       });
-      console.log(this.getDocuments);
+      await this.fetchDocumentsCustomer(this.idCustomer);
       if (!this.getCustomers || !this.getCustomers.length) {
         await this.fetchAllCustomers({ page: null });
       }
@@ -725,9 +732,11 @@ export default defineComponent({
             : this.getCustomers.filter((item) => item.id == this.customerId);
       }
     } catch (error) {
-      console.error("Error loading data:", error);
-      // Gérer les erreurs ici
-      // Par exemple, afficher une alerte ou un message d'erreur
+      swal({
+        text: "An error occurred, please try again",
+        icon: "error",
+        closeOnClickOutside: false,
+      });
     }
   },
 });
