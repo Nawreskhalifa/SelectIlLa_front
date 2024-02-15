@@ -606,7 +606,6 @@ export default defineComponent({
       }
     },
     async handleFilterChange() {
-      console.log(this.startYear, this.endYear);
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
       await this.fetchAllAttachmentsByCustomer({
