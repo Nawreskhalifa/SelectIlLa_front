@@ -67,7 +67,7 @@
       <loading
       v-model:active="isLoading"
       :can-cancel="true"
-      :on-cancel="onCancel"
+       :on-cancel="onCancel"
       :is-full-page="fullPage"
     />
     </div>
@@ -96,12 +96,15 @@ export default defineComponent({
     const totalPages = ref(1);
 
     const fetchData = async (start = 0, limit = 8) => {
+      isLoading.value=true
       try {
         const data = await fetchVilla(start, limit);
         villas.value = data.data;
         totalPages.value = Math.ceil(data.meta.pagination.total / limit);
       } catch (error) {
         console.error("Error in fetchData:", error);
+      } finally{
+        isLoading.value = false
       }
     };
  const byCategory = (event) => {

@@ -408,6 +408,31 @@ export async function search(table, field, query, searchInput) {
     };
   }
 }
+export async function searchInS(table, field,field2, query, searchInput) {
+  try {
+    const url =process.env.VUE_APP_API_BASE_URL
+    const response = await axios.get(
+      `${url}${table}?populate=deep&filters[${field}][${field2}][${query}]=${searchInput}`
+    );
+
+    if (response) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      }
+    } else {
+      throw new Error("Failed to fetch vehicles");
+    }
+  } catch (error) {
+    console.error('Error getting vehicle:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
+}
+
 
 
 export async function updateVehicle(vehicleId, updatedData) {
@@ -754,7 +779,7 @@ export async function fetchPartnersById(id, start = 0, limit = 16) {
 }
 export async function fetchPartners(start = 0, limit = 16) {
   try {
-    const response = await axios.get(`${endPoints.partners}?populate=deep`);
+    const response = await axios.get(`${endPoints.partners}?populate=deep&pagination[page]=1&pagination[pageSize]=10`);
     if (response) {
       console.log(response.data)
       return response.data;

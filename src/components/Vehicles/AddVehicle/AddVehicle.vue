@@ -239,7 +239,7 @@ v-model:content="description"
 
           <div class="col-md-12 text-danger"></div>
 
-          <div class="col-md-6">
+          <!-- <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">Owner</label>
               <input
@@ -250,7 +250,7 @@ v-model:content="description"
               />
               <div v-if="ownerError" class="text-danger">{{ ownerError }}</div>
             </div>
-          </div>
+          </div> -->
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -377,8 +377,7 @@ export default defineComponent({
     const AllSelected = ref<string[]>([]);
     const makes =  ref([]) ;
     const brands=  ref([]);
-    const owner = ref("");
-    const seats = ref("");
+     const seats = ref("");
     const daily = ref("");
     const mice = ref("");
     const newDaily = ref("");
@@ -424,8 +423,7 @@ export default defineComponent({
     const descriptionError = ref("");
     const categoryError = ref("");
     const imageError = ref("");
-    const ownerError = ref("");
-    const seatsError = ref("");
+     const seatsError = ref("");
     const dailyError = ref("");
     const miceError = ref("");
     const newDailyError = ref("");
@@ -509,8 +507,7 @@ export default defineComponent({
       brandError.value = "";
       descriptionError.value = "";
       categoryError.value = "";
-      ownerError.value = "";
-      seatsError.value = "";
+       seatsError.value = "";
       dailyError.value = "";
       miceError.value = "";
       newDailyError.value = "";
@@ -522,9 +519,6 @@ export default defineComponent({
         imageError.value = "Please upload at least one image.";
       }
 
-      if (!owner.value.trim()) {
-        ownerError.value = "Owner is required.";
-      }
 
       if (!daily.value.trim()) {
         dailyError.value = "Daily amount is required.";
@@ -539,8 +533,7 @@ export default defineComponent({
         brandError.value ||
         descriptionError.value ||
         categoryError.value ||
-        ownerError.value ||
-        seatsError.value ||
+         seatsError.value ||
         dailyError.value ||
         miceError.value ||
         newDailyError.value
@@ -563,8 +556,7 @@ export default defineComponent({
           new_daily: parseFloat(newDaily.value),
           deposit: parseFloat(deposit.value),
           description: description.value.ops[0].insert,
-          owner: owner.value,
-          // category_vehicles: selectedC ,
+           // category_vehicles: selectedC ,
           seats: parseInt(seats.value),
           partner: [parseInt(selectedPartner.value)]
         },
@@ -660,7 +652,7 @@ fetchMakesCat()
       brand,
       description,
       selectedFiles,
-      owner,
+      // owner,
       modal,
       isLoading,
 saveOnlyBrand,
@@ -686,8 +678,7 @@ saveOnlyBrand,
       descriptionError,
        categoryError,
 changeText,
-      ownerError,
-      seatsError,
+       seatsError,
       dailyError,
       miceError,
        newDailyError,

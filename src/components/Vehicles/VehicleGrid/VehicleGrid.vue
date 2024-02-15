@@ -306,7 +306,10 @@ if(item && item.attributes && item.attributes.brand && item.attributes.brand.dat
   },
   watch: {},
   async created() {
+    this.isLoading = true
     await this.fetchData();
+        this.isLoading = false
+
   },
 };
 </script>

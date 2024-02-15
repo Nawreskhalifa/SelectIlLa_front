@@ -110,8 +110,8 @@
                           v-if="
                             previousPhotos &&
                             previousPhotos.attributes &&
-                            previousPhotos.attributes.photos &&
-                            previousPhotos.attributes.photos.data.length > 0
+                            previousPhotos.attributes?.photos &&
+                            previousPhotos.attributes?.photos.data.length > 0
                           "
                         >
                           <h4>Previous Photos:</h4>
@@ -153,7 +153,7 @@
                             previousPhotos &&
                             previousPhotos.attributes &&
                             previousPhotos.attributes.photos &&
-                            previousPhotos.attributes.photos.data.length > 0
+                            previousPhotos?.attributes?.photos?.data?.length > 0
                           "
                         ></h4>
                         <div class="file-upload text-center position-relative">
@@ -189,12 +189,14 @@
                         <label class="d-block text-black fw-semibold mb-10">
                           Description
                         </label>
-                        <div class="mb-0">
-                          <textarea
-                            v-model="description"
-                            class="form-control shadow-none rounded-0 text-black"
-                            placeholder="Write your Villa description"
-                          ></textarea>
+                          <div class="mb-0">
+                           <QuillEditor
+                  theme="snow"
+                  :placeholder="description"
+v-model:content="description"
+
+                   toolbar="full"
+                />
                         </div>
                         <div v-if="descriptionError" class="text-danger">
                           {{ descriptionError }}
@@ -312,11 +314,13 @@
                             align-items: center;
                           "
                         >
-                        <li class="single_cat" v-if="partner">
-                          {{ getSelectedPartnerName }}
+                        <li class="single_cat" v-if="partner && partner.data && partner.data.attributes && partner.data.attributes.name  ">
+                          {{ partner.data.attributes.name }}
                           <!-- <span> {{ cat.attributes.Name }}</span> -->
-                          <i class="fas fa-times-circle" @click="deleteFromCategories(cat)"></i>
+                          <i class="fas fa-times-circle" @click="partner=''"></i>
                       </li>
+
+
 
                         </ul>
                         <select
@@ -325,12 +329,12 @@
                       >
                         <option value="" disabled>Select a Partner</option>
                         <option
-                          v-for="partner in partnerData"
-                          :key="partner.id"
-                          :value="partner.id"
-                          :selected="selectedPartner === partner.id"
+                          v-for="pr in partnerData"
+                          :key="pr.id"
+                          :value="pr"
+                          :selected="selectedPartner === pr.id"
                         >
-                          {{ partner.name }}
+                          {{ pr?.name }}
                         </option>
                       </select>
 
@@ -342,7 +346,7 @@
 
                     <div class="col-md-12 text-danger"></div>
 
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25">
                         <label class="d-block text-black fw-semibold mb-10"
                           >Owner</label
@@ -357,7 +361,7 @@
                           {{ ownerError }}
                         </div>
                       </div>
-                    </div>
+                    </div> -->
 
                     <div class="col-md-6">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -463,13 +467,13 @@ export default {
       deposit: this.villa.attributes.deposit,
       description: this.villa.attributes.description,
       minioeuvre_daily: this.villa.attributes.minioeuvre_daily,
-      owner: this.villa.attributes.owner,
-      selectedPartner: this.villa.attributes.partner.data.attributes.id,
+      // owner: this.villa.attributes.owner,
+      selectedPartner:    this.villa.attributes.partner.data.id,
       previousCategories: this.villa.attributes.category_villas.data,
       selectedCategory: "",
       showUploadedFiles: false,
       previousPhotos: this.villa,
-      partner:this.villa.attributes.partner.data.attributes.id,
+      partner:this.villa.attributes.partner,
       selectedFiles: [],
       imageUrls: [],
       partnerData :[] ,
@@ -602,10 +606,12 @@ export default {
           daily: parseFloat(this.daily),
           new_daily: parseFloat(this.newDaily),
           deposit: parseFloat(this.deposit),
-          description: this.description,
           minioeuvre_daily: this.minioeuvre_daily.toString(),
           category_villas: allCategories,
-          partner:this.partner
+          partner:this.partner,
+               description: this.description.ops && this.description.ops.length > 0
+        ? this.description.ops[0].insert
+        : this.villa.attributes.description,
         },
       };
       console.log(villaData)

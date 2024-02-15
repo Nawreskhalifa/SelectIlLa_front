@@ -301,6 +301,12 @@ rooms
       </div>
     </div>
   </div>
+        <loading
+      v-model:active="isLoading"
+      :can-cancel="true"
+
+      :is-full-page="fullPage"
+    />
 </template>
 
 <script>
@@ -308,13 +314,16 @@ import { mapActions, mapGetters } from "vuex";
 import { defineComponent } from "vue";
 import PartnerInformation from "./PartnerInformation.vue";
 import Media from "../../Reservations/FileManagar/FileManager.vue"
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 export default defineComponent({
   name: "PartnerDetails",
-  components: {  PartnerInformation ,Media},
+  components: {  PartnerInformation ,Media  , Loading},
 
   data() {
     return {
-      partners : null
+      partners : null,
+      isLoading:false
     };
   },
    computed: {
@@ -330,7 +339,10 @@ export default defineComponent({
    },
 
   async mounted() {
+    this.isLoading=true
     await this.loadPartner()
+        this.isLoading=false
+
    },
 });
 </script>

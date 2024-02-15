@@ -343,7 +343,7 @@
             <span class="title">partners</span>
           </router-link>
         </li> -->
-        <li
+        <!-- <li
           class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
         >
           <a
@@ -368,7 +368,7 @@
                     partners
                   </router-link>
                 </li>
-                <li class="sidebar-sub-menu-item">
+                 <li class="sidebar-sub-menu-item">
                   <router-link
                     to="/add-partner"
                     class="sidebar-sub-menu-link"
@@ -379,8 +379,23 @@
               </ul>
             </div>
           </div>
+        </li> -->
+    <li class="sidebar-nav-item">
+          <router-link to="/partnersList" class="sidebar-nav-link d-block">
+                                   <i class="fas fa-handshake"></i>
+
+
+            <span class="title">Partners</span>
+          </router-link>
         </li>
-        <li
+          <li class="sidebar-nav-item">
+          <router-link to="/reservationList" class="sidebar-nav-link d-block">
+                        <i class="flaticon-layer-2"></i>
+
+            <span class="title">Reservations</span>
+          </router-link>
+        </li>
+        <!-- <li
           class="sidebar-nav-item accordion-item bg-transparent border-0 rounded-0"
         >
           <a
@@ -417,13 +432,13 @@
               </ul>
             </div>
           </div>
-</li>
-        <li class="sidebar-nav-item">
+</li> -->
+        <!-- <li class="sidebar-nav-item">
           <router-link to="/contacts" class="sidebar-nav-link d-block">
             <i class="fa fa-address-book" aria-hidden="true"></i>
             <span class="title">Contacts</span>
           </router-link>
-        </li>
+        </li> -->
       </ul>
     </div>
   </div>

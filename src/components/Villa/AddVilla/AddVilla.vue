@@ -273,7 +273,7 @@ v-model:content="description"
 
           <div class="col-md-12 text-danger"></div>
 
-          <div class="col-md-6">
+          <!-- <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">Owner</label>
               <input
@@ -284,7 +284,7 @@ v-model:content="description"
               />
               <div v-if="ownerError" class="text-danger">{{ ownerError }}</div>
             </div>
-          </div>
+          </div> -->
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -403,7 +403,7 @@ const selectedCategory: Ref<any | null> = ref(null);
     const description = ref();
     const minioeuvre_daily = ref("");
     const showModal = ref(false)
-    const owner = ref("");
+    // const owner = ref("");
     const selectedPartner = ref("");
     const modules = {
       module: BlotFormatter,
@@ -432,8 +432,7 @@ categories.value.push(event)
     const cityError = ref("");
     const descriptionError = ref("");
     const categoryError = ref("");
-    const ownerError = ref("");
-    const seatsError = ref("");
+     const seatsError = ref("");
     const dailyError = ref("");
     const roomsError = ref("");
     const newDailyError = ref("");
@@ -507,8 +506,7 @@ categories.value.push(event)
       cityError.value = "";
       descriptionError.value = "";
       categoryError.value = "";
-      ownerError.value = "";
-      seatsError.value = "";
+       seatsError.value = "";
       dailyError.value = "";
       roomsError.value = "";
       newDailyError.value = "";
@@ -526,9 +524,9 @@ categories.value.push(event)
         categoryError.value = "Please select a category.";
       }
 
-      if (!owner.value.trim()) {
-        ownerError.value = "Owner is required.";
-      }
+      // if (!owner.value.trim()) {
+      //   ownerError.value = "Owner is required.";
+      // }
 
       if (!daily.value.trim()) {
         dailyError.value = "Daily amount is required.";
@@ -539,8 +537,7 @@ categories.value.push(event)
         roomsError.value ||
         descriptionError.value ||
         categoryError.value ||
-        ownerError.value ||
-        seatsError.value ||
+         seatsError.value ||
         dailyError.value ||
         cityError.value ||
         newDailyError.value
@@ -597,16 +594,14 @@ categories.value.push(event)
       description,
       selectedCategory,
       selectedFiles,
-      owner,
-      addedCategory,
+       addedCategory,
       daily,
       deposit,
       showToatSuccess,
       newDaily,
       descriptionError,
       categoryError,
-      ownerError,
-      seatsError,
+       seatsError,
       dailyError,
       OpenVilla,
   showModal,

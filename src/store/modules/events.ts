@@ -2,7 +2,6 @@ import { decodeApiToEvent } from "@/models/Event/Event";
 import { makeApiRequest } from "@/services/apiService";
 import { endPoints } from "@/utils/endPoints";
 import { methodsHttpNames } from "@/utils/methods";
-
 const state = {
   eventsError: null,
   eventsLoading: false,

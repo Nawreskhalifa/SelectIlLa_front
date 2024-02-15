@@ -146,7 +146,7 @@
                 >+ brand for {{ openedMake }}
               </span>
             </div>
-            <form>
+            <!-- <form>
               <div class="input-group">
                 <input
                   type="text"
@@ -164,7 +164,7 @@
                   ></i>
                 </button>
               </div>
-            </form>
+            </form> -->
           </div>
           <div class="table-responsive">
             <table class="table text-nowrap align-middle mb-0">

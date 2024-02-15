@@ -362,8 +362,8 @@ v-model:content="description"
  </select>
                       </div>
                     </div> -->
-                    <div class="col-md-6">
-                      <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                    <!-- <div class="col-md-6"> -->
+                      <!-- <div class="form-group mb-15 mb-sm-20 mb-md-25">
                         <label class="d-block text-black fw-semibold mb-10"
                           >Owner</label
                         >
@@ -376,8 +376,8 @@ v-model:content="description"
                         <div v-if="ownerError" class="text-danger">
                           {{ ownerError }}
                         </div>
-                      </div>
-                    </div>
+                      </div> -->
+                    <!-- </div> -->
 
                     <div class="col-md-6">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -450,7 +450,7 @@ export default {
       description: this.vehicle.attributes.description,
       // previousCategories: this.vehicle.attributes.category_vehicles.data,
       selectedCategory: "",
-      owner: this.vehicle.attributes.owner,
+      // owner: this.vehicle.attributes.owner,
       seats: this.vehicle.attributes.seats,
       daily: this.vehicle.attributes.daily,
       mice: this.vehicle.attributes.mice,
@@ -656,12 +656,12 @@ export default {
       mice: parseFloat(this.mice),
       new_daily: parseFloat(this.newDaily),
       deposit: parseFloat(this.deposit),
-      owner: this.owner,
+      // owner: this.owner,
       seats: parseInt(this.seats),
       partner: this.partner,
       description: this.description.ops && this.description.ops.length > 0
         ? this.description.ops[0].insert
-        : this.vehicle.attributes.description, // Use the old description if there are no changes
+        : this.vehicle.attributes.description,
     },
   };
   if (this.selectedFiles.length > 0) {

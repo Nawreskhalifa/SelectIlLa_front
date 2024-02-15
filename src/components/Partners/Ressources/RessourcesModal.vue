@@ -5,8 +5,8 @@
           <div v-show="show" class="modal-inner">
             <i class="fas fa-times close-icon" @click="closeModal"></i>
 
-            <div class="card product-details-box">
-               <nav id="navbar-example2" class="navbar navbar-light bg-light">
+            <div class="  product-details-box">
+               <nav id="navbar-example2" class="navbar navbar-light bg-light"  >
                 <a class="navbar-brand">Ressources</a>
                 <ul class="nav nav-pills">
                    <li class="nav-item"  :class="{ active: villas }">
@@ -21,7 +21,7 @@
                 </ul>
               </nav>
 
-              <div class="row row-cols-1 row-cols-md-3" v-if="villas && ressources && ressources.villas">
+              <div class="row row-cols-1 row-cols-md-3 pt-15" v-if="villas && ressources && ressources.villas">
                 <div class="col mb-4" v-for="villa in ressources.villas" :key="villa.id">
                   <div class="card h-100" v-if="villa.photos">
                     <img :src="urlPic(villa)" class="card-img-top img" alt="">
