@@ -13,7 +13,27 @@
               Reservation Details
             </h5>
           </div>
-          <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+          <div>
+            <span
+              class="badge text-outline-warning"
+              v-if="getReservation?.attributes.status == 'Pending'"
+              >{{ getReservation?.attributes.status }}</span
+            >
+            <span
+              class="badge text-outline-success"
+              v-if="getReservation?.attributes.status == 'Confirmed'"
+              >{{ getReservation?.attributes.status }}</span
+            >
+            <span
+              class="badge text-outline-danger"
+              v-if="getReservation?.attributes.status == 'Canceled'"
+              >{{ getReservation?.attributes.status }}</span
+            >
+          </div>
+          <div
+            class="dropdown mt-10 mt-sm-0 ms-sm-10"
+            v-if="getReservation?.attributes.status === 'Pending'"
+          >
             <button
               class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
               type="button"
@@ -487,7 +507,10 @@
       :is-full-page="fullPage"
     />
   </div>
-  <RefuseReservationModal :idReservation="idReservation" />
+  <RefuseReservationModal
+    :idReservation="idReservation"
+    :idCustomer="this.getReservation?.attributes.customer.data.id"
+  />
 </template>
 
 <script>

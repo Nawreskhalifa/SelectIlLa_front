@@ -17,7 +17,7 @@
           <h5 class="modal-title fw-bold text-black">Refuse Reservation</h5>
         </div>
         <div class="modal-body ps-0 pe-0 pb-0 pt-15 pt-md-25">
-          <form>
+          <form @submit.prevent="refuse">
             <div class="row">
               <div class="col-lg-12 col-md-12">
                 <div class="form-group mb-15 mb-md-25">
@@ -47,11 +47,11 @@
     </div>
   </div>
   <loading
-  v-model:active="isLoading"
-  :can-cancel="true"
-  :on-cancel="onCancel"
-  :is-full-page="fullPage"
-/>
+    v-model:active="isLoading"
+    :can-cancel="true"
+    :on-cancel="onCancel"
+    :is-full-page="fullPage"
+  />
 </template>
 
 <script>
@@ -60,7 +60,7 @@ import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 
 export default {
-  components: {  Loading },
+  components: { Loading },
 
   name: "RefuseReservationModal",
   props: {
@@ -80,6 +80,7 @@ export default {
       console.log("User cancelled the loader.");
     },
     async refuse() {
+      this.isLoading = true;
       const res = await updateReservation(this.idReservation, {
         data: {
           status: "Canceled",
@@ -95,7 +96,7 @@ export default {
           icon: "success",
           closeOnClickOutside: false,
         });
-
+        this.$emit("close");
         this.isLoading = false;
       }
     },
