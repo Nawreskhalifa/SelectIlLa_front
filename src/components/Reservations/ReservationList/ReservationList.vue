@@ -375,7 +375,10 @@ startDate: ''
       this.ModalVisible = false;
     },
     showDetail(reservation) {
-      this.ModalVisible = true;
+      // this.ModalVisible = true;
+   const reservationId = reservation.id;
+  this.$router.push({ name: 'ReservationDetailsPage', params: { reservationId } });
+
       this.reserveData = reservation;
       console.log(reservation);
     },

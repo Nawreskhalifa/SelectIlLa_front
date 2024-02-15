@@ -1032,7 +1032,7 @@ export async function postPartner(partner) {
     try {
       let response  ;
   if(query){
-        response = await axios.get(`${endPoints.makes}?populate=*&${query}`);
+        response = await axios.get(`${endPoints.makes}?populate=deep&${query}`);
   }else{
         response = await axios.get(`${endPoints.makes}?populate=deep`);
 
@@ -1051,7 +1051,7 @@ export async function postPartner(partner) {
     try {
       let response
       if(query){
-        response = await axios.get(`${endPoints.brands}?populate=*&${query}`);
+        response = await axios.get(`${endPoints.brands}?populate=deep&${query}`);
       }else{
         response = await axios.get(`${endPoints.brands}?populate=deep`);
 
