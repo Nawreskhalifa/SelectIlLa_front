@@ -237,18 +237,20 @@
                         >
                           Status
                         </th>
-                        <th
+                        <!-- <th
                           scope="col"
                           class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
                         >
                           ACTIONS
-                        </th>
+                        </th> -->
                       </tr>
                     </thead>
                     <tbody>
                       <tr
                         v-for="(reservation, index) in getDocuments"
                         :key="index"
+                        @click="navigateToReservationDetailPage(reservation.id)"
+                        style="cursor: pointer"
                       >
                         <th
                           class="shadow-none lh-1 fw-medium text-black-emphasis title fs-md-15 fs-lg-16 ps-0"
@@ -319,7 +321,7 @@
                           >
                         </td>
 
-                        <td
+                        <!-- <td
                           class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
                         >
                           <div class="dropdown">
@@ -369,7 +371,7 @@
                               </li>
                             </ul>
                           </div>
-                        </td>
+                        </td> -->
                       </tr>
                     </tbody>
                   </table>
@@ -520,9 +522,6 @@ export default defineComponent({
         idCustomer: this.idCustomer,
         status: this.statusFilter,
       });
-
-      console.log(this.statusFilter);
-      console.log(this.getDocuments);
     },
     AcceptSelectedReservations() {
       const selectedReservations = [];
