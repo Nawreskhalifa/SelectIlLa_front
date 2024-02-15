@@ -542,7 +542,7 @@ export default defineComponent({
         title: "Are you sure?",
         text: "Once accepted, you will not be able to cancel these reservations!",
         icon: "warning",
-        buttons: ["Cancel", "Delete"],
+        buttons: ["Cancel", "Confirm"],
         dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
