@@ -56,9 +56,9 @@
           <option value="false">Inactive</option>
         </select>
       </div>
-      <div class="dropdown">
+      <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
         <button
-          class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+          class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
@@ -211,7 +211,10 @@
               <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14">
                 PROMOTE BY:
                 <span class="fw-semibold text-primary">
-                  {{ event.partner?.name + event.partner?.surname }}
+                  {{
+                    event.partner?.attributes.name +
+                    event.partner?.attributes.surname
+                  }}
                 </span>
               </span>
               <!-- <span class="badge text-outline-danger ms-10">{{
@@ -318,6 +321,12 @@
         </ul>
       </nav>
     </div>
+    <loading
+      v-model:active="getEventsLoading"
+      :can-cancel="true"
+      :on-cancel="onCancel"
+      :is-full-page="fullPage"
+    />
   </div>
 </template>
 
@@ -325,8 +334,13 @@
 import swal from "sweetalert";
 import { mapActions, mapGetters } from "vuex";
 import { storageUrl } from "../../utils/constants";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 export default {
   name: "ListEvents",
+  components: {
+    Loading,
+  },
   data() {
     return {
       storagUrl: "",
@@ -338,7 +352,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchAllEvents", "deleteEvent"]),
+    ...mapActions(["fetchAllEvents", "deleteEvent", "getEventsLoading"]),
     deleteSelectedCustomers() {
       const selectedEvents = [];
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');

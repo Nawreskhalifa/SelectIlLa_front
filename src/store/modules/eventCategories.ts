@@ -93,7 +93,7 @@ const actions = {
         }
         return true
     },
-    async fetchAllCategoriesEvent({ commit }, { page = null, perPage = 25, name = null }: { page?: number | null, perPage?: number, name: string | null }) {
+    async fetchAllCategoriesEvent({ commit }, { page = null, perPage = 25, name = null, sortDirectionName }: { page?: number | null, perPage?: number, name: string | null, sortDirectionName?: string }) {
         commit('SET_CATEGORIES_LOADING', true)
         commit('SET_CATEGORIES_ERROR')
         try {
@@ -105,7 +105,14 @@ const actions = {
                         description?: { $contains: string };
                     }>;
                 };
-            } = {}
+                sort?: string[];
+            } = {sort: []}
+            // Add sorting options
+            // if (sortDirectionName!==null) {
+
+            //         filters.sort.push(`name:${sortDirectionName}`);
+
+            // }
             if (page !== null) {
                 filters = { pagination: { page: page, pageSize: perPage } };
             }
@@ -118,26 +125,6 @@ const actions = {
                     ]
                 };
             }
-            const params: any = {};
-
-            // Ajouter la pagination si spécifiée
-            if (page && perPage) {
-                params.pagination = {
-                    page: page,
-                    pageSize: perPage
-                };
-            }
-
-            // Ajouter la recherche (filtre par nom) si spécifiée
-            if (name) {
-                params.filters = {
-                    name: {
-                        $contains: name
-                    }
-                };
-            }
-
-
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
                 endPoints.allCategoriesEvent,

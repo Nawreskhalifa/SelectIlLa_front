@@ -22,6 +22,7 @@
     "bootstrap-vue-next": "^0.7.3",
     "core-js": "^3.8.3",
     "dotenv": "^16.4.1",
+    "jquery": "^3.7.1",
     "js-cookie": "^3.0.5",
     "leaflet": "^1.9.4",
     "pdf-viewer-vue": "^0.2.7",

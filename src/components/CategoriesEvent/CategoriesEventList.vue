@@ -1,47 +1,5 @@
 <template>
-  <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
-    >
-    <!-- <div
-      class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-20 p-md-25 p-lg-30">
-      <div class="d-sm-flex align-items-center">
-        <form
-          class="search-box position-relative"
-          @submit.prevent="handleSearch"
-        >
-          <input
-            type="text"
-            class="form-control shadow-none text-black rounded-0 border-0"
-            placeholder="Search event"
-            v-model="searchText"
-          />
-          <button
-            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
-            type="submit"
-            :disabled="getCategoriesLoading"
-          >
-            <i
-              v-if="!getCategoriesLoading"
-              class="flaticon-search-interface-symbol"
-            ></i>
-            <div
-              v-if="getCategoriesLoading"
-              class="spinner-border"
-              role="status"
-            ></div>
-          </button>
-        </form>
-      </div>
-      <div class="d-sm-flex align-items-center mt-10 mt-lg-0">
-        <router-link
-          to="/create-new-category-event"
-          class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
-        >
-          Add New Category
-          <i class="flaticon-plus position-relative ms-5 fs-12"></i>
-        </router-link>
-      </div>
-    </div> -->
-  </div>
+  <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing"></div>
   <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
     <div
       class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-20 p-md-25 p-lg-30"
@@ -83,6 +41,38 @@
           <i class="flaticon-plus position-relative ms-5 fs-12"></i>
         </router-link>
       </div>
+      <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+        <button
+          class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="flaticon-dots"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="selectAllCategories"
+            >
+              <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
+              {{ selectAllChecked ? "Deselect All" : "Select All" }}
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="deleteSelectedCategories"
+            >
+              <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
+              Delete Selected
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
     <div class="card-body p-15 p-sm-20 p-md-25">
       <div class="table-responsive">
@@ -92,8 +82,11 @@
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+                @click="toggleSortDirection"
               >
                 Category Name
+                <span v-if="sortDirection === 'asc'" class="arrow-up"></span>
+                <span v-if="sortDirection === 'desc'" class="arrow-down"></span>
               </th>
 
               <th
@@ -123,7 +116,6 @@
                   </div>
                   {{ category.name }}
                 </div>
-
               </td>
               <td class="shadow-none lh-1 fw-medium text-paragraph">
                 {{ truncateDescription(category.description) }}
@@ -219,30 +211,99 @@
         </nav>
       </div>
     </div>
+    <loading
+      v-model:active="getCategoriesLoading"
+      :can-cancel="true"
+      :on-cancel="onCancel"
+      :is-full-page="true"
+    />
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import swal from "sweetalert";
 import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
-
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 export default defineComponent({
   name: "CategoriesEventList",
+  components: {
+    Loading,
+  },
   data() {
     return {
       currentPage: 1,
       searchText: "",
+      selectAllChecked: false,
+      sortDirection: "asc",
     };
   },
   methods: {
-    ...mapActions(["fetchAllCategoriesEvent", "deleteCategoryEvent"]),
+    ...mapActions([
+      "fetchAllCategoriesEvent",
+      "deleteCategoryEvent",
+      "getCategoriesLoading",
+    ]),
+    toggleSortDirection() {
+      // Basculer entre ascendant et descendant
+      this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      // Appeler handleFilterChange pour appliquer le nouveau tri
+      this.handleSearch();
+    },
+    deleteSelectedCategories() {
+      const selectedCategories = [];
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+          selectedCategories.push(this.getCustomers[index].id);
+        }
+      });
+
+      if (selectedCategories.length === 0) {
+        swal("Please select at least one category to delete.");
+        return;
+      }
+
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover these categories!",
+        icon: "warning",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          // Call the deleteCustomer action or API endpoint to delete the selected customers
+          await Promise.all(
+            selectedCategories.map((id) => this.deleteCategoryEvent(id))
+          );
+          // After deletion, fetch customers again to update the list
+          await this.fetchAllCategoriesEvent({
+            page: this.currentPage,
+            perPage: 4,
+          });
+          swal("Selected categories have been deleted!", {
+            icon: "success",
+          });
+        } else {
+          swal("Selected categories are safe!");
+        }
+      });
+    },
+    selectAllCategories() {
+      this.selectAllChecked = !this.selectAllChecked;
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = this.selectAllChecked;
+      });
+    },
     async handleSearch() {
       console.log(this.searchText);
       await this.fetchAllCategoriesEvent({
         page: this.currentPage,
         perPage: 4,
         name: this.searchText,
+        sortDirectionName: this.sortDirection,
       });
     },
     async onPageChange(pageNumber) {
@@ -315,7 +376,13 @@ export default defineComponent({
   transition: box-shadow 0.4s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+.arrow-up::before {
+  content: "\25B2"; /* Code Unicode pour la flèche vers le haut */
+}
 
+.arrow-down::before {
+  content: "\25BC"; /* Code Unicode pour la flèche vers le bas */
+}
 .event-card:hover {
   /* Box shadow on hover */
   box-shadow: 0 8px 12px #7d6ff0;

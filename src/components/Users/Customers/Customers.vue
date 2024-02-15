@@ -4,16 +4,6 @@
       class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
     >
       <div class="d-sm-flex align-items-center">
-        <!-- <a
-          class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block me-10 mb-10 mb-lg-0 text-decoration-none"
-          href="#"
-          data-bs-toggle="modal"
-          data-bs-target="#AddNewCustomerModal"
-        >
-          Add New Customer
-          <i class="flaticon-plus position-relative ms-5 fs-12"></i>
-        </a> -->
-
         <button
           class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mb-10 mb-lg-0"
           type="button"
@@ -82,9 +72,9 @@
             </option>
           </select>
         </div>
-        <div class="dropdown">
+        <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
           <button
-            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+            class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
             type="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
@@ -310,16 +300,27 @@
         </nav>
       </div>
     </div>
+    <loading
+      v-model:active="getEventLoading"
+      :can-cancel="true"
+      :on-cancel="onCancel"
+      :is-full-page="true"
+    />
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
 import { mapGetters, mapActions } from "vuex";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 import { storageUrl } from "@/utils/constants";
 import swal from "sweetalert";
 export default defineComponent({
   name: "CustomersList",
+  components: {
+    Loading,
+  },
   data() {
     return {
       storageUrl: "",
@@ -335,6 +336,9 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(["fetchAllCustomers", "deleteCustomer"]),
+    onCancel() {
+      console.log("User cancelled the loader.");
+    },
     async handleFilterChange() {
       console.log(this.startYear, this.endYear);
       // Réinitialiser la page actuelle à 1

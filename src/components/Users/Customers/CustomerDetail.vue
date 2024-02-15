@@ -7,80 +7,136 @@
       <div class="leads-details-tabs">
         <ul class="nav nav-tabs border-0 mb-25" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100  active"
-              id="emails-tab" data-bs-toggle="tab" data-bs-target="#reservations-tab-pane" type="button" role="tab"
-              aria-controls="reservations-tab-pane" aria-selected="false">
+            <button
+              class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100 active"
+              id="emails-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#reservations-tab-pane"
+              type="button"
+              role="tab"
+              aria-controls="reservations-tab-pane"
+              aria-selected="false"
+            >
               Reservations
             </button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100 "
-              id="creditCards-tab" data-bs-toggle="tab" data-bs-target="#creditCards-tab-pane" type="button" role="tab"
-              aria-controls="creditCards-tab-pane" aria-selected="true">
+            <button
+              class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100"
+              id="creditCards-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#creditCards-tab-pane"
+              type="button"
+              role="tab"
+              aria-controls="creditCards-tab-pane"
+              aria-selected="true"
+            >
               Credit Cards
             </button>
           </li>
 
-
           <li class="nav-item" role="presentation">
-            <button class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100"
-              id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments-tab-pane" type="button" role="tab"
-              aria-controls="attachments-tab-pane" aria-selected="false">
+            <button
+              class="nav-link fs-md-15 fs-lg-16 fw-medium border-0 rounded-0 d-block text-center w-100"
+              id="attachments-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#attachments-tab-pane"
+              type="button"
+              role="tab"
+              aria-controls="attachments-tab-pane"
+              aria-selected="false"
+            >
               Attachments
             </button>
           </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-          <div class="tab-pane fade " id="creditCards-tab-pane" role="tabpanel" tabindex="1">
+          <div
+            class="tab-pane fade"
+            id="creditCards-tab-pane"
+            role="tabpanel"
+            tabindex="1"
+          >
             <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
               <div
-                class="card-head bg-white d-md-flex align-items-center justify-content-between pt-15 pb-15 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30">
+                class="card-head bg-white d-md-flex align-items-center justify-content-between pt-15 pb-15 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30"
+              >
                 <h5 class="card-title fw-bold mb-0">Credit Cards</h5>
                 <div class="d-flex align-items-center mt-10 mt-md-0"></div>
               </div>
               <div
-                class="card-body pt-0 pb-15 pb-sm-20 pb-md-25 pb-lg-30 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30">
+                class="card-body pt-0 pb-15 pb-sm-20 pb-md-25 pb-lg-30 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30"
+              >
                 <div class="table-responsive">
                   <table class="table text-nowrap align-middle mb-0">
                     <thead>
                       <tr>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0">
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+                        >
                           HOLDER NAME
                         </th>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+                        >
                           NUMBER
                         </th>
 
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+                        >
                           cvv
                         </th>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+                        >
                           eXPIRY DATE
                         </th>
-                        <th scope="col"
-                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"></th>
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
+                        ></th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(card, index) in customer?.creditCards" :key="index">
-                        <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                      <tr
+                        v-for="(card, index) in customer?.creditCards"
+                        :key="index"
+                      >
+                        <td
+                          class="shadow-none lh-1 fw-medium text-black-emphasis"
+                        >
                           {{ card.holderName }}
                         </td>
-                        <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        <td
+                          class="shadow-none lh-1 fw-medium text-black-emphasis"
+                        >
                           {{ card.number }}
                         </td>
-                        <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        <td
+                          class="shadow-none lh-1 fw-medium text-black-emphasis"
+                        >
                           {{ card.cvv }}
                         </td>
-                        <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        <td
+                          class="shadow-none lh-1 fw-medium text-black-emphasis"
+                        >
                           {{ card.expiryDate }}
                         </td>
-                        <td class="shadow-none lh-1 fw-medium text-black-emphasis"></td>
+                        <td
+                          class="shadow-none lh-1 fw-medium text-black-emphasis"
+                        ></td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-                <div class="d-md-flex mt-15 mt-md-25 mb-0 justify-content-between align-items-center">
+                <div
+                  class="d-md-flex mt-15 mt-md-25 mb-0 justify-content-between align-items-center"
+                >
                   <!-- <a
                   href="#"
                   class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block"
@@ -88,12 +144,18 @@
                   data-bs-target="#createNewDealModal"
                   >Add A New Deal</a
                 > -->
-                  <div class="pagination-area d-md-flex align-items-center mt-10 mt-md-0">
+                  <!-- <div
+                    class="pagination-area d-md-flex align-items-center mt-10 mt-md-0"
+                  >
                     <p class="mb-0 text-paragraph">
                       Showing
-                      <span class="fw-bold">{{
-                        Math.min(11, customer?.creditCards?.length)
-                      }}</span>
+                      <span
+                        class="fw-bold"
+                        v-if="
+                          customer?.creditCards && customer?.creditCards?.length
+                        "
+                        >{{ Math.min(11, customer?.creditCards?.length) }}</span
+                      >
                       out of
                       <span class="fw-bold">{{
                         customer?.creditCards?.length
@@ -123,105 +185,238 @@
                         </li>
                       </ul>
                     </nav>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="tab-pane fade show active" id="reservations-tab-pane" role="tabpanel" tabindex="0">
+          <div
+            class="tab-pane fade show active"
+            id="reservations-tab-pane"
+            role="tabpanel"
+            tabindex="0"
+          >
             <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
               <div
-                class="card-head bg-white d-md-flex align-items-center justify-content-between pt-15 pb-15 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30">
+                class="card-head bg-white d-md-flex align-items-center justify-content-between pt-15 pb-15 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30"
+              >
                 <h5 class="card-title fw-bold mb-0">Reservations</h5>
+                <select
+                  v-model="statusFilter"
+                  @change="handleFilterChange"
+                  class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+                >
+                  <option selected value="">All</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Canceled">Canceled</option>
+                </select>
                 <div class="d-flex align-items-center mt-10 mt-md-0">
-                  <form class="search-box position-relative me-15">
-                    <input type="text" class="form-control shadow-none text-black rounded-0 border-0"
-                      placeholder="Search email" />
-                    <button type="submit" class="bg-transparent text-primary transition p-0 border-0">
-                      <i class="flaticon-search-interface-symbol"></i>
+                  <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+                    <button
+                      class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <i class="flaticon-dots"></i>
                     </button>
-                  </form>
-                  <button
-                    class="dot-btn lh-1 position-relative top-3 bg-transparent border-0 shadow-none p-0 transition d-inline-block mt-10 mt-sm-0"
-                    type="button">
-                    <i class="flaticon-dots"></i>
-                  </button>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <a
+                          class="dropdown-item d-flex align-items-center"
+                          href="javascript:void(0);"
+                          @click="selectAllReservations"
+                        >
+                          <i
+                            class="fas fa-check lh-1 me-8 position-relative top-1"
+                          ></i>
+                          {{ selectAllChecked ? "Deselect All" : "Select All" }}
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          class="dropdown-item d-flex align-items-center"
+                          href="javascript:void(0);"
+                          @click="AcceptSelectedReservations"
+                        >
+                          <i
+                            class="flaticon-delete lh-1 me-8 position-relative top-1"
+                          ></i>
+                          Delete Selected
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
               <div
-                class="card-body pt-0 pb-15 pb-sm-20 pb-md-25 pb-lg-30 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30">
+                class="card-body pt-0 pb-15 pb-sm-20 pb-md-25 pb-lg-30 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30"
+              >
                 <div class="table-responsive">
                   <table class="table text-nowrap align-middle mb-0">
                     <thead>
                       <tr>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0">
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+                        >
                           Product
                         </th>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+                        >
                           Start
                         </th>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+                        >
                           End
                         </th>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
-                          Pickup location
-                        </th>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
-                          Drop off location
-                        </th>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
-                          seats
-                        </th>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
-                          bottles
-                        </th>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+                        >
                           Total Amount
                         </th>
-                        <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+                        >
                           Status
                         </th>
-                        <th scope="col"
-                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"></th>
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
+                        >
+                          ACTIONS
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <th class="shadow-none lh-1 fw-medium text-black-emphasis title fs-md-15 fs-lg-16 ps-0">
-                          Design a Facebook Ad
-                          <span class="d-block fs-13 mt-10 text-muted fw-normal">ronanjohnny@gmail.com</span>
+                      <tr
+                        v-for="(reservation, index) in getDocuments"
+                        :key="index"
+                      >
+                        <th
+                          class="shadow-none lh-1 fw-medium text-black-emphasis title fs-md-15 fs-lg-16 ps-0"
+                        >
+                          <div class="d-flex align-items-center">
+                            <div class="form-check mb-0">
+                              <input
+                                class="form-check-input shadow-none"
+                                type="checkbox"
+                              />
+                            </div>
+                            <span
+                              class="d-block fs-13 mt-10 text-muted fw-normal"
+                              v-if="reservation.attributes.vehicle.data"
+                              >{{
+                                reservation.attributes.vehicle.data.attributes
+                                  .make.data?.attributes.name
+                              }}</span
+                            >
+                            <span
+                              class="d-block fs-13 mt-10 text-muted fw-normal"
+                              v-if="reservation.attributes.event.data"
+                              >{{
+                                reservation.attributes.event.data.attributes
+                                  .name
+                              }}</span
+                            >
+                            <span
+                              class="d-block fs-13 mt-10 text-muted fw-normal"
+                              v-if="reservation.attributes.villa.data"
+                              >{{
+                                reservation.attributes.villa.data.attributes
+                                  .name
+                              }}</span
+                            >
+                          </div>
                         </th>
-                        <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                          J. Ronan
+                        <td
+                          class="shadow-none lh-1 fw-medium text-black-emphasis"
+                        >
+                          {{ reservation.attributes.pickup_date }}
+                        </td>
+                        <td
+                          class="shadow-none lh-1 fw-medium text-black-emphasis"
+                        >
+                          {{ reservation.attributes.drop_off_date }}
+                        </td>
+                        <td
+                          class="shadow-none lh-1 fw-medium text-black-emphasis"
+                        >
+                          {{ reservation.attributes.total_amount }}
                         </td>
                         <td class="shadow-none lh-1 fw-medium">
-                          <span class="badge text-outline-warning">Bounce</span>
+                          <span
+                            class="badge text-outline-warning"
+                            v-if="reservation.attributes.status == 'Pending'"
+                            >{{ reservation.attributes.status }}</span
+                          >
+                          <span
+                            class="badge text-outline-success"
+                            v-if="reservation.attributes.status == 'Confirmed'"
+                            >{{ reservation.attributes.status }}</span
+                          >
+                          <span
+                            class="badge text-outline-danger"
+                            v-if="reservation.attributes.status == 'Canceled'"
+                            >{{ reservation.attributes.status }}</span
+                          >
                         </td>
-                        <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                          13 Apr, 2023
-                        </td>
-                        <td class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0">
+
+                        <td
+                          class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
+                        >
                           <div class="dropdown">
-                            <button class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                              type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button
+                              class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                              type="button"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
                               <i class="flaticon-dots"></i>
                             </button>
                             <ul class="dropdown-menu">
                               <li>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);"><i
-                                    class="flaticon-view lh-1 me-8 position-relative top-1"></i>
-                                  View</a>
+                                <a
+                                  class="dropdown-item d-flex align-items-center"
+                                  href="javascript:void(0);"
+                                  @click="
+                                    navigateToReservationDetailPage(
+                                      reservation.id
+                                    )
+                                  "
+                                  ><i
+                                    class="flaticon-view lh-1 me-8 position-relative top-1"
+                                  ></i>
+                                  View</a
+                                >
                               </li>
                               <li>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);"><i
-                                    class="flaticon-pen lh-1 me-8 position-relative top-1"></i>
-                                  Edit</a>
+                                <a
+                                  class="dropdown-item d-flex align-items-center"
+                                  href="javascript:void(0);"
+                                  ><i
+                                    class="flaticon-pen lh-1 me-8 position-relative top-1"
+                                  ></i>
+                                  Edit</a
+                                >
                               </li>
                               <li>
-                                <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);"><i
-                                    class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
-                                  Delete</a>
+                                <a
+                                  class="dropdown-item d-flex align-items-center"
+                                  href="javascript:void(0);"
+                                  ><i
+                                    class="flaticon-delete lh-1 me-8 position-relative top-1"
+                                  ></i>
+                                  Delete</a
+                                >
                               </li>
                             </ul>
                           </div>
@@ -230,70 +425,95 @@
                     </tbody>
                   </table>
                 </div>
+                <div
+                  class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
+                >
+                  <p class="mb-0 text-paragraph">
+                    Showing
+                    <span class="fw-bold">{{
+                      Math.min(11, getDocuments.length)
+                    }}</span>
+                    out of
+                    <span class="fw-bold">{{ getDocuments.length }}</span>
+                    results
+                  </p>
+                  <nav class="mt-15 mt-md-0">
+                    <ul class="pagination mb-0">
+                      <li
+                        class="page-item"
+                        :class="{ disabled: currentPage === 1 }"
+                      >
+                        <a
+                          class="page-link"
+                          href="#"
+                          aria-label="Previous"
+                          @click="
+                            currentPage !== 1 && onPageChange(currentPage - 1)
+                          "
+                        >
+                          <i class="flaticon-chevron-1"></i>
+                        </a>
+                      </li>
+                      <li
+                        class="page-item"
+                        v-for="page in getTotalPagesReservation"
+                        :key="page"
+                        :class="{ active: page === currentPage }"
+                      >
+                        <a
+                          class="page-link"
+                          href="#"
+                          @click="onPageChange(page)"
+                          >{{ page }}</a
+                        >
+                      </li>
+                      <li
+                        class="page-item"
+                        :class="{
+                          disabled: currentPage === getTotalPagesReservation,
+                        }"
+                      >
+                        <a
+                          class="page-link"
+                          href="#"
+                          aria-label="Next"
+                          @click="
+                            currentPage !== getTotalPages &&
+                              onPageChange(currentPage + 1)
+                          "
+                        >
+                          <i class="flaticon-chevron"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
               </div>
             </div>
+            <loading
+              v-model:active="getUsersLoading"
+              :can-cancel="true"
+              :on-cancel="onCancel"
+              :is-full-page="true"
+            />
           </div>
-          <div class="tab-pane fade" id="attachments-tab-pane" role="tabpanel" tabindex="2">
+          <div
+            class="tab-pane fade"
+            id="attachments-tab-pane"
+            role="tabpanel"
+            tabindex="2"
+          >
             <div class="card mb-25 border-0 rounded-0 bg-white attachments-box">
-              <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
-                <div class="mb-15 mb-md-20 mb-lg-25 d-sm-flex align-items-center justify-content-between">
+              <div
+                class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing"
+              >
+                <div
+                  class="mb-15 mb-md-20 mb-lg-25 d-sm-flex align-items-center justify-content-between"
+                >
                   <h5 class="card-title fw-bold mb-0">Attachments</h5>
                 </div>
-                <ul class="list ps-0 mb-0 list-unstyled">
-                  <li>
-                    <span class="fw-medium d-block fs-md-15 fs-lg-16">
-                      <i class="flaticon-image lh-1 position-relative text-primary top-2 me-5"></i>
-                      Adlash_1.png
-                    </span>
-                    <div class="d-flex align-items-center text-muted mt-5">
-                      <span class="d-block">555kb</span>
-                      <span class="w-6 h-6 rounded-circle bg-muted ms-8 me-8"></span>
-                      <span class="d-block">J. Ronan</span>
-                      <span class="w-6 h-6 rounded-circle bg-muted ms-8 me-8"></span>
-                      <span class="d-block">13 Apr, 2023</span>
-                    </div>
-                    <img src="../../../assets/images/admin.jpg" alt="admin" width="100" class="mt-10" />
-                  </li>
-                  <li>
-                    <span class="fw-medium d-block fs-md-15 fs-lg-16">
-                      <i class="flaticon-image lh-1 position-relative text-primary top-2 me-5"></i>
-                      Adlash_2.png
-                    </span>
-                    <div class="d-flex align-items-center text-muted mt-5">
-                      <span class="d-block">1MB</span>
-                      <span class="w-6 h-6 rounded-circle bg-muted ms-8 me-8"></span>
-                      <span class="d-block">J. Pinkman</span>
-                      <span class="w-6 h-6 rounded-circle bg-muted ms-8 me-8"></span>
-                      <span class="d-block">12 Apr, 2023</span>
-                    </div>
-                  </li>
-                  <li>
-                    <span class="fw-medium d-block fs-md-15 fs-lg-16">
-                      <i class="flaticon-image lh-1 position-relative text-primary top-2 me-5"></i>
-                      Adlash_3.png
-                    </span>
-                    <div class="d-flex align-items-center text-muted mt-5">
-                      <span class="d-block">472kb</span>
-                      <span class="w-6 h-6 rounded-circle bg-muted ms-8 me-8"></span>
-                      <span class="d-block">A. Carter</span>
-                      <span class="w-6 h-6 rounded-circle bg-muted ms-8 me-8"></span>
-                      <span class="d-block">11 Apr, 2023</span>
-                    </div>
-                  </li>
-                  <li>
-                    <span class="fw-medium d-block fs-md-15 fs-lg-16">
-                      <i class="flaticon-document lh-1 position-relative text-primary top-2 me-5"></i>
-                      Adlash_4.txt
-                    </span>
-                    <div class="d-flex align-items-center text-muted mt-5">
-                      <span class="d-block">433kb</span>
-                      <span class="w-6 h-6 rounded-circle bg-muted ms-8 me-8"></span>
-                      <span class="d-block">V. Loper</span>
-                      <span class="w-6 h-6 rounded-circle bg-muted ms-8 me-8"></span>
-                      <span class="d-block">10 Apr, 2023</span>
-                    </div>
-                  </li>
-                </ul>
+                <div v-if="getDocuments"></div>
+                <Media :documents="getDocuments" />
               </div>
             </div>
           </div>
@@ -301,15 +521,26 @@
       </div>
     </div>
   </div>
+  <loading
+    v-model:active="getUsersLoading"
+    :can-cancel="true"
+    :on-cancel="onCancel"
+    :is-full-page="true"
+  />
 </template>
 
 <script>
 import CustomersInformation from "./CustomerInformation.vue";
 import { mapActions, mapGetters } from "vuex";
 import { defineComponent } from "vue";
+import Media from "./FileManagar/FileManager.vue";
+import swal from "sweetalert";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
+
 export default defineComponent({
   name: "CustomerDetail",
-  components: { CustomersInformation },
+  components: { CustomersInformation, Media, Loading },
   props: {
     // Define the 'customer id' prop
     customerId: {
@@ -320,24 +551,116 @@ export default defineComponent({
     return {
       idCustomer: this.customerId,
       customer: {},
+      currentPage: 1,
+      selectAllChecked: false,
+      statusFilter: "",
+      isLoading: false,
+      fullPage: true,
     };
   },
   methods: {
-    ...mapActions(["fetchAllCustomers"]),
+    ...mapActions(["fetchAllCustomers", "fetchAllAttachmentsByCustomer"]),
+    async handleFilterChange() {
+      console.log(this.startYear, this.endYear);
+      // Réinitialiser la page actuelle à 1
+      this.currentPage = 1;
+      await this.fetchAllAttachmentsByCustomer({
+        page: this.currentPage,
+        perPage: 5,
+        idCustomer: this.idCustomer,
+        status: this.statusFilter,
+      });
+
+      console.log(this.statusFilter);
+      console.log(this.getDocuments);
+    },
+    AcceptSelectedReservations() {
+      const selectedReservations = [];
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+          selectedReservations.push(this.getDocuments[index].id);
+        }
+      });
+
+      if (selectedReservations.length === 0) {
+        swal("Please select at least one reservation to delete.");
+        return;
+      }
+
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover these reservations!",
+        icon: "warning",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          swal("Selected reservations have been deleted!", {
+            icon: "success",
+          });
+        } else {
+          swal("Selected reservations are safe!");
+        }
+      });
+    },
+    selectAllReservations() {
+      this.selectAllChecked = !this.selectAllChecked;
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = this.selectAllChecked;
+      });
+    },
+    navigateToReservationDetailPage(reservationId) {
+      // Utilisez le routeur de Vue pour naviguer vers la page détaillée du reservation
+      this.$router.push({
+        name: "ReservationDetailsPage",
+        params: { reservationId: reservationId },
+      });
+    },
+    async onPageChange(pageNumber) {
+      this.currentPage = pageNumber;
+      await this.fetchAllCustomers({
+        page: pageNumber,
+        perPage: 4,
+        name: null,
+      });
+    },
+    onCancel() {
+      console.log("User cancelled the loader.");
+    },
   },
   computed: {
-    ...mapGetters(["getCustomers"]),
+    ...mapGetters([
+      "getCustomers",
+      "getDocuments",
+      "getTotalPagesReservation",
+      "getTotalItemsReservation",
+      "getUsersLoading",
+    ]),
   },
   async mounted() {
-    if (!this.getCustomers || !this.getCustomers.length) {
-      await this.fetchAllCustomers();
-    }
-    if (this.getCustomers && this.getCustomers.length) {
-      this.customer =
-        this.getCustomers.filter((item) => item.id == this.customerId) &&
+    try {
+      await this.fetchAllAttachmentsByCustomer({
+        page: this.currentPage,
+        perPage: 5,
+        idCustomer: this.idCustomer,
+      });
+      console.log(this.getDocuments);
+      if (!this.getCustomers || !this.getCustomers.length) {
+        await this.fetchAllCustomers({ page: null });
+      }
+      if (this.getCustomers && this.getCustomers.length) {
+        this.customer =
+          this.getCustomers.filter((item) => item.id == this.customerId) &&
           this.getCustomers.filter((item) => item.id == this.customerId).length
-          ? this.getCustomers.filter((item) => item.id == this.customerId)[0]
-          : this.getCustomers.filter((item) => item.id == this.customerId);
+            ? this.getCustomers.filter((item) => item.id == this.customerId)[0]
+            : this.getCustomers.filter((item) => item.id == this.customerId);
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
+      // Gérer les erreurs ici
+      // Par exemple, afficher une alerte ou un message d'erreur
     }
   },
 });

@@ -524,6 +524,7 @@ export default defineComponent({
   async mounted() {
     await this.fetchAllCategoriesEvent({ page: null });
     await this.fetchAllPartners();
+    console.log(this.getPartners);
     // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
     const today = new Date();
     const year = today.getFullYear();

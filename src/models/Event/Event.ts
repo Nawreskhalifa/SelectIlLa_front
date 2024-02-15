@@ -52,7 +52,7 @@ export const decodeApiToEvent = (eventApi): Event => {
         endTime: eventApi.attributes.end_time,
         location: eventApi.attributes.location,
         photos: eventApi.attributes.photos.data ? eventApi.attributes.photos.data.map(decodeApiToPhoto) : null,
-        partner: eventApi.attributes.partner.data ? decodePart(eventApi.attributes.partner.data) : null,
+        partner: eventApi.attributes.partner.data ,
         categoryEvents: eventApi.attributes.category_events.data.map(decodeApiToEventCategory),
         active: eventApi.attributes.active
     };

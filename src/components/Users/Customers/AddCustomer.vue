@@ -239,7 +239,7 @@
       v-model:active="isLoading"
       :can-cancel="true"
       :on-cancel="onCancel"
-      :is-full-page="fullPage"
+      :is-full-page="true"
     />
   </div>
 </template>
@@ -260,7 +260,6 @@ import {
   RegistreUser,
   postCustomer,
 } from "@/services/apiService";
-import { httpCodes } from "@/utils/httpCodes";
 
 export default defineComponent({
   name: "AddUser",
