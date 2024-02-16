@@ -9,6 +9,10 @@
     <div
       class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between pt-15 pb-15 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30"
     >
+      <h6 v-if="selectedCount > 0">
+        {{ selectedCount }}
+        {{ selectedCount === 1 ? "item" : "items" }} selected
+      </h6>
       <div class="d-flex align-items-center">
         <form
           class="search-box position-relative"
@@ -100,9 +104,10 @@
           </li>
           <li>
             <a
+              :class="{ disabled: selectedCount === 0 }"
               class="dropdown-item d-flex align-items-center"
               href="javascript:void(0);"
-              @click="deleteSelectedCustomers"
+              @click="selectedCount !== 0 && deleteSelectedCustomers"
             >
               <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
               Delete Selected
@@ -117,7 +122,11 @@
       <div class="card h-100 mb-15 border-0 rounded-0 bg-white event-card">
         <div class="card-body p-10 letter-spacing">
           <div class="form-check mb-2">
-            <input class="form-check-input shadow-none" type="checkbox" />
+            <input
+              class="form-check-input shadow-none"
+              type="checkbox"
+              @change="updateSelectionCounter($event, index)"
+            />
           </div>
 
           <router-link :to="`/event-details/${event.id}`">
@@ -358,10 +367,20 @@ export default {
       searchText: "",
       isActiveFilter: "All",
       selectAllChecked: false,
+      selectedCount: 0,
     };
   },
   methods: {
     ...mapActions(["fetchAllEvents", "deleteEvent", "getEventsLoading"]),
+    updateSelectionCounter(event, index) {
+      if (event.target.checked) {
+        // Si la case à cocher est cochée, incrémenter le compteur de sélection
+        this.selectedCount++;
+      } else {
+        // Sinon, décrémenter le compteur de sélection
+        this.selectedCount--;
+      }
+    },
     resetFilters() {
       // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
       this.searchText = "";
@@ -425,9 +444,15 @@ export default {
     },
     selectAllEvents() {
       this.selectAllChecked = !this.selectAllChecked;
+      this.selectedCount = 0;
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
       checkboxes.forEach((checkbox) => {
         checkbox.checked = this.selectAllChecked;
+        if (checkbox.checked) {
+          this.selectedCount++;
+        } else {
+          this.selectedCount--;
+        }
       });
     },
     async handleSearch() {
@@ -437,7 +462,6 @@ export default {
         perPage: 4,
         name: this.searchText,
       });
-      console.log("q:", this.getEvents);
     },
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;

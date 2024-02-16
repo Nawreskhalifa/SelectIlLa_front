@@ -42,34 +42,6 @@
           </button>
         </form>
       </div>
-      <!-- <div class="d-sm-flex align-items-center">
-        <form
-          class="search-box position-relative"
-          @submit.prevent="handleSearch"
-        >
-          <input
-            type="text"
-            class="form-control shadow-none text-black rounded-0 border-0"
-            placeholder="Search event"
-            v-model="searchText"
-          />
-          <button
-            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
-            type="submit"
-            :disabled="getCategoriesLoading"
-          >
-            <i
-              v-if="!getCategoriesLoading"
-              class="flaticon-search-interface-symbol"
-            ></i>
-            <div
-              v-if="getCategoriesLoading"
-              class="spinner-border"
-              role="status"
-            ></div>
-          </button>
-        </form>
-      </div> -->
       <div class="d-sm-flex align-items-center mt-10 mt-lg-0">
         <router-link
           to="/create-new-category-event"
@@ -336,7 +308,6 @@ export default defineComponent({
       });
     },
     async handleSearch() {
-      console.log(this.searchText);
       await this.fetchAllCategoriesEvent({
         page: this.currentPage,
         perPage: 4,

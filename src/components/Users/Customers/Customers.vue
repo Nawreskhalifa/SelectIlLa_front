@@ -226,7 +226,7 @@
                 {{ customer.phone }}
               </td>
               <td class="shadow-none lh-1 fw-medium text-muted">
-                {{ customer.address }}
+                {{ truncateLocation(customer.address) }}
               </td>
 
               <td class="shadow-none lh-1 fw-medium text-muted">
@@ -366,7 +366,14 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(["fetchAllCustomers", "deleteCustomer"]),
-
+    truncateLocation(location) {
+      const maxLength = 40;
+      if (location.length <= maxLength) {
+        return location;
+      } else {
+        return location.slice(0, maxLength) + "...";
+      }
+    },
     resetFilters() {
       // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
       this.searchText = "";
@@ -571,12 +578,6 @@ export default defineComponent({
       "getTotalPages",
       "getTotalItems",
     ]),
-    availableYears() {
-      const currentYear = new Date().getFullYear();
-      const start = currentYear - 80;
-      const end = currentYear - 18; // Moins 18 ans
-      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-    },
     isFilterActive() {
       return (
         this.searchText !== "" ||
@@ -590,7 +591,6 @@ export default defineComponent({
     this.isLoading = true;
     await this.fetchAllCustomers({ page: 1, perPage: 4 });
     this.isLoading = false;
-    console.log(this.getCustomers);
     this.storageUrl = storageUrl;
   },
 });
