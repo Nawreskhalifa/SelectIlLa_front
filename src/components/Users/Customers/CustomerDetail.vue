@@ -187,9 +187,12 @@
                       </li>
                       <li>
                         <a
+                          :class="{ disabled: selectedCount === 0 }"
                           class="dropdown-item d-flex align-items-center"
                           href="javascript:void(0);"
-                          @click="AcceptSelectedReservations"
+                          @click="
+                            selectedCount !== 0 && AcceptSelectedReservations
+                          "
                         >
                           <i class="ph ph-check-square-offset"> </i>
 
@@ -203,6 +206,10 @@
               <div
                 class="card-body pt-0 pb-15 pb-sm-20 pb-md-25 pb-lg-30 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30"
               >
+                <h6 v-if="selectedCount > 0">
+                  {{ selectedCount }}
+                  {{ selectedCount === 1 ? "item" : "items" }} selected
+                </h6>
                 <div class="table-responsive">
                   <table class="table text-nowrap align-middle mb-0">
                     <thead>
@@ -237,22 +244,21 @@
                         >
                           Status
                         </th>
-                        <!-- <th
-                          scope="col"
-                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
-                        >
-                          ACTIONS
-                        </th> -->
                       </tr>
                     </thead>
                     <tbody>
                       <tr
                         v-for="(reservation, index) in getDocuments"
                         :key="index"
-                        @click="navigateToReservationDetailPage(reservation.id)"
+                        @click="
+                          navigateToReservationDetailPage(
+                            reservation.id,
+                            $event
+                          )
+                        "
                         style="cursor: pointer"
                       >
-                        <th
+                        <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis title fs-md-15 fs-lg-16 ps-0"
                         >
                           <div class="d-flex align-items-center">
@@ -260,6 +266,7 @@
                               <input
                                 class="form-check-input shadow-none"
                                 type="checkbox"
+                                @change="updateSelectionCounter($event, index)"
                               />
                             </div>
                             <span
@@ -287,7 +294,7 @@
                               }}</span
                             >
                           </div>
-                        </th>
+                        </td>
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
                         >
@@ -320,58 +327,6 @@
                             >{{ reservation.attributes.status }}</span
                           >
                         </td>
-
-                        <!-- <td
-                          class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                        >
-                          <div class="dropdown">
-                            <button
-                              class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                              type="button"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              <i class="flaticon-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                              <li>
-                                <a
-                                  class="dropdown-item d-flex align-items-center"
-                                  href="javascript:void(0);"
-                                  @click="
-                                    navigateToReservationDetailPage(
-                                      reservation.id
-                                    )
-                                  "
-                                  ><i
-                                    class="flaticon-view lh-1 me-8 position-relative top-1"
-                                  ></i>
-                                  View</a
-                                >
-                              </li>
-                              <li>
-                                <a
-                                  class="dropdown-item d-flex align-items-center"
-                                  href="javascript:void(0);"
-                                  ><i
-                                    class="flaticon-pen lh-1 me-8 position-relative top-1"
-                                  ></i>
-                                  Edit</a
-                                >
-                              </li>
-                              <li>
-                                <a
-                                  class="dropdown-item d-flex align-items-center"
-                                  href="javascript:void(0);"
-                                  ><i
-                                    class="flaticon-delete lh-1 me-8 position-relative top-1"
-                                  ></i>
-                                  Delete</a
-                                >
-                              </li>
-                            </ul>
-                          </div>
-                        </td> -->
                       </tr>
                     </tbody>
                   </table>
@@ -462,9 +417,29 @@
                   class="mb-15 mb-md-20 mb-lg-25 d-sm-flex align-items-center justify-content-between"
                 >
                   <h5 class="card-title fw-bold mb-0">Attachments</h5>
+                  <div class="d-sm-flex align-items-center">
+                    <button
+                      @click="openFileDialog"
+                      class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mb-10 mb-lg-0"
+                      type="button"
+                      :disabled="loadingFiles"
+                    >
+                      Upload
+                      <i
+                        class="ph ph-upload position-relative ms-5 top-2 fs-15"
+                      ></i>
+                      <div
+                        v-if="loadingFiles"
+                        class="spinner-border"
+                        role="status"
+                      ></div>
+                    </button>
+                  </div>
                 </div>
-                <div v-if="getDocuments"></div>
-                <Media :documents="getDocuments" />
+                <Media
+                  :documentsReservations="getDocuments"
+                  :documentsCustomer="getDocumentsCustomer"
+                />
               </div>
             </div>
           </div>
@@ -473,7 +448,7 @@
     </div>
   </div>
   <loading
-    v-model:active="getUsersLoading"
+    v-model:active="isLoading"
     :can-cancel="true"
     :on-cancel="onCancel"
     :is-full-page="true"
@@ -485,6 +460,7 @@ import CustomersInformation from "./CustomerInformation.vue";
 import { mapActions, mapGetters } from "vuex";
 import { defineComponent } from "vue";
 import Media from "./FileManagar/FileManager.vue";
+import { uploadFiles } from "@/services/apiService";
 import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
@@ -508,12 +484,86 @@ export default defineComponent({
       statusFilter: "",
       isLoading: false,
       fullPage: true,
+      documents: [],
+      loadingFiles: false,
+      selectedCount: 0,
     };
   },
   methods: {
-    ...mapActions(["fetchAllCustomers", "fetchAllAttachmentsByCustomer"]),
+    ...mapActions([
+      "fetchAllCustomers",
+      "fetchAllAttachmentsByCustomer",
+      "fetchDocumentsCustomer",
+    ]),
+    async openFileDialog() {
+      try {
+        // Créez un élément de type input de fichier
+        const input = document.createElement("input");
+        input.type = "file";
+        input.multiple = true;
+
+        // Définissez les attributs supplémentaires si nécessaire
+        // input.accept = 'image/*'; // Décommentez pour limiter les types de fichiers acceptés
+
+        // Créez une promesse pour attendre que l'utilisateur sélectionne les fichiers
+        const files = await new Promise((resolve, reject) => {
+          // Ajoutez un écouteur d'événements pour détecter lorsque des fichiers sont sélectionnés
+          input.addEventListener("change", (event) => {
+            const files = event.target.files;
+            resolve(Array.from(files));
+          });
+          // Cliquez sur l'élément input de fichier pour ouvrir la boîte de dialogue
+          input.click();
+        });
+
+        // Ajoutez les fichiers sélectionnés à la liste des documents
+        this.documents.push(...files);
+
+        // Vérifiez s'il y a des fichiers à télécharger
+        if (files.length > 0) {
+          // Mettez le chargement en cours
+          this.loadingFiles = true;
+
+          // Téléchargez les fichiers du client
+          const res = await uploadFiles(
+            files,
+            "api::customer.customer",
+            "documents",
+            this.customerId
+          );
+
+          // Arrêtez le chargement
+          this.loadingFiles = false;
+
+          // Vérifiez si le téléchargement a réussi
+          if (res.success) {
+            // Affichez un message de succès
+            swal({
+              text: "Files uploaded Successfully!",
+              icon: "success",
+              closeOnClickOutside: false,
+            });
+          } else {
+            // Affichez un message d'erreur
+            swal({
+              text: "An error occurred, please try again",
+              icon: "error",
+              closeOnClickOutside: false,
+            });
+          }
+        }
+      } catch (error) {
+        // Gérez les erreurs
+        swal({
+          text: "An error occurred, please try again",
+          icon: "error",
+          closeOnClickOutside: false,
+        });
+      }
+    },
     async handleFilterChange() {
-      console.log(this.startYear, this.endYear);
+      this.isLoading = true;
+
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
       await this.fetchAllAttachmentsByCustomer({
@@ -522,6 +572,7 @@ export default defineComponent({
         idCustomer: this.idCustomer,
         status: this.statusFilter,
       });
+      this.isLoading = false;
     },
     AcceptSelectedReservations() {
       const selectedReservations = [];
@@ -571,10 +622,13 @@ export default defineComponent({
               }
             })
           );
+          this.isLoading = true;
+
           await this.fetchAllAttachmentsByCustomer({
             page: this.currentPage,
             perPage: 4,
           });
+          this.isLoading = false;
 
           swal("Selected pending reservations have been accepted!", {
             icon: "success",
@@ -584,14 +638,33 @@ export default defineComponent({
         }
       });
     },
+    updateSelectionCounter(event, index) {
+      if (event.target.checked) {
+        // Si la case à cocher est cochée, incrémenter le compteur de sélection
+        this.selectedCount++;
+      } else {
+        // Sinon, décrémenter le compteur de sélection
+        this.selectedCount--;
+      }
+    },
     selectAllReservations() {
       this.selectAllChecked = !this.selectAllChecked;
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      this.selectedCount = 0;
       checkboxes.forEach((checkbox) => {
         checkbox.checked = this.selectAllChecked;
+        if (checkbox.checked) {
+          this.selectedCount++;
+        } else {
+          this.selectedCount--;
+        }
       });
     },
-    navigateToReservationDetailPage(reservationId) {
+    navigateToReservationDetailPage(reservationId, event) {
+      // Vérifier si l'élément cliqué est la case à cocher
+      if (event.target.tagName.toLowerCase() === "input") {
+        return; // Ne rien faire si c'est la case à cocher qui a été cliquée
+      }
       // Utilisez le routeur de Vue pour naviguer vers la page détaillée du reservation
       this.$router.push({
         name: "ReservationDetailsPage",
@@ -599,12 +672,15 @@ export default defineComponent({
       });
     },
     async onPageChange(pageNumber) {
+      this.isLoading = true;
+
       this.currentPage = pageNumber;
       await this.fetchAllCustomers({
         page: pageNumber,
         perPage: 4,
         name: null,
       });
+      this.isLoading = false;
     },
     onCancel() {
       console.log("User cancelled the loader.");
@@ -617,18 +693,24 @@ export default defineComponent({
       "getTotalPagesReservation",
       "getTotalItemsReservation",
       "getUsersLoading",
+      "getDocumentsCustomer",
     ]),
   },
   async mounted() {
     try {
+      this.isLoading = true;
+
       await this.fetchAllAttachmentsByCustomer({
         page: this.currentPage,
         perPage: 5,
         idCustomer: this.idCustomer,
       });
-      console.log(this.getDocuments);
+
+      await this.fetchDocumentsCustomer(this.idCustomer);
       if (!this.getCustomers || !this.getCustomers.length) {
+        this.isLoading = false;
         await this.fetchAllCustomers({ page: null });
+        this.isLoading = false;
       }
       if (this.getCustomers && this.getCustomers.length) {
         this.customer =
@@ -637,10 +719,14 @@ export default defineComponent({
             ? this.getCustomers.filter((item) => item.id == this.customerId)[0]
             : this.getCustomers.filter((item) => item.id == this.customerId);
       }
+      this.isLoading = false;
     } catch (error) {
-      console.error("Error loading data:", error);
-      // Gérer les erreurs ici
-      // Par exemple, afficher une alerte ou un message d'erreur
+      this.isLoading = false;
+      swal({
+        text: "An error occurred, please try again",
+        icon: "error",
+        closeOnClickOutside: false,
+      });
     }
   },
 });

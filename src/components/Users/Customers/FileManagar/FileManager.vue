@@ -1,25 +1,23 @@
 <template>
-  <div v-if="documents">
+  <div v-if="documentsReservations">
     <div v-if="!selectedFile">
-      <div v-for="(files, index) in documents" :key="index">
-        <div>
-          <div
-            class="file-card"
-            v-for="(file, index) in files.attributes.documents.data"
-            :key="index"
-            @click="selectFile(file)"
-          >
-            <div class="file-card-int">
-              <img
-                class="file-icon"
-                src="../../../../assets/file.png"
-                alt="File Icon"
-              />
-              <div class="file-name">{{ file.attributes.name }}</div>
-            </div>
-            <div class="download">
-              <i class="fas fa-download" aria-hidden="true"></i>
-            </div>
+      <div v-for="(files, index) in documentsReservations" :key="index">
+        <div
+          class="file-card"
+          v-for="(file, index) in files.attributes.documents.data"
+          :key="index"
+          @click="selectFile(file)"
+        >
+          <div class="file-card-int">
+            <img
+              class="file-icon"
+              src="../../../../assets/file.png"
+              alt="File Icon"
+            />
+            <div class="file-name">{{ file.attributes.name }}</div>
+          </div>
+          <div class="download">
+            <i class="fas fa-download" aria-hidden="true"></i>
           </div>
         </div>
       </div>
@@ -42,6 +40,28 @@
       </div>
     </div>
   </div>
+  <div v-if="documentsCustomer" class="list ps-0 mb-0 list-unstyled">
+    <div v-if="!selectedFile">
+      <div
+        class="file-card d-flex align-items-center justify-content-between"
+        v-for="(file, index) in documentsCustomer"
+        :key="index"
+        @click="selectFile(file)"
+      >
+        <div class="file-card-int">
+          <img
+            class="file-icon"
+            src="../../../../assets/file.png"
+            alt="File Icon"
+          />
+          <div class="file-name">{{ file.attributes.name }}</div>
+        </div>
+        <div class="download">
+          <i class="fas fa-download" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -52,9 +72,13 @@ export default {
     PdfViewr,
   },
   props: {
-    documents: {
+    documentsReservations: {
       type: Array,
       required: true,
+    },
+    documentsCustomer: {
+      type: Array,
+      required: false,
     },
   },
   data() {

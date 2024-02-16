@@ -365,6 +365,12 @@
       </form>
     </div>
   </div>
+  <loading
+    v-model:active="isLoading"
+    :can-cancel="true"
+    :on-cancel="onCancel"
+    :is-full-page="true"
+  />
 </template>
 
 <script>
@@ -379,17 +385,21 @@ import { methodsHttpNames } from "@/utils/methods";
 import { endPoints } from "@/utils/endPoints";
 import { storageUrl } from "../../utils/constants";
 import swal from "sweetalert";
-
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 export default defineComponent({
   name: "AddEvent",
-  components: {},
+  components: {
+    Loading,
+  },
   data() {
     return {
+      isLoading: false,
       storageUrl: storageUrl,
       newPhotos: [],
       photosFromDatabase: [],
       selectedPhotos: [],
-      category: "",
+      category: [],
       selectedCategories: [],
       currentDate: new Date().toISOString().split("T")[0], // Date actuelle
       eventName: "",
@@ -443,7 +453,7 @@ export default defineComponent({
       // selectedCategories contiendra l'identifiant de la catégorie sélectionnée
       // Vous pouvez rechercher l'objet de catégorie complet à partir de getCategoriesEvent
       const selectedCategory = this.getCategoriesEvent.find(
-        (category) => category.id === this.category
+        (category) => category.id === this.category.id
       );
 
       // Assurez-vous que la catégorie sélectionnée existe
@@ -458,6 +468,7 @@ export default defineComponent({
           this.selectedCategories.push(selectedCategory);
         }
       }
+      console.log(this.selectedCategories);
     },
 
     removeNewImage(index) {
@@ -494,6 +505,8 @@ export default defineComponent({
       this.selectedPhotos.splice(index, 1);
     },
     async createEvent() {
+      this.isLoading = true;
+
       const formData = new FormData();
 
       try {
@@ -533,6 +546,8 @@ export default defineComponent({
           undefined
         );
         if (response.success) {
+          this.isLoading = false;
+
           console.log(this.photos, response.data.id);
           if (this.photos && this.photos.length) {
             const responseUpload = await uploadFiles(
@@ -554,6 +569,8 @@ export default defineComponent({
           });
         }
       } catch (error) {
+        this.isLoading = false;
+
         console.log(error);
       }
     },
@@ -568,21 +585,11 @@ export default defineComponent({
     ]),
   },
   async mounted() {
-    await this.fetchAllCategoriesEvent({ page: null });
-    await this.fetchAllPartners();
-    // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    this.currentDate = `${year}-${month}-${day}`;
-    // Initialise startDate avec la date actuelle
-    this.startDate = this.currentDate;
-    console.log("dfd", this.getCategoriesEvent);
     if (this.$route.params && this.$route.params.idEvent) {
+      this.isLoading = true;
       await this.fetchOneEvent(this.$route.params.idEvent);
-      console.log("dd", this.getEvent);
-      console.log("ss", this.getEvent.categoryEvents);
+      // console.log("dd", this.getEvent);
+      // console.log("ss", this.getEvent.categoryEvents);
 
       this.eventName = this.getEvent.name;
       this.description = this.getEvent.description;
@@ -609,8 +616,22 @@ export default defineComponent({
       if (this.getEvent.partner) {
         this.selectedPartner = this.getEvent.partner.id;
       }
+      this.isLoading = false;
     }
-    console.log(this.selectedCategories, "ok");
+    this.isLoading = true;
+
+    await this.fetchAllCategoriesEvent({ page: null });
+    await this.fetchAllPartners();
+    this.isLoading = false;
+
+    // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    this.currentDate = `${year}-${month}-${day}`;
+    // Initialise startDate avec la date actuelle
+    this.startDate = this.currentDate;
   },
 });
 </script>

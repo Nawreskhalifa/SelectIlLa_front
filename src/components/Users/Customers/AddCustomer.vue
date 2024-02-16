@@ -1,7 +1,7 @@
 <template>
   <div class="card mb-25 border-0 rounded-0 bg-white add-user-card">
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
-      <form @submit.prevent="submit">
+      <form @submit.prevent="addUser">
         <div class="row">
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -15,7 +15,7 @@
                 placeholder="e.g. Adam"
                 required
               />
-              <p class="text-danger">{{ errors.name }}</p>
+              <p v-if="!name" class="text-danger">First name is required</p>
             </div>
           </div>
           <div class="col-md-6">
@@ -30,7 +30,7 @@
                 placeholder="e.g. Smith"
                 required
               />
-              <p class="text-danger">{{ errors.surname }}</p>
+              <p v-if="!surname" class="text-danger">Last name is required</p>
             </div>
           </div>
           <div class="col-md-6">
@@ -47,7 +47,7 @@
                 <option value="Female">Female</option>
                 <option value="Male">Male</option>
               </select>
-              <p class="text-danger">{{ errors.gender }}</p>
+              <p v-if="!gender" class="text-danger">Gender is required</p>
             </div>
           </div>
           <div class="col-md-6">
@@ -61,8 +61,11 @@
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. EnvyTheme Software"
                 required
+                :max="getCurrentDate()"
               />
-              <p class="text-danger">{{ errors.datofbirth }}</p>
+              <p v-if="!dateOfBirth" class="text-danger">
+                Date of birth is required
+              </p>
             </div>
           </div>
           <div class="col-md-6">
@@ -77,7 +80,7 @@
                 placeholder="add your address here"
                 required
               />
-              <p class="text-danger">{{ errors.address }}</p>
+              <p v-if="!address" class="text-danger">Address is required</p>
             </div>
           </div>
           <div class="col-md-6">
@@ -90,8 +93,13 @@
                 type="text"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. +001 321 4567"
+                required
               />
             </div>
+            <p v-if="!phone" class="text-danger">Phone number is required</p>
+            <p v-if="phone && isNaN(phone)" class="text-danger">
+              Please enter a valid number for the phone number.
+            </p>
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -105,7 +113,9 @@
                 placeholder="e.g. 1236547898"
                 required
               />
-              <p class="text-danger">{{ errors.driver_license }}</p>
+              <p v-if="!driver_license" class="text-danger">
+                Driver license is required
+              </p>
             </div>
           </div>
           <div class="col-md-6">
@@ -120,7 +130,9 @@
                 placeholder="e.g. Health"
                 required
               />
-              <p class="text-danger">{{ errors.Insurance }}</p>
+              <p v-if="Insurance" class="text-danger">
+                Insurance type is required
+              </p>
             </div>
           </div>
           <div class="col-md-6">
@@ -135,7 +147,10 @@
                 placeholder="e.g. adam127704@gmail.com"
                 required
               />
-              <p class="text-danger">{{ errors.email }}</p>
+              <p v-if="!email" class="text-danger">Email is required</p>
+              <p v-if="email && !validateEmail(email)" class="text-danger">
+                Invalid email format
+              </p>
             </div>
           </div>
 
@@ -151,7 +166,7 @@
                 placeholder="e.g. AaSmith123"
                 required
               />
-              <p class="text-danger">{{ errors.password }}</p>
+              <p v-if="!password" class="text-danger">Password is required</p>
             </div>
           </div>
 
@@ -219,6 +234,7 @@
                   </div>
                 </div>
               </div>
+              <p class="text-danger">{{ errors.photo }}</p>
             </div>
 
             <div class="col-md-12">
@@ -287,6 +303,8 @@ export default defineComponent({
       selectedDocuments: [],
       Insurance: "",
       driver_license: "",
+      formSubmitted: false,
+      isValid:false,
       errors: {
         name: "",
         surname: "",
@@ -298,6 +316,7 @@ export default defineComponent({
         Insurance: "",
         email: "",
         password: "",
+        photo: "",
       },
     };
   },
@@ -305,14 +324,41 @@ export default defineComponent({
     handleFileUpload(event) {
       // Vérifie si un fichier a été sélectionné
       if (event.target.files.length > 0) {
-        this.photo = event.target.files[0];
+        const file = event.target.files[0];
+        const maxSize = 20 * 1024 * 1024; // Taille maximale en octets (ici, 20 Mo)
+
+        // Vérifier si la taille du fichier est inférieure ou égale à la taille maximale
+        if (file.size > maxSize) {
+          // Afficher un message d'erreur à l'utilisateur
+          this.errors.photo =
+            "The size of the image exceeds the limit of 20 MB.";
+          return; // Arrêter le traitement
+        }
+
+        // Continuer le traitement si la taille est conforme à la limite
+        this.errors.photo = ""; // Effacer les erreurs précédentes
+        this.photo = file;
 
         this.selectedPhoto = [];
         this.selectedPhoto.push({
-          id: event.target.files[0].name,
-          url: URL.createObjectURL(event.target.files[0]),
+          id: file.name,
+          url: URL.createObjectURL(file),
         });
       }
+    },
+
+    getCurrentDate() {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      let month = currentDate.getMonth() + 1;
+      if (month < 10) {
+        month = "0" + month; // Ajoute un zéro devant si le mois est inférieur à 10
+      }
+      let day = currentDate.getDate();
+      if (day < 10) {
+        day = "0" + day; // Ajoute un zéro devant si le jour est inférieur à 10
+      }
+      return `${year}-${month}-${day}`;
     },
     onCancel() {
       console.log("User cancelled the loader.");
@@ -322,18 +368,82 @@ export default defineComponent({
       // Vous pouvez utiliser une expression régulière ou une autre méthode de validation ici
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
-    async submit() {
-      // Réinitialiser les erreurs
-      this.resetErrors();
+    async addUser() {
+      console.log('submit')
+
+      this.formSubmitted = true;
+      this.isLoading = true;
 
       // Valider les champs
-      const isValid = this.validateFields();
+      // Valider les champs
 
-      if (!isValid) {
-        return; // Arrêter la soumission si des erreurs sont trouvées
-      }
+      // if (this.name === "") {
+      //   this.errors.name = "First name is required";
+      //   this.isValid = false;
+      // }
 
-      this.isLoading = true;
+      // if (this.surname === "") {
+      //   this.errors.surname = "Last name is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.gender) {
+      //   this.errors.gender = "Gender is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.datofbirth) {
+      //   this.errors.datofbirth = "Date of birth is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.address) {
+      //   this.errors.address = "Address is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.phone) {
+      //   this.errors.phone = "Phone number is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.driver_license) {
+      //   this.errors.driver_license = "Driver license is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.Insurance) {
+      //   this.errors.Insurance = "Insurance type is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.email) {
+      //   this.errors.email = "Email is required";
+      //   this.isValid  = false;
+      // } else if (!this.validateEmail(this.email)) {
+      //   this.errors.email = "Invalid email format";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.password) {
+      //   this.errors.password = "Password is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.isValid ) {
+      //   console.log(this.errors);
+      //   // Scroll to the first error
+      //   const errorElements = document.querySelectorAll(".text-danger");
+      //   if (errorElements.length > 0) {
+      //     const firstErrorElement = errorElements[0];
+      //     firstErrorElement.scrollIntoView({
+      //       behavior: "smooth",
+      //       block: "start",
+      //     });
+      //   }
+      //   return; // Arrêter la soumission si des erreurs sont trouvées
+      // }
+
 
       try {
         // Soumettre le formulaire
@@ -354,12 +464,12 @@ export default defineComponent({
       // Valider les champs
       let isValid = true;
 
-      if (!this.name) {
+      if (this.name == "") {
         this.errors.name = "First name is required";
         isValid = false;
       }
 
-      if (!this.surname) {
+      if (!this.surname == "") {
         this.errors.surname = "Last name is required";
         isValid = false;
       }
@@ -417,7 +527,6 @@ export default defineComponent({
         undefined,
         { filters: { email: { $eq: this.email } } }
       );
-      console.log("fetch:", response);
       if (response.data && response.data.length > 0) {
         swal({
           text: "Email already exists!",

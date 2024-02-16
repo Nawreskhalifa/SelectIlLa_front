@@ -96,6 +96,17 @@
             <div class="accordion-body">
               <ul class="sidebar-sub-menu ps-0 mb-0 list-unstyled">
                 <li class="sidebar-sub-menu-item">
+                  <router-link to="/events" class="sidebar-sub-menu-link">
+                    Events List
+                  </router-link>
+                </li>
+
+                <li class="sidebar-sub-menu-item">
+                  <router-link to="/add-event" class="sidebar-sub-menu-link">
+                    Add Event
+                  </router-link>
+                </li>
+                <li class="sidebar-sub-menu-item">
                   <router-link
                     to="/categories-event"
                     class="sidebar-sub-menu-link"
@@ -108,20 +119,10 @@
                     to="/create-new-category-event"
                     class="sidebar-sub-menu-link"
                   >
-                    Create New Category
-                  </router-link>
-                </li>
-                <li class="sidebar-sub-menu-item">
-                  <router-link to="/events" class="sidebar-sub-menu-link">
-                    Events List
+                    Create Category
                   </router-link>
                 </li>
 
-                <li class="sidebar-sub-menu-item">
-                  <router-link to="/add-event" class="sidebar-sub-menu-link">
-                    Add Event
-                  </router-link>
-                </li>
               </ul>
             </div>
           </div>

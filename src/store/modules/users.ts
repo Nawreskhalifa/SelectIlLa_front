@@ -18,6 +18,7 @@ const state = {
     totalPagesReservation: 0,
     totalItemsReservation: 0,
     reservation: null,
+    documentsCustomer: [],
 }
 const getters = {
     getUsersError: state => state.userError,
@@ -32,8 +33,13 @@ const getters = {
     getTotalPagesReservation: (state) => state.totalPagesReservation,
     getTotalItemsReservation: (state) => state.totalItemsReservation,
     getReservation: (state) => state.reservation,
+    getDocumentsCustomer: (state) => state.documentsCustomer,
+
 }
 const mutations = {
+    SET_DOCUMENTS_CUSTOMER(state, payload) {
+        state.documentsCustomer = payload;
+    },
     SET_TOTAL_ITEMS(state, payload = 0) {
         state.totalItems = payload;
     },
@@ -139,7 +145,7 @@ const actions = {
         }
         return true
     },
-    async fetchAllCustomers({ commit }, { page = null, perPage = 25, name, gender = 'All', startYear, endYear, sortDirectionUserName, sortDirectionLocation }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startYear?: number, endYear?: number, sortDirectionUserName?: string, sortDirectionLocation?: string }) {
+    async fetchAllCustomers({ commit }, { page = null, perPage = 25, name, gender = 'All', startDate, endDate, sortDirectionUserName, sortDirectionLocation }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startDate?: number, endDate?: number, sortDirectionUserName?: string, sortDirectionLocation?: string }) {
         commit('SET_USERS_LOADING', true);
         commit('SET_USERS_ERROR', null);
         try {
@@ -156,7 +162,7 @@ const actions = {
                         address?: { $contains: string };
                         user?: { email?: { $contains: string }, username?: { $contains: string }, gender?: { $eq: string }, date_of_birth?: { $between?: [string, string] } };
                     }>;
-                    user?: { gender?: { $eq: string }, date_of_birth?: { $between?: [string, string] } };
+                    user?: { $and?: Array<{ gender?: { $eq: string }, date_of_birth?: { $gte?: string, $lte?: string } }>; };
                 };
                 sort?: string[];
 
@@ -190,19 +196,21 @@ const actions = {
 
             // Add the gender filter if specified
             if (gender !== 'All') {
-                // Make sure filters.filters.user is defined before adding gender filter
+                // Assurez-vous que filters.filters.user est défini avant d'ajouter le filtre de genre
                 filters.filters.user = filters.filters.user || {};
-                filters.filters.user.gender = { $eq: gender };
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ gender: { $eq: gender } });
             }
-            // Add date of birth filter if startYear and endYear are specified
-            if (startYear && endYear) {
+            // Add date of birth filter if startDate and endDate are specified
+            if (startDate) {
                 filters.filters.user = filters.filters.user || {};
-                filters.filters.user.date_of_birth = {
-                    $between: [
-                        new Date(`${startYear}-01-01T00:00:00.000Z`).toISOString(),
-                        new Date(`${endYear}-12-31T23:59:59.999Z`).toISOString()
-                    ]
-                };
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ date_of_birth: { $gte: startDate.toString() } });
+            }
+            if (endDate) {
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ date_of_birth: { $lte: endDate.toString() } });
             }
             // Add sorting options
             if (sortDirectionUserName) {
@@ -211,8 +219,6 @@ const actions = {
                     filters.sort.push(`name:${sortDirectionUserName}`);
                     filters.sort.push(`surname:${sortDirectionUserName}`);
                 }
-
-                console.log(filters)
             }
             // Add sorting options
             if (sortDirectionLocation) {
@@ -220,8 +226,6 @@ const actions = {
                 if (filters.sort) {
                     filters.sort.push(`address:${sortDirectionLocation}`);
                 }
-
-                console.log(filters)
             }
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
@@ -340,6 +344,37 @@ const actions = {
         }
         return true
     },
+    async fetchDocumentsCustomer({ commit }, id) {
+        commit('SET_USERS_LOADING', true)
+        commit('SET_USERS_ERROR')
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.deleteCustomer}${id}`,
+                undefined,
+                { populate: { documents: true } }
+            );
+            if (response.success) {
+                commit('SET_DOCUMENTS_CUSTOMER', response.data.data.attributes.documents.data)
+                commit('SET_USERS_LOADING')
+            }
+
+        } catch (error: any) {
+            commit('SET_USERS_LOADING')
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
     async fetchAllAttachmentsByCustomer({ commit }, { page = 1, perPage = 25, idCustomer, status }: { page?: number, perPage?: number, idCustomer: number, status?: string }) {
         commit('SET_USERS_LOADING', true);
         commit('SET_USERS_ERROR', null);
@@ -347,7 +382,7 @@ const actions = {
             let filters: any = { customer: { id: { $eq: idCustomer } } };
 
             // Ajouter la condition pour le statut uniquement s'il n'est pas nul
-            if (status && status!=='') {
+            if (status && status !== '') {
                 filters = { ...filters, status: { $eq: status } };
             }
             const response = await makeApiRequest(

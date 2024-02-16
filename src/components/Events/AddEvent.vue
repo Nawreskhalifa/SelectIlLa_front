@@ -275,6 +275,7 @@
                 class="form-select shadow-none fw-semibold rounded-0 select-same-width"
                 style="height: 47px; border-color: #eeeee4"
                 v-model="selectedPartner"
+                @change="addPartner"
               >
                 <option value="" selected>Select a partner</option>
                 <option
@@ -350,6 +351,12 @@
       </form>
     </div>
   </div>
+  <loading
+    v-model:active="isLoading"
+    :can-cancel="true"
+    :on-cancel="onCancel"
+    :is-full-page="true"
+  />
 </template>
 
 <script>
@@ -359,12 +366,17 @@ import { makeApiRequest } from "@/services/apiService";
 import { methodsHttpNames } from "@/utils/methods";
 import { endPoints } from "@/utils/endPoints";
 import swal from "sweetalert";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 
 export default defineComponent({
   name: "AddEvent",
-  components: {},
+  components: {
+    Loading,
+  },
   data() {
     return {
+      isLoading: false,
       selectedPhotos: [],
       selectedCategories: [],
       currentDate: new Date().toISOString().split("T")[0], // Date actuelle
@@ -393,6 +405,7 @@ export default defineComponent({
       selectedCategory: "",
       AllSelected: [],
       selectedCategoryNames: [],
+      partner: [],
     };
   },
   methods: {
@@ -407,8 +420,9 @@ export default defineComponent({
         item.id !== cat.id;
       });
     },
-    addToAllCat: () => {
-      this.AllSelected.push(this.selectedCategory);
+    addPartner() {
+      this.partner = [];
+      this.partner.push(this.selectedPartner);
     },
     addCategoryEvent() {
       // Vous pouvez accéder à la catégorie sélectionnée via selectedCategories
@@ -451,6 +465,7 @@ export default defineComponent({
       this.selectedPhotos.splice(index, 1);
     },
     async createEvent() {
+      this.isLoading = true;
       const formData = new FormData();
 
       try {
@@ -458,8 +473,8 @@ export default defineComponent({
           // Ajouter le tableau d'identifiants de catégories à formData
           formData.append("category_events", JSON.stringify(item.id));
         });
-
-        formData.append("partner", this.selectedPartner);
+        console.log(this.partner);
+        formData.append("partner", this.partner);
         // Ajouter chaque champ du formulaire à l'objet FormData
         formData.append("name", this.eventName);
         formData.append("description", this.description);
@@ -486,6 +501,8 @@ export default defineComponent({
           undefined
         );
         if (response.success) {
+          this.isLoading = false;
+
           await this.addEvent(response.data.data);
           this.$router.push({ name: "EventListPage" });
           // Afficher un message de succès
@@ -496,6 +513,8 @@ export default defineComponent({
           });
         }
       } catch (error) {
+        this.isLoading = false;
+
         console.log(error);
       }
     },

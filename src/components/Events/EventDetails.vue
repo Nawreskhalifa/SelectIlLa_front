@@ -48,7 +48,11 @@
                     <span class="d-block text-muted">
                       Promote by:
                       <span class="fw-semibold text-primary"
-                        >{{ getEvent?.namePromoter }}
+                        >{{
+                          getEvent?.partner?.attributes.name +
+                          " " +
+                          getEvent?.partner?.attributes.surname
+                        }}
                       </span>
                     </span>
                     <span
@@ -226,13 +230,13 @@
                 <img
                   v-if="
                     storageUrl &&
-                    getEvent?.partner?.attributes.user?.data.attributes.photo
-                      ?.data.attributes.url
+                    getEvent?.partner?.attributes.user?.data?.attributes?.photo
+                      ?.data?.attributes?.url
                   "
                   :src="
                     storageUrl +
-                    getEvent?.partner?.attributes.user?.data.attributes.photo
-                      ?.data.attributes.url
+                    getEvent?.partner?.attributes.user?.data?.attributes?.photo
+                      ?.data?.attributes.url
                   "
                   class="rounded-circle"
                   width="40"

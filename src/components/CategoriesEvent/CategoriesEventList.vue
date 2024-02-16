@@ -4,25 +4,35 @@
     <div
       class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-20 p-md-25 p-lg-30"
     >
-      <div class="d-sm-flex align-items-center">
+      <div class="d-flex align-items-center">
         <form
           class="search-box position-relative"
           @submit.prevent="handleSearch"
         >
           <input
             type="text"
-            class="form-control shadow-none text-black rounded-0 border-0"
-            placeholder="Search event"
+            class="form-control shadow-none rounded-0 border-0 pr-40"
+            placeholder="Search here"
+            style="width: calc(100% - 40px)"
             v-model="searchText"
+            @input="handleSearch"
           />
           <button
-            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
+            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-15 fs-lg-16 bg-primary"
             type="submit"
+            style="
+              position: absolute;
+              right: 0;
+              top: 50%;
+              transform: translateY(-50%);
+            "
             :disabled="getCategoriesLoading"
           >
+            Search
+
             <i
               v-if="!getCategoriesLoading"
-              class="flaticon-search-interface-symbol"
+              class="flaticon-search-interface-symbol position-relative ms-5 top-1"
             ></i>
             <div
               v-if="getCategoriesLoading"
@@ -298,7 +308,6 @@ export default defineComponent({
       });
     },
     async handleSearch() {
-      console.log(this.searchText);
       await this.fetchAllCategoriesEvent({
         page: this.currentPage,
         perPage: 4,

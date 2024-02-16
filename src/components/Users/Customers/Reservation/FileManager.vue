@@ -1,7 +1,6 @@
 <template>
   <div v-if="documents" class="list ps-0 mb-0 list-unstyled">
     <div v-if="!selectedFile">
-        <div>
           <div
             class="file-card d-flex align-items-center justify-content-between"
             v-for="(file, index) in documents"
@@ -20,7 +19,6 @@
               <i class="fas fa-download" aria-hidden="true"></i>
             </div>
           </div>
-        </div>
 
     </div>
     <div v-else>

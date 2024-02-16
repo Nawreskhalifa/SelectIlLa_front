@@ -3,15 +3,6 @@
     <div
       class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
     >
-      <div class="d-sm-flex align-items-center">
-        <button
-          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mb-10 mb-lg-0"
-          type="button"
-        >
-          Export
-          <i class="flaticon-file-1 position-relative ms-5 top-2 fs-15"></i>
-        </button>
-      </div>
       <div class="d-flex align-items-center">
         <form
           class="search-box position-relative"
@@ -19,18 +10,28 @@
         >
           <input
             type="text"
-            class="form-control shadow-none text-black rounded-0 border-0"
-            placeholder="Search customer"
+            class="form-control shadow-none rounded-0 border-0 pr-40"
+            placeholder="Search here"
+            style="width: calc(100% - 40px)"
             v-model="searchText"
+            @input="handleSearch"
           />
           <button
-            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
+            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-15 fs-lg-16 bg-primary"
             type="submit"
+            style="
+              position: absolute;
+              right: 0;
+              top: 50%;
+              transform: translateY(-50%);
+            "
             :disabled="getUsersLoading"
           >
+            Search
+
             <i
               v-if="!getUsersLoading"
-              class="flaticon-search-interface-symbol"
+              class="flaticon-search-interface-symbol position-relative ms-5 top-1"
             ></i>
             <div
               v-if="getUsersLoading"
@@ -39,76 +40,102 @@
             ></div>
           </button>
         </form>
-        <select
-          v-model="genderFilter"
+      </div>
+      <select
+        v-model="genderFilter"
+        @change="handleFilterChange"
+        class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+      >
+        <option value="All">All</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select>
+      <div
+        class="rounded-1 d-flex me-1 mt-1 mt-lg-0"
+        style="display: flex; align-items: center; gap: 1px"
+      >
+        <label class="text-muted fs-md-1" for="start-date">From</label>
+        <input
+          id="start-date"
+          type="date"
+          class="form-control datepicker project-select form-select shadow-none fw-semibold rounded-1 mt-1 mt-sm-0 ms-sm-1"
+          placeholder="Start Date"
+          v-model="startDate"
+          :max="getCurrentDate()"
           @change="handleFilterChange"
-          class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+        />
+
+        <label class="text-muted fs-md-6" for="end-date">To </label>
+        <input
+          id="end-date"
+          type="date"
+          class="form-control datepicker project-select form-select shadow-none fw-semibold rounded-1 mt-1 mt-sm-0 ms-sm-1"
+          placeholder="End Date"
+          v-model="endDate"
+          :max="getCurrentDate()"
+          @change="handleFilterChange"
+        />
+      </div>
+      <button
+        v-if="isFilterActive"
+        class="default-outline-btn transition border fw-medium text-black pt-2 pb-4 ps-1 pe-4 pt-md-6 pb-md-3 ps-md-1 pe-md-1 rounded-1 fs-md-5 fs-lg-5 bg-transparent"
+        type="button"
+        @click="resetFilters"
+      >
+        Reset
+        <i
+          class="flaticon-refresh position-relative ms-5 top-2 fs-15"
+          style="margin-left: 3px"
+        ></i>
+      </button>
+      <div class="d-sm-flex align-items-center">
+        <button
+          class="default-outline-btn position-relative transition fw-medium text-black pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 bg-transparent fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1"
+          type="button"
         >
-          <option value="All">All</option>
-          <option value="Female">Female</option>
-          <option value="Male">Male</option>
-        </select>
-        <!-- Ajoutez cette section pour le filtre d'intervalle d'années -->
-        <div class="d-flex align-items-center">
-          <select
-            v-model="startYear"
-            @change="handleFilterChange"
-            class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-          >
-            <option value="" selected>From</option>
-            <option v-for="year in availableYears" :key="year" :value="year">
-              {{ year }}
-            </option>
-          </select>
-          <span class="mx-2">-</span>
-          <select
-            v-model="endYear"
-            @change="handleFilterChange"
-            class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-          >
-            <option value="" selected>To</option>
-            <option v-for="year in availableYears" :key="year" :value="year">
-              {{ year }}
-            </option>
-          </select>
-        </div>
-        <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
-          <button
-            class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <i class="flaticon-dots"></i>
-          </button>
-          <ul class="dropdown-menu">
-            <li>
-              <a
-                class="dropdown-item d-flex align-items-center"
-                href="javascript:void(0);"
-                @click="selectAllCustomers"
-              >
-                <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
-                {{ selectAllChecked ? "Deselect All" : "Select All" }}
-              </a>
-            </li>
-            <li>
-              <a
-                class="dropdown-item d-flex align-items-center"
-                href="javascript:void(0);"
-                @click="deleteSelectedCustomers"
-              >
-                <i
-                  class="flaticon-delete lh-1 me-8 position-relative top-1"
-                ></i>
-                Delete Selected
-              </a>
-            </li>
-          </ul>
-        </div>
+          Export
+          <i class="flaticon-file-1 position-relative ms-5 top-2 fs-15"></i>
+        </button>
+      </div>
+      <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+        <button
+          class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="flaticon-dots"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="selectAllCustomers"
+            >
+              <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
+              {{ selectAllChecked ? "Deselect All" : "Select All" }}
+            </a>
+          </li>
+          <li>
+            <a
+              :class="{ disabled: selectedCount === 0 }"
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="selectedCount !== 0 && deleteSelectedCustomers()"
+            >
+              <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
+              Delete Selected
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
     <div class="card-body p-15 p-sm-20 p-md-25">
+      <h6 v-if="selectedCount > 0">
+        {{ selectedCount }}
+        {{ selectedCount === 1 ? "item" : "items" }} selected
+      </h6>
       <div class="table-responsive">
         <table class="table text-nowrap align-middle mb-0">
           <thead>
@@ -176,6 +203,7 @@
                     <input
                       class="form-check-input shadow-none"
                       type="checkbox"
+                      @change="updateSelectionCounter($event, index)"
                     />
                   </div>
                   <div class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16">
@@ -198,7 +226,7 @@
                 {{ customer.phone }}
               </td>
               <td class="shadow-none lh-1 fw-medium text-muted">
-                {{ customer.address }}
+                {{ truncateLocation(customer.address) }}
               </td>
 
               <td class="shadow-none lh-1 fw-medium text-muted">
@@ -300,13 +328,13 @@
         </nav>
       </div>
     </div>
-    <loading
-      v-model:active="getEventLoading"
-      :can-cancel="true"
-      :on-cancel="onCancel"
-      :is-full-page="true"
-    />
   </div>
+  <loading
+    v-model:active="isLoading"
+    :can-cancel="true"
+    :on-cancel="onCancel"
+    :is-full-page="true"
+  />
 </template>
 
 <script>
@@ -328,19 +356,61 @@ export default defineComponent({
       searchText: "",
       selectAllChecked: false,
       genderFilter: "All",
-      startYear: "",
-      endYear: "",
+      startDate: "",
+      endDate: "",
       sortDirection: "asc",
       sortDirectionLoc: "asc",
+      selectedCount: 0,
+      isLoading: false,
     };
   },
   methods: {
     ...mapActions(["fetchAllCustomers", "deleteCustomer"]),
+    truncateLocation(location) {
+      const maxLength = 40;
+      if (location.length <= maxLength) {
+        return location;
+      } else {
+        return location.slice(0, maxLength) + "...";
+      }
+    },
+    resetFilters() {
+      // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
+      this.searchText = "";
+      this.genderFilter = "All";
+      this.startDate = "";
+      this.endDate = "";
+      // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
+      this.handleFilterChange();
+    },
+    updateSelectionCounter(event, index) {
+      if (event.target.checked) {
+        // Si la case à cocher est cochée, incrémenter le compteur de sélection
+        this.selectedCount++;
+      } else {
+        // Sinon, décrémenter le compteur de sélection
+        this.selectedCount--;
+      }
+    },
+    getCurrentDate() {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      let month = currentDate.getMonth() + 1;
+      if (month < 10) {
+        month = "0" + month; // Ajoute un zéro devant si le mois est inférieur à 10
+      }
+      let day = currentDate.getDate();
+      if (day < 10) {
+        day = "0" + day; // Ajoute un zéro devant si le jour est inférieur à 10
+      }
+      return `${year}-${month}-${day}`;
+    },
     onCancel() {
       console.log("User cancelled the loader.");
     },
     async handleFilterChange() {
-      console.log(this.startYear, this.endYear);
+      this.isLoading = true;
+
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
 
@@ -350,23 +420,48 @@ export default defineComponent({
         perPage: 4,
         name: this.searchText,
         gender: this.genderFilter,
-        startYear: this.startYear,
-        endYear: this.endYear,
-        sortDirectionUserName: this.sortDirection,
-        sortDirectionLocation: this.sortDirectionLoc,
+        startDate: this.startDate,
+        endDate: this.endDate,
       });
+      this.isLoading = false;
     },
-    toggleSortDirection() {
+    async toggleSortDirection() {
       // Basculer entre ascendant et descendant
       this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
-      // Appeler handleFilterChange pour appliquer le nouveau tri
-      this.handleFilterChange();
+      // Réinitialiser la page actuelle à 1
+      this.currentPage = 1;
+      this.isLoading = true;
+
+      // Appeler fetchAllEvents avec le filtre actif
+      await this.fetchAllCustomers({
+        page: this.currentPage,
+        perPage: 4,
+        name: this.searchText,
+        gender: this.genderFilter,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        sortDirectionUserName: this.sortDirection,
+      });
+      this.isLoading = false;
     },
-    toggleSortDirectionLoc() {
+    async toggleSortDirectionLoc() {
       // Basculer entre ascendant et descendant
       this.sortDirectionLoc = this.sortDirectionLoc === "asc" ? "desc" : "asc";
-      // Appeler handleFilterChange pour appliquer le nouveau tri
-      this.handleFilterChange();
+      // Réinitialiser la page actuelle à 1
+      this.currentPage = 1;
+      this.isLoading = true;
+
+      // Appeler fetchAllEvents avec le filtre actif
+      await this.fetchAllCustomers({
+        page: this.currentPage,
+        perPage: 4,
+        name: this.searchText,
+        gender: this.genderFilter,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        sortDirectionLocation: this.sortDirectionLoc,
+      });
+      this.isLoading = false;
     },
     deleteSelectedCustomers() {
       const selectedCustomers = [];
@@ -394,8 +489,12 @@ export default defineComponent({
           await Promise.all(
             selectedCustomers.map((id) => this.deleteCustomer(id))
           );
+          this.isLoading = true;
+
           // After deletion, fetch customers again to update the list
           await this.fetchAllCustomers({ page: this.currentPage, perPage: 4 });
+          this.isLoading = false;
+
           swal("Selected customers have been deleted!", {
             icon: "success",
           });
@@ -407,25 +506,37 @@ export default defineComponent({
     selectAllCustomers() {
       this.selectAllChecked = !this.selectAllChecked;
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      this.selectedCount = 0;
       checkboxes.forEach((checkbox) => {
         checkbox.checked = this.selectAllChecked;
+        if (checkbox.checked) {
+          this.selectedCount++;
+        } else {
+          this.selectedCount--;
+        }
       });
     },
     async handleSearch() {
-      console.log(this.searchText);
+      this.isLoading = true;
+
       await this.fetchAllCustomers({
         page: this.currentPage,
         perPage: 4,
         name: this.searchText,
       });
+      this.isLoading = false;
     },
+
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;
+      this.isLoading = true;
+
       await this.fetchAllCustomers({
         page: pageNumber,
         perPage: 4,
         name: null,
       });
+      this.isLoading = false;
     },
     navigateToCustomerDetailPage(customerId) {
       // Utilisez le routeur de Vue pour naviguer vers la page détaillée du client
@@ -467,16 +578,19 @@ export default defineComponent({
       "getTotalPages",
       "getTotalItems",
     ]),
-    availableYears() {
-      const currentYear = new Date().getFullYear();
-      const start = currentYear - 80;
-      const end = currentYear - 18; // Moins 18 ans
-      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    isFilterActive() {
+      return (
+        this.searchText !== "" ||
+        this.genderFilter !== "All" ||
+        this.startDate !== "" ||
+        this.endDate !== ""
+      );
     },
   },
   async mounted() {
+    this.isLoading = true;
     await this.fetchAllCustomers({ page: 1, perPage: 4 });
-    console.log(this.getCustomers);
+    this.isLoading = false;
     this.storageUrl = storageUrl;
   },
 });
