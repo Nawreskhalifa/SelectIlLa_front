@@ -585,21 +585,11 @@ export default defineComponent({
     ]),
   },
   async mounted() {
-    await this.fetchAllCategoriesEvent({ page: null });
-    await this.fetchAllPartners();
-    // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    this.currentDate = `${year}-${month}-${day}`;
-    // Initialise startDate avec la date actuelle
-    this.startDate = this.currentDate;
-    console.log("dfd", this.getCategoriesEvent);
     if (this.$route.params && this.$route.params.idEvent) {
+      this.isLoading = true;
       await this.fetchOneEvent(this.$route.params.idEvent);
-      console.log("dd", this.getEvent);
-      console.log("ss", this.getEvent.categoryEvents);
+      // console.log("dd", this.getEvent);
+      // console.log("ss", this.getEvent.categoryEvents);
 
       this.eventName = this.getEvent.name;
       this.description = this.getEvent.description;
@@ -626,8 +616,22 @@ export default defineComponent({
       if (this.getEvent.partner) {
         this.selectedPartner = this.getEvent.partner.id;
       }
+      this.isLoading = false;
     }
-    console.log(this.selectedCategories, "ok");
+    this.isLoading = true;
+
+    await this.fetchAllCategoriesEvent({ page: null });
+    await this.fetchAllPartners();
+    this.isLoading = false;
+
+    // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    this.currentDate = `${year}-${month}-${day}`;
+    // Initialise startDate avec la date actuelle
+    this.startDate = this.currentDate;
   },
 });
 </script>
