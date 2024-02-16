@@ -374,12 +374,12 @@ export default defineComponent({
       // Valider les champs
       let isValid = true;
 
-      if (this.name == "") {
+      if (this.name === "") {
         this.errors.name = "First name is required";
         isValid = false;
       }
 
-      if (!this.surname == "") {
+      if (this.surname === "") {
         this.errors.surname = "Last name is required";
         isValid = false;
       }
