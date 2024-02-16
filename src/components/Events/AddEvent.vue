@@ -351,6 +351,12 @@
       </form>
     </div>
   </div>
+  <loading
+    v-model:active="isLoading"
+    :can-cancel="true"
+    :on-cancel="onCancel"
+    :is-full-page="true"
+  />
 </template>
 
 <script>
@@ -360,12 +366,17 @@ import { makeApiRequest } from "@/services/apiService";
 import { methodsHttpNames } from "@/utils/methods";
 import { endPoints } from "@/utils/endPoints";
 import swal from "sweetalert";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 
 export default defineComponent({
   name: "AddEvent",
-  components: {},
+  components: {
+    Loading,
+  },
   data() {
     return {
+      isLoading: false,
       selectedPhotos: [],
       selectedCategories: [],
       currentDate: new Date().toISOString().split("T")[0], // Date actuelle
@@ -394,7 +405,7 @@ export default defineComponent({
       selectedCategory: "",
       AllSelected: [],
       selectedCategoryNames: [],
-      partner: []
+      partner: [],
     };
   },
   methods: {
@@ -410,7 +421,7 @@ export default defineComponent({
       });
     },
     addPartner() {
-      this.partner=[];
+      this.partner = [];
       this.partner.push(this.selectedPartner);
     },
     addCategoryEvent() {
@@ -454,6 +465,7 @@ export default defineComponent({
       this.selectedPhotos.splice(index, 1);
     },
     async createEvent() {
+      this.isLoading = true;
       const formData = new FormData();
 
       try {
@@ -461,7 +473,7 @@ export default defineComponent({
           // Ajouter le tableau d'identifiants de catégories à formData
           formData.append("category_events", JSON.stringify(item.id));
         });
-console.log(this.partner);
+        console.log(this.partner);
         formData.append("partner", this.partner);
         // Ajouter chaque champ du formulaire à l'objet FormData
         formData.append("name", this.eventName);
@@ -489,6 +501,8 @@ console.log(this.partner);
           undefined
         );
         if (response.success) {
+          this.isLoading = false;
+
           await this.addEvent(response.data.data);
           this.$router.push({ name: "EventListPage" });
           // Afficher un message de succès
@@ -499,6 +513,8 @@ console.log(this.partner);
           });
         }
       } catch (error) {
+        this.isLoading = false;
+
         console.log(error);
       }
     },
