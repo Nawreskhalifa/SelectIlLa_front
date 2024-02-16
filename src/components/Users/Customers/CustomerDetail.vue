@@ -448,7 +448,7 @@
     </div>
   </div>
   <loading
-    v-model:active="getUsersLoading"
+    v-model:active="isLoading"
     :can-cancel="true"
     :on-cancel="onCancel"
     :is-full-page="true"
@@ -562,6 +562,8 @@ export default defineComponent({
       }
     },
     async handleFilterChange() {
+      this.isLoading = true;
+
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
       await this.fetchAllAttachmentsByCustomer({
@@ -570,6 +572,7 @@ export default defineComponent({
         idCustomer: this.idCustomer,
         status: this.statusFilter,
       });
+      this.isLoading = false;
     },
     AcceptSelectedReservations() {
       const selectedReservations = [];
@@ -619,10 +622,13 @@ export default defineComponent({
               }
             })
           );
+          this.isLoading = true;
+
           await this.fetchAllAttachmentsByCustomer({
             page: this.currentPage,
             perPage: 4,
           });
+          this.isLoading = false;
 
           swal("Selected pending reservations have been accepted!", {
             icon: "success",
@@ -666,12 +672,15 @@ export default defineComponent({
       });
     },
     async onPageChange(pageNumber) {
+      this.isLoading = true;
+
       this.currentPage = pageNumber;
       await this.fetchAllCustomers({
         page: pageNumber,
         perPage: 4,
         name: null,
       });
+      this.isLoading = false;
     },
     onCancel() {
       console.log("User cancelled the loader.");
@@ -689,14 +698,19 @@ export default defineComponent({
   },
   async mounted() {
     try {
+      this.isLoading = true;
+
       await this.fetchAllAttachmentsByCustomer({
         page: this.currentPage,
         perPage: 5,
         idCustomer: this.idCustomer,
       });
+
       await this.fetchDocumentsCustomer(this.idCustomer);
       if (!this.getCustomers || !this.getCustomers.length) {
+        this.isLoading = false;
         await this.fetchAllCustomers({ page: null });
+        this.isLoading = false;
       }
       if (this.getCustomers && this.getCustomers.length) {
         this.customer =
@@ -705,7 +719,9 @@ export default defineComponent({
             ? this.getCustomers.filter((item) => item.id == this.customerId)[0]
             : this.getCustomers.filter((item) => item.id == this.customerId);
       }
+      this.isLoading = false;
     } catch (error) {
+      this.isLoading = false;
       swal({
         text: "An error occurred, please try again",
         icon: "error",
