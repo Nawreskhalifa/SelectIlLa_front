@@ -148,7 +148,7 @@
                 required
               />
               <p v-if="!email" class="text-danger">Email is required</p>
-              <p v-if="!email && validateEmail(email)" class="text-danger">
+              <p v-if="email && !validateEmail(email)" class="text-danger">
                 Invalid email format
               </p>
             </div>
