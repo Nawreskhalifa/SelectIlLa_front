@@ -275,6 +275,7 @@
                 class="form-select shadow-none fw-semibold rounded-0 select-same-width"
                 style="height: 47px; border-color: #eeeee4"
                 v-model="selectedPartner"
+                @change="addPartner"
               >
                 <option value="" selected>Select a partner</option>
                 <option
@@ -393,6 +394,7 @@ export default defineComponent({
       selectedCategory: "",
       AllSelected: [],
       selectedCategoryNames: [],
+      partner: []
     };
   },
   methods: {
@@ -407,8 +409,9 @@ export default defineComponent({
         item.id !== cat.id;
       });
     },
-    addToAllCat: () => {
-      this.AllSelected.push(this.selectedCategory);
+    addPartner() {
+      this.partner=[];
+      this.partner.push(this.selectedPartner);
     },
     addCategoryEvent() {
       // Vous pouvez accéder à la catégorie sélectionnée via selectedCategories
@@ -458,8 +461,8 @@ export default defineComponent({
           // Ajouter le tableau d'identifiants de catégories à formData
           formData.append("category_events", JSON.stringify(item.id));
         });
-
-        formData.append("partner", this.selectedPartner);
+console.log(this.partner);
+        formData.append("partner", this.partner);
         // Ajouter chaque champ du formulaire à l'objet FormData
         formData.append("name", this.eventName);
         formData.append("description", this.description);
