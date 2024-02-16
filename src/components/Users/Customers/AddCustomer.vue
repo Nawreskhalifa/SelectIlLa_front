@@ -1,7 +1,7 @@
 <template>
   <div class="card mb-25 border-0 rounded-0 bg-white add-user-card">
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
-      <form @submit.prevent="submit">
+      <form @submit.prevent="addUser">
         <div class="row">
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -303,6 +303,8 @@ export default defineComponent({
       selectedDocuments: [],
       Insurance: "",
       driver_license: "",
+      formSubmitted: false,
+      isValid:false,
       errors: {
         name: "",
         surname: "",
@@ -366,82 +368,82 @@ export default defineComponent({
       // Vous pouvez utiliser une expression régulière ou une autre méthode de validation ici
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
-    async submit() {
-      // Réinitialiser les erreurs
-      this.resetErrors();
+    async addUser() {
+      console.log('submit')
 
-      // Valider les champs
-      // Valider les champs
-      let isValid = true;
-
-      if (this.name === "") {
-        this.errors.name = "First name is required";
-        isValid = false;
-      }
-
-      if (this.surname === "") {
-        this.errors.surname = "Last name is required";
-        isValid = false;
-      }
-
-      if (!this.gender) {
-        this.errors.gender = "Gender is required";
-        isValid = false;
-      }
-
-      if (!this.datofbirth) {
-        this.errors.datofbirth = "Date of birth is required";
-        isValid = false;
-      }
-
-      if (!this.address) {
-        this.errors.address = "Address is required";
-        isValid = false;
-      }
-
-      if (!this.phone) {
-        this.errors.phone = "Phone number is required";
-        isValid = false;
-      }
-
-      if (!this.driver_license) {
-        this.errors.driver_license = "Driver license is required";
-        isValid = false;
-      }
-
-      if (!this.Insurance) {
-        this.errors.Insurance = "Insurance type is required";
-        isValid = false;
-      }
-
-      if (!this.email) {
-        this.errors.email = "Email is required";
-        isValid = false;
-      } else if (!this.validateEmail(this.email)) {
-        this.errors.email = "Invalid email format";
-        isValid = false;
-      }
-
-      if (!this.password) {
-        this.errors.password = "Password is required";
-        isValid = false;
-      }
-
-      if (!isValid) {
-        console.log(this.errors);
-        // Scroll to the first error
-        const errorElements = document.querySelectorAll(".text-danger");
-        if (errorElements.length > 0) {
-          const firstErrorElement = errorElements[0];
-          firstErrorElement.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }
-        return; // Arrêter la soumission si des erreurs sont trouvées
-      }
-
+      this.formSubmitted = true;
       this.isLoading = true;
+
+      // Valider les champs
+      // Valider les champs
+
+      // if (this.name === "") {
+      //   this.errors.name = "First name is required";
+      //   this.isValid = false;
+      // }
+
+      // if (this.surname === "") {
+      //   this.errors.surname = "Last name is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.gender) {
+      //   this.errors.gender = "Gender is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.datofbirth) {
+      //   this.errors.datofbirth = "Date of birth is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.address) {
+      //   this.errors.address = "Address is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.phone) {
+      //   this.errors.phone = "Phone number is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.driver_license) {
+      //   this.errors.driver_license = "Driver license is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.Insurance) {
+      //   this.errors.Insurance = "Insurance type is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.email) {
+      //   this.errors.email = "Email is required";
+      //   this.isValid  = false;
+      // } else if (!this.validateEmail(this.email)) {
+      //   this.errors.email = "Invalid email format";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.password) {
+      //   this.errors.password = "Password is required";
+      //   this.isValid  = false;
+      // }
+
+      // if (!this.isValid ) {
+      //   console.log(this.errors);
+      //   // Scroll to the first error
+      //   const errorElements = document.querySelectorAll(".text-danger");
+      //   if (errorElements.length > 0) {
+      //     const firstErrorElement = errorElements[0];
+      //     firstErrorElement.scrollIntoView({
+      //       behavior: "smooth",
+      //       block: "start",
+      //     });
+      //   }
+      //   return; // Arrêter la soumission si des erreurs sont trouvées
+      // }
+
 
       try {
         // Soumettre le formulaire
