@@ -187,9 +187,12 @@
                       </li>
                       <li>
                         <a
+                          :class="{ disabled: selectedCount === 0 }"
                           class="dropdown-item d-flex align-items-center"
                           href="javascript:void(0);"
-                          @click="AcceptSelectedReservations"
+                          @click="
+                            selectedCount !== 0 && AcceptSelectedReservations
+                          "
                         >
                           <i class="ph ph-check-square-offset"> </i>
 
@@ -203,6 +206,10 @@
               <div
                 class="card-body pt-0 pb-15 pb-sm-20 pb-md-25 pb-lg-30 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30"
               >
+                <h6 v-if="selectedCount > 0">
+                  {{ selectedCount }}
+                  {{ selectedCount === 1 ? "item" : "items" }} selected
+                </h6>
                 <div class="table-responsive">
                   <table class="table text-nowrap align-middle mb-0">
                     <thead>
@@ -237,22 +244,21 @@
                         >
                           Status
                         </th>
-                        <!-- <th
-                          scope="col"
-                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
-                        >
-                          ACTIONS
-                        </th> -->
                       </tr>
                     </thead>
                     <tbody>
                       <tr
                         v-for="(reservation, index) in getDocuments"
                         :key="index"
-                        @click="navigateToReservationDetailPage(reservation.id)"
+                        @click="
+                          navigateToReservationDetailPage(
+                            reservation.id,
+                            $event
+                          )
+                        "
                         style="cursor: pointer"
                       >
-                        <th
+                        <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis title fs-md-15 fs-lg-16 ps-0"
                         >
                           <div class="d-flex align-items-center">
@@ -260,6 +266,7 @@
                               <input
                                 class="form-check-input shadow-none"
                                 type="checkbox"
+                                @change="updateSelectionCounter($event, index)"
                               />
                             </div>
                             <span
@@ -287,7 +294,7 @@
                               }}</span
                             >
                           </div>
-                        </th>
+                        </td>
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
                         >
@@ -320,58 +327,6 @@
                             >{{ reservation.attributes.status }}</span
                           >
                         </td>
-
-                        <!-- <td
-                          class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                        >
-                          <div class="dropdown">
-                            <button
-                              class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                              type="button"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              <i class="flaticon-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                              <li>
-                                <a
-                                  class="dropdown-item d-flex align-items-center"
-                                  href="javascript:void(0);"
-                                  @click="
-                                    navigateToReservationDetailPage(
-                                      reservation.id
-                                    )
-                                  "
-                                  ><i
-                                    class="flaticon-view lh-1 me-8 position-relative top-1"
-                                  ></i>
-                                  View</a
-                                >
-                              </li>
-                              <li>
-                                <a
-                                  class="dropdown-item d-flex align-items-center"
-                                  href="javascript:void(0);"
-                                  ><i
-                                    class="flaticon-pen lh-1 me-8 position-relative top-1"
-                                  ></i>
-                                  Edit</a
-                                >
-                              </li>
-                              <li>
-                                <a
-                                  class="dropdown-item d-flex align-items-center"
-                                  href="javascript:void(0);"
-                                  ><i
-                                    class="flaticon-delete lh-1 me-8 position-relative top-1"
-                                  ></i>
-                                  Delete</a
-                                >
-                              </li>
-                            </ul>
-                          </div>
-                        </td> -->
                       </tr>
                     </tbody>
                   </table>
@@ -531,6 +486,7 @@ export default defineComponent({
       fullPage: true,
       documents: [],
       loadingFiles: false,
+      selectedCount: 0,
     };
   },
   methods: {
@@ -676,14 +632,33 @@ export default defineComponent({
         }
       });
     },
+    updateSelectionCounter(event, index) {
+      if (event.target.checked) {
+        // Si la case à cocher est cochée, incrémenter le compteur de sélection
+        this.selectedCount++;
+      } else {
+        // Sinon, décrémenter le compteur de sélection
+        this.selectedCount--;
+      }
+    },
     selectAllReservations() {
       this.selectAllChecked = !this.selectAllChecked;
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      this.selectedCount = 0;
       checkboxes.forEach((checkbox) => {
         checkbox.checked = this.selectAllChecked;
+        if (checkbox.checked) {
+          this.selectedCount++;
+        } else {
+          this.selectedCount--;
+        }
       });
     },
-    navigateToReservationDetailPage(reservationId) {
+    navigateToReservationDetailPage(reservationId, event) {
+      // Vérifier si l'élément cliqué est la case à cocher
+      if (event.target.tagName.toLowerCase() === "input") {
+        return; // Ne rien faire si c'est la case à cocher qui a été cliquée
+      }
       // Utilisez le routeur de Vue pour naviguer vers la page détaillée du reservation
       this.$router.push({
         name: "ReservationDetailsPage",

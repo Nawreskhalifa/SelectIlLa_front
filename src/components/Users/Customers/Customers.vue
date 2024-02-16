@@ -328,13 +328,13 @@
         </nav>
       </div>
     </div>
-    <loading
-      v-model:active="getUsersLoading"
-      :can-cancel="true"
-      :on-cancel="onCancel"
-      :is-full-page="true"
-    />
   </div>
+  <loading
+    v-model:active="isLoading"
+    :can-cancel="true"
+    :on-cancel="onCancel"
+    :is-full-page="true"
+  />
 </template>
 
 <script>
@@ -361,6 +361,7 @@ export default defineComponent({
       sortDirection: "asc",
       sortDirectionLoc: "asc",
       selectedCount: 0,
+      isLoading: false,
     };
   },
   methods: {
@@ -401,6 +402,8 @@ export default defineComponent({
       console.log("User cancelled the loader.");
     },
     async handleFilterChange() {
+      this.isLoading = true;
+
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
 
@@ -413,12 +416,14 @@ export default defineComponent({
         startDate: this.startDate,
         endDate: this.endDate,
       });
+      this.isLoading = false;
     },
     async toggleSortDirection() {
       // Basculer entre ascendant et descendant
       this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
+      this.isLoading = true;
 
       // Appeler fetchAllEvents avec le filtre actif
       await this.fetchAllCustomers({
@@ -430,12 +435,14 @@ export default defineComponent({
         endDate: this.endDate,
         sortDirectionUserName: this.sortDirection,
       });
+      this.isLoading = false;
     },
     async toggleSortDirectionLoc() {
       // Basculer entre ascendant et descendant
       this.sortDirectionLoc = this.sortDirectionLoc === "asc" ? "desc" : "asc";
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
+      this.isLoading = true;
 
       // Appeler fetchAllEvents avec le filtre actif
       await this.fetchAllCustomers({
@@ -447,6 +454,7 @@ export default defineComponent({
         endDate: this.endDate,
         sortDirectionLocation: this.sortDirectionLoc,
       });
+      this.isLoading = false;
     },
     deleteSelectedCustomers() {
       const selectedCustomers = [];
@@ -474,8 +482,12 @@ export default defineComponent({
           await Promise.all(
             selectedCustomers.map((id) => this.deleteCustomer(id))
           );
+          this.isLoading = true;
+
           // After deletion, fetch customers again to update the list
           await this.fetchAllCustomers({ page: this.currentPage, perPage: 4 });
+          this.isLoading = false;
+
           swal("Selected customers have been deleted!", {
             icon: "success",
           });
@@ -498,20 +510,26 @@ export default defineComponent({
       });
     },
     async handleSearch() {
-      console.log(this.searchText);
+      this.isLoading = true;
+
       await this.fetchAllCustomers({
         page: this.currentPage,
         perPage: 4,
         name: this.searchText,
       });
+      this.isLoading = false;
     },
+
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;
+      this.isLoading = true;
+
       await this.fetchAllCustomers({
         page: pageNumber,
         perPage: 4,
         name: null,
       });
+      this.isLoading = false;
     },
     navigateToCustomerDetailPage(customerId) {
       // Utilisez le routeur de Vue pour naviguer vers la page détaillée du client
@@ -569,7 +587,9 @@ export default defineComponent({
     },
   },
   async mounted() {
+    this.isLoading = true;
     await this.fetchAllCustomers({ page: 1, perPage: 4 });
+    this.isLoading = false;
     console.log(this.getCustomers);
     this.storageUrl = storageUrl;
   },
