@@ -94,18 +94,10 @@ const actions = {
             category_events?: { name?: { $contains: string } };
             partner?: { name?: { $contains: string }; surname?: { $contains: string } };
           }>;
-          active?: { $eq: boolean };
+          $and?: Array<{ active?: { $eq: boolean } }>;
         };
       } = {
       };
-
-      // filters.populate = [
-      //   'category_events',
-      //   'photos',
-      //   'partner',
-      //   'partner.sharedImage.media',
-      // ];
-
       if (page) {
         filters.pagination = { page: page, pageSize: perPage };
       }
@@ -129,19 +121,15 @@ const actions = {
       if (isActive !== 'All') {
         filters.filters = {
           ...(filters.filters || {}),
-          active: { $eq: isActive === 'true' }
+          $and: [{ active: { $eq: isActive === 'true' } }] // Utilisation de $and avec un seul élément
         };
       }
-
-
-
       const response = await makeApiRequest(
         methodsHttpNames.GET,
         `${endPoints.allEvents}/?populate=deep`,
         undefined,
         filters
       );
-      console.log(response)
       if (response.success) {
         commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
         commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);

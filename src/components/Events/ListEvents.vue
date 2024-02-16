@@ -9,25 +9,35 @@
     <div
       class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between pt-15 pb-15 ps-15 pe-15 ps-sm-20 pe-sm-20 ps-md-25 pe-md-25 ps-lg-30 pe-lg-30"
     >
-      <div class="d-sm-flex align-items-center">
+      <div class="d-flex align-items-center">
         <form
           class="search-box position-relative"
           @submit.prevent="handleSearch"
         >
           <input
             type="text"
-            class="form-control shadow-none text-black rounded-0 border-0"
-            placeholder="Search event"
+            class="form-control shadow-none rounded-0 border-0 pr-40"
+            placeholder="Search here"
+            style="width: calc(100% - 40px)"
             v-model="searchText"
+            @input="handleSearch"
           />
           <button
-            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
+            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-15 fs-lg-16 bg-primary"
             type="submit"
+            style="
+              position: absolute;
+              right: 0;
+              top: 50%;
+              transform: translateY(-50%);
+            "
             :disabled="getEventsLoading"
           >
+            Search
+
             <i
               v-if="!getEventsLoading"
-              class="flaticon-search-interface-symbol"
+              class="flaticon-search-interface-symbol position-relative ms-5 top-1"
             ></i>
             <div
               v-if="getEventsLoading"
@@ -55,6 +65,18 @@
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
+        <button
+          v-if="isFilterActive"
+          class="default-outline-btn transition border fw-medium text-black pt-2 pb-4 ps-1 pe-4 pt-md-6 pb-md-3 ps-md-1 pe-md-1 rounded-1 fs-md-5 fs-lg-5 bg-transparent"
+          type="button"
+          @click="resetFilters"
+        >
+          Reset
+          <i
+            class="flaticon-refresh position-relative ms-5 top-2 fs-15"
+            style="margin-left: 3px"
+          ></i>
+        </button>
       </div>
       <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
         <button
@@ -255,19 +277,6 @@
                 </a>
               </li>
             </ul>
-            <!-- <router-link
-              :to="`/event-details/${event.id}`"
-              class="link-btn p-12 p-sm-15 p-md-20 d-flex align-items-center justify-content-between w-100 text-decoration-none fw-medium text-muted"
-            >
-              <span v-if="event.active == true" class="position-relative"
-                >Active</span
-              >
-              <span v-if="event.active == false" class="position-relative"
-                >Inactive</span
-              >
-
-              <i class="ph ph-arrow-right"></i>
-            </router-link> -->
           </div>
         </div>
       </div>
@@ -353,6 +362,13 @@ export default {
   },
   methods: {
     ...mapActions(["fetchAllEvents", "deleteEvent", "getEventsLoading"]),
+    resetFilters() {
+      // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
+      this.searchText = "";
+      this.isActiveFilter = "All";
+      // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
+      this.handleFilterChange();
+    },
     deleteSelectedCustomers() {
       const selectedEvents = [];
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -531,6 +547,9 @@ export default {
       "getTotalPages",
       "getTotalItems",
     ]),
+    isFilterActive() {
+      return this.searchText !== "" || this.isActiveFilter !== "All";
+    },
   },
   async mounted() {
     this.storageUrl = storageUrl;
