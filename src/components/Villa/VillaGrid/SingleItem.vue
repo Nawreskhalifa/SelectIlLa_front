@@ -13,7 +13,7 @@
       <div class="card-body p-0 letter-spacing">
         <div class="image position-relative">
           <img
-            @click="toggleModal"
+            @click="toggleModal(villa.id)"
             :src="
               getFullImageUrl(villa.attributes.photos.data[0].attributes.url)
             "
@@ -141,9 +141,10 @@ export default {
     addToFavorites() {
       console.log("Add to favorites:", this.villa);
     },
-    toggleModal() {
-      this.modalActive = !this.modalActive;
-    },
+    toggleModal(id) {
+            this.$router.push({ name: 'villadetails', params: { id: id }})
+
+     },
     handleDelete(confirmed) {
       if (confirmed) {
         this.$emit("itemDeleted", this.villa.id);

@@ -264,7 +264,24 @@ export async function deleteVehicle(vehicleId) {
   }
 }
 
-
+export async function fetchVehicleById(vehicleId,query="?populate=deep"){
+    try {
+    const response = await axios.get(`${endPoints.vehicles}/${vehicleId}/${query}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error  fetch vehicle with ID ${vehicleId}:`, error);
+    throw error;
+  }
+}
+export async function fetchVillaById(id,query="?populate=deep"){
+    try {
+    const response = await axios.get(`${endPoints.villa}/${id}/${query}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error  fetch vehicle with ID ${id}:`, error);
+    throw error;
+  }
+}
 export async function fetchVehicleCategories(query = "") {
   try {
     const response = await axios.get(`${endPoints.vehiclesCategories}?${query}`);
@@ -1069,7 +1086,7 @@ export async function postPartner(partner) {
 // http://localhost:1337/api/brands
   export async function  fetchBrandMyMake(id){
 try {
-      const response = await axios.get(`${endPoints.brands}?populate=*&filters[make][id][$eq]=${id}`);
+      const response = await axios.get(`${endPoints.brands}?populate=deep&filters[make][id][$eq]=${id}`);
       if (response) {
          return response.data;
       } else {

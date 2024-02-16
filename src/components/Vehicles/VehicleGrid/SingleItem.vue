@@ -14,8 +14,8 @@
       <div class="card-body p-0 letter-spacing">
         <div class="image position-relative">
           <img
-          @click="toggleModal"
-          :src="getFullImageUrl(vehicle.attributes.photos.data[0].attributes.url)"
+          @click="toggleModal(vehicle.id)"
+          :src="getFullImageUrl(vehicle.attributes?.photos.data[0].attributes?.url)"
           class="imagev"
           alt="vehicle"
           style="max-width: 100%; height: 200px"
@@ -42,36 +42,36 @@
         </div>
         <div class="content p-20">
           <h4 class="mb-10 fw-semibold fs-16 fs-lg-18">
-          <span>   {{ vehicle.attributes.make?.data.attributes.name }}</span>  - <span>{{ vehicle.attributes.brand?.data.attributes.name }} </span>
+          <span>   {{ vehicle.attributes?.make?.data?.attributes?.name }}</span>  - <span>{{ vehicle.attributes.brand?.data?.attributes?.name }} </span>
           </h4>
 
           <div class="mt-10 price d-flex align-items-center justify-content-between"  >
             <span class="text-primary fw-bold fs-md-15 fs-lg-16">{{
-              vehicle.attributes.msrp
+              vehicle?.attributes?.msrp
             }}</span>
             <div class="lockbtn reviews d-flex align-items-center">
               <button
                 @click="active(false)"
                 class="lock"
-                v-if="vehicle.attributes.isActive"
+                v-if="vehicle?.attributes?.isActive"
               >
                 <i class="fas fa-solid fa-eye-slash"></i>
               </button>
               <button
                 @click="active(true)"
                 class="lock"
-                v-if="!vehicle.attributes.isActive"
+                v-if="!vehicle.attributes?.isActive"
               >
                 <i class="fas fa-eye"></i>
               </button>
             </div>
           </div>
           <span>
-            published : <span v-date="vehicle.attributes.publishedAt"></span>
+            published : <span v-date="vehicle.attributes?.publishedAt"></span>
           </span>
           <br />
           <span>
-            updated : <span v-date="vehicle.attributes.updatedAt"></span>
+            updated : <span v-date="vehicle.attributes?.updatedAt"></span>
           </span>
           <button
             type="button"
@@ -81,15 +81,15 @@
             Update This
             <i class="fas fa-edit"></i>
           </button>
-
+<!--
           <VehicleDetails
             @close="toggleModal"
             :modalActive="modalActive"
             :vehicle="vehicle"
-          ></VehicleDetails>
+          ></VehicleDetails> -->
           <DeleteModal
             :show="deleteModalVisible"
-            :propToDelete="vehicle.attributes.brand.data.attributes?.name"
+            :propToDelete="vehicle.attributes?.brand?.data?.attributes?.name"
             @delete="handleDelete"
           />
           <UpdateVehicle
@@ -106,7 +106,7 @@
 
 <script>
 import { ref } from "vue";
-import VehicleDetails from "../VehicleDetails/VehicleDetails.vue";
+// import VehicleDetails from "../VehicleDetails/VehicleDetails.vue";
 import DeleteModal from "@/components/Common/DeleteModal.vue";
 import UpdateVehicle from "../UpdateVehicle/UpdateVehicle.vue";
 import { updateVehicle } from "@/services/apiService";
@@ -136,8 +136,9 @@ export default {
     addToFavorites() {
       console.log("Add to favorites:", this.vehicle);
     },
-    toggleModal() {
-      this.modalActive = !this.modalActive;
+    toggleModal(id) {
+      this.$router.push({ name: 'vehicledetails', params: { id: id }})
+      // this.modalActive = !this.modalActive;
     },
     async active(value) {
       if (value === true) {
@@ -193,7 +194,7 @@ export default {
     },
   },
   components: {
-    VehicleDetails,
+    // VehicleDetails,
     DeleteModal,
     UpdateVehicle,
   },

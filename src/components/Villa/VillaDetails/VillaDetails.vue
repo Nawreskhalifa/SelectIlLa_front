@@ -113,7 +113,7 @@
                           :key="categorie.id"
                           >{{ categorie.attributes.name }}
                         </span> -->
-<span class="text-black fw-semibold d-inline-block">
+                       <span class="text-black fw-semibold d-inline-block">
                           Categories:
                         </span>
                        <div

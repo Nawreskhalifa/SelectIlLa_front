@@ -1,7 +1,10 @@
 
 import { createWebHistory, createRouter } from "vue-router";
 import AddVehicle from "@/pages/Vehicle/AddVehicle.vue"
-import VehicleList from "@/pages/Vehicle/VehicleList.vue"
+import VehicleList from "@/pages/Vehicle/VehicleList.vue";
+import VehicleDetails from "../pages/Vehicle/VehicleDetails.vue"
+import VillaDetails from "@/pages/Villa/VillaDetails.vue"
+
 import VillaList from "@/pages/Villa/VillaList.vue"
 import AddVilla from "@/pages/Villa/AddVilla.vue"
 import AddVehicleCategory from "../pages/Categories/Vehicle/AddVehicleCategory.vue"
@@ -288,6 +291,20 @@ const routes = [
 
     meta: { auth: true }
 
+  },
+    {
+    path: "/vehicledetails/:id",
+    name: "vehicledetails",
+    component: VehicleDetails,
+    beforeEnter: guardMyroute,
+    meta: { auth: true }
+  },
+     {
+    path: "/villadetails/:id",
+    name: "villadetails",
+    component: VillaDetails,
+    beforeEnter: guardMyroute,
+    meta: { auth: true }
   },
   {
     path: "/add-partner",

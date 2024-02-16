@@ -6,8 +6,8 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb mb-0 list-unstyled ps-0">
         <li class="breadcrumb-item">
-          <router-link to="/" class="text-decoration-none text-black">
-            Dashboard
+          <router-link :to="url" class="text-decoration-none text-black">
+            {{PrevPage}}
           </router-link>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
@@ -18,11 +18,24 @@
   </div>
 </template>
 
-<script lang="ts">
+<script  >
 import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "BreadCrumb",
-  props: ["PageTitle"],
+  props: {
+    PageTitle:{
+      type:String ,
+      required: true
+    },
+    PrevPage:{
+      type:String ,
+       default:'Dashboard'
+    },
+    url:{
+       type:String ,
+       default:'/'
+    }
+  },
 });
 </script>

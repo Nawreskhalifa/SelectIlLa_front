@@ -1,19 +1,16 @@
 <template>
-  <BreadCrumb PageTitle="Vehicles" />
-  <VehicleDetails />
+   <VillaDetails />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 
-import BreadCrumb from "../../components/Common/BreadCrumb.vue";
-import VehicleDetails from "../../components/Vehicles/VehicleDetails/VehicleDetails.vue";
+ import VillaDetails from "../../components/Villa/VillaDetailsPage/VillaDetailsPage.vue";
 
 export default defineComponent({
   name: "ProductsGridPage",
   components: {
-    BreadCrumb,
-    VehicleDetails,
+     VillaDetails,
   },
 });
 </script>
