@@ -338,12 +338,7 @@
                 type="submit"
                 :disabled="getEventsLoading"
               >
-                <span v-if="!getEventsLoading">Save Event</span>
-                <div
-                  v-if="getEventsLoading"
-                  class="spinner-border"
-                  role="status"
-                ></div>
+                <span>Save Event</span>
               </button>
             </div>
           </div>

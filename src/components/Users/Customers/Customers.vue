@@ -30,14 +30,9 @@
             Search
 
             <i
-              v-if="!getUsersLoading"
+
               class="flaticon-search-interface-symbol position-relative ms-5 top-1"
             ></i>
-            <div
-              v-if="getUsersLoading"
-              class="spinner-border"
-              role="status"
-            ></div>
           </button>
         </form>
       </div>

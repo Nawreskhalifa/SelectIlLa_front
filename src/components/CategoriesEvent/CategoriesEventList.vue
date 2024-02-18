@@ -31,14 +31,8 @@
             Search
 
             <i
-              v-if="!getCategoriesLoading"
               class="flaticon-search-interface-symbol position-relative ms-5 top-1"
             ></i>
-            <div
-              v-if="getCategoriesLoading"
-              class="spinner-border"
-              role="status"
-            ></div>
           </button>
         </form>
       </div>

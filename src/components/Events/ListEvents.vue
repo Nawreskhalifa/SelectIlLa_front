@@ -40,14 +40,8 @@
             Search
 
             <i
-              v-if="!getEventsLoading"
               class="flaticon-search-interface-symbol position-relative ms-5 top-1"
             ></i>
-            <div
-              v-if="getEventsLoading"
-              class="spinner-border"
-              role="status"
-            ></div>
           </button>
         </form>
       </div>
@@ -248,9 +242,6 @@
                   }}
                 </span>
               </span>
-              <!-- <span class="badge text-outline-danger ms-10">{{
-                event.active
-              }}</span> -->
             </div>
             <p class="text-paragraph lh-base fs-md-15">
               {{ truncateDescription(event.description) }}

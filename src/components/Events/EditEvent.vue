@@ -104,36 +104,6 @@
               >
             </div>
           </div>
-          <!-- <div class="col-md-12">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <fieldset>
-                <details>
-                  <summary>Select categories:</summary>
-                  <div class="col-md-6">
-                    <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                      <label class="d-block text-black fw-semibold mb-10">
-                        Categories
-                      </label>
-                      <select
-                        class="form-select shadow-none fw-semibold rounded-0 select-same-width"
-                        style="height: 47px; border-color: #eeeee4"
-                        v-model="selectedCategories"
-                      >
-                        <option value="" selected>Select a partner</option>
-                        <option
-                          v-for="category in getCategoriesEvent"
-                          :key="category.id"
-                          :value="category.id"
-                        >
-                          {{ category.name }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </details>
-              </fieldset>
-            </div>
-          </div> -->
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10"
@@ -351,12 +321,7 @@
                   type="submit"
                   :disabled="getCategoriesLoading"
                 >
-                  <span v-if="!getCategoriesLoading">Save Event</span>
-                  <div
-                    v-if="getCategoriesLoading"
-                    class="spinner-border"
-                    role="status"
-                  ></div>
+                  <span>Save Event</span>
                 </button>
               </div>
             </div>
