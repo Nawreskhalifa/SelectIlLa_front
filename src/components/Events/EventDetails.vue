@@ -277,6 +277,11 @@
       </div>
     </div>
   </div>
+  <loading
+    v-model:active="getEventsLoading"
+    :can-cancel="true"
+    :is-full-page="true"
+  />
 </template>
 
 <script>
@@ -285,9 +290,13 @@ import { mapActions, mapGetters } from "vuex";
 import swal from "sweetalert";
 import { storageUrl } from "../../utils/constants";
 import Swiper from "swiper";
-
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 export default defineComponent({
   name: "EventDetails",
+  components: {
+    Loading,
+  },
   data() {
     return {
       storageUrl: "",
@@ -295,7 +304,7 @@ export default defineComponent({
     };
   },
   methods: {
-    ...mapActions(["fetchOneEvent", "deleteCategoryEvent"]),
+    ...mapActions(["fetchOneEvent", "deleteCategoryEvent", "getEventsLoading"]),
     getDayOfMonth(inputDate) {
       // Création d'un objet Date à partir de la chaîne de date d'entrée
       var dateObject = new Date(inputDate);
