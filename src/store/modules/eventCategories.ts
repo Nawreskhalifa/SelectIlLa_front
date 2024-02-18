@@ -106,16 +106,19 @@ const actions = {
                     }>;
                 };
                 sort?: string[];
-            } = {sort: []}
-            // Add sorting options
-            // if (sortDirectionName!==null) {
-
-            //         filters.sort.push(`name:${sortDirectionName}`);
-
-            // }
+            } = { sort: [] }
             if (page !== null) {
                 filters = { pagination: { page: page, pageSize: perPage } };
             }
+            //    Add sorting options
+            if (sortDirectionName != null) {
+                filters.sort = [];
+                filters.sort.push(`name:${sortDirectionName}`);
+                console.log(filters.sort)
+
+
+            }
+
             // Add the name filter if specified
             if (name) {
                 filters.filters = {
@@ -133,7 +136,6 @@ const actions = {
             );
             console.log(response.data.data.map(decodeApiToEventCategory))
             if (response.success) {
-                console.log("dd", response.data.meta.pagination);
                 commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
                 commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
                 commit('SET_CATEGORIES', response.data.data.map(decodeApiToEventCategory))

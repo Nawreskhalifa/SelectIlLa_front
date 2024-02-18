@@ -152,6 +152,16 @@
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
+                        @click.prevent="navigateToEditCategoryPage(category.id)"
+                        ><i
+                          class="flaticon-pen lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Edit</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
                         @click.prevent="deleteCategory(category.id)"
                         ><i
                           class="flaticon-delete lh-1 me-8 position-relative top-1"
@@ -218,7 +228,6 @@
     <loading
       v-model:active="getCategoriesLoading"
       :can-cancel="true"
-      :on-cancel="onCancel"
       :is-full-page="true"
     />
   </div>
@@ -249,11 +258,16 @@ export default defineComponent({
       "deleteCategoryEvent",
       "getCategoriesLoading",
     ]),
-    toggleSortDirection() {
+    async toggleSortDirection() {
       // Basculer entre ascendant et descendant
       this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
       // Appeler handleFilterChange pour appliquer le nouveau tri
-      this.handleSearch();
+      await this.fetchAllCategoriesEvent({
+        page: this.currentPage,
+        perPage: 4,
+        name: this.searchText,
+        sortDirectionName: this.sortDirection,
+      });
     },
     deleteSelectedCategories() {
       const selectedCategories = [];
@@ -306,7 +320,6 @@ export default defineComponent({
         page: this.currentPage,
         perPage: 4,
         name: this.searchText,
-        sortDirectionName: this.sortDirection,
       });
     },
     async onPageChange(pageNumber) {
