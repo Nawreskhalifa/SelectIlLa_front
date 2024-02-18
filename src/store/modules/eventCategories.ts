@@ -67,7 +67,6 @@ const actions = {
                 },
                 undefined
             );
-            console.log(response.data.data)
             if (response.success) {
 
                 commit('UPDATE_CATEGORY', {
@@ -114,7 +113,6 @@ const actions = {
             if (sortDirectionName != null) {
                 filters.sort = [];
                 filters.sort.push(`name:${sortDirectionName}`);
-                console.log(filters.sort)
 
 
             }
@@ -134,7 +132,6 @@ const actions = {
                 undefined,
                 filters
             );
-            console.log(response.data.data.map(decodeApiToEventCategory))
             if (response.success) {
                 commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
                 commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
@@ -223,7 +220,6 @@ const actions = {
         commit('SET_CATEGORIES_LOADING', true)
         commit('SET_CATEGORIES_ERROR')
         try {
-            console.log(payload)
             const response = await makeApiRequest(
                 methodsHttpNames.POST,
                 endPoints.createCategoryEvent,
