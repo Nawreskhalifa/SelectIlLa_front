@@ -162,7 +162,7 @@
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
-                        @click.prevent="deleteCategory(category.id)"
+                        @click="deleteCategory(category.id)"
                         ><i
                           class="flaticon-delete lh-1 me-8 position-relative top-1"
                         ></i>
@@ -230,6 +230,13 @@
       :can-cancel="true"
       :is-full-page="true"
     />
+    <CustomModal
+      :show="showModal"
+      :msg="modalMessage"
+      :messageType="messageType"
+      @action="handleModalAction"
+      @close="showModal = false"
+    />
   </div>
 </template>
 
@@ -239,10 +246,12 @@ import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import CustomModal from "../Common/CustomModal.vue";
 export default defineComponent({
   name: "CategoriesEventList",
   components: {
     Loading,
+    CustomModal,
   },
   data() {
     return {
@@ -250,6 +259,10 @@ export default defineComponent({
       searchText: "",
       selectAllChecked: false,
       sortDirection: "asc",
+      showModal: false,
+      modalMessage: "",
+      categoryIdToDelete: null, // Ajoutez la propriété pour stocker l'ID de la catégorie à supprimer
+      messageType: "delete",
     };
   },
   methods: {
@@ -351,25 +364,21 @@ export default defineComponent({
       }
     },
     async deleteCategory(id) {
-      swal({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this category!",
-        icon: "warning",
-        buttons: ["Cancel", "Delete"],
-        dangerMode: true,
-      }).then(async (willDelete) => {
-        if (willDelete) {
-          // Call the deleteCategoryEvent action or API endpoint to delete the category
-          await this.deleteCategoryEvent(id);
-          swal({
-            text: "Category deleted Successfully!",
-            icon: "success",
-            closeOnClickOutside: false,
-          });
-        } else {
-          swal("Category is safe!");
-        }
-      });
+      this.showModal = true;
+      this.modalMessage = "Are you sure you want to delete this category?";
+      this.categoryIdToDelete = id;
+    },
+    async handleModalAction(confirmed) {
+      // Fermer la modal
+      this.showModal = false;
+      // Vérifier si l'utilisateur a confirmé
+      if (confirmed) {
+        // Appeler la méthode de suppression de la catégorie ici
+        // Utilisez this.categoryIdToDelete pour obtenir l'ID de la catégorie à supprimer
+        await this.deleteCategoryEvent(this.categoryIdToDelete);
+        // Suppression confirmée, afficher un message de succès
+        this.$emit("categoryDeleted");
+      }
     },
   },
   computed: {
