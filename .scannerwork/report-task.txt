@@ -1,0 +1,6 @@
+projectKey=SelectIlLaFront
+serverUrl=http://localhost:9000
+serverVersion=10.4.0.87286
+dashboardUrl=http://localhost:9000/dashboard?id=SelectIlLaFront
+ceTaskId=a7ac8101-8a3d-4116-b99c-9dd639634f6c
+ceTaskUrl=http://localhost:9000/api/ce/task?id=a7ac8101-8a3d-4116-b99c-9dd639634f6c
