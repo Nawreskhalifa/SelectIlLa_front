@@ -153,7 +153,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${token}`;
         return api(originalRequest);
       } else {
-        throw error; // Re-throw the original error if refreshToken fails
+        throw error;
       }
     }
 
@@ -165,24 +165,17 @@ api.interceptors.response.use(
 
 export async function logIn(identifier: string, password: string) {
   try {
-    // Send a POST request to the login endpoint with user credentials
-    const response = await axios.post(endPoints.login, {
+     const response = await axios.post(endPoints.login, {
       identifier: identifier,
       password: password
     });
 
-    // Extract JWT token and user data from the response
-    const { jwt, user } = response.data;
-
-    // Store JWT token and user data in local storage for future use
+     const { jwt, user } = response.data;
     window.localStorage.setItem(keys.token, jwt);
     window.localStorage.setItem(keys.userData, JSON.stringify(user));
-
-    // Return success along with response data and status
-    return { message: "", data: response.data, status: response.status };
+     return { message: "", data: response.data, status: response.status };
   } catch (error: any) {
-    // Handle errors in case of login failure
-    return {
+     return {
       status: error?.response?.data.error.status,
       message: error?.response.data.error.message,
       data: null
