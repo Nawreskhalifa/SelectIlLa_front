@@ -144,7 +144,7 @@
                           navigateToCategoryDetailPage(category.id)
                         "
                         ><i
-                          class="flaticon-pen lh-1 me-8 position-relative top-1"
+                          class="flaticon-view lh-1 me-8 position-relative top-1"
                         ></i>
                         View</a
                       >

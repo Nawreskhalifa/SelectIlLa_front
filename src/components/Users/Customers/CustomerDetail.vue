@@ -1,4 +1,10 @@
 <template>
+  <BreadCrumb
+    :PrevPage="'Customers List'"
+    :url="'/customersList'"
+    :PageTitle="customer.name"
+  />
+
   <div class="row">
     <div class="col-lg-5 col-xl-4">
       <CustomersInformation :customerId="idCustomer" />
@@ -465,10 +471,11 @@ import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import { updateReservation, acceptReservation } from "@/services/apiService";
+import BreadCrumb from "../../Common/BreadCrumb.vue";
 
 export default defineComponent({
   name: "CustomerDetail",
-  components: { CustomersInformation, Media, Loading },
+  components: { CustomersInformation, Media, Loading, BreadCrumb },
   props: {
     // Define the 'customer id' prop
     customerId: {
