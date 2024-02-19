@@ -115,7 +115,7 @@
               :class="{ disabled: selectedCount === 0 }"
               class="dropdown-item d-flex align-items-center"
               href="javascript:void(0);"
-              @click="selectedCount !== 0 && deleteSelectedCustomers()"
+              @click="deleteSelectedCustomers"
             >
               <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
               Delete Selected
@@ -187,7 +187,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(customer, index) in getCustomers" :key="index">
+            <tr
+              v-for="(customer, index) in getCustomers"
+              :key="index"
+              @click="navigateToCustomerDetailPage(customer.id, $event)"
+              style="cursor: pointer"
+            >
               <th
                 class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
               >
@@ -245,7 +250,9 @@
                       <a
                         class="dropdown-item d-flex align-items-center"
                         href="javascript:void(0);"
-                        @click="navigateToCustomerDetailPage(customer.id)"
+                        @click="
+                          navigateToCustomerDetailPage(customer.id, $event)
+                        "
                       >
                         <i
                           class="flaticon-view lh-1 me-8 position-relative top-1"
@@ -532,7 +539,10 @@ export default defineComponent({
       });
       this.isLoading = false;
     },
-    navigateToCustomerDetailPage(customerId) {
+    navigateToCustomerDetailPage(customerId, event) {
+      if (event.target.tagName.toLowerCase() === "input") {
+        return; // Ne rien faire si c'est la case à cocher qui a été cliquée
+      }
       // Utilisez le routeur de Vue pour naviguer vers la page détaillée du client
       this.$router.push({
         name: "CustomerDetailPage",
