@@ -433,6 +433,7 @@ export default defineComponent({
       const newPhotos = Array.from(event.target.files);
 
       this.photos.push(...newPhotos);
+      console.log(this.photos);
       this.selectedPhotos = [];
       this.photos.forEach((item) => {
         this.selectedPhotos.push({
