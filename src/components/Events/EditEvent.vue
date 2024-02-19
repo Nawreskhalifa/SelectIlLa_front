@@ -330,6 +330,18 @@
                 >
                   <span>Save Event</span>
                 </button>
+                <button
+                  type="button"
+                  class="bg-transparent p-0 border-0 text-danger lh-1 fw-medium"
+                  @click="deleteAllSelectedPhotos"
+                >
+                  <i
+                    class="flaticon-delete lh-1 me-1 position-relative top-2"
+                  ></i>
+                  <span class="position-relative"
+                    >Delete All Selected Photos</span
+                  >
+                </button>
               </div>
             </div>
           </div>
@@ -439,7 +451,6 @@ export default defineComponent({
           this.selectedCategories.push(selectedCategory);
         }
       }
-      console.log(this.selectedCategories);
     },
 
     removeNewImage(index) {
@@ -448,6 +459,10 @@ export default defineComponent({
     removeImageFromDatabase(obj, index) {
       this.updatedPhotos.push(obj.id);
       this.photosFromDatabase.splice(index, 1);
+    },
+    deleteAllSelectedPhotos() {
+      this.photos = [];
+      this.selectedCategories = [];
     },
     handleFileUpload(event) {
       const files = event.target.files;

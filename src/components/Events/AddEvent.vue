@@ -319,6 +319,18 @@
               >
                 <span>Save Event</span>
               </button>
+              <button
+                type="button"
+                class="bg-transparent p-0 border-0 text-danger lh-1 fw-medium"
+                @click="deleteAllSelectedPhotos"
+              >
+                <i
+                  class="flaticon-delete lh-1 me-1 position-relative top-2"
+                ></i>
+                <span class="position-relative"
+                  >Delete All Selected Photos</span
+                >
+              </button>
             </div>
           </div>
         </div>
@@ -428,6 +440,10 @@ export default defineComponent({
           url: URL.createObjectURL(item),
         });
       });
+    },
+    deleteAllSelectedPhotos() {
+      this.photos = [];
+      this.selectedPhotos = [];
     },
     removeImage(index) {
       // Supprimer l'image à l'index spécifié
