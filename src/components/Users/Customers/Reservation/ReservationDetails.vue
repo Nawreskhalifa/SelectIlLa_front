@@ -579,7 +579,6 @@ export default defineComponent({
               // Afficher un message de succès
               swal({
                 text: "Reservation Confirmed Successfully!",
-                icon: "success",
                 closeOnClickOutside: false,
               });
             }

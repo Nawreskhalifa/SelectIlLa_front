@@ -15,7 +15,9 @@
                 placeholder="e.g. Adam"
                 required
               />
-              <p v-if="!name" class="text-danger">First name is required</p>
+              <p v-if="formSubmitted && !name" class="text-danger">
+                First name is required
+              </p>
             </div>
           </div>
           <div class="col-md-6">
@@ -30,7 +32,9 @@
                 placeholder="e.g. Smith"
                 required
               />
-              <p v-if="!surname" class="text-danger">Last name is required</p>
+              <p v-if="formSubmitted && !surname" class="text-danger">
+                Last name is required
+              </p>
             </div>
           </div>
           <div class="col-md-6">
@@ -47,7 +51,9 @@
                 <option value="Female">Female</option>
                 <option value="Male">Male</option>
               </select>
-              <p v-if="!gender" class="text-danger">Gender is required</p>
+              <p v-if="formSubmitted && !gender" class="text-danger">
+                Gender is required
+              </p>
             </div>
           </div>
           <div class="col-md-6">
@@ -63,7 +69,7 @@
                 required
                 :max="getCurrentDate()"
               />
-              <p v-if="!dateOfBirth" class="text-danger">
+              <p v-if="formSubmitted && !dateOfBirth" class="text-danger">
                 Date of birth is required
               </p>
             </div>
@@ -80,7 +86,9 @@
                 placeholder="add your address here"
                 required
               />
-              <p v-if="!address" class="text-danger">Address is required</p>
+              <p v-if="formSubmitted && !address" class="text-danger">
+                Address is required
+              </p>
             </div>
           </div>
           <div class="col-md-6">
@@ -96,8 +104,13 @@
                 required
               />
             </div>
-            <p v-if="!phone" class="text-danger">Phone number is required</p>
-            <p v-if="phone && isNaN(phone)" class="text-danger">
+            <p v-if="formSubmitted && !phone" class="text-danger">
+              Phone number is required
+            </p>
+            <p
+              v-if="formSubmitted && phone && isNaN(phone)"
+              class="text-danger"
+            >
               Please enter a valid number for the phone number.
             </p>
           </div>
@@ -113,7 +126,7 @@
                 placeholder="e.g. 1236547898"
                 required
               />
-              <p v-if="!driver_license" class="text-danger">
+              <p v-if="formSubmitted && !driver_license" class="text-danger">
                 Driver license is required
               </p>
             </div>
@@ -130,7 +143,7 @@
                 placeholder="e.g. Health"
                 required
               />
-              <p v-if="Insurance" class="text-danger">
+              <p v-if="formSubmitted && Insurance" class="text-danger">
                 Insurance type is required
               </p>
             </div>
@@ -147,8 +160,13 @@
                 placeholder="e.g. adam127704@gmail.com"
                 required
               />
-              <p v-if="!email" class="text-danger">Email is required</p>
-              <p v-if="email && !validateEmail(email)" class="text-danger">
+              <p v-if="formSubmitted && !email" class="text-danger">
+                Email is required
+              </p>
+              <p
+                v-if="formSubmitted && email && !validateEmail(email)"
+                class="text-danger"
+              >
                 Invalid email format
               </p>
             </div>
@@ -166,7 +184,9 @@
                 placeholder="e.g. AaSmith123"
                 required
               />
-              <p v-if="!password" class="text-danger">Password is required</p>
+              <p v-if="formSubmitted && !password" class="text-danger">
+                Password is required
+              </p>
             </div>
           </div>
 
@@ -242,6 +262,7 @@
                 <button
                   class="default-btn position-relative transition border-0 fw-medium text-white pt-8 pb-8 ps-15 pe-15 pt-md-12 pb-md-12 ps-md-20 pe-md-20"
                   type="submit"
+                  @click="setFormSubmitted"
                 >
                   Add User
                 </button>
@@ -254,7 +275,6 @@
     <loading
       v-model:active="isLoading"
       :can-cancel="true"
-      :on-cancel="onCancel"
       :is-full-page="true"
     />
   </div>
@@ -304,7 +324,7 @@ export default defineComponent({
       Insurance: "",
       driver_license: "",
       formSubmitted: false,
-      isValid:false,
+      isValid: false,
       errors: {
         name: "",
         surname: "",
@@ -317,10 +337,14 @@ export default defineComponent({
         email: "",
         password: "",
         photo: "",
+        formSubmitted: false,
       },
     };
   },
   methods: {
+    setFormSubmitted() {
+      this.formSubmitted = true;
+    },
     handleFileUpload(event) {
       // Vérifie si un fichier a été sélectionné
       if (event.target.files.length > 0) {
@@ -369,7 +393,7 @@ export default defineComponent({
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
     async addUser() {
-      console.log('submit')
+      console.log("submit");
 
       this.formSubmitted = true;
       this.isLoading = true;
@@ -443,7 +467,6 @@ export default defineComponent({
       //   }
       //   return; // Arrêter la soumission si des erreurs sont trouvées
       // }
-
 
       try {
         // Soumettre le formulaire
@@ -530,7 +553,6 @@ export default defineComponent({
       if (response.data && response.data.length > 0) {
         swal({
           text: "Email already exists!",
-          icon: "error",
           closeOnClickOutside: false,
         });
       } else {

@@ -1,282 +1,318 @@
 <template>
   <div class="row">
-    <div class="col-12">
-      <div
-        class="card mb-30 border-0 rounded-0 bg-white event-details-card container-fluid"
+    <div
+      class="card mb-30 border-0 rounded-0 bg-white event-details-card container-fluid"
+    >
+      <swiper
+        :modules="modules"
+        :slides-per-view="1"
+        :space-between="50"
+        navigation
+        :pagination="{ clickable: true }"
+        :scrollbar="{ draggable: true }"
+        @swiper="onSwiper"
+        @slideChange="onSlideChange"
       >
-        <div class="swiper-container event-swiper">
-          <div class="swiper-wrapper">
-            <!-- Boucle sur toutes les images de l'événement -->
-            <div
-              class="swiper-slide"
-              v-for="(photo, index) in getEvent?.photos"
-              :key="index"
-            >
-              <img
-                v-if="storageUrl && photo.url"
-                :src="storageUrl + photo.url"
-                alt="event-image"
-                class="card-image"
-              />
-            </div>
-          </div>
-          <!-- Ajouter les flèches de navigation -->
-          <div class="swiper-button-next"></div>
-          <div class="swiper-button-prev"></div>
-        </div>
-        <div class="card-body p-15 letter-spacing">
-          <div class="ps-5 pe-5 mb-15 ps-sm-20 pe-sm-20 mb-sm-25">
-            <div
-              class="mb-12 mb-md-20 d-lg-flex align-items-center justify-content-between"
-            >
-              <div class="d-lg-flex align-items-center">
-                <div class="date rounded-1 text-center">
-                  <span class="d-block bg-primary text-white fs-md-15 fw-bold">
-                    {{ getDayAbbreviation(getEvent?.startDate) }}
-                  </span>
-                  <span class="d-block text-black fw-black">{{
-                    getDayOfMonth(getEvent?.startDate)
-                  }}</span>
-                </div>
-                <div class="ms-lg-20 mt-15 mt-lg-0">
-                  <h5 class="fs-15 fs-md-16 fs-lg-18 mb-8 mb-md-12 fw-bold">
-                    <a href="#" class="text-black text-decoration-none">
-                      {{ getEvent?.name }}
-                    </a>
-                  </h5>
-                  <div class="d-flex align-items-center">
-                    <span class="d-block text-muted">
-                      Promote by:
-                      <span class="fw-semibold text-primary"
-                        >{{
-                          getEvent?.partner?.attributes.name +
-                          " " +
-                          getEvent?.partner?.attributes.surname
-                        }}
-                      </span>
-                    </span>
-                    <span
-                      v-if="getEvent?.active == true"
-                      class="badge text-outline-success ms-10"
-                      >Active</span
-                    >
-                    <span
-                      v-if="getEvent?.active == false"
-                      class="badge text-outline-danger ms-10"
-                      >Inactive</span
-                    >
-                  </div>
-                  <div style="display: flex; justify-content: space-between">
-                    <span class="d-block text-muted"> Categories: </span>
-                    <div
-                      v-for="(e, index) in getEvent?.categoryEvents"
-                      :key="e.id"
-                    >
-                      <span class="d-inline-block text-primary">{{
-                        e.name
-                      }}</span>
-                      <!-- Ajouter un séparateur sauf pour le dernier élément -->
-                      <span
-                        v-if="index !== getEvent.categoryEvents.length - 1"
-                        class="text-muted"
-                      >
-                        -
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="info bg-gray">
-            <div class="row">
-              <div class="col-sm-6 col-lg-3">
-                <div class="info-card position-relative">
-                  <div
-                    class="icon bg-info rounded-circle text-center position-absolute start-0 text-white"
-                  >
-                    <i class="flaticon-clock"></i>
-                  </div>
-                  <span
-                    class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
-                  >
-                    Starts:
-                  </span>
-                  <span class="fw-medium text-paragraph">
-                    {{ changeDate(getEvent?.startDate) }}
-                    {{ extractHourMinuteFromTime(getEvent?.startTime) }}
-                  </span>
-                </div>
-              </div>
-              <div class="col-sm-6 col-lg-3">
-                <div class="info-card position-relative">
-                  <div
-                    class="icon bg-info rounded-circle text-center position-absolute start-0 text-white"
-                  >
-                    <i class="flaticon-clock"></i>
-                  </div>
-                  <span
-                    class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
-                  >
-                    End:
-                  </span>
-                  <span class="fw-medium text-paragraph">
-                    {{ changeDate(getEvent?.endDate) }}
-                    {{ extractHourMinuteFromTime(getEvent?.endTime) }}
-                  </span>
-                </div>
-              </div>
+        <swiper-slide v-for="(photo, index) in getEvent?.photos" :key="index">
+          <img
+            v-if="storageUrl && photo.url"
+            :src="storageUrl + photo.url"
+            alt="event-image"
+            class="card-image"
+        /></swiper-slide>
+      </swiper>
+      <div class="card-body p-15 letter-spacing">
+        <div class="row">
+          <!-- Ajout d'un conteneur flex -->
 
-              <div class="col-sm-6 col-lg-4">
-                <div class="info-card position-relative">
+          <div class="col text-end">
+            <a
+              class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"
+              href="javascript:void(0);"
+              @click="navigateToEditEventPage(getEvent?.id)"
+            >
+              Edit Event
+            </a>
+          </div>
+        </div>
+        <div class="ps-5 pe-5 mb-15 ps-sm-20 pe-sm-20 mb-sm-25">
+          <div
+            class="mb-12 mb-md-20 d-lg-flex align-items-center justify-content: space-between"
+          >
+            <div class="date rounded-1 text-center">
+              <span class="d-block bg-primary text-white fs-md-15 fw-bold">
+                {{ getDayAbbreviation(getEvent?.startDate) }}
+              </span>
+              <span class="d-block text-black fw-black">{{
+                getDayOfMonth(getEvent?.startDate)
+              }}</span>
+            </div>
+            <div class="ms-lg-20 mt-15 mt-lg-0">
+              <h5 class="fs-15 fs-md-16 fs-lg-18 mb-8 mb-md-12 fw-bold">
+                <a href="#" class="text-black text-decoration-none">
+                  {{ getEvent?.name }}
+                </a>
+              </h5>
+
+              <div class="d-flex align-items-center">
+                <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14">
+                  Promote by:
+                  <span class="fw-semibold text-primary"
+                    >{{
+                      getEvent?.partner?.attributes.name +
+                      " " +
+                      getEvent?.partner?.attributes.surname
+                    }}
+                  </span>
+                </span>
+              </div>
+              <div class="d-flex align-items-center">
+                <div style="display: flex; justify-content: space-between">
+                  <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14">
+                    Categories:
+                  </span>
                   <div
-                    class="icon bg-success rounded-circle text-center position-absolute start-0 text-white"
+                    v-for="(e, index) in getEvent?.categoryEvents"
+                    :key="e.id"
                   >
-                    <i class="flaticon-maps-and-flags"></i>
+                    <span class="text-primary">{{ e.name }}</span>
+                    <span
+                      v-if="index !== getEvent?.categoryEvents.length - 1"
+                      class="text-muted"
+                    >
+                      -
+                    </span>
                   </div>
-                  <span
-                    class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
-                  >
-                    Location:
-                  </span>
-                  <span class="fw-medium text-paragraph">
-                    {{ getEvent?.location }}
-                  </span>
                 </div>
               </div>
-              <div class="col-sm-6 col-lg-4">
-                <div class="info-card position-relative">
-                  <div
-                    class="icon bg-warning rounded-circle text-center position-absolute start-0 text-white"
-                  >
-                    <i class="flaticon-money"></i>
-                  </div>
-                  <span
-                    class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
-                  >
-                    Ticket Price:
+              <div class="d-flex align-items-center">
+                <div style="display: flex; justify-content: space-between">
+                  <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14">
+                    Status:
                   </span>
-                  <span class="fw-medium text-paragraph"
-                    >${{ getEvent?.price }}</span
-                  >
-                </div>
-              </div>
-              <div class="col-sm-6 col-lg-5">
-                <div class="info-card position-relative">
-                  <div
-                    class="icon bg-danger rounded-circle text-center position-absolute start-0 text-white"
-                  >
-                    <i class="flaticon-date-1"></i>
-                  </div>
                   <span
-                    class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
+                    v-if="getEvent?.active == true"
+                    class="badge text-outline-success ms-10"
+                    >Active</span
                   >
-                    Remaining Seats:
-                  </span>
-                  <span class="fw-medium text-paragraph"
-                    >{{ getEvent?.remainingSeats }}/{{
-                      getEvent?.totalSeats
-                    }}</span
-                  >
-                </div>
-              </div>
-              <div class="col-sm-6 col-lg-5">
-                <div class="info-card position-relative">
-                  <div
-                    class="icon bg-danger rounded-circle text-center position-absolute start-0 text-white"
-                  >
-                    <i class="flaticon-date-1"></i>
-                  </div>
                   <span
-                    class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
-                  >
-                    Remaining Bottles:
-                  </span>
-                  <span class="fw-medium text-paragraph"
-                    >{{ getEvent?.remainingBottles }}/{{
-                      getEvent?.totalBottles
-                    }}</span
+                    v-if="getEvent?.active == false"
+                    class="badge text-outline-danger ms-10"
+                    >Inactive</span
                   >
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="card mb-25 border-0 rounded-0 bg-white event-details-card">
-        <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
-          <div class="mb-10 mb-sm-15 mb-lg-20">
-            <h5 class="card-title fw-bold mb-0 fs-15 fs-md-16 fs-lg-18">
-              About The Event
-            </h5>
-          </div>
-          <p class="text-paragraph fs-md-15 fs-lg-16 text-paragraph lh-base">
-            {{ getEvent?.description }}
-          </p>
-        </div>
-      </div>
-      <div class="card mb-25 border-0 rounded-0 bg-white event-details-card">
-        <div
-          class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing contact-card"
-        >
-          <div class="mb-10 mb-sm-15 mb-lg-20">
-            <h3 class="card-title fw-bold mb-0 fs-15 fs-md-16 fs-lg-18">
-              Promoter information's
-            </h3>
-          </div>
-          <div class="card-body p-20 p-md-25 p-lg-30">
-            <div class="mb-15 mb-md-20 mb-lg-25 d-flex justify-content-between">
-              <div class="position-relative rounded-circle">
-                <img
-                  v-if="
-                    storageUrl &&
-                    getEvent?.partner?.attributes.user?.data?.attributes?.photo
-                      ?.data?.attributes?.url
-                  "
-                  :src="
-                    storageUrl +
-                    getEvent?.partner?.attributes.user?.data?.attributes?.photo
-                      ?.data?.attributes.url
-                  "
-                  class="rounded-circle"
-                  width="40"
-                  height="40"
-                  alt="user"
-                />
-              </div>
-            </div>
-            <h5 class="fs-15 fs-md-18 fw-bold text-black mb-0">
-              {{
-                getEvent?.partner?.attributes.name +
-                " " +
-                getEvent?.partner?.attributes.surname
-              }}
-            </h5>
-            <ul class="info-list ps-0 mb-0 list-unstyled">
-              <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
-                <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
-                  >PHONE:</span
+        <div class="info bg-gray">
+          <div class="row">
+            <div class="col-sm-6 col-lg-6">
+              <div class="info-card position-relative">
+                <div
+                  class="icon bg-info rounded-circle text-center position-absolute start-0 text-white"
                 >
+                  <i class="flaticon-clock"></i>
+                </div>
+                <span
+                  class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
+                >
+                  Start:
+                </span>
+                <span class="fw-medium text-paragraph">
+                  {{ changeDate(getEvent?.startDate) }}
+                  {{ extractHourMinuteFromTime(getEvent?.startTime) }}
+                </span>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-6">
+              <div class="info-card position-relative">
+                <div
+                  class="icon bg-info rounded-circle text-center position-absolute start-0 text-white"
+                >
+                  <i class="flaticon-clock"></i>
+                </div>
+                <span
+                  class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
+                >
+                  End:
+                </span>
+                <span class="fw-medium text-paragraph">
+                  {{ changeDate(getEvent?.endDate) }}
+                  {{ extractHourMinuteFromTime(getEvent?.endTime) }}
+                </span>
+              </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-6">
+              <div class="info-card position-relative">
+                <div
+                  class="icon bg-success rounded-circle text-center position-absolute start-0 text-white"
+                >
+                  <i class="flaticon-maps-and-flags"></i>
+                </div>
+                <span
+                  class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
+                >
+                  Location:
+                </span>
+                <span class="fw-medium text-paragraph">
+                  {{ getEvent?.location }}
+                </span>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-6">
+              <div class="info-card position-relative">
+                <div
+                  class="icon bg-warning rounded-circle text-center position-absolute start-0 text-white"
+                >
+                  <i class="flaticon-money"></i>
+                </div>
+                <span
+                  class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
+                >
+                  Ticket Price:
+                </span>
+                <span class="fw-medium text-paragraph"
+                  >${{ getEvent?.price }}</span
+                >
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-6">
+              <div class="info-card position-relative">
+                <div
+                  class="icon bg-danger rounded-circle text-center position-absolute start-0 text-white"
+                >
+                  <i class="flaticon-date-1"></i>
+                </div>
+                <span
+                  class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
+                >
+                  Remaining Seats:
+                </span>
+                <span class="fw-medium text-paragraph"
+                  >{{ getEvent?.remainingSeats }}/{{
+                    getEvent?.totalSeats
+                  }}</span
+                >
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-6">
+              <div class="info-card position-relative">
+                <div
+                  class="icon bg-danger rounded-circle text-center position-absolute start-0 text-white"
+                >
+                  <i class="flaticon-date-1"></i>
+                </div>
+                <span
+                  class="d-block text-black-emphasis fs-md-15 fs-lg-16 fw-bold mb-1"
+                >
+                  Remaining Bottles:
+                </span>
+                <span class="fw-medium text-paragraph"
+                  >{{ getEvent?.remainingBottles }}/{{
+                    getEvent?.totalBottles
+                  }}</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card mb-25 border-0 rounded-0 bg-white event-details-card">
+      <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
+        <div class="mb-10 mb-sm-15 mb-lg-20">
+          <h5 class="card-title fw-bold mb-0 fs-15 fs-md-16 fs-lg-18">
+            About The Event
+          </h5>
+        </div>
+        <p class="text-paragraph fs-md-15 fs-lg-16 text-paragraph lh-base">
+          {{ getEvent?.description }}
+        </p>
+      </div>
+    </div>
+    <div class="card mb-25 border-0 rounded-0 bg-white event-details-card">
+      <div
+        class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing contact-card"
+      >
+        <div class="card mb-25 border-0 rounded-0 bg-white profile-intro-card">
+          <div class="card-body p-15 p-sm-20 p-sm-25 p-lg-30 letter-spacing">
+            <div
+              class="mb-15 mb-md-20 d-flex align-items-center justify-content-between"
+            >
+              <h5 class="card-title fw-bold mb-0 fs-lg-18">
+                Promoter information's
+              </h5>
+            </div>
+            <div
+              class="user-info d-sm-flex align-items-center justify-content-between"
+            >
+              <div class="d-flex align-items-center">
+                <div class="image">
+                  <img
+                    v-if="
+                      storageUrl &&
+                      getEvent?.partner?.attributes.user?.data?.attributes
+                        ?.photo?.data?.attributes?.url
+                    "
+                    :src="
+                      storageUrl +
+                      getEvent?.partner?.attributes.user?.data?.attributes
+                        ?.photo?.data?.attributes.url
+                    "
+                    class="rounded-circle"
+                    width="85"
+                    height="85"
+                    alt="user"
+                  />
+                </div>
+                <div class="ms-15 ms-md-20">
+                  <h5 class="text-black fw-black mb-1">
+                    {{
+                      getEvent?.partner?.attributes.name +
+                      " " +
+                      getEvent?.partner?.attributes.surname
+                    }}
+                  </h5>
+                  <!-- <span class="d-block text-muted">@victordynamic</span> -->
+                </div>
+              </div>
+            </div>
+            <div class="content pe-0">
+              <span class="d-block text-black fs-md-15 fs-lg-16 fw-medium mb-8">
+                Phone
+              </span>
+              <p class="fs-md-15 mb-0 text-paragraph lh-base">
                 {{ getEvent?.partner.attributes?.phone }}
-              </li>
-              <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
-                <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
-                  >EMAIL:</span
-                >
+              </p>
+            </div>
+            <div class="content pe-0">
+              <span class="d-block text-black fs-md-15 fs-lg-16 fw-medium mb-8">
+                Email
+              </span>
+              <p class="fs-md-15 mb-0 text-paragraph lh-base">
                 {{ getEvent?.partner?.attributes.user?.data.attributes.email }}
-              </li>
-              <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
-                <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
-                  >ADDRESS:</span
-                >
+              </p>
+            </div>
+            <div class="content pe-0">
+              <span class="d-block text-black fs-md-15 fs-lg-16 fw-medium mb-8">
+                Address
+              </span>
+              <p class="fs-md-15 mb-0 text-paragraph lh-base">
                 {{ getEvent?.partner.attributes.address }}
-              </li>
-            </ul>
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <loading
+    v-model:active="getEventsLoading"
+    :can-cancel="true"
+    :is-full-page="true"
+  />
 </template>
 
 <script>
@@ -284,10 +320,35 @@ import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import swal from "sweetalert";
 import { storageUrl } from "../../utils/constants";
-import Swiper from "swiper";
-
+import "swiper/css";
+import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 export default defineComponent({
   name: "EventDetails",
+  components: {
+    Loading,
+    Swiper,
+    SwiperSlide,
+  },
+  setup() {
+    const onSwiper = (swiper) => {
+      console.log(swiper);
+    };
+    const onSlideChange = () => {
+      console.log("slide change");
+    };
+    return {
+      onSwiper,
+      onSlideChange,
+      modules: [Navigation, Pagination, Scrollbar, A11y],
+    };
+  },
   data() {
     return {
       storageUrl: "",
@@ -295,7 +356,15 @@ export default defineComponent({
     };
   },
   methods: {
-    ...mapActions(["fetchOneEvent", "deleteCategoryEvent"]),
+    ...mapActions(["fetchOneEvent", "deleteCategoryEvent", "getEventsLoading"]),
+    navigateToEditEventPage(idEvent) {
+      if (idEvent !== null && idEvent !== undefined) {
+        this.$router.push({
+          name: "EditEventPage",
+          params: { idEvent: idEvent },
+        });
+      }
+    },
     getDayOfMonth(inputDate) {
       // Création d'un objet Date à partir de la chaîne de date d'entrée
       var dateObject = new Date(inputDate);
@@ -379,7 +448,6 @@ export default defineComponent({
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this category!",
-        icon: "warning",
         buttons: ["Cancel", "Delete"],
         dangerMode: true,
       }).then(async (willDelete) => {
@@ -390,11 +458,8 @@ export default defineComponent({
           // Afficher un message de succès
           swal({
             text: "Category deleted Successfully!",
-            icon: "success",
             closeOnClickOutside: false,
           });
-        } else {
-          swal("Category is safe!");
         }
       });
     },
@@ -410,30 +475,54 @@ export default defineComponent({
       console.log(this.getEvent);
     }
     // Initialiser le slider Swiper après que les images de l'événement ont été chargées
-    this.swiper = new Swiper(".swiper-container", {
-      // Configurer les options du slider Swiper selon vos besoins
-      loop: false,
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-      allowTouchMove: false, // disable touch/swipe
-    });
-    // Add click event to navigation arrows
-    const nextButton = document.querySelector(".swiper-button-next");
-    const prevButton = document.querySelector(".swiper-button-prev");
-
-    nextButton.addEventListener("click", () => {
-      this.swiper.slideNext();
-    });
-
-    prevButton.addEventListener("click", () => {
-      this.swiper.slidePrev();
-    });
+    // this.swiper = new Swiper(".swiper-container", {
+    //   loop: false,
+    //   pagination: {
+    //     el: ".swiper-pagination",
+    //     clickable: true,
+    //   },
+    //   allowTouchMove: false,
+    //   on: {
+    //     slideChange: () => {
+    //       const bullets = document.querySelectorAll(
+    //         ".swiper-pagination-bullet"
+    //       );
+    //       const activeIndex = this.swiper.realIndex;
+    //       bullets.forEach((bullet, index) => {
+    //         if (index === activeIndex) {
+    //           bullet.classList.add("swiper-pagination-bullet-active");
+    //         } else {
+    //           bullet.classList.remove("swiper-pagination-bullet-active");
+    //         }
+    //       });
+    //     },
+    //   },
+    // });
   },
 });
 </script>
 <style scoped>
+.swiper-pagination {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background-color: #ddd;
+  margin: 0 5px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #333;
+}
 .event-swiper {
   margin: 0 auto; /* Centrer horizontalement */
   padding: auto;

@@ -30,14 +30,8 @@
             Search
 
             <i
-              v-if="!getUsersLoading"
               class="flaticon-search-interface-symbol position-relative ms-5 top-1"
             ></i>
-            <div
-              v-if="getUsersLoading"
-              class="spinner-border"
-              role="status"
-            ></div>
           </button>
         </form>
       </div>
@@ -362,6 +356,7 @@ export default defineComponent({
       sortDirectionLoc: "asc",
       selectedCount: 0,
       isLoading: false,
+      perPage: 4,
     };
   },
   methods: {
@@ -417,7 +412,7 @@ export default defineComponent({
       // Appeler fetchAllEvents avec le filtre actif
       await this.fetchAllCustomers({
         page: this.currentPage,
-        perPage: 4,
+        perPage: this.perPage,
         name: this.searchText,
         gender: this.genderFilter,
         startDate: this.startDate,
@@ -435,7 +430,7 @@ export default defineComponent({
       // Appeler fetchAllEvents avec le filtre actif
       await this.fetchAllCustomers({
         page: this.currentPage,
-        perPage: 4,
+        perPage: this.perPage,
         name: this.searchText,
         gender: this.genderFilter,
         startDate: this.startDate,
@@ -454,7 +449,7 @@ export default defineComponent({
       // Appeler fetchAllEvents avec le filtre actif
       await this.fetchAllCustomers({
         page: this.currentPage,
-        perPage: 4,
+        perPage: this.perPage,
         name: this.searchText,
         gender: this.genderFilter,
         startDate: this.startDate,
@@ -480,7 +475,6 @@ export default defineComponent({
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover these customers!",
-        icon: "warning",
         buttons: ["Cancel", "Delete"],
         dangerMode: true,
       }).then(async (willDelete) => {
@@ -490,16 +484,15 @@ export default defineComponent({
             selectedCustomers.map((id) => this.deleteCustomer(id))
           );
           this.isLoading = true;
-
+          this.currentPage = 1;
           // After deletion, fetch customers again to update the list
-          await this.fetchAllCustomers({ page: this.currentPage, perPage: 4 });
+          await this.fetchAllCustomers({
+            page: this.currentPage,
+            perPage: this.perPage,
+          });
           this.isLoading = false;
 
-          swal("Selected customers have been deleted!", {
-            icon: "success",
-          });
-        } else {
-          swal("Selected customers are safe!");
+          swal("Selected customers have been deleted!", {});
         }
       });
     },
@@ -521,7 +514,7 @@ export default defineComponent({
 
       await this.fetchAllCustomers({
         page: this.currentPage,
-        perPage: 4,
+        perPage: this.perPage,
         name: this.searchText,
       });
       this.isLoading = false;
@@ -533,7 +526,7 @@ export default defineComponent({
 
       await this.fetchAllCustomers({
         page: pageNumber,
-        perPage: 4,
+        perPage: this.perPage,
         name: null,
       });
       this.isLoading = false;
@@ -557,15 +550,12 @@ export default defineComponent({
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this customer!",
-        icon: "warning",
         buttons: ["Cancel", "Delete"],
         dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
           // Call the deleteCustomer action or API endpoint to delete the customer
           await this.deleteCustomer(id);
-        } else {
-          swal("Customer is safe!");
         }
       });
     },
@@ -589,7 +579,7 @@ export default defineComponent({
   },
   async mounted() {
     this.isLoading = true;
-    await this.fetchAllCustomers({ page: 1, perPage: 4 });
+    await this.fetchAllCustomers({ page: 1, perPage: this.perPage });
     this.isLoading = false;
     this.storageUrl = storageUrl;
   },

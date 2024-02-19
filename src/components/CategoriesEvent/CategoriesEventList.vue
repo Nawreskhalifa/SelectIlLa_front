@@ -31,14 +31,8 @@
             Search
 
             <i
-              v-if="!getCategoriesLoading"
               class="flaticon-search-interface-symbol position-relative ms-5 top-1"
             ></i>
-            <div
-              v-if="getCategoriesLoading"
-              class="spinner-border"
-              role="status"
-            ></div>
           </button>
         </form>
       </div>
@@ -75,7 +69,7 @@
             <a
               class="dropdown-item d-flex align-items-center"
               href="javascript:void(0);"
-              @click="deleteSelectedCategories"
+              @click.prevent="deleteSelectedCategories"
             >
               <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
               Delete Selected
@@ -158,7 +152,17 @@
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
-                        @click.prevent="deleteCategory(category.id)"
+                        @click.prevent="navigateToEditCategoryPage(category.id)"
+                        ><i
+                          class="flaticon-pen lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Edit</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        @click="deleteCategory(category.id)"
                         ><i
                           class="flaticon-delete lh-1 me-8 position-relative top-1"
                         ></i>
@@ -224,8 +228,14 @@
     <loading
       v-model:active="getCategoriesLoading"
       :can-cancel="true"
-      :on-cancel="onCancel"
       :is-full-page="true"
+    />
+    <CustomModal
+      :show="showModal"
+      :msg="modalMessage"
+      :messageType="messageType"
+      @action="handleModalAction"
+      @close="showModal = false"
     />
   </div>
 </template>
@@ -236,10 +246,12 @@ import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import CustomModal from "../Common/CustomModal.vue";
 export default defineComponent({
   name: "CategoriesEventList",
   components: {
     Loading,
+    CustomModal,
   },
   data() {
     return {
@@ -247,6 +259,10 @@ export default defineComponent({
       searchText: "",
       selectAllChecked: false,
       sortDirection: "asc",
+      showModal: false,
+      modalMessage: "",
+      categoryIdToDelete: null, // Ajoutez la propriété pour stocker l'ID de la catégorie à supprimer
+      messageType: "delete",
     };
   },
   methods: {
@@ -255,32 +271,34 @@ export default defineComponent({
       "deleteCategoryEvent",
       "getCategoriesLoading",
     ]),
-    toggleSortDirection() {
+    async toggleSortDirection() {
       // Basculer entre ascendant et descendant
       this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
       // Appeler handleFilterChange pour appliquer le nouveau tri
-      this.handleSearch();
+      await this.fetchAllCategoriesEvent({
+        page: this.currentPage,
+        perPage: 4,
+        name: this.searchText,
+        sortDirectionName: this.sortDirection,
+      });
     },
     deleteSelectedCategories() {
       const selectedCategories = [];
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
       checkboxes.forEach((checkbox, index) => {
         if (checkbox.checked) {
-          selectedCategories.push(this.getCustomers[index].id);
+          if (this.getCategoriesEvent && this.getCategoriesEvent[index]) {
+            // Add null check
+            selectedCategories.push(this.getCategoriesEvent[index].id);
+          }
         }
       });
-
-      if (selectedCategories.length === 0) {
-        swal("Please select at least one category to delete.");
-        return;
-      }
 
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover these categories!",
-        icon: "warning",
-        buttons: ["Cancel", "Delete"],
         dangerMode: true,
+        buttons: ["Cancel", "Delete"],
       }).then(async (willDelete) => {
         if (willDelete) {
           // Call the deleteCustomer action or API endpoint to delete the selected customers
@@ -288,15 +306,13 @@ export default defineComponent({
             selectedCategories.map((id) => this.deleteCategoryEvent(id))
           );
           // After deletion, fetch customers again to update the list
+          this.currentPage = 1;
+
           await this.fetchAllCategoriesEvent({
             page: this.currentPage,
             perPage: 4,
           });
-          swal("Selected categories have been deleted!", {
-            icon: "success",
-          });
-        } else {
-          swal("Selected categories are safe!");
+          swal("Selected categories have been deleted!", {});
         }
       });
     },
@@ -312,7 +328,6 @@ export default defineComponent({
         page: this.currentPage,
         perPage: 4,
         name: this.searchText,
-        sortDirectionName: this.sortDirection,
       });
     },
     async onPageChange(pageNumber) {
@@ -344,25 +359,21 @@ export default defineComponent({
       }
     },
     async deleteCategory(id) {
-      swal({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this category!",
-        icon: "warning",
-        buttons: ["Cancel", "Delete"],
-        dangerMode: true,
-      }).then(async (willDelete) => {
-        if (willDelete) {
-          // Call the deleteCategoryEvent action or API endpoint to delete the category
-          await this.deleteCategoryEvent(id);
-          swal({
-            text: "Category deleted Successfully!",
-            icon: "success",
-            closeOnClickOutside: false,
-          });
-        } else {
-          swal("Category is safe!");
-        }
-      });
+      this.showModal = true;
+      this.modalMessage = "Are you sure you want to delete this category?";
+      this.categoryIdToDelete = id;
+    },
+    async handleModalAction(confirmed) {
+      // Fermer la modal
+      this.showModal = false;
+      // Vérifier si l'utilisateur a confirmé
+      if (confirmed) {
+        // Appeler la méthode de suppression de la catégorie ici
+        // Utilisez this.categoryIdToDelete pour obtenir l'ID de la catégorie à supprimer
+        await this.deleteCategoryEvent(this.categoryIdToDelete);
+        // Suppression confirmée, afficher un message de succès
+        this.$emit("categoryDeleted");
+      }
     },
   },
   computed: {

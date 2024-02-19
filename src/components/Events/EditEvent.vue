@@ -15,7 +15,7 @@
                 v-model="eventName"
                 required
               />
-              <span v-if="!eventName" class="text-danger"
+              <span v-if="formSubmitted && !eventName" class="text-danger"
                 >Event Name is required!</span
               >
             </div>
@@ -75,7 +75,9 @@
                   </button>
                 </div>
               </div>
-              <span v-if="selectedCategories.length === 0" class="text-danger"
+              <span
+                v-if="formSubmitted && selectedCategories.length === 0"
+                class="text-danger"
                 >Please select at least one category!</span
               >
             </div>
@@ -104,36 +106,6 @@
               >
             </div>
           </div>
-          <!-- <div class="col-md-12">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <fieldset>
-                <details>
-                  <summary>Select categories:</summary>
-                  <div class="col-md-6">
-                    <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                      <label class="d-block text-black fw-semibold mb-10">
-                        Categories
-                      </label>
-                      <select
-                        class="form-select shadow-none fw-semibold rounded-0 select-same-width"
-                        style="height: 47px; border-color: #eeeee4"
-                        v-model="selectedCategories"
-                      >
-                        <option value="" selected>Select a partner</option>
-                        <option
-                          v-for="category in getCategoriesEvent"
-                          :key="category.id"
-                          :value="category.id"
-                        >
-                          {{ category.name }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </details>
-              </fieldset>
-            </div>
-          </div> -->
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10"
@@ -147,7 +119,7 @@
                 required
                 v-model="price"
               />
-              <span v-if="isNaN(price)" class="text-danger"
+              <span v-if="formSubmitted && isNaN(price)" class="text-danger"
                 >Please enter a valid number for the price.</span
               >
             </div>
@@ -163,7 +135,7 @@
                 required
                 v-model="location"
               />
-              <span v-if="!location" class="text-danger"
+              <span v-if="formSubmitted && !location" class="text-danger"
                 >Location is required!</span
               >
             </div>
@@ -179,10 +151,12 @@
                 required
                 v-model="startDate"
               />
-              <span v-if="!startDate" class="text-danger"
+              <span v-if="formSubmitted && !startDate" class="text-danger"
                 >Start Date is required!</span
               >
-              <span v-else-if="startDate < currentDate" class="text-danger"
+              <span
+                v-else-if="formSubmitted && startDate < currentDate"
+                class="text-danger"
                 >Start Date must be today or later</span
               >
             </div>
@@ -199,7 +173,7 @@
                 v-model="startTime"
                 :min="currentDate"
               />
-              <span v-if="!startTime" class="text-danger"
+              <span v-if="formSubmitted && !startTime" class="text-danger"
                 >Start Time is required!</span
               >
             </div>
@@ -216,10 +190,12 @@
                 v-model="endDate"
                 :min="startDate"
               />
-              <span v-if="!endDate" class="text-danger"
+              <span v-if="formSubmitted && !endDate" class="text-danger"
                 >End Date is required!</span
               >
-              <span v-else-if="endDate < startDate" class="text-danger"
+              <span
+                v-else-if="formSubmitted && endDate < startDate"
+                class="text-danger"
                 >endDate Date must be today or later</span
               >
             </div>
@@ -235,7 +211,7 @@
                 required
                 v-model="endTime"
               />
-              <span v-if="!endTime" class="text-danger"
+              <span v-if="formSubmitted && !endTime" class="text-danger"
                 >End Time is required!</span
               >
             </div>
@@ -254,7 +230,7 @@
                 required
                 v-model="seats"
               />
-              <span v-if="!seats" class="text-danger"
+              <span v-if="formSubmitted && !seats" class="text-danger"
                 >Number of Seats is required!</span
               >
               <span v-else-if="seats < 1" class="text-danger"
@@ -276,10 +252,10 @@
                 required
                 v-model="bottles"
               />
-              <span v-if="!bottles" class="text-danger"
+              <span v-if="formSubmitted && !bottles" class="text-danger"
                 >Number of bottles is required!</span
               >
-              <span v-else-if="bottles < 1" class="text-danger"
+              <span v-else-if="formSubmitted && bottles < 1" class="text-danger"
                 >Number of bottles must be at least 1</span
               >
             </div>
@@ -350,13 +326,21 @@
                   class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
                   type="submit"
                   :disabled="getCategoriesLoading"
+                  @click="setFormSubmitted"
                 >
-                  <span v-if="!getCategoriesLoading">Save Event</span>
-                  <div
-                    v-if="getCategoriesLoading"
-                    class="spinner-border"
-                    role="status"
-                  ></div>
+                  <span>Save Event</span>
+                </button>
+                <button
+                  type="button"
+                  class="bg-transparent p-0 border-0 text-danger lh-1 fw-medium"
+                  @click="deleteAllSelectedPhotos"
+                >
+                  <i
+                    class="flaticon-delete lh-1 me-1 position-relative top-2"
+                  ></i>
+                  <span class="position-relative"
+                    >Delete All Selected Photos</span
+                  >
                 </button>
               </div>
             </div>
@@ -365,12 +349,7 @@
       </form>
     </div>
   </div>
-  <loading
-    v-model:active="isLoading"
-    :can-cancel="true"
-    :on-cancel="onCancel"
-    :is-full-page="true"
-  />
+  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
 </template>
 
 <script>
@@ -426,6 +405,7 @@ export default defineComponent({
       categoriesEvent: [],
       categoriesSelected: [],
       selectedPartner: [],
+      formSubmitted: false,
     };
   },
   methods: {
@@ -436,6 +416,9 @@ export default defineComponent({
       "fetchOneEvent",
       "fetchAllPartners",
     ]),
+    setFormSubmitted() {
+      this.formSubmitted = true;
+    },
     objetExisteDansListe(objetRecherche, listeObjets) {
       // Parcourir la liste d'objets
       for (let objet of listeObjets) {
@@ -468,7 +451,6 @@ export default defineComponent({
           this.selectedCategories.push(selectedCategory);
         }
       }
-      console.log(this.selectedCategories);
     },
 
     removeNewImage(index) {
@@ -477,6 +459,10 @@ export default defineComponent({
     removeImageFromDatabase(obj, index) {
       this.updatedPhotos.push(obj.id);
       this.photosFromDatabase.splice(index, 1);
+    },
+    deleteAllSelectedPhotos() {
+      this.photos = [];
+      this.selectedCategories = [];
     },
     handleFileUpload(event) {
       const files = event.target.files;
@@ -588,9 +574,6 @@ export default defineComponent({
     if (this.$route.params && this.$route.params.idEvent) {
       this.isLoading = true;
       await this.fetchOneEvent(this.$route.params.idEvent);
-      // console.log("dd", this.getEvent);
-      // console.log("ss", this.getEvent.categoryEvents);
-
       this.eventName = this.getEvent.name;
       this.description = this.getEvent.description;
       if (this.getEvent.categoryEvents && this.getEvent.categoryEvents.length) {
@@ -601,7 +584,6 @@ export default defineComponent({
           })
         );
       }
-      // this.selectedCategories = [];
       this.price = this.getEvent.price;
       this.location = this.getEvent.location;
       this.startDate = this.getEvent.startDate;
@@ -648,7 +630,7 @@ fieldset {
   border: none;
   padding: 0;
   cursor: pointer;
-  color: red;
+  color: rgb(232, 227, 227);
 }
 
 fieldset > label {

@@ -15,7 +15,7 @@
                 v-model="eventName"
                 required
               />
-              <span v-if="!eventName" class="text-danger"
+              <span v-if="formSubmitted && !eventName" class="text-danger"
                 >Event Name is required!</span
               >
             </div>
@@ -41,11 +41,6 @@
               <label class="d-block text-black fw-semibold mb-10"
                 >Ticket Price</label
               >
-              <!-- <span
-                  class="input-group-text rounded-0 fs-14 fw-bold text-primary"
-                >
-                  $
-                </span> -->
               <input
                 type="text"
                 class="form-control shadow-none rounded-0 text-black"
@@ -55,11 +50,11 @@
                 pattern="\d+(\.\d{2})?"
                 title="Please enter a valid price (e.g. 120.00)"
               />
-              <span v-if="!price" class="text-danger"
+              <span v-if="formSubmitted && !price" class="text-danger"
                 >Ticket Price is required!</span
               >
               <span
-                v-else-if="!price.match(/^\d+(\.\d{2})?$/)"
+                v-else-if="formSubmitted && !price.match(/^\d+(\.\d{2})?$/)"
                 class="text-danger"
                 >Please enter a valid price (e.g. 120.00)</span
               >
@@ -76,7 +71,7 @@
                 required
                 v-model="location"
               />
-              <span v-if="!location" class="text-danger"
+              <span v-if="formSubmitted && !location" class="text-danger"
                 >Location is required!</span
               >
             </div>
@@ -93,10 +88,12 @@
                 v-model="startDate"
                 :min="currentDate"
               />
-              <span v-if="!startDate" class="text-danger"
+              <span v-if="formSubmitted && !startDate" class="text-danger"
                 >Start Date is required!</span
               >
-              <span v-else-if="startDate < currentDate" class="text-danger"
+              <span
+                v-else-if="formSubmitted && startDate < currentDate"
+                class="text-danger"
                 >Start Date must be today or later</span
               >
             </div>
@@ -113,7 +110,7 @@
                 v-model="startTime"
                 :min="currentDate"
               />
-              <span v-if="!startTime" class="text-danger"
+              <span v-if="formSubmitted && !startTime" class="text-danger"
                 >Start Time is required!</span
               >
             </div>
@@ -130,10 +127,12 @@
                 v-model="endDate"
                 :min="startDate"
               />
-              <span v-if="!endDate" class="text-danger"
+              <span v-if="formSubmitted && !endDate" class="text-danger"
                 >End Date is required!</span
               >
-              <span v-else-if="endDate < startDate" class="text-danger"
+              <span
+                v-else-if="formSubmitted && endDate < startDate"
+                class="text-danger"
                 >endDate Date must be today or later</span
               >
             </div>
@@ -149,7 +148,7 @@
                 required
                 v-model="endTime"
               />
-              <span v-if="!endTime" class="text-danger"
+              <span v-if="formSubmitted && !endTime" class="text-danger"
                 >End Time is required!</span
               >
             </div>
@@ -168,10 +167,10 @@
                 required
                 v-model="seats"
               />
-              <span v-if="!seats" class="text-danger"
+              <span v-if="formSubmitted && !seats" class="text-danger"
                 >Number of Seats is required!</span
               >
-              <span v-else-if="seats < 1" class="text-danger"
+              <span v-else-if="formSubmitted && seats < 1" class="text-danger"
                 >Number of Seats must be at least 1</span
               >
             </div>
@@ -190,10 +189,10 @@
                 required
                 v-model="bottles"
               />
-              <span v-if="!bottles" class="text-danger"
+              <span v-if="formSubmitted && !bottles" class="text-danger"
                 >Number of bottles is required!</span
               >
-              <span v-else-if="bottles < 1" class="text-danger"
+              <span v-else-if="formSubmitted && bottles < 1" class="text-danger"
                 >Number of bottles must be at least 1</span
               >
             </div>
@@ -238,29 +237,8 @@
                   </button>
                 </div>
               </div>
-              <!-- <ul
-                style="
-                  display: flex;
-                  flex-direction: row;
-                  gap: 10px;
-                  justify-content: flex-start;
-                  align-items: center;
-                "
-              >
-                <li
-                  class="single_cat"
-                  v-for="cat in selectedCategoryNames"
-                  :key="cat.id"
-                >
-                  <span> {{ cat.name }}</span>
-                  <i
-                    class="fas fa-times-circle"
-                    @click="deleteFromCategories(cat)"
-                  ></i>
-                </li>
-              </ul> -->
               <span
-                v-if="selectedCategoryNames.length === 0"
+                v-if="formSubmitted && selectedCategoryNames.length === 0"
                 class="text-danger"
                 >Please select at least one category!</span
               >
@@ -286,7 +264,7 @@
                   {{ partner.name }}
                 </option>
               </select>
-              <span v-if="!selectedPartner" class="text-danger"
+              <span v-if="formSubmitted && !selectedPartner" class="text-danger"
                 >Partner is required!</span
               >
             </div>
@@ -337,13 +315,21 @@
                 class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
                 type="submit"
                 :disabled="getEventsLoading"
+                @click="setFormSubmitted"
               >
-                <span v-if="!getEventsLoading">Save Event</span>
-                <div
-                  v-if="getEventsLoading"
-                  class="spinner-border"
-                  role="status"
-                ></div>
+                <span>Save Event</span>
+              </button>
+              <button
+                type="button"
+                class="bg-transparent p-0 border-0 text-danger lh-1 fw-medium"
+                @click="deleteAllSelectedPhotos"
+              >
+                <i
+                  class="flaticon-delete lh-1 me-1 position-relative top-2"
+                ></i>
+                <span class="position-relative"
+                  >Delete All Selected Photos</span
+                >
               </button>
             </div>
           </div>
@@ -351,12 +337,7 @@
       </form>
     </div>
   </div>
-  <loading
-    v-model:active="isLoading"
-    :can-cancel="true"
-    :on-cancel="onCancel"
-    :is-full-page="true"
-  />
+  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
 </template>
 
 <script>
@@ -406,6 +387,7 @@ export default defineComponent({
       AllSelected: [],
       selectedCategoryNames: [],
       partner: [],
+      formSubmitted: false,
     };
   },
   methods: {
@@ -417,7 +399,7 @@ export default defineComponent({
     ]),
     deleteFromCategories(cat) {
       this.selectedCategoryNames = this.selectedCategoryNames.filter((item) => {
-        item.id !== cat.id;
+        return item.id !== cat.id; // Ajoutez le return ici
       });
     },
     addPartner() {
@@ -459,10 +441,17 @@ export default defineComponent({
         });
       });
     },
+    deleteAllSelectedPhotos() {
+      this.photos = [];
+      this.selectedPhotos = [];
+    },
     removeImage(index) {
       // Supprimer l'image à l'index spécifié
       this.photos.splice(index, 1);
       this.selectedPhotos.splice(index, 1);
+    },
+    setFormSubmitted() {
+      this.formSubmitted = true;
     },
     async createEvent() {
       this.isLoading = true;
@@ -508,14 +497,11 @@ export default defineComponent({
           // Afficher un message de succès
           swal({
             text: "Event Added Successfully!",
-            icon: "success",
             closeOnClickOutside: false,
           });
         }
       } catch (error) {
         this.isLoading = false;
-
-        console.log(error);
       }
     },
   },
@@ -543,7 +529,6 @@ export default defineComponent({
   async mounted() {
     await this.fetchAllCategoriesEvent({ page: null });
     await this.fetchAllPartners();
-    console.log(this.getPartners);
     // Initialise currentDate avec la date actuelle au format YYYY-MM-DD
     const today = new Date();
     const year = today.getFullYear();
@@ -589,7 +574,7 @@ details {
   border: none;
   padding: 0;
   cursor: pointer;
-  color: red;
+  color: rgb(232, 227, 227);
 }
 
 select,

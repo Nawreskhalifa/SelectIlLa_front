@@ -78,7 +78,7 @@ const actions = {
     }
     return true;
   },
-  async fetchAllEvents({ commit }, { page, perPage = 25, name, isActive = 'All' }: { page: number, perPage?: number, name: string | null, isActive?: string }) {
+  async fetchAllEvents({ commit }, { page, perPage = 25, name, isActive = 'All', category = 'All' }: { page: number, perPage?: number, name: string | null, isActive?: string, category?: string }) {
     commit("SET_EVENTS_LOADING", true);
     commit("SET_EVENTS_ERROR");
 
@@ -93,7 +93,9 @@ const actions = {
             category_events?: { name?: { $contains: string } };
             partner?: { name?: { $contains: string }; surname?: { $contains: string } };
           }>;
-          $and?: Array<{ active?: { $eq: boolean } }>;
+          $and?: Array<{
+            active?: { $eq: boolean }, category_events?: { name: { $eq: string } },
+          }>;
         };
       } = {
       };
@@ -121,6 +123,13 @@ const actions = {
         filters.filters = {
           ...(filters.filters || {}),
           $and: [{ active: { $eq: isActive === 'true' } }] // Utilisation de $and avec un seul élément
+        };
+      }
+      // Add the category filter if specified
+      if (category !== 'All') {
+        filters.filters = {
+          ...(filters.filters || {}),
+          $and: [{ category_events: { name: { $eq: category } } }] // Utilisation de $and avec un seul élément
         };
       }
       const response = await makeApiRequest(
@@ -192,7 +201,6 @@ const actions = {
         undefined,
         undefined
       );
-      console.log(response.data)
       commit("SET_EVENT", decodeApiToEvent(response.data.data));
       commit("SET_EVENTS_LOADING");
     } catch (error: any) {
