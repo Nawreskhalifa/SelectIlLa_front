@@ -629,8 +629,9 @@ this.partner = event[0]
       const result = await updateVilla(this.villa.id, villaData);
 
       if (result.success) {
-        this.$emit("updatedData", result.data.data);
-        this.$emit("close");
+        // this.$emit("updatedData", result.data.data);
+        // this.$emit("close");
+this.$router.push({path: '/villalist'})
 
         toast.success("villa Updated  🚗 👍 ", {
           autoClose: 1000,

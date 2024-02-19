@@ -5,7 +5,7 @@
         <div class="file-card" v-for="(file, index) in documents?.data" :key="index" @click="selectFile(file)">
           <div class="file-card-int">
             <img class="file-icon" :src="getIcon(file.attributes.name)" alt="File Icon">
-            <div class="file-name">{{ file.attributes.name }}</div>
+            <div class="file-name">{{  truncatedFileName(file.attributes.name) }}</div>
           </div>
           <div class="download" @click="downloadFile(file.attributes.url)">
             <i class="fas fa-download" aria-hidden="true"></i>
@@ -33,7 +33,7 @@
 
       <template v-slot:footer> You can put your footer here </template>
     </ModalFiles>
-    <button @click="openModal"></button>
+    <!-- <button @click="openModal"></button> -->
 </template>
 
 <script>
@@ -105,6 +105,14 @@ export default {
      },
     goBack() {
       this.selectedFile = null;
+    },
+    truncatedFileName(fileName) {
+      const maxLength = 15;
+      if (fileName.length > maxLength) {
+        return fileName.substring(0, maxLength) + '...';
+      } else {
+        return fileName;
+      }
     }
   }
 };

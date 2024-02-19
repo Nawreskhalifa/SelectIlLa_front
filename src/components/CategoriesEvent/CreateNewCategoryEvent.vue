@@ -1,4 +1,4 @@
- <template>
+<template>
   <div class="card mb-25 border-0 rounded-0 bg-white create-new-project-box" id="createNewCategoryBox">
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
       <form @submit.prevent="createNewCategory" id="createNewCategoryForm">
@@ -14,6 +14,7 @@
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. AI Machine Learning"
                 required
+                id="categoryName"
               />
             </div>
           </div>
@@ -28,6 +29,7 @@
                   class="form-control shadow-none rounded-0 text-black"
                   rows="4"
                   placeholder="Write your meta description"
+                  id="categoryDescription"
                 ></textarea>
               </div>
             </div>
@@ -38,6 +40,7 @@
               class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
               type="submit"
               :disabled="getCategoriesLoading"
+              id="createCategoryBtn"
             >
               <span>Create Category</span>
             </button>
@@ -52,8 +55,6 @@
     :is-full-page="true"
   />
 </template>
-
-
 <script lang="ts">
 import { makeApiRequest } from "../../services/apiService";
 import { endPoints } from "../../utils/endPoints";
