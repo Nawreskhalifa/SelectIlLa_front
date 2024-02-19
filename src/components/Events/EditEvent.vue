@@ -282,7 +282,10 @@
                   </span>
                 </span>
               </div>
-              <div v-if="photosFromDatabase.length > 0" class="image-preview">
+              <div
+                v-if="photosFromDatabase && photosFromDatabase?.length > 0"
+                class="image-preview"
+              >
                 <div
                   v-for="(photo, index) in photosFromDatabase"
                   :key="index"
@@ -299,7 +302,10 @@
                   </button>
                 </div>
               </div>
-              <div v-if="newPhotos.length > 0" class="image-preview">
+              <div
+                v-if="newPhotos && newPhotos.length > 0"
+                class="image-preview"
+              >
                 <!-- Afficher les nouvelles images téléchargées -->
                 <div
                   v-for="(newPhoto, index) in newPhotos"
@@ -461,8 +467,12 @@ export default defineComponent({
       this.photosFromDatabase.splice(index, 1);
     },
     deleteAllSelectedPhotos() {
+      this.newPhotos = [];
       this.photos = [];
-      this.selectedCategories = [];
+      this.photosFromDatabase.forEach((item) => {
+        this.updatedPhotos.push(item.id);
+      });
+      this.photosFromDatabase = [];
     },
     handleFileUpload(event) {
       const files = event.target.files;
@@ -473,10 +483,12 @@ export default defineComponent({
           id: "new_" + (this.newPhotos.length + 1),
           name: file.name,
           url: imageUrl,
+          file: file,
         };
         this.newPhotos.push(newPhoto);
 
-        this.photos.push(...Array.from(event.target.files));
+        // this.photos.push(...Array.from(event.target.files));
+        // console.log(this.photos)
       }
     },
     deleteFromCategories(cat) {
@@ -496,7 +508,6 @@ export default defineComponent({
       const formData = new FormData();
 
       try {
-        console.log(this.selectedCategories);
         if (this.selectedCategories && this.selectedCategories.length) {
           for (let index = 0; index < this.selectedCategories.length; index++) {
             // Ajouter l'objet temporaire à formData
@@ -520,11 +531,11 @@ export default defineComponent({
         formData.append("total_bottles", this.bottles.toString());
         formData.append("name_promoter", this.promoterName);
         formData.append("promiting_info", this.promoterInfo);
-        if (this.newPhotos && this.newPhotos.length >= 1) {
-          this.newPhotos.forEach((photo) => {
-            formData.append("files.photos", photo);
-          });
-        }
+        // if (this.newPhotos && this.newPhotos.length >= 1) {
+        //   this.newPhotos.forEach((photo) => {
+        //     formData.append("files.photos", photo);
+        //   });
+        // }
         const response = await makeApiRequest(
           methodsHttpNames.PUT,
           `${endPoints.findEvent}/${this.getEvent.id}`,
@@ -533,10 +544,12 @@ export default defineComponent({
         );
         if (response.success) {
           this.isLoading = false;
-
-          console.log(this.photos, response.data.id);
-          if (this.photos && this.photos.length) {
-            const responseUpload = await uploadFiles(
+          if (this.newPhotos && this.newPhotos.length) {
+            this.newPhotos.forEach((item) => {
+              this.photos.push(item.file);
+            });
+            console.log(this.photos);
+            await uploadFiles(
               this.photos,
               "api::event.event",
               "photos",

@@ -291,6 +291,39 @@
                 </span>
               </div>
               <div v-if="photos.length > 0" class="image-preview">
+                <div v-for="(photo, index) in selectedPhotos" :key="index" class="image-item">
+                    <img :src="photo.url" alt="Selected Image" />
+                    <button @click="removeImage(index)" class="delete_icon" type="button">
+                        <i class="fas fa-times-circle"></i>
+                        <!-- Icône de suppression -->
+                    </button>
+                </div>
+            </div>
+            </div>
+          </div>
+
+          <!-- <div class="col-md-12">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Upload Images
+              </label>
+              <div class="file-upload text-center position-relative">
+                <input
+                  type="file"
+                  multiple
+                  v-on:change="handleFileUpload"
+                  accept="image/*"
+                  class="d-block shadow-none border-0 position-absolute start-0 end-0 top-0 bottom-0 z-1 opacity-0"
+                />
+                <i class="flaticon-image"></i>
+                <span class="d-block text-muted">
+                  Drop Images Here Or
+                  <span class="text-black fw-medium position-relative">
+                    Click To Upload
+                  </span>
+                </span>
+              </div>
+              <div v-if="photos.length > 0" class="image-preview">
                 <div
                   v-for="(photo, index) in selectedPhotos"
                   :key="index"
@@ -303,12 +336,11 @@
                     type="button"
                   >
                     <i class="fas fa-times-circle"></i>
-                    <!-- Icône de suppression -->
                   </button>
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
           <div class="col-md-12">
             <div class="d-flex align-items-center justify-content-between">
               <button
@@ -336,12 +368,12 @@
         </div>
       </form>
     </div>
-    <loading v-model:active="isLoading" :is-full-page="true" />
   </div>
+  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import { makeApiRequest } from "@/services/apiService";
 import { methodsHttpNames } from "@/utils/methods";
@@ -433,7 +465,6 @@ export default defineComponent({
       const newPhotos = Array.from(event.target.files);
 
       this.photos.push(...newPhotos);
-      console.log(this.photos);
       this.selectedPhotos = [];
       this.photos.forEach((item) => {
         this.selectedPhotos.push({
