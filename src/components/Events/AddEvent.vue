@@ -238,27 +238,6 @@
                   </button>
                 </div>
               </div>
-              <!-- <ul
-                style="
-                  display: flex;
-                  flex-direction: row;
-                  gap: 10px;
-                  justify-content: flex-start;
-                  align-items: center;
-                "
-              >
-                <li
-                  class="single_cat"
-                  v-for="cat in selectedCategoryNames"
-                  :key="cat.id"
-                >
-                  <span> {{ cat.name }}</span>
-                  <i
-                    class="fas fa-times-circle"
-                    @click="deleteFromCategories(cat)"
-                  ></i>
-                </li>
-              </ul> -->
               <span
                 v-if="selectedCategoryNames.length === 0"
                 class="text-danger"

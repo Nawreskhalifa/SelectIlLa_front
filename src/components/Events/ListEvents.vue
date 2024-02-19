@@ -46,14 +46,21 @@
         </form>
       </div>
       <div class="d-sm-flex align-items-center mt-10 mt-lg-0">
-        <a
-          href="javascript:void(0);"
-          @click="navigateToAddEventPage()"
-          class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
+        <select
+          class="form-select shadow-none fw-semibold rounded-0 select-same-width"
+          style="height: 47px; border-color: #eeeee4"
+          v-model="selectedCategory"
+          @change="handleFilterChange"
         >
-          Add New Event
-          <i class="flaticon-plus position-relative ms-5 fs-12"></i>
-        </a>
+          <option value="" selected>All</option>
+          <option
+            v-for="category in getCategoriesEvent"
+            :key="category.id"
+            :value="category.name"
+          >
+            {{ category.name }}
+          </option>
+        </select>
         <select
           v-model="isActiveFilter"
           @change="handleFilterChange"
@@ -76,6 +83,14 @@
           ></i>
         </button>
       </div>
+      <a
+        href="javascript:void(0);"
+        @click="navigateToAddEventPage()"
+        class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
+      >
+        Add New Event
+        <i class="flaticon-plus position-relative ms-5 fs-12"></i>
+      </a>
       <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
         <button
           class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
@@ -304,7 +319,7 @@
           </li>
           <li
             class="page-item"
-            v-for="page in getTotalPages"
+            v-for="page in Math.ceil(getTotalItems / perPage)"
             :key="page"
             :class="{ active: page === currentPage }"
           >
@@ -314,14 +329,14 @@
           </li>
           <li
             class="page-item"
-            :class="{ disabled: currentPage === getTotalPages }"
+            :class="{ disabled: currentPage === Math.ceil(getTotalItems / perPage) }"
           >
             <a
               class="page-link"
               href="#"
               aria-label="Next"
               @click="
-                currentPage !== getTotalPages && onPageChange(currentPage + 1)
+                currentPage !== Math.ceil(getTotalItems / perPage) && onPageChange(currentPage + 1)
               "
             >
               <i class="flaticon-chevron"></i>
@@ -359,10 +374,18 @@ export default {
       isActiveFilter: "All",
       selectAllChecked: false,
       selectedCount: 0,
+      selectedCategory: "",
+      perPage: 4,
     };
   },
   methods: {
-    ...mapActions(["fetchAllEvents", "deleteEvent", "getEventsLoading"]),
+    ...mapActions([
+      "fetchAllEvents",
+      "deleteEvent",
+      "getEventsLoading",
+      "fetchAllCategoriesEvent",
+    ]),
+
     updateSelectionCounter(event, index) {
       if (event.target.checked) {
         // Si la case à cocher est cochée, incrémenter le compteur de sélection
@@ -376,6 +399,7 @@ export default {
       // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
       this.searchText = "";
       this.isActiveFilter = "All";
+      this.selectedCategory = "All";
       // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
       this.handleFilterChange();
     },
@@ -404,7 +428,10 @@ export default {
           // Call the deleteEvent action or API endpoint to delete the selected events
           await Promise.all(selectedEvents.map((id) => this.deleteEvent(id)));
           // After deletion, fetch events again to update the list
-          await this.fetchAllEvents({ page: this.currentPage, perPage: 4 });
+          await this.fetchAllEvents({
+            page: this.currentPage,
+            perPage: this.perPage,
+          });
           swal("Selected events have been deleted!", {
             icon: "success",
           });
@@ -428,9 +455,10 @@ export default {
       // Appeler fetchAllEvents avec le filtre actif
       await this.fetchAllEvents({
         page: this.currentPage,
-        perPage: 4,
+        perPage: this.perPage,
         name: this.searchText,
         isActive: this.isActiveFilter,
+        category: this.selectedCategory,
       });
     },
     selectAllEvents() {
@@ -450,13 +478,17 @@ export default {
       console.log(this.searchText);
       await this.fetchAllEvents({
         page: this.currentPage,
-        perPage: 4,
+        perPage: this.perPage,
         name: this.searchText,
       });
     },
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;
-      await this.fetchAllEvents({ page: pageNumber, perPage: 4, name: null });
+      await this.fetchAllEvents({
+        page: pageNumber,
+        perPage: this.perPage,
+        name: null,
+      });
     },
     getDayOfMonth(inputDate) {
       // Création d'un objet Date à partir de la chaîne de date d'entrée
@@ -559,8 +591,8 @@ export default {
       "getEventsError",
       "getEventsLoading",
       "getEvents",
-      "getTotalPages",
       "getTotalItems",
+      "getCategoriesEvent",
     ]),
     isFilterActive() {
       return this.searchText !== "" || this.isActiveFilter !== "All";
@@ -570,10 +602,11 @@ export default {
     this.storageUrl = storageUrl;
     await this.fetchAllEvents({
       page: this.currentPage,
-      perPage: 4,
+      perPage: this.perPage,
       name: null,
     });
-    console.log(this.getEvents);
+    await this.fetchAllCategoriesEvent({ page: null });
+
   },
 };
 </script>

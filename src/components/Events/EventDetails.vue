@@ -20,9 +20,8 @@
               />
             </div>
           </div>
-          <!-- Ajouter les flèches de navigation -->
-          <div class="swiper-button-next"></div>
-          <div class="swiper-button-prev"></div>
+          <!-- Ajouter les points de navigation -->
+          <div class="swiper-pagination"></div>
         </div>
         <div class="card-body p-15 letter-spacing">
           <div class="ps-5 pe-5 mb-15 ps-sm-20 pe-sm-20 mb-sm-25">
@@ -420,29 +419,53 @@ export default defineComponent({
     }
     // Initialiser le slider Swiper après que les images de l'événement ont été chargées
     this.swiper = new Swiper(".swiper-container", {
-      // Configurer les options du slider Swiper selon vos besoins
       loop: false,
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
       },
-      allowTouchMove: false, // disable touch/swipe
-    });
-    // Add click event to navigation arrows
-    const nextButton = document.querySelector(".swiper-button-next");
-    const prevButton = document.querySelector(".swiper-button-prev");
-
-    nextButton.addEventListener("click", () => {
-      this.swiper.slideNext();
-    });
-
-    prevButton.addEventListener("click", () => {
-      this.swiper.slidePrev();
+      allowTouchMove: false,
+      on: {
+        slideChange: () => {
+          const bullets = document.querySelectorAll(
+            ".swiper-pagination-bullet"
+          );
+          const activeIndex = this.swiper.realIndex;
+          bullets.forEach((bullet, index) => {
+            if (index === activeIndex) {
+              bullet.classList.add("swiper-pagination-bullet-active");
+            } else {
+              bullet.classList.remove("swiper-pagination-bullet-active");
+            }
+          });
+        },
+      },
     });
   },
 });
 </script>
 <style scoped>
+.swiper-pagination {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background-color: #ddd;
+  margin: 0 5px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #333;
+}
 .event-swiper {
   margin: 0 auto; /* Centrer horizontalement */
   padding: auto;
