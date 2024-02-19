@@ -196,9 +196,7 @@
                           :class="{ disabled: selectedCount === 0 }"
                           class="dropdown-item d-flex align-items-center"
                           href="javascript:void(0);"
-                          @click="
-                            selectedCount !== 0 && AcceptSelectedReservations
-                          "
+                          @click="AcceptSelectedReservations"
                         >
                           <i class="ph ph-check-square-offset"> </i>
 
@@ -601,7 +599,7 @@ export default defineComponent({
         if (willDelete) {
           await Promise.all(
             selectedReservations.map(async (reservation) => {
-              if (reservation.status === "Pending") {
+              if (reservation.attributes.status === "Pending") {
                 const res = await updateReservation(reservation.id, {
                   data: {
                     status: "Confirmed",
