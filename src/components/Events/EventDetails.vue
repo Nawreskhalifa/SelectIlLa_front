@@ -3,26 +3,24 @@
     <div
       class="card mb-30 border-0 rounded-0 bg-white event-details-card container-fluid"
     >
-      <div class="swiper-container event-swiper">
-        <div class="swiper-wrapper">
-          <!-- Boucle sur toutes les images de l'événement -->
-          <div
-            class="swiper-slide"
-            v-for="(photo, index) in getEvent?.photos"
-            :key="index"
-          >
-            <img
-              v-if="storageUrl && photo.url"
-              :src="storageUrl + photo.url"
-              alt="event-image"
-              class="card-image"
-            />
-          </div>
-        </div>
-        <!-- Ajouter les points de navigation -->
-        <div class="swiper-pagination"></div>
-      </div>
-
+      <swiper
+        :modules="modules"
+        :slides-per-view="1"
+        :space-between="50"
+        navigation
+        :pagination="{ clickable: true }"
+        :scrollbar="{ draggable: true }"
+        @swiper="onSwiper"
+        @slideChange="onSlideChange"
+      >
+        <swiper-slide v-for="(photo, index) in getEvent?.photos" :key="index">
+          <img
+            v-if="storageUrl && photo.url"
+            :src="storageUrl + photo.url"
+            alt="event-image"
+            class="card-image"
+        /></swiper-slide>
+      </swiper>
       <div class="card-body p-15 letter-spacing">
         <div class="row">
           <!-- Ajout d'un conteneur flex -->
@@ -322,13 +320,34 @@ import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import swal from "sweetalert";
 import { storageUrl } from "../../utils/constants";
-import Swiper from "swiper";
+import "swiper/css";
+import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
+import { Swiper, SwiperSlide } from "swiper/vue";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 export default defineComponent({
   name: "EventDetails",
   components: {
     Loading,
+    Swiper,
+    SwiperSlide,
+  },
+  setup() {
+    const onSwiper = (swiper) => {
+      console.log(swiper);
+    };
+    const onSlideChange = () => {
+      console.log("slide change");
+    };
+    return {
+      onSwiper,
+      onSlideChange,
+      modules: [Navigation, Pagination, Scrollbar, A11y],
+    };
   },
   data() {
     return {
@@ -460,29 +479,29 @@ export default defineComponent({
       console.log(this.getEvent);
     }
     // Initialiser le slider Swiper après que les images de l'événement ont été chargées
-    this.swiper = new Swiper(".swiper-container", {
-      loop: false,
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-      allowTouchMove: false,
-      on: {
-        slideChange: () => {
-          const bullets = document.querySelectorAll(
-            ".swiper-pagination-bullet"
-          );
-          const activeIndex = this.swiper.realIndex;
-          bullets.forEach((bullet, index) => {
-            if (index === activeIndex) {
-              bullet.classList.add("swiper-pagination-bullet-active");
-            } else {
-              bullet.classList.remove("swiper-pagination-bullet-active");
-            }
-          });
-        },
-      },
-    });
+    // this.swiper = new Swiper(".swiper-container", {
+    //   loop: false,
+    //   pagination: {
+    //     el: ".swiper-pagination",
+    //     clickable: true,
+    //   },
+    //   allowTouchMove: false,
+    //   on: {
+    //     slideChange: () => {
+    //       const bullets = document.querySelectorAll(
+    //         ".swiper-pagination-bullet"
+    //       );
+    //       const activeIndex = this.swiper.realIndex;
+    //       bullets.forEach((bullet, index) => {
+    //         if (index === activeIndex) {
+    //           bullet.classList.add("swiper-pagination-bullet-active");
+    //         } else {
+    //           bullet.classList.remove("swiper-pagination-bullet-active");
+    //         }
+    //       });
+    //     },
+    //   },
+    // });
   },
 });
 </script>
