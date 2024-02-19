@@ -336,12 +336,12 @@
         </div>
       </form>
     </div>
+    <loading v-model:active="isLoading" :is-full-page="true" />
   </div>
-  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
 </template>
 
 <script>
-import { defineComponent, computed } from "vue";
+import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import { makeApiRequest } from "@/services/apiService";
 import { methodsHttpNames } from "@/utils/methods";
@@ -463,7 +463,6 @@ export default defineComponent({
           // Ajouter le tableau d'identifiants de catégories à formData
           formData.append("category_events", JSON.stringify(item.id));
         });
-        console.log(this.partner);
         formData.append("partner", this.partner);
         // Ajouter chaque champ du formulaire à l'objet FormData
         formData.append("name", this.eventName);
