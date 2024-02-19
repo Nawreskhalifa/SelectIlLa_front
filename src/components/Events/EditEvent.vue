@@ -15,7 +15,7 @@
                 v-model="eventName"
                 required
               />
-              <span v-if="!eventName" class="text-danger"
+              <span v-if="formSubmitted && !eventName" class="text-danger"
                 >Event Name is required!</span
               >
             </div>
@@ -75,7 +75,9 @@
                   </button>
                 </div>
               </div>
-              <span v-if="selectedCategories.length === 0" class="text-danger"
+              <span
+                v-if="formSubmitted && selectedCategories.length === 0"
+                class="text-danger"
                 >Please select at least one category!</span
               >
             </div>
@@ -117,7 +119,7 @@
                 required
                 v-model="price"
               />
-              <span v-if="isNaN(price)" class="text-danger"
+              <span v-if="formSubmitted && isNaN(price)" class="text-danger"
                 >Please enter a valid number for the price.</span
               >
             </div>
@@ -133,7 +135,7 @@
                 required
                 v-model="location"
               />
-              <span v-if="!location" class="text-danger"
+              <span v-if="formSubmitted && !location" class="text-danger"
                 >Location is required!</span
               >
             </div>
@@ -149,10 +151,12 @@
                 required
                 v-model="startDate"
               />
-              <span v-if="!startDate" class="text-danger"
+              <span v-if="formSubmitted && !startDate" class="text-danger"
                 >Start Date is required!</span
               >
-              <span v-else-if="startDate < currentDate" class="text-danger"
+              <span
+                v-else-if="formSubmitted && startDate < currentDate"
+                class="text-danger"
                 >Start Date must be today or later</span
               >
             </div>
@@ -169,7 +173,7 @@
                 v-model="startTime"
                 :min="currentDate"
               />
-              <span v-if="!startTime" class="text-danger"
+              <span v-if="formSubmitted && !startTime" class="text-danger"
                 >Start Time is required!</span
               >
             </div>
@@ -186,10 +190,12 @@
                 v-model="endDate"
                 :min="startDate"
               />
-              <span v-if="!endDate" class="text-danger"
+              <span v-if="formSubmitted && !endDate" class="text-danger"
                 >End Date is required!</span
               >
-              <span v-else-if="endDate < startDate" class="text-danger"
+              <span
+                v-else-if="formSubmitted && endDate < startDate"
+                class="text-danger"
                 >endDate Date must be today or later</span
               >
             </div>
@@ -205,7 +211,7 @@
                 required
                 v-model="endTime"
               />
-              <span v-if="!endTime" class="text-danger"
+              <span v-if="formSubmitted && !endTime" class="text-danger"
                 >End Time is required!</span
               >
             </div>
@@ -224,7 +230,7 @@
                 required
                 v-model="seats"
               />
-              <span v-if="!seats" class="text-danger"
+              <span v-if="formSubmitted && !seats" class="text-danger"
                 >Number of Seats is required!</span
               >
               <span v-else-if="seats < 1" class="text-danger"
@@ -246,10 +252,10 @@
                 required
                 v-model="bottles"
               />
-              <span v-if="!bottles" class="text-danger"
+              <span v-if="formSubmitted && !bottles" class="text-danger"
                 >Number of bottles is required!</span
               >
-              <span v-else-if="bottles < 1" class="text-danger"
+              <span v-else-if="formSubmitted && bottles < 1" class="text-danger"
                 >Number of bottles must be at least 1</span
               >
             </div>
@@ -320,6 +326,7 @@
                   class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
                   type="submit"
                   :disabled="getCategoriesLoading"
+                  @click="setFormSubmitted"
                 >
                   <span>Save Event</span>
                 </button>
@@ -386,6 +393,7 @@ export default defineComponent({
       categoriesEvent: [],
       categoriesSelected: [],
       selectedPartner: [],
+      formSubmitted: false,
     };
   },
   methods: {
@@ -396,6 +404,9 @@ export default defineComponent({
       "fetchOneEvent",
       "fetchAllPartners",
     ]),
+    setFormSubmitted() {
+      this.formSubmitted = true;
+    },
     objetExisteDansListe(objetRecherche, listeObjets) {
       // Parcourir la liste d'objets
       for (let objet of listeObjets) {
