@@ -160,7 +160,7 @@
                 </li>
                 <li class="sidebar-sub-menu-item">
                   <router-link to="/VehicleListCategory" class="sidebar-sub-menu-link">
-                     Vehicle Categories
+                     Makes And  Brands
                   </router-link>
                 </li>
               </ul>

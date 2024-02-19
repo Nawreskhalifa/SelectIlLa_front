@@ -1,7 +1,7 @@
  import { fetchPartnersById ,fetchPartners} from "@/services/apiService";
 
 const state = {
-  partner: null,
+  partner: undefined,
    cachedPartners: []
 };
 

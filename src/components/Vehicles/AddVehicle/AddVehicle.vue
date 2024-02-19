@@ -56,7 +56,7 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                style
+                Style
               </label>
               <input
                 v-model="style"
@@ -69,7 +69,7 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                deposit
+                Deposit
               </label>
               <input
                 v-model="deposit"
@@ -81,12 +81,15 @@
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"> msrp </label>
-              <input
+                <label class="d-block text-black fw-semibold mb-10">
+                  <abbr title="Manufacturer's Suggested Retail Price"
+                    >MSRP</abbr
+                  ></label>
+               <input
                 v-model="msrp"
-                type="text"
+                type="number"
                 class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. msrp"
+                placeholder="e.g. 2532152"
               />
             </div>
           </div>
@@ -97,6 +100,8 @@
               </label>
               <div class="mb-0">
                    <QuillEditor
+                                     style="height: 12em"
+
                   theme="snow"
                   placeholder="Write your meta description"
 v-model:content="description"

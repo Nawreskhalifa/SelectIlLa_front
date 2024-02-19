@@ -31,5 +31,7 @@ export const endPoints = {
     accepted_reservations: `${API_BASE_URL}accepted-reservations`,
     registreUser :`${API_BASE_URL}auth/local/register`,
 brands:`${API_BASE_URL}brands`,
-makes:`${API_BASE_URL}makes`
+makes:`${API_BASE_URL}makes`,
+tags:`${API_BASE_URL}tags`
+
 };

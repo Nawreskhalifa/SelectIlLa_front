@@ -1,68 +1,57 @@
-<template>
-    <transition name="modal-animation">
-      <div v-show="show" class="modal">
-        <transition name="modal-animation-inner">
-          <div v-show="show" class="modal-inner">
-            <i class="fas fa-times close-icon" @click="closeModal"></i>
-
-            <div class="  product-details-box">
-               <nav id="navbar-example2" class="navbar navbar-light bg-light"  >
-                <a class="navbar-brand">Ressources</a>
-                <ul class="nav nav-pills">
-                   <li class="nav-item"  :class="{ active: villas }">
-                    <a class="nav-link" @click="showVillas">Villas</a>
-                  </li>
-                  <li class="nav-item"  :class="{ active: vehicles }">
-                    <a class="nav-link" @click="showVehicles">Vehicles</a>
-                  </li>
-                  <li class="nav-item"  :class="{ active: events }" >
-                    <a class="nav-link" @click="showEvents">Events</a>
-                  </li>
-                </ul>
-              </nav>
-
-              <div class="row row-cols-1 row-cols-md-3 pt-15" v-if="villas && ressources && ressources.villas">
-                <div class="col mb-4" v-for="villa in ressources.villas" :key="villa.id">
-                  <div class="card h-100" v-if="villa.photos">
-                    <img :src="urlPic(villa)" class="card-img-top img" alt="">
+   <template>
+   <div  style="width: 100%;">
+                  <nav id="navbar-example2" class="navbar navbar-light bg-light">
+      <a class="navbar-brand">Resources</a>
+      <ul class="nav nav-pills">
+        <li class="nav-item" :class="{ active: villas }">
+          <a class="nav-link" @click="showVillas">Villas</a>
+        </li>
+        <li class="nav-item" :class="{ active: vehicles }">
+          <a class="nav-link" @click="showVehicles">Vehicles</a>
+        </li>
+        <li class="nav-item" :class="{ active: events }">
+          <a class="nav-link" @click="showEvents">Events</a>
+        </li>
+      </ul>
+    </nav>
+              <div class="row row-cols-1 row-cols-md-3 pt-15" v-if="villas && ressources && ressources?.villas && ressources?.villas.data">
+                <div class="col mb-4" v-for="villa in ressources?.villas?.data" :key="villa.id">
+                  <div class="card h-100" v-if="villa?.attributes?.photos?.data[0]?.attributes">
+                    <img :src="urlPic(villa?.attributes?.photos?.data[0]?.attributes.url)" class="card-img-top img" alt="">
                     <div class="card-body">
-                      <h5 class="card-title">{{ villa.name }}</h5>
-                      <p class="card-text">{{truncatedDescription(villa.description)}}</p>
+                      <h5 class="card-title">{{ villa?.attributes?.name }}</h5>
+                      <p class="card-text">{{truncatedDescription(villa?.attributes?.description)}}</p>
                     </div>
                   </div>
                 </div>
               </div>
-               <div class="row row-cols-1 row-cols-md-3" v-if="vehicles  && ressources && ressources.vehicles">
-                <div class="col mb-4" v-for="vehicle in ressources.vehicles" :key="vehicle.id">
-                    <div class="card h-100" v-if="vehicle.photos">
-                      <img :src="urlPic(vehicle)" class="card-img-top img " alt=""
+               <div class="row row-cols-1 row-cols-md-3" v-if="vehicles  && ressources && ressources?.vehicles && ressources?.vehicles?.data">
+                <div class="col mb-4" v-for="vehicle in ressources?.vehicles?.data" :key="vehicle.id">
+                    <div class="card h-100" v-if="vehicle?.attributes?.photos?.data[0]?.attributes">
+                      <img :src="urlPic(vehicle?.attributes?.photos?.data[0]?.attributes.url)" class="card-img-top img " alt=""
                        >
                       <div class="card-body">
-                        <h5 class="card-title" v-if="vehicle.make && vehicle.make ">{{ vehicle.make.name }}</h5>
-                            <p class="card-text">{{ truncatedDescription(vehicle.description) }}</p>
+                        <h5 class="card-title" v-if="vehicle?.attributes?.make && vehicle.attributes?.make ">{{ vehicle?.attributes?.make?.data?.attributes?.name }}</h5>
+                            <p class="card-text">{{ truncatedDescription(vehicle?.attributes?.description) }}</p>
 
                       </div>
                     </div>
                   </div>
                </div>
 
-               <div class="row row-cols-1 row-cols-md-3" v-if="events  && ressources && ressources.events">
-                <div class="col mb-4" v-for="event in ressources.events" :key="event.id">
-                    <div class="card h-100" v-if="event.photos">
-                      <img :src="urlPic(event)" class="card-img-top img" alt="">
+               <div class="row row-cols-1 row-cols-md-3" v-if="events  && ressources && ressources?.events && ressources?.events?.data">
+                <div class="col mb-4" v-for="event in ressources?.events?.data" :key="event.id">
+                    <div class="card h-100" v-if="event?.attributes?.photos?.data[0]?.attributes">
+                      <img :src="urlPic(event?.attributes?.photos?.data[0]?.attributes?.url)" class="card-img-top img" alt="">
                       <div class="card-body">
-                        <h5 class="card-title">{{ event.name }}</h5>
-                        <p class="card-text">{{truncatedDescription(event.description)}}</p>
+                        <h5 class="card-title">{{ event?.attributes?.name }}</h5>
+                        <p class="card-text">{{truncatedDescription(event?.attributes?.description)}}</p>
                       </div>
                     </div>
                   </div>
                  </div>
                  </div>
-          </div>
-        </transition>
-      </div>
-    </transition>
-  </template>
+                </template>
 <script>
   export default {
     props: {
@@ -81,12 +70,10 @@
       };
     },
     methods: {
-        urlPic(villa) {
-  if (villa && villa.photos && villa.photos.length > 0 && villa.photos[0].url) {
-     return `${process.env.VUE_APP_STORAGE_URL}${villa.photos[0].url.trim()}`;
-  } else {
-    return '';
-  }
+        urlPic(url) {
+  // if (villa && villa.photos && villa.photos.length > 0 && villa.photos[0].url) {
+     return `${process.env.VUE_APP_STORAGE_URL}${url}`;
+
 }
 ,truncatedDescription(description) {
        const phrases = description.split(/[.,!?]/);
@@ -113,7 +100,8 @@
       }
     },
     mounted() {
-      console.log('Photos:', this.ressources.villas[0]?.photos[0].url);
+      console.log(this.ressources, "ressource form")
+      console.log('Photos:', this.ressources?.attributes?.villas[0]?.photos[0].url);
     }
   };
 </script>
@@ -210,18 +198,23 @@
      cursor: pointer;
    }
 
-   /* Increase specificity for active nav item */
-   .nav-item.active > .nav-link {
+
+    .nav-item.active > .nav-link {
      background-color: #6560f0;
      color: white;
    }
  }
+
+ .nav-item.active > .nav-link {
+  background-color: #6560f0;
+  color: white;
+}
  .card-img-top {
     max-height: 200px;
-    transition: transform 0.3s ease; /* Add transition for smoother animation */
+    transition: transform 0.3s ease;
   }
 
   .card-img-top:hover {
-    transform: scale(1.05); /* Increase size on hover */
+    transform: scale(1.05);
   }
  </style>

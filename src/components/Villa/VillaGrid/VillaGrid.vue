@@ -5,15 +5,15 @@
 
       <div class="products-sidebar-filter bg-white letter-spacing mb-25" v-if="selected.length > 0">
         <div class="title" style="display: flex; flex-direction: row;">
-          <h5 class="mb-0 fw-semibold text-secondary">Available Actions</h5>
-          <div class="button"  style="display: flex; flex-direction: row;">
+          <!-- <h5 class="mb-0 fw-semibold text-secondary">Available Actions</h5> -->
+          <!-- <div class="button"  style="display: flex; flex-direction: row;">
             <button class="active btn  " @click="deleteAll">
             <i class="fas fa-trash"></i>
             </button>
             <button class="active btn" @click="desactivateAll">
                 <i class="fas fa-ban"></i>
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

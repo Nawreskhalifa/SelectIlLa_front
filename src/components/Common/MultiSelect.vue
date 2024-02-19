@@ -1,0 +1,167 @@
+<template>
+  <div class="multiselect-container col-md-6">
+    <label class="d-block text-black fw-semibold mb-2">{{ label }}</label>
+
+    <div class="selected-tags form-group mb-2" @click="toggleDropdown">
+      <div v-if="selectedTags.length === 0" class="placeholder">{{ placeholder }}</div>
+      <div v-else>
+        <div v-if="multiSelect">
+          <div v-for="(tag, index) in selectedTags" :key="index" class="tag">
+            {{ tag.attributes.name }}
+            <span v-if="tag.attributes"> {{ tag.attributes.name }}</span>
+         <span v-if="tag.name"> {{ tag.name }}</span>
+            <span class="close-icon" @click.stop="removeTag(index)">x</span>
+          </div>
+        </div>
+        <div v-else class="tag">
+             <span v-if="selectedTags[0].attributes">  {{ selectedTags[0].attributes.name }}</span>
+         <span v-if="selectedTags[0].name">    {{ selectedTags[0].name }}</span>
+
+          <span class="close-icon"   @click="removeTag(0)" @click.stop="toggleDropdown ">x</span>
+        </div>
+      </div>
+    </div>
+      <ul v-show="dropdownVisible" class="dropdown form-control">
+    <li v-for="(option, index) in options" :key="index" @click="toggleSelection(option)" :class="{ 'selected': isSelected(option) }">
+      <span v-if="option.attributes">{{ option.attributes.name }}</span>
+      <span v-if="option.name">{{ option.name }}</span>
+      <span v-if="multiSelect && isSelected(option)" class="checkmark">✔</span>
+    </li>
+  </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    options: {
+      type: Array,
+      required: true,
+    },
+    placeholder: {
+      type: String,
+      default: 'Select tags...',
+    },
+    value: {
+      type: Array,
+      default: () => [],
+    },
+    label: {
+      type: String
+    },
+    multiSelect: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  data() {
+    return {
+      selectedTags: this.value,
+      dropdownVisible: false,
+    };
+  },
+  watch: {
+    value(newVal) {
+      this.selectedTags = newVal;
+    },
+    selectedTags(newVal) {
+      this.$emit('input', newVal);
+    },
+  },
+  methods: {
+    toggleDropdown() {
+      this.dropdownVisible = !this.dropdownVisible;
+    },
+    toggleSelection(tag) {
+      if (this.multiSelect) {
+        const index = this.selectedTags.findIndex(t => t === tag);
+        if (index !== -1) {
+          this.selectedTags.splice(index, 1);
+        } else {
+          this.selectedTags.push(tag);
+        }
+        this.$emit('update:selected', this.selectedTags);
+      } else {
+        this.selectedTags = [tag];
+        this.$emit('update:selectedOne', this.selectedTags);
+
+        this.toggleDropdown();
+      }
+    },
+    removeTag(index) {
+      this.selectedTags.splice(index, 1);
+    },
+    isSelected(option) {
+      return this.selectedTags.some(tag => tag === option);
+    },
+  },
+};
+</script>
+<style scoped>
+.multiselect-container {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+}
+
+.selected-tags {
+  padding:12px 15px ;
+  border: 1px solid #ccc;
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+.placeholder {
+  color: black !important ;
+  background-color: white;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #007bff;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 4px;
+}
+
+.close-icon {
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.dropdown li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdown li:hover {
+  background-color: #f0f0f0;
+}
+
+.checkmark {
+  float: right;
+}
+.selected {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  display: none;
+}
+
+</style>

@@ -9,15 +9,63 @@
         align-items: center;
       "
     >
-      <h5 class="mb-0 fw-semibold text-secondary">Select All</h5>
+      <h5 class="mb-0 fw-semibold text-secondary">Options</h5>
       <div>
-         <div class="checkbox-wrapper">
+         <!-- <div class="checkbox-wrapper">
           <input type="checkbox" id="selectAllCheckbox" v-model="selectAll"  />
           <label class="checkbox-label" for="selectAllCheckbox">
              <i v-if="selectAll" class="fas fa-check"></i>
           </label>
-        </div>
-
+        </div> -->
+<div class="dropdown">
+                  <button
+                    class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i class="flaticon-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <!-- <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        @click.prevent="openEdit(partner)"
+                        ><i
+                          class="flaticon-pen lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Add</a
+                      >
+                    </li> -->
+                     <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        ><i
+                          class="fas fa-check lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Select  All </a
+                      >
+                    </li>
+                     <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        ><i
+                          class="flaticon-delete lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Delete All </a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                         ><i
+                          class="fas fa-ban lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Disable All </a
+                      >
+                    </li>
+                  </ul>
+                </div>
       </div>
 
     </div>
@@ -38,11 +86,11 @@
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Makes</h6>
       <ul class="categories-list ps-0 mb-0 list-unstyled">
-        <li  @click="byCategory('All')">
+        <li  @click="byCategory('All')" class="cat">
             <span class="d-block fs-md-15 fw-medium">All</span>
             <span class="d-block fw-medium text-muted">{{makes.length}}</span>
          </li>
-<li v-for="item in makes" :key="item.id" @click="byCategory(item)">
+<li v-for="item in makes" :key="item.id"  class="cat" @click="byCategory(item) ">
     <span class="d-block fs-md-15 fw-medium">{{item.attributes.name}}</span>
             <span class="d-block fw-medium text-muted">{{item?.attributes?.vehicles?.data?.length }}</span>
 </li>
@@ -62,7 +110,7 @@
         See More
       </button> -->
     </div>
-    <div class="sidebar-item">
+    <!-- <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Brands</h6>
       <ul class="brands-list ps-0 mb-0 list-unstyled">
         <li
@@ -107,14 +155,14 @@
         >
         See More
       </button>
-      </ul>
+      </ul> -->
       <!-- <button
         type="button"
         class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
       >
         See More
       </button> -->
-     </div>
+     <!-- </div> -->
   </div>
 
 </template>
@@ -156,7 +204,8 @@ export default {
     // },
     async seeMoreMakes() {
       const { data } = await fetchMakes(`pagination[start]=${this.makes.length}&pagination[limit]=${this.makeLimit}`);
-      this.makes = this.makes.concat(data);
+       this.makes = await this.makes.concat(data);
+      console.log(this.makes,"okay")
       this.moreMakesAvailable = data.length === this.makeLimit;
     },
     async seeMoreBrands() {
@@ -167,6 +216,7 @@ export default {
 async getMakesAndBrands(queryMakes="" , queryBrands=""){
   const {data} = await fetchMakes(queryMakes)
     this.makes = data
+    console.log(this.makes,"oks")
   const br = await fetchBrands(queryBrands)
    this.brands = br.data
 } ,

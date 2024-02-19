@@ -123,6 +123,8 @@
               </label>
               <div class="mb-0">
                    <QuillEditor
+                                                       style="height: 12em"
+
                   theme="snow"
                   placeholder="Write your meta description"
 v-model:content="description"

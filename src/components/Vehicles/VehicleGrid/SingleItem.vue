@@ -76,7 +76,7 @@
           <button
             type="button"
             class="add-to-cart-btn text-center d-block mt-15 fw-medium transition w-100 rounded-1 position-relative"
-            @click="updateVehicle"
+            @click="updateVehicle(vehicle.id)"
           >
             Update This
             <i class="fas fa-edit"></i>
@@ -92,12 +92,12 @@
             :propToDelete="vehicle.attributes?.brand?.data?.attributes?.name"
             @delete="handleDelete"
           />
-          <UpdateVehicle
+          <!-- <UpdateVehicle
             :show="isUpdate"
             :vehicle="vehicle"
             @close="updateVehicle"
             @updatedData="newData"
-          />
+          /> -->
         </div>
       </div>
     </div>
@@ -108,8 +108,8 @@
 import { ref } from "vue";
 // import VehicleDetails from "../VehicleDetails/VehicleDetails.vue";
 import DeleteModal from "@/components/Common/DeleteModal.vue";
-import UpdateVehicle from "../UpdateVehicle/UpdateVehicle.vue";
-import { updateVehicle } from "@/services/apiService";
+// import UpdateVehicle from "../UpdateVehicle/UpdateVehicle.vue";
+ import { updateVehicle } from "@/services/apiService";
 export default {
   props: {
     vehicle: {
@@ -123,9 +123,9 @@ export default {
   setup() {
     const modalActive = ref(false);
     const deleteModalVisible = ref(false);
-    const isUpdate = ref(false);
+    // const isUpdate = ref(false);
 
-    return { modalActive, deleteModalVisible, isUpdate };
+    return { modalActive, deleteModalVisible };
   },
 
   methods: {
@@ -174,8 +174,9 @@ export default {
     toggleDeleteModal() {
       this.deleteModalVisible = !this.deleteModalVisible;
     },
-    updateVehicle() {
-      this.isUpdate = !this.isUpdate;
+    updateVehicle(id) {
+            this.$router.push({ name: 'updatevehicle', params: { id: id }})
+      // this.isUpdate = !this.isUpdate;
     },
     newData(event) {
       this.$emit("itemUpdated", event);
@@ -196,7 +197,7 @@ export default {
   components: {
     // VehicleDetails,
     DeleteModal,
-    UpdateVehicle,
+    // UpdateVehicle,
   },
 };
 </script>

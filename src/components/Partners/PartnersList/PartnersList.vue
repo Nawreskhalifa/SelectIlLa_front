@@ -3,7 +3,7 @@
     <div
       class="card-head box-shadow bg-white d-md-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
     >
-      <div class="search-box position-relative" >
+      <div class="search-box position-relative">
         <input
           @input="change"
           type="text"
@@ -11,54 +11,50 @@
           placeholder="Search Partner"
           v-model="searchInput"
         />
-
       </div>
       <div class="d-sm-flex align-items-center gap-2">
-
-        <button
-        class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
-        type="button"
-        :class="{ 'selected':allCheckboxesChecked }"
-        @click="allData"
-      >
-        All
-      </button>
-
-
-      <button
-      class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
-      type="button"
-      :class="{ 'selected':vehicleSelected }"
-      @click="vehicleData"
-
-    >
-      Vehicle
-     </button>
         <button
           class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
           type="button"
-          :class="{ 'selected':eventSelected }"
+          :class="{ selected: allCheckboxesChecked }"
+          @click="allData"
+        >
+          All
+        </button>
+
+        <button
+          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
+          type="button"
+          :class="{ selected: vehicleSelected }"
+          @click="vehicleData"
+        >
+          Vehicle
+        </button>
+        <button
+          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
+          type="button"
+          :class="{ selected: eventSelected }"
           @click="eventData"
         >
           Events
-         </button>
-         <button
-         class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
-         type="button"
-         :class="{ 'selected':villaSelected }"
-         @click="villaData"
-       >
-         Villas
         </button>
-         <div class="d-sm-flex align-items-center mt-10 mt-lg-0">
-            <router-link
-              to="/add-partner"
-              class=" btn btn-primary position-relative   border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
-            >
-              Add Partner
-              <i class="flaticon-plus position-relative ms-5 fs-12"></i>
-            </router-link>
-  <!-- <select
+        <button
+          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
+          type="button"
+          :class="{ selected: villaSelected }"
+          @click="villaData"
+        >
+          Villas
+        </button>
+        <div class="d-sm-flex align-items-center mt-10 mt-lg-0">
+          <router-link
+            to="/add-partner"
+            class="btn btn-primary position-relative border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
+          >
+            Add Partner
+            <i class="flaticon-plus position-relative ms-5 fs-12"></i>
+          </router-link>
+          <!-- <select
               class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
             >
               <option selected>All (32)</option>
@@ -107,7 +103,7 @@
                   >
                 </li>
               </ul> -->
-           </div>
+        </div>
       </div>
     </div>
     <div class="card-body p-15 p-sm-20 p-md-25">
@@ -122,16 +118,16 @@
                 Name
               </th>
               <th
-              scope="col"
-              class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-            >
-            surname
-            </th>
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+              >
+                surname
+              </th>
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
               >
-              phone
+                phone
               </th>
               <th
                 scope="col"
@@ -139,12 +135,12 @@
               >
                 Type Ressource
               </th>
-              <th
+              <!-- <th
               scope="col"
               class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
             >
                 Check
-            </th>
+            </th> -->
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
@@ -155,7 +151,8 @@
           </thead>
           <tbody>
             <tr v-for="partner in paginatedPartners" :key="partner.id">
-              <td   class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
+              <td
+                class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
               >
                 <div class="d-flex align-items-center">
                   <!-- <div class="form-check mb-0">
@@ -165,14 +162,21 @@
                     />
                   </div> -->
                   <div class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16">
-                    <img v-if="partner && partner.user && partner.user.photo && partner.user.photo.url"
+                    <img
+                      v-if="
+                        partner &&
+                        partner.user &&
+                        partner.user.photo &&
+                        partner.user.photo.url
+                      "
                       :src="getFullImageUrl(partner.user.photo.url)"
                       class="rounded-circle me-8"
                       width="24"
                       height="24"
                       alt="user"
                     />
-                       <img v-else
+                    <img
+                      v-else
                       src="../../../assets/guest.png"
                       class="rounded-circle me-8"
                       width="24"
@@ -180,60 +184,58 @@
                       alt="user"
                     />
 
-                   {{ partner.name }}
+                    {{ partner.name }}
                   </div>
                 </div>
               </td>
               <td class="shadow-none lh-1 fw-medium text-paragraph">
                 {{ partner.surname }}
-
               </td>
               <td class="shadow-none lh-1 fw-medium text-paragraph">
                 {{ partner.phone }}
               </td>
               <td class="shadow-none lh-1 fw-medium text-paragraph">
-
-  <div >
-    <label>
-      <input
-        type="checkbox"
-        :checked="partner.vehicles.length > 0"
-        v-model="partner.hasVehicle"
-        disabled
-        class="form-check-input"
-      />
-      Vehicle
-    </label>
-  </div>
-  <div>
-    <label>
-      <input
-        type="checkbox"
-        :checked="partner.villas.length > 0"
-        v-model="partner.hasVillas"
-        disabled
-        class="form-check-input"
-      />
-      Villas
-    </label>
-  </div>
-  <div>
-    <label>
-      <input
-        type="checkbox"
-        :checked="partner.events.length > 0"
-        disabled
-        v-model="partner.hasEvents"
-        class="form-check-input"
-      />
-      Events
-    </label>
-  </div>
-               </td>
-
+                <div>
+                  <label>
+                    <input
+                      type="checkbox"
+                      :checked="partner.vehicles.length > 0"
+                      v-model="partner.hasVehicle"
+                      disabled
+                      class="form-check-input"
+                    />
+                    Vehicle
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    <input
+                      type="checkbox"
+                      :checked="partner.villas.length > 0"
+                      v-model="partner.hasVillas"
+                      disabled
+                      class="form-check-input"
+                    />
+                    Villas
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    <input
+                      type="checkbox"
+                      :checked="partner.events.length > 0"
+                      disabled
+                      v-model="partner.hasEvents"
+                      class="form-check-input"
+                    />
+                    Events
+                  </label>
+                </div>
+              </td>
+              <!--
                <td class="shadow-none lh-1 fw-medium text-paragraph">
                 <i @click="openRessources(partner)" class="fas fa-eye" style="cursor: pointer;"></i>
-              </td>
+              </td> -->
               <td
                 class="shadow-none lh-1 fw-medium text-paragraph text-end pe-0"
               >
@@ -257,7 +259,7 @@
                         Add</a
                       >
                     </li> -->
-                     <li>
+                    <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
                         @click.prevent="openDetails(partner)"
@@ -287,27 +289,37 @@
       <div
         class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
       >
-         <p class="mb-0 text-paragraph">
-    Showing <span class="fw-bold">{{ paginatedPartners.length }}</span> out of
-    <span class="fw-bold">{{ partners.length }}</span> results
-  </p>
+        <p class="mb-0 text-paragraph">
+          Showing
+          <span class="fw-bold">{{ paginatedPartners.length }}</span> out of
+          <span class="fw-bold">{{ partners.length }}</span> results
+        </p>
         <nav class="mt-15 mt-md-0">
-       <ul class="pagination mb-0">
-  <li class="page-item">
-    <a class="page-link" href="#" aria-label="Previous" @click="prevPage">
-      <i class="flaticon-chevron-1"></i>
-    </a>
-  </li>
-  <li class="page-item" v-for="page in maxPage" :key="page">
-    <a class="page-link" :class="{ active: page === checkList.currentPage }" @click="currentPage = page">{{ page }}  </a>
-  </li>
-  <li class="page-item">
-    <a class="page-link"   aria-label="Next" @click="nextPage">
-      <i class="flaticon-chevron"></i>
-    </a>
-  </li>
-</ul>
-
+          <ul class="pagination mb-0">
+            <li class="page-item">
+              <a
+                class="page-link"
+                href="#"
+                aria-label="Previous"
+                @click="prevPage"
+              >
+                <i class="flaticon-chevron-1"></i>
+              </a>
+            </li>
+            <li class="page-item" v-for="page in maxPage" :key="page">
+              <a
+                class="page-link"
+                :class="{ active: page === checkList.currentPage }"
+                @click="currentPage = page"
+                >{{ page }}
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" aria-label="Next" @click="nextPage">
+                <i class="flaticon-chevron"></i>
+              </a>
+            </li>
+          </ul>
         </nav>
       </div>
     </div>
@@ -318,19 +330,13 @@
       :partner="partnerEdit"
       @close="closeModal"
      /> -->
-     <RessourcesModal
-     :show="ressourcesModalVisible"
-     @close="closeRessources"
-     :ressources="partnerEdit"
-    />
   </div>
-      <loading
-      v-model:active="isLoading"
-      :can-cancel="true"
-       :on-cancel="onCancel"
-      :is-full-page="fullPage"
-    />
-
+  <loading
+    v-model:active="isLoading"
+    :can-cancel="true"
+    :on-cancel="onCancel"
+    :is-full-page="fullPage"
+  />
 </template>
 
 <script>
@@ -340,62 +346,58 @@ import {
   search,
 } from "@/services/apiService";
 // import UpdateModal from "../AddPartner/EditPartners.vue";
-import {fetchPartners, fetchUserByPartner} from "@/services/apiService"
-import RessourcesModal from '../Ressources/RessourcesModal.vue'
+import { fetchPartners, fetchUserByPartner } from "@/services/apiService";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 export default {
   name: "PartnersList ",
   components: {
-    RessourcesModal,
-    Loading
+    Loading,
   },
   data() {
     return {
       partners: [],
       checkList: {
-      vehicle: true,
-      villa: true,
-      event: true,
-
-
-    },
- currentPage: 1 ,
-        pageSize: 3,
-          isLoading:false,
+        vehicle: true,
+        villa: true,
+        event: true,
+      },
+      currentPage: 1,
+      pageSize: 3,
+      isLoading: false,
 
       ModalVisible: false,
-      ressourcesModalVisible : false,
+      ressourcesModalVisible: false,
       partnerEdit: "",
       searchInput: "",
-      secondAllPartners : []
-     };
+      secondAllPartners: [],
+    };
   },
   methods: {
-      prevPage() {
-  if (this.currentPage > 1) {
-    this.currentPage--;
-  }
-},
-nextPage() {
-  const maxPage = Math.ceil(this.partners.length / this.pageSize);
-  if (this.currentPage < maxPage) {
-    this.currentPage++;
-  }
-},
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      const maxPage = Math.ceil(this.partners.length / this.pageSize);
+      if (this.currentPage < maxPage) {
+        this.currentPage++;
+      }
+    },
     getFullImageUrl(relativePath) {
-      const stockage = process.env.VUE_APP_STORAGE_URL
+      const stockage = process.env.VUE_APP_STORAGE_URL;
       return `${stockage}${relativePath}`;
     },
     async fetchAllPartners() {
-  try {
-    const data = await fetchPartners();
-    this.partners = data;
-    this.secondAllPartners = data
-  } catch (error) {
-    console.error("Error fetching partners:", error);
-  }
-},
+      try {
+        const data = await fetchPartners();
+        this.partners = data;
+        this.secondAllPartners = data;
+      } catch (error) {
+        console.error("Error fetching partners:", error);
+      }
+    },
     async deletePartner(id) {
       this.partners = this.partners.filter((item) => {
         return item.id !== id;
@@ -405,130 +407,130 @@ nextPage() {
     async openEdit(partner) {
       this.ModalVisible = !this.ModalVisible;
       this.partnerEdit = partner;
-      },
+    },
 
     closeModal() {
       this.ModalVisible = !this.ModalVisible;
     },
-    closeRessources(){
-   this.ressourcesModalVisible = false
+    closeRessources() {
+      this.ressourcesModalVisible = false;
     },
     async updated() {
       await this.fetchAllPartners();
       this.ModalVisible = !this.ModalVisible;
     },
-      openDetails(partner) {
-        console.log(partner)
-     this.$router.push({ name: 'partnerdetails', params: { id: partner.id } });
-  },
- async change() {
-  try {
-           this.partners = await this.secondAllPartners;
+    openDetails(partner) {
+      console.log(partner);
+      this.$router.push({ name: "partnerdetails", params: { id: partner.id } });
+    },
+    async change() {
+      try {
+        this.partners = await this.secondAllPartners;
 
-    this.currentPage = 1;
+        this.currentPage = 1;
 
-    const searchInput = this.searchInput.trim().toLowerCase();
-    if (searchInput !== '') {
-       this.partners = this.partners.filter(partner =>
-        partner.name.toLowerCase().includes(searchInput)
-      );
-    } else {
-       this.partners = await this.secondAllPartners;
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
+        const searchInput = this.searchInput.trim().toLowerCase();
+        if (searchInput !== "") {
+          this.partners = this.partners.filter((partner) =>
+            partner.name.toLowerCase().includes(searchInput)
+          );
+        } else {
+          this.partners = await this.secondAllPartners;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
 
-
-,
-     async vehicleData() {
+    async vehicleData() {
       await this.fetchAllPartners();
 
+      this.checkList.event = false;
+      this.checkList.villa = false;
+      this.checkList.vehicle = true;
 
-  this.checkList.event = false;
-  this.checkList.villa = false;
-  this.checkList.vehicle = true;
-
-  this.partners = this.partners.filter((partner) => {
-    return partner.vehicles.length > 0;
-  });
-},
-async villaData() {
-  await this.fetchAllPartners();
-
-  this.checkList.event = false;
-  this.checkList.villa = true;
-  this.checkList.vehicle = false;
-
-  this.partners = this.partners.filter((partner) => {
-    return partner.villas.length > 0;
-  });
-},
-async eventData() {
-  await this.fetchAllPartners();
-
-  this.checkList.event = true;
-  this.checkList.villa = false;
-  this.checkList.vehicle = false;
-
-  this.partners = this.partners.filter((partner) => {
-    return partner.events.length > 0;
-  });
-},
-
-async allData() {
-  this.checkList.event = true;
-  this.checkList.villa = true;
-  this.checkList.vehicle = true;
-  await this.fetchAllPartners();
-},
-openRessources(partner){
-    this.partnerEdit= partner
- this.ressourcesModalVisible  = true;
-}
-  },
- computed:{
-  allCheckboxesChecked() {
-    return this.checkList.vehicle && this.checkList.villa && this.checkList.event;
-  },
-  vehicleSelected(){
-    return this.checkList.vehicle === true;
-  },
-  villaSelected(){
-    return this.checkList.villa === true;
-  },
-  eventSelected(){
-    return this.checkList.event === true;
-  },
-  chechIfPartner(){
-    if(this.partners){
-      const onlyPartner =  this.partners.filter((item)=> {
-        if(item.user?.role?.name === "Partner"){
-          return item;
-        }
+      this.partners = this.partners.filter((partner) => {
+        return partner.vehicles.length > 0;
       });
-      return onlyPartner;
-    } else {
-      return [];
-    }
-  },
-paginatedPartners() {
-   if (this.partners) {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    const partnersWithRole = this.partners.filter(item => item.user?.role?.name === "Partner");
-    return partnersWithRole.slice(startIndex, endIndex);
-  } else {
-    return [];
-  }
-},
-maxPage() {
-  const totalPartners = this.chechIfPartner.length;
-  return Math.ceil(totalPartners / this.pageSize);
-}
+    },
+    async villaData() {
+      await this.fetchAllPartners();
 
-},
+      this.checkList.event = false;
+      this.checkList.villa = true;
+      this.checkList.vehicle = false;
+
+      this.partners = this.partners.filter((partner) => {
+        return partner.villas.length > 0;
+      });
+    },
+    async eventData() {
+      await this.fetchAllPartners();
+
+      this.checkList.event = true;
+      this.checkList.villa = false;
+      this.checkList.vehicle = false;
+
+      this.partners = this.partners.filter((partner) => {
+        return partner.events.length > 0;
+      });
+    },
+
+    async allData() {
+      this.checkList.event = true;
+      this.checkList.villa = true;
+      this.checkList.vehicle = true;
+      await this.fetchAllPartners();
+    },
+    openRessources(partner) {
+      this.partnerEdit = partner;
+      this.ressourcesModalVisible = true;
+    },
+  },
+  computed: {
+    allCheckboxesChecked() {
+      return (
+        this.checkList.vehicle && this.checkList.villa && this.checkList.event
+      );
+    },
+    vehicleSelected() {
+      return this.checkList.vehicle === true;
+    },
+    villaSelected() {
+      return this.checkList.villa === true;
+    },
+    eventSelected() {
+      return this.checkList.event === true;
+    },
+    chechIfPartner() {
+      if (this.partners) {
+        const onlyPartner = this.partners.filter((item) => {
+          if (item.user?.role?.name === "Partner") {
+            return item;
+          }
+        });
+        return onlyPartner;
+      } else {
+        return [];
+      }
+    },
+    paginatedPartners() {
+      if (this.partners) {
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const endIndex = startIndex + this.pageSize;
+        const partnersWithRole = this.partners.filter(
+          (item) => item.user?.role?.name === "Partner"
+        );
+        return partnersWithRole.slice(startIndex, endIndex);
+      } else {
+        return [];
+      }
+    },
+    maxPage() {
+      const totalPartners = this.chechIfPartner.length;
+      return Math.ceil(totalPartners / this.pageSize);
+    },
+  },
   directives: {
     date: {
       mounted(el, binding) {
@@ -542,23 +544,17 @@ maxPage() {
     },
   },
   async mounted() {
-        this.isLoading = true ;
+    this.isLoading = true;
 
-await     this.fetchAllPartners();
+    await this.fetchAllPartners();
     this.isLoading = false;
-
   },
 };
 </script>
 
 <style scoped>
 .selected {
-    background-color: rgb(89, 64, 231) !important ;
+  background-color: rgb(89, 64, 231) !important ;
   color: white !important;
 }
-
-
-
-
-
 </style>

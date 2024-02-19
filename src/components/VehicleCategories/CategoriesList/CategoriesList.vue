@@ -1,5 +1,6 @@
 <template>
   <UpdateModal :show="ModalVisible" @close="closeModal" @addMake="addAMake" />
+  <Loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
   <div v-if="makeToEdit">
     <edit-make
       :show="EditMakeModal"
@@ -31,16 +32,15 @@
         class="card mb-25 border-0 rounded-0 bg-white letter-spacing chat-sidebar"
       >
         <div class="card-body">
-             <input
-              type="text"
-              class="form-control shadow-none text-black rounded-0 border-0"
-              placeholder="Search message"
-              v-model="searchInput"
-                @input="searchMake"
+          <input
+            type="text"
+            class="form-control shadow-none text-black rounded-0 border-0"
+            placeholder="Search message"
+            v-model="searchInput"
+            @input="searchMake"
+          />
 
-            />
-
-           <button
+          <button
             class="btn btn-primary d-block w-100"
             type="button"
             @click="openAdd"
@@ -51,79 +51,89 @@
           <div class="chat-users-list">
             <div class="card mb-25 border-0 rounded-0 bg-white to-do-list-box">
               <div class="card-body letter-spacing">
-                <ul class="to-do-list style-two ps-0 list-unstyled mb-0">
-
-                  <li
-                    v-for="make in makes"
-                    :key="make.id"
-                    :class="{ selected: make.selected }"
-                    class="to-do-list-item d-flex align-items-center justify-content-between hoverli"
-                    @click.prevent="openBrandsFormMake(make)"
-                  >
-                    <div style="width: 95%; cursor: pointer">
-                      <div
-                        class="'form-check mb-0 fs-md-15 fs-lg-16 text-black fw-medium'"
- v-if="make && make.attributes && make.attributes.name"
-
-                      >
-                        <label class="aria-label">
-                          <h6
-                            style="cursor: pointer"
-                            class="card-title fw-bold mb-0"
-                          >
-                            {{ make.attributes.name }}
-                          </h6>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="dropdown">
-                      <button
-                        class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <i class="flaticon-dots"></i>
-                      </button>
-                      <ul class="dropdown-menu">
-                        <!-- <li>
-                <a
-                  class="dropdown-item d-flex align-items-center"
-                  href="javascript:void(0);"
+                <div
+                  class="scrollable-container"
+                  :style="{ maxHeight: showAllItems ? 'none' : '100%' }"
                 >
-                  <i class="flaticon-view lh-1 me-8"></i>
-                  View
-                </a>
-              </li> -->
-                        <li>
-                          <a
-                            class="dropdown-item d-flex align-items-center"
-                            @click.prevent="openEditMake(make)"
-                          >
-                            <i class="flaticon-pen lh-1 me-8"></i>
-                            Edit
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            class="dropdown-item d-flex align-items-center"
-                            @click.prevent="deleteMakeMeth(make.id)"
-                          >
-                            <i class="flaticon-delete lh-1 me-8"></i>
-                            Delete
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </li>
-                </ul>
+                  <ul class="to-do-list style-two ps-0 list-unstyled mb-0">
+                    <li
+                      v-for="make in paginatedMakes"
+                      :key="make.id"
+                      :class="{ selected: make.selected }"
+                      class="to-do-list-item d-flex align-items-center justify-content-between hoverli"
+                      @click.prevent="openBrandsFormMake(make)"
+                    >
+                      <div style="width: 95%; cursor: pointer">
+                        <div
+                          class="'form-check mb-0 fs-md-15 fs-lg-16 text-black fw-medium'"
+                          v-if="
+                            make && make.attributes && make?.attributes?.name
+                          "
+                        >
+                          <label class="aria-label">
+                            <h6
+                              style="cursor: pointer"
+                              class="card-title fw-bold mb-0"
+                            >
+                              {{ make.attributes.name }}
+                            </h6>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="dropdown">
+                        <button
+                          class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="flaticon-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a
+                              class="dropdown-item d-flex align-items-center"
+                              @click.prevent="openEditMake(make)"
+                            >
+                              <i class="flaticon-pen lh-1 me-8"></i>
+                              Edit
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              class="dropdown-item d-flex align-items-center"
+                              @click.prevent="deleteMakeMeth(make.id)"
+                            >
+                              <i class="flaticon-delete lh-1 me-8"></i>
+                              Delete
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div
+                  class="text-center mt-2"
+                  v-if="!showAllItems && makes.length > pageSize"
+                >
+                  <button class="btn btn-link" @click="showAllItems = true">
+                    Show more
+                  </button>
+                </div>
+                <div class="text-center mt-2" v-else-if="showAllItems">
+                  <button class="btn btn-link" @click="showAllItems = false">
+                    Show less
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-lg-8 col-xxxl-9">
+
+    <div class="col-lg-4 col-xxxl-4">
       <div class="card mb-25 border-0 rounded-0 bg-white">
         <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
           <div
@@ -143,202 +153,250 @@
                 class="fw-medium text-muted me-8"
                 @click="addNewBrand()"
                 style="cursor: pointer"
-                >+ brand for {{ openedMake }}
+                >+ brand for {{ openedMake }}</span
+              >
+            </div>
+          </div>
+          <div class="responsive">
+            <div class="row">
+              <div class="col-lg-12">
+                <div v-for="brand in paginatedBrands" :key="brand.id">
+                  <div
+                    class="card mb-3"
+                    @click="handleBrandClick(brand)"
+                    :class="{ selected: brand.selected }"
+                    style="cursor: pointer"
+                  >
+                    <div
+                      class="card-body hoverli"
+                      style="
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-between;
+                      "
+                    >
+                      <h6 class="card-title fw-bold mb-0">
+                        {{ brand?.attributes?.name }}
+                      </h6>
+                      <div class="dropdown">
+                        <button
+                          class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="flaticon-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              @click.prevent="openEditBrand(brand)"
+                              >Edit</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              @click.prevent="deleteBrandMethode(brand.id)"
+                              >Delete</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="!showAllBrands && brands.length > pageSize">
+                  <button class="btn btn-link" @click="showAllBrands = true">
+                    Show more
+                  </button>
+                </div>
+                <div v-else-if="showAllBrands">
+                  <button class="btn btn-link" @click="showAllBrands = false">
+                    Show less
+                  </button>
+                </div>
+              </div>
+            </div>
+            <hr />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-xxxl-4">
+      <div class="card mb-25 border-0 rounded-0 bg-white">
+        <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
+          <div
+            class="mb-15 mb-md-30 d-sm-flex align-items-center justify-content-between" style="margin-top: 25px;"
+          >
+            <h6 class="card-title fw-bold mb-0">
+              Tags
+              <span class="badge bg-primary fs-20" v-if="openedBrand">{{
+                openedBrand?.attributes?.name
+              }}</span>
+            </h6>
+            <div
+              class="card-select mt-10 mt-md-0 mb-10 mb-md-0 d-inline-block d-sm-flex align-items-center ps-10 pe-10 pt-5 pb-5"
+              v-if="openedBrand"
+            >
+              <span
+                class="fw-medium text-muted me-8  "
+                v-if="!isAdd"
+                @click="addNewTags()"
+                style="cursor: pointer"
+                >+ Tag for {{ openedBrand.attributes?.name }}
+              </span>
+              <span
+                class="fw-medium text-muted me-8      "
+                v-if="isAdd"
+                @click="cancelAddTags()"
+                style="cursor: pointer"
+                >Cancel
               </span>
             </div>
-            <!-- <form>
-              <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control shadow-none fw-medium ps-12 pt-8 pb-8 pe-12 letter-spacing"
-                  placeholder="Search"
-                  v-model="searchInput"
-                  @input="searchBrand"
+          </div>
+          <div class="responsive">
+            <div class="row" >
+              <div v-if="isAdd"  style="display:flex ; justify-content: space-between; align-items: center; flex-direction: column; height: 100%; margin-top: 40%; ">
+                <ChipsComponent
+                   :previousTags="this.tags"
+                  @newChipAdded="handleNewChipAdded"
+                  @previousChipAdded="handlePreviousChipAdded"
                 />
-                <button
-                  class="default-btn position-relative transition border-0 text-white ps-12 pe-12 rounded-1"
-                  type="button"
-                >
-                  <i
-                    class="flaticon-search-interface-symbol position-relative"
-                  ></i>
-                </button>
+                <span
+                  class="fw-medium text-muted me-8"
+                  @click="submitTags"
+                  style="cursor: pointer; display: flex; justify-content: end"
+                  ><span
+                    style="
+                      border: 1px solid rgb(179, 171, 171);
+                      padding: 5px;
+                      border-radius: 5px;
+                      align-self: self-end;
+                    "
+                    >Submit</span
+                  >
+                </span>
               </div>
-            </form> -->
-          </div>
-          <div class="table-responsive">
-            <table class="table text-nowrap align-middle mb-0">
-              <thead>
-                <tr>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
-                  >
-                    Brand Name
-                  </th>
-                  <!-- <th
-                scope="col"
-                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+              <div
+                v-if="!isAdd && !openedBrand.attributes?.name"
+                class="col-lg-12"
               >
-
-              </th> -->
-                  <!-- <th
-                scope="col"
-                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-              >
-                CUSTOMER
-              </th> -->
-                  <!-- <th
-                scope="col"
-                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-              >
-                TOTAL
-              </th>
-              <th
-                scope="col"
-                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-              >
-                PROFIT
-              </th> -->
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 pe-0"
-                  >
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody v-if="!openedMakeFull">
-                <tr v-for="br in paginatedBrands" :key="br.id">
-                  <td class="shadow-none lh-1 fw-medium">
-                    {{ br.attributes.name }}
-                  </td>
-
-                  <td class="shadow-none lh-1 fw-medium pe-0">
-                    <div class="dropdown">
-                      <button
-                        class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <i class="flaticon-dots"></i>
-                      </button>
-                      <ul class="dropdown-menu">
-                        <!-- <li>
-                <a
-                  class="dropdown-item d-flex align-items-center"
-                  href="javascript:void(0);"
-                >
-                  <i class="flaticon-view lh-1 me-8"></i>
-                  View
-                </a>
-              </li> -->
-                        <li>
-                          <a
-                            class="dropdown-item d-flex align-items-center"
-                            @click.prevent="openEditBrand(br)"
-                          >
-                            <i class="flaticon-pen lh-1 me-8"></i>
-                            Edit
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            class="dropdown-item d-flex align-items-center"
-                            @click.prevent="deleteBrandMethode(br.id)"
-                          >
-                            <i class="flaticon-delete lh-1 me-8"></i>
-                            Delete
-                          </a>
-                        </li>
-                      </ul>
+                <div v-for="tag in tags" :key="tag.id">
+                  <div class="card mb-3" style="cursor: pointer">
+                    <div
+                      class="card-body hoverli"
+                      style="
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-between;
+                      "
+                    >
+                      <h6 class="card-title fw-bold mb-0">
+                        {{ tag?.attributes?.name }}
+                      </h6>
+                      <div class="dropdown">
+                        <button
+                          class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="flaticon-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              @click.prevent="openEditTag(tag)"
+                              >Edit</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              @click.prevent="deleteTag(tag.id)"
+                              >Delete</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-              <tbody v-else >
-                <tr v-for="br in brands" :key="br.id">
-                  <td class="shadow-none lh-1 fw-medium">
-                    {{ br.attributes.name }}
-                  </td>
+                  </div>
+                </div>
 
-                  <td class="shadow-none lh-1 fw-medium pe-0">
-                    <div class="dropdown">
-                      <button
-                        class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <i class="flaticon-dots"></i>
-                      </button>
-                      <ul class="dropdown-menu">
-                        <!-- <li>
-                <a
-                  class="dropdown-item d-flex align-items-center"
-                  href="javascript:void(0);"
-                >
-                  <i class="flaticon-view lh-1 me-8"></i>
-                  View
-                </a>
-              </li> -->
-                        <li>
-                          <a
-                            class="dropdown-item d-flex align-items-center"
-                            @click.prevent="openEditBrand(br)"
-                          >
-                            <i class="flaticon-pen lh-1 me-8"></i>
-                            Edit
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            class="dropdown-item d-flex align-items-center"
-                            @click.prevent="deleteBrandMethode(br.id)"
-                          >
-                            <i class="flaticon-delete lh-1 me-8"></i>
-                            Delete
-                          </a>
-                        </li>
-                      </ul>
+                <div v-if="!showAllBrands && brands.length > pageSize">
+                  <button class="btn btn-link" @click="showAllBrands = true">
+                    Show more
+                  </button>
+                </div>
+                <div v-else-if="showAllBrands">
+                  <button class="btn btn-link" @click="showAllBrands = false">
+                    Show less
+                  </button>
+                </div>
+              </div>
+              <div
+                v-if="!isAdd && openedBrand.attributes?.name"
+                class="col-lg-12"
+              >
+                <div v-for="tag in tags" :key="tag.id">
+                  <div class="card mb-3" style="cursor: pointer">
+                    <div
+                      class="card-body hoverli"
+                      style="
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-between;
+                      "
+                    >
+                      <h6 class="card-title fw-bold mb-0">
+                        {{ tag?.attributes?.name }}
+                      </h6>
+                      <div class="dropdown">
+                        <button
+                          class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="flaticon-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <!-- <li>
+                            <a class="dropdown-item" @click.prevent="openEditTag(tag)">Edit</a>
+                          </li> -->
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              @click.prevent="deleteTag(tag.id)"
+                              >Delete</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <hr />
-            <div
-              class="pagination-area d-md-flex mb-25 justify-content-between align-items-center"
-            >
-              <p class="mb-0 text-paragraph">
-                Showing <span class="fw-bold"> 15</span> out of
-                <span class="fw-bold"> </span> results
-              </p>
-               <nav class="pagination-area d-md-flex mb-25 justify-content-between align-items-center">
-    <p class="mb-0 text-paragraph">
-      Showing <span class="fw-bold">{{ paginatedBrands.length }}</span> out of
-      <span class="fw-bold">{{ totalItems }}</span> results
-    </p>
-    <nav class="mt-15 mt-md-0">
-      <ul class="pagination mb-0">
-        <li class="page-item">
-          <a class="page-link" aria-label="Previous" @click.prevent="prevPage">
-            <i class="flaticon-chevron-1"></i>
-          </a>
-        </li>
-        <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: page === currentPage }">
-          <a class="page-link" @click.prevent="goToPage(page)">{{ page }}</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" aria-label="Next" @click.prevent="nextPage">
-            <i class="flaticon-chevron"></i>
-          </a>
-        </li>
-      </ul>
-    </nav>
- </nav>            </div>
+                  </div>
+                </div>
+
+                <div v-if="!showAllBrands && brands.length > pageSize">
+                  <button class="btn btn-link" @click="showAllBrands = true">
+                    Show more
+                  </button>
+                </div>
+                <div v-else-if="showAllBrands">
+                  <button class="btn btn-link" @click="showAllBrands = false">
+                    Show less
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
+          <hr />
         </div>
       </div>
     </div>
@@ -353,69 +411,202 @@ import {
   editBrand,
   deleteMake,
   deleteBrand,
+  fetchTags,
   postBrand,
+  deleteTags,
   fetchBrandMyMake,
+  addTags,
+  updateTags,
   search,
 } from "@/services/apiService";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 import UpdateModal from "@/components/VehicleCategories/EditCategory/EditCategory.vue";
 import EditMake from "@/components/VehicleCategories/EditMake/EditMake.vue";
 import AddBrand from "../AddNewBrand/AddNewBrand.vue";
 import EditBrand from "../EditBrand/EditBrand.vue";
+import ChipsComponent from "../../Common/ChipsComponent.vue";
 export default {
   name: "CategoryList",
   components: {
     UpdateModal,
+    ChipsComponent,
     EditMake,
     EditBrand,
     AddBrand,
+    Loading,
   },
   data() {
     return {
       categories: [],
       ModalVisible: false,
+      showAllItems: false,
+      isLoading: false,
       categoryEdit: "",
+      showAllBrands: false,
+
       EditMakeModal: false,
       makes: [],
       makeToEdit: "",
       brands: [],
-      openedMake: "",
-      openedMakeFull: "",
+      openedMake: null,
+      openedMakeFull: null,
+      openedBrand: "",
       showAddBrand: false,
       editBrandModal: false,
       brandToEdit: "",
-            currentPage: 1,
-pageSize: 3,
-searchInput:""
+      currentPage: 1,
+      isAdd: false,
+      pageSize: 3,
+      searchInput: "",
+      tags: [],
+      perviousTagsAdded: [],
+      newTagsAdded: [],
+      brandsTags: [],
     };
   },
-  computed:{
-     totalItems() {
+  computed: {
+    totalItemsMake() {
+      return this.makes.length;
+    },
+    totalPagesMake() {
+      if (this.showAllItems) {
+        return 1;
+      } else {
+        return Math.ceil(this.totalItemsMake / this.pageSize);
+      }
+    },
+    paginatedMakes() {
+      if (this.showAllItems) {
+        return this.makes;
+      } else {
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const endIndex = startIndex + this.pageSize;
+        return this.makes.slice(startIndex, endIndex);
+      }
+    },
+
+    totalItems() {
       return this.brands.length;
     },
     totalPages() {
       return Math.ceil(this.totalItems / this.pageSize);
     },
     paginatedBrands() {
-      const startIndex = (this.currentPage - 1) * this.pageSize;
-      const endIndex = startIndex + this.pageSize;
-      return this.brands.slice(startIndex, endIndex);
+      if (this.showAllBrands) {
+        return this.brands;
+      } else {
+        const startIndex = 0;
+        const endIndex = this.pageSize;
+        return this.brands.slice(startIndex, endIndex);
+      }
     },
   },
   methods: {
-  async searchMake() {
-    this.makes= []
+    async deleteTag(tagId) {
       try {
-        const { data } = await search('makes', 'name', '$contains', this.searchInput);
-        this.makes = data.data;
-       } catch (error) {
-        console.error('Error searching makes:', error);
-       }
+        await deleteTags(tagId);
+        this.tags = await this.tags.filter((tag) => tag.id !== tagId);
+        this.brandsTags = await this.brandsTags.filter(
+          (tag) => tag.id !== tagId
+        );
+      } catch (error) {
+        console.error(`Error deleting tag with ID ${tagId}:`, error);
+      }
     },
-      async   searchBrand(){
-  const {data} = await search('brands','name','$contains',this.searchInput)
- this.brands =data.data
-} ,
-       goToPage(page) {
+    submitTags() {
+      if (this.perviousTagsAdded.length >= 0) {
+        this.perviousTagsAdded.forEach(async (item) => {
+          const dataTags = {
+            data: {
+              brand: this.openedBrand.id,
+            },
+          };
+          const upd = await updateTags(item.id, dataTags);
+          this.brandsTags.push(upd.data);
+        });
+      }
+      if (this.newTagsAdded.length >= 0) {
+        this.newTagsAdded.forEach(async (item) => {
+          const dataTags = {
+            data: {
+              name: item,
+              brand: this.openedBrand.id,
+            },
+          };
+          const res = await addTags(dataTags);
+          this.brandsTags.push(res.data);
+        });
+        this.isAdd = false;
+      }
+      this.newTagsAdded = [];
+      this.perviousTagsAdded = [];
+    },
+    cancelAddTags() {
+      this.isAdd = false;
+      this.perviousTagsAdded = [];
+      this.newTagsAdded = [];
+    },
+    handleNewChipAdded(event) {
+      this.newTagsAdded.push(event);
+    },
+    handlePreviousChipAdded(event) {
+      this.perviousTagsAdded.push(event);
+    },
+    addedTags() {
+      this.isAdd = false;
+    },
+    addNewTags() {
+      this.isAdd = true;
+    },
+    handleBrandClick(brand) {
+      this.brands.forEach((b) => {
+        if (b.id !== brand.id) {
+          b.selected = false;
+        }
+      });
+      brand.selected = !brand.selected;
+      this.tags = [];
+      this.openedBrand = brand;
+      this.brandsTags = [];
+      if (
+        brand &&
+        brand.attributes &&
+        brand.attributes.tags &&
+        brand.attributes.tags.data
+      ) {
+        this.tags = brand.attributes.tags.data;
+        this.brandsTags = this.openedBrand.attributes.tags.data;
+      }
+    },
+
+    async searchMake() {
+      this.makes = [];
+      this.currentPage = 1;
+      try {
+        const { data } = await search(
+          "makes",
+          "name",
+          "$contains",
+          this.searchInput
+        );
+        this.makes = data.data;
+        this.currentPage = Math.min(this.currentPage, this.totalPages);
+      } catch (error) {
+        console.error("Error searching makes:", error);
+      }
+    },
+
+    async searchBrand() {
+      const { data } = await search(
+        "brands",
+        "name",
+        "$contains",
+        this.searchInput
+      );
+      this.brands = data.data;
+    },
+    goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
       }
@@ -433,37 +624,42 @@ searchInput:""
     closeAddBrand() {
       this.showAddBrand = false;
     },
-     async deleteBrandMethode(id) {
-  const res = await deleteBrand(id);
-  if (res) {
-    this.brands = this.brands.filter(item => item.id !== id);
-  }
-},
+    async deleteBrandMethode(id) {
+      const res = await deleteBrand(id);
+      if (res) {
+        this.brands = this.brands.filter((item) => item.id !== id);
+      }
+    },
 
-   async    editBrandMethod(event){
-    if(event.name , event.id){
-const updateBr= await editBrand(event.id , {data : { name : event.name}})
-    if(updateBr){
-      this.editBrandModal = false
-      this.brands.forEach(item => {
-           if( item.id ===event.id  && item.attributes && item.attributes.name ){
-         item.attributes.name = event.name
-           }
-      })
-    }
-    }
+    async editBrandMethod(event) {
+      if ((event.name, event.id)) {
+        const updateBr = await editBrand(event.id, {
+          data: { name: event.name },
+        });
+        if (updateBr) {
+          this.editBrandModal = false;
+          this.brands.forEach((item) => {
+            if (
+              item.id === event.id &&
+              item.attributes &&
+              item.attributes.name
+            ) {
+              item.attributes.name = event.name;
+            }
+          });
+        }
+      }
     },
     addNewBrand() {
       this.showAddBrand = true;
     },
-  openEditBrand(brand) {
-  //  console.log(brand);
-  this.editBrandModal = true;
-  this.brandToEdit = brand;
-},
+    openEditBrand(brand) {
+      this.editBrandModal = true;
+      this.brandToEdit = brand;
+    },
 
-    closeEditBrand(){
-      this.editBrandModal = false
+    closeEditBrand() {
+      this.editBrandModal = false;
     },
     async CreateANewBrand(event) {
       if (event.name && event.make) {
@@ -478,11 +674,20 @@ const updateBr= await editBrand(event.id , {data : { name : event.name}})
     closeMake() {
       this.EditMakeModal = false;
     },
-    async getMakes() {
-      const { data } = await fetchMakes();
+    async getMakes(page = 1, pageSize = 4) {
+      let query = `pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+      const { data } = await fetchMakes(query);
       this.makes = data;
-      console.log(this.makes);
+      const allItemsDisplayed = this.makes.length <= pageSize;
+      if (allItemsDisplayed) {
+        query = "";
+        const { data: allData } = await fetchMakes(query);
+        this.makes = allData;
+      }
+
+      this.showAllItems = allItemsDisplayed;
     },
+
     async openBrandsFormMake(make) {
       this.makes.forEach((m) => (m.selected = false));
       make.selected = true;
@@ -572,15 +777,18 @@ const updateBr= await editBrand(event.id , {data : { name : event.name}})
         console.error("Error searching for vehicles:", error);
       }
     },
+    async getTags() {
+      const { data } = await fetchTags();
+      console.log(data);
+      this.tags = data;
+    },
   },
-  mounted() {
-    this.getMakes();
-    this.getAllMakes();
+  async mounted() {
+    this.isLoading = true;
+    await this.getTags(), await this.getMakes();
+    await this.getAllMakes();
+    this.isLoading = false;
   },
-
-  // mounted() {
-  //   this.fetchCategories();
-  // },
 };
 </script>
 
@@ -603,4 +811,16 @@ const updateBr= await editBrand(event.id , {data : { name : event.name}})
   color: white;
   padding: 5px;
 }
+.chips-container {
+  position: relative;
+  height: 50px;
+}
+
+.add-tag-text {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+}
+
 </style>

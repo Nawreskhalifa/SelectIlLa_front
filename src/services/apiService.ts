@@ -1226,3 +1226,52 @@ export async function deleteBrand(brandId) {
     throw error;
   }
 }
+
+export async function fetchTags(query="") {
+    try {
+      let response  ;
+  if(query){
+        response = await axios.get(`${endPoints.tags}?populate=deep&${query}`);
+  }else{
+        response = await axios.get(`${endPoints.tags}?populate=deep`);
+
+  }
+      if (response) {
+         return response.data;
+      } else {
+         throw new Error("Failed to fetch tags");
+      }
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+      throw error;
+    }
+  }
+  export async function addTags(tagData) {
+  try {
+    const response = await axios.post(endPoints.tags, tagData);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding tags:', error);
+    throw error;
+  }
+}
+
+export async function deleteTags(tagId) {
+  try {
+    const response = await axios.delete(`${endPoints.tags}/${tagId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting tag with ID ${tagId}:`, error);
+    throw error;
+  }
+}
+
+export async function updateTags(tagId, tagData) {
+  try {
+    const response = await axios.put(`${endPoints.tags}/${tagId}`, tagData);
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating tag with ID ${tagId}:`, error);
+    throw error;
+  }
+}

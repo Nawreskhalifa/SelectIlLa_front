@@ -79,7 +79,7 @@
           <button
             type="button"
             class="add-to-cart-btn text-center d-block mt-15 fw-medium transition w-100 rounded-1 position-relative"
-            @click="updateVillaModal"
+            @click="updateVillaModal(villa)"
           >
             Update This
             <i class="fas fa-edit"></i>
@@ -158,9 +158,10 @@ export default {
     toggleDeleteModal() {
       this.deleteModalVisible = !this.deleteModalVisible;
     },
-    updateVillaModal() {
-      this.isUpdate = !this.isUpdate;
-      console.log(this.isUpdate);
+    updateVillaModal(villa) {
+      // this.isUpdate = !this.isUpdate;
+            this.$router.push({ name: 'updatevilla', params: { id: villa.id }})
+      // console.log(this.isUpdate);
     },
 
     newData(event) {

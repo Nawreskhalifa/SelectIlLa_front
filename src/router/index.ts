@@ -34,6 +34,8 @@ import ErrorPage from "../pages/ErrorPage.vue"
 import AddPartner from "@/pages/Partners/AddPartner/AddPartner.vue";
 import PdfViewer from "../pages/PDF/PdfVww.vue"
 import ReservationDetailsPage from '../pages/Users/Customers/ReservationDetailsPage.vue'
+import UpdateVehicle from '../pages/Vehicle/UpdateVehiclePage.vue';
+import updateVilla from '../pages/Villa/UpdateVilla.vue'
 function guardMyroute(to, from, next) {
   const isAuthenticated = localStorage.getItem('user');
 
@@ -118,10 +120,25 @@ const routes = [
     name: "CustomerDetailPage",
     component: CustomerDetailPage,
     beforeEnter: guardMyroute,
-
     props: true,
     meta: { auth: true }
 
+  },
+  {
+    path: "/updatevehicle/:id",
+    name: "updatevehicle",
+    component: UpdateVehicle,
+    beforeEnter: guardMyroute,
+    props: true,
+    meta: { auth: true }
+  },
+   {
+    path: "/updatevilla/:id",
+    name: "updatevilla",
+    component: updateVilla,
+    beforeEnter: guardMyroute,
+    props: true,
+    meta: { auth: true }
   },
   {
     path: "/categories-event",

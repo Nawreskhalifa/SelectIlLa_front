@@ -9,15 +9,65 @@
         align-items: center;
       "
     >
-      <h5 class="mb-0 fw-semibold text-secondary">Select All</h5>
+      <h5 class="mb-0 fw-semibold text-secondary">Options</h5>
       <div>
-         <div class="checkbox-wrapper">
+         <!-- <div class="checkbox-wrapper">
           <input type="checkbox" id="selectAllCheckbox" v-model="selectAll"  />
           <label class="checkbox-label" for="selectAllCheckbox">
              <i v-if="selectAll" class="fas fa-check"></i>
           </label>
-        </div>
+        </div> -->
+<div class="dropdown">
+                  <button
+                    class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i class="flaticon-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <!-- <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        @click.prevent="openEdit(partner)"
+                        ><i
+                          class="flaticon-pen lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Add</a
+                      >
+                    </li> -->
+                     <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        ><i
+                          class="fas fa-check lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Select  All </a
+                      >
+                    </li>
+                     <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        ><i
+                          class="flaticon-delete lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Delete All </a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                         ><i
+                          class="fas fa-ban lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Disable All </a
+                      >
+                    </li>
+                  </ul>
+                </div>
       </div>
+
     </div>
       <router-link to="/addvilla" class="btn btn-primary d-block w-100 mt-15 mb-25">ADD VILLA</router-link>
 
@@ -34,25 +84,18 @@
     </div>
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Categories</h6>
-      <ul class="categories-list ps-0 mb-0 list-unstyled">
-        <li class="cat">
-          <span class="d-block fs-md-15 fw-medium" @click="byCategory()">All</span>
-        </li>
-        <li v-for="category in categories" :key="category.id" @click="byCategory(category)" class="cat">
-          <span class="d-block fs-md-15 fw-medium">{{
-            category.attributes.Name
-          }}</span>
-          <span
-            class="d-block fw-medium text-muted"
-            v-if="
-              category.attributes &&
-              category.attributes.villas &&
-              category.attributes.villas.data
-             "
-            >{{ category.attributes.villas.data.length }}
-          </span>
-        </li>
-      </ul>
+       <ul class="categories-list ps-0 mb-0 list-unstyled">
+  <li class="cat" v-if="categories.length > 0">
+    <span class="d-block fs-md-15 fw-medium" @click="byCategory()">All</span>
+        <span class="d-block fw-medium text-muted">{{ totalVehiclesCount  }}</span>
+
+  </li>
+  <li v-for="category in categoriesWithVehicles" :key="category.id" @click="byCategory(category)" class="cat">
+     <span class="d-block fs-md-15 fw-medium">{{ category.attributes.Name }}</span>
+    <span class="d-block fw-medium text-muted">{{ category.attributes.villas.data.length }}</span>
+   </li>
+</ul>
+
     </div>
   </div>
 
@@ -76,6 +119,14 @@ export default {
     selectAll(newValue, prevValue) {
         this.$emit("allSelected", newValue);
     },
+  },
+  computed:{
+  categoriesWithVehicles() {
+      return this.categories.filter(category => category.attributes.villas.data.length > 0);
+    },
+      totalVehiclesCount() {
+      return this.categories.reduce((total, category) => total + category.attributes.villas.data.length, 0);
+    }
   },
   methods: {
     async fetchCategories() {

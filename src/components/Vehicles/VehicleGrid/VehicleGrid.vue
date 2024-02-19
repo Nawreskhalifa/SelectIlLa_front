@@ -15,7 +15,7 @@
           class="products-sidebar-filter bg-white letter-spacing mb-25"
           v-if="selected.length > 0"
         >
-          <div class="title" style="display: flex; flex-direction: row">
+          <!-- <div class="title" style="display: flex; flex-direction: row">
             <h5 class="mb-0 fw-semibold text-secondary">Available Actions</h5>
             <div
               class="button"
@@ -29,7 +29,7 @@
                 <i class="fas fa-ban"></i>
               </button>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -213,25 +213,29 @@ if(item && item.attributes && item.attributes.brand && item.attributes.brand.dat
     //     console.error("Error in filtredData:", error);
     //   }
     // },
-    async filtredData(searchInput) {
-      try {
-        if (searchInput.trim()) {
-          console.log("Search input:", searchInput);
-          console.log("New data:", this.newData);
-          this.vehicles = this.vehicles.filter((vehicle) =>
-            vehicle.attributes?.make?.data?.attributes?.name
-              ?.toLowerCase()
-              .includes(searchInput.toLowerCase())
-          );
-        } else {
-          console.log("No search input provided.");
-          await this.fetchData();
-        }
-        console.log("Filtered vehicles:", this.vehicles);
-      } catch (error) {
-        console.error("Error in filtredData:", error);
-      }
-    },
+   async filtredData(searchInput) {
+  try {
+    if (searchInput.trim()) {
+      console.log("Search input:", searchInput);
+      console.log("New data:", this.newData);
+      this.vehicles = this.vehicles.filter((vehicle) =>
+        (vehicle.attributes?.make?.data?.attributes?.name
+          ?.toLowerCase()
+          .includes(searchInput.toLowerCase()) ||
+        vehicle.attributes?.brand?.data?.attributes?.name
+          ?.toLowerCase()
+          .includes(searchInput.toLowerCase()))
+      );
+    } else {
+      console.log("No search input provided.");
+      await this.fetchData();
+    }
+    console.log("Filtered vehicles:", this.vehicles);
+  } catch (error) {
+    console.error("Error in filtredData:", error);
+  }
+},
+
 
     async handleItemDeleted(vehicleId) {
       try {
@@ -247,22 +251,22 @@ if(item && item.attributes && item.attributes.brand && item.attributes.brand.dat
     },
 
     selectedData() {
-      if (!this.isSelected) {
-        this.selected = [...this.vehicles];
-      } else {
-        this.selected = [];
-      }
+      // if (!this.isSelected) {
+      //   this.selected = [...this.vehicles];
+      // } else {
+      //   this.selected = [];
+      // }
 
-      this.isSelected = !this.isSelected;
+      // this.isSelected = !this.isSelected;
 
-      if (this.isSelected && this.selected.length === this.vehicles.length) {
-        setTimeout(() => {
-          const buttonsContainer = document.querySelector(".button");
-          if (buttonsContainer) {
-            buttonsContainer.scrollIntoView({ behavior: "smooth" });
-          }
-        }, 100);
-      }
+      // if (this.isSelected && this.selected.length === this.vehicles.length) {
+      //   setTimeout(() => {
+      //     const buttonsContainer = document.querySelector(".button");
+      //     if (buttonsContainer) {
+      //       buttonsContainer.scrollIntoView({ behavior: "smooth" });
+      //     }
+      //   }, 100);
+      // }
     },
 
     handleItemUpdated() {

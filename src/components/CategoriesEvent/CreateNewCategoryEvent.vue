@@ -1,44 +1,43 @@
-<template>
-  <div class="card mb-25 border-0 rounded-0 bg-white create-new-project-box">
+ <template>
+  <div class="card mb-25 border-0 rounded-0 bg-white create-new-project-box" id="createNewCategoryBox">
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
-      <form @submit.prevent="createNewCategory">
+      <form @submit.prevent="createNewCategory" id="createNewCategoryForm">
         <div class="row">
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
+              <label class="d-block text-black fw-semibold mb-10" for="categoryName">
                 Category Name
               </label>
-              <input v-model="name" type="text" class="form-control shadow-none rounded-0 text-black"
+              <input v-model="name" type="text" class="form-control shadow-none rounded-0 text-black" id="categoryName"
                 placeholder="e.g. AI Machine Learning" required />
             </div>
           </div>
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
+              <label class="d-block text-black fw-semibold mb-10" for="categoryDescription">
                 Category Description
               </label>
               <div class="mb-0">
                 <textarea v-model="description" class="form-control shadow-none rounded-0 text-black" rows="4"
-                  placeholder="Write your meta description"></textarea>
+                  placeholder="Write your meta description" id="categoryDescription"></textarea>
               </div>
-
             </div>
           </div>
 
           <div class="col-md-12">
             <button
               class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 bg-primary"
-              type="submit" :disabled="getCategoriesLoading">
+              type="submit" :disabled="getCategoriesLoading" id="createCategoryBtn">
               <span v-if="!getCategoriesLoading">Create Category</span>
               <div v-if="getCategoriesLoading" class="spinner-border" role="status"></div>
             </button>
-
           </div>
         </div>
       </form>
     </div>
   </div>
 </template>
+
 
 <script lang="ts">
 import { makeApiRequest } from "../../services/apiService";
