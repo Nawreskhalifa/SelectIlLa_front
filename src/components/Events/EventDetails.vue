@@ -44,7 +44,7 @@
                     </a>
                   </h5>
                   <div class="d-flex align-items-center">
-                    <span class="d-block text-muted">
+                    <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14">
                       Promote by:
                       <span class="fw-semibold text-primary"
                         >{{
@@ -65,22 +65,21 @@
                       >Inactive</span
                     >
                   </div>
-                  <div style="display: flex; justify-content: space-between">
-                    <span class="d-block text-muted"> Categories: </span>
-                    <div
-                      v-for="(e, index) in getEvent?.categoryEvents"
-                      :key="e.id"
-                    >
-                      <span class="d-inline-block text-primary">{{
-                        e.name
-                      }}</span>
-                      <!-- Ajouter un séparateur sauf pour le dernier élément -->
-                      <span
-                        v-if="index !== getEvent.categoryEvents.length - 1"
-                        class="text-muted"
-                      >
-                        -
+                  <div class="d-flex align-items-center">
+                    <div style="display: flex; justify-content: space-between">
+                      <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14">
+                        Categories:
                       </span>
+                      <div v-for="(e, index) in getEvent.categoryEvents" :key="e.id">
+                        <span class="text-primary">{{ e.name }}</span>
+                        <!-- Ajouter un séparateur sauf pour le dernier élément -->
+                        <span
+                          v-if="index !== getEvent.categoryEvents.length - 1"
+                          class="text-muted"
+                        >
+                          -
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
