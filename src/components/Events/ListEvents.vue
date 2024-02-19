@@ -116,7 +116,7 @@
               :class="{ disabled: selectedCount === 0 }"
               class="dropdown-item d-flex align-items-center"
               href="javascript:void(0);"
-              @click="selectedCount !== 0 && deleteSelectedCustomers"
+              @click.prevent="deleteSelectedCustomers"
             >
               <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
               Delete Selected
@@ -329,14 +329,17 @@
           </li>
           <li
             class="page-item"
-            :class="{ disabled: currentPage === Math.ceil(getTotalItems / perPage) }"
+            :class="{
+              disabled: currentPage === Math.ceil(getTotalItems / perPage),
+            }"
           >
             <a
               class="page-link"
               href="#"
               aria-label="Next"
               @click="
-                currentPage !== Math.ceil(getTotalItems / perPage) && onPageChange(currentPage + 1)
+                currentPage !== Math.ceil(getTotalItems / perPage) &&
+                  onPageChange(currentPage + 1)
               "
             >
               <i class="flaticon-chevron"></i>
@@ -408,7 +411,8 @@ export default {
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
       checkboxes.forEach((checkbox, index) => {
         if (checkbox.checked) {
-          selectedEvents.push(this.getEvents[index].id);
+          if (this.getEvents && this.getEvents[index]) {
+          selectedEvents.push(this.getEvents[index].id);}
         }
       });
 
@@ -427,12 +431,12 @@ export default {
           // Call the deleteEvent action or API endpoint to delete the selected events
           await Promise.all(selectedEvents.map((id) => this.deleteEvent(id)));
           // After deletion, fetch events again to update the list
+          this.currentPage = 1;
           await this.fetchAllEvents({
             page: this.currentPage,
             perPage: this.perPage,
           });
-          swal("Selected events have been deleted!", {
-          });
+          swal("Selected events have been deleted!", {});
         }
       });
     },
@@ -598,7 +602,6 @@ export default {
       name: null,
     });
     await this.fetchAllCategoriesEvent({ page: null });
-
   },
 };
 </script>

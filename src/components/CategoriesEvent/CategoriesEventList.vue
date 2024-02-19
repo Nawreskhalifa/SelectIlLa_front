@@ -294,11 +294,10 @@ export default defineComponent({
         }
       });
 
-
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover these categories!",
-        dangerMode:true,
+        dangerMode: true,
         buttons: ["Cancel", "Delete"],
       }).then(async (willDelete) => {
         if (willDelete) {
@@ -307,12 +306,13 @@ export default defineComponent({
             selectedCategories.map((id) => this.deleteCategoryEvent(id))
           );
           // After deletion, fetch customers again to update the list
+          this.currentPage = 1;
+
           await this.fetchAllCategoriesEvent({
             page: this.currentPage,
             perPage: 4,
           });
-          swal("Selected categories have been deleted!", {
-          });
+          swal("Selected categories have been deleted!", {});
         }
       });
     },
