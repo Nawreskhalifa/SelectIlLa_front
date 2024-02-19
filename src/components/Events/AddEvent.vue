@@ -399,7 +399,7 @@ export default defineComponent({
     ]),
     deleteFromCategories(cat) {
       this.selectedCategoryNames = this.selectedCategoryNames.filter((item) => {
-        item.id !== cat.id;
+        return item.id !== cat.id; // Ajoutez le return ici
       });
     },
     addPartner() {
