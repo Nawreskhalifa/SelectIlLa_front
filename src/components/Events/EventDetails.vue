@@ -29,8 +29,8 @@
 
           <div class="col text-end">
             <a
-            class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"
-            href="javascript:void(0);"
+              class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"
+              href="javascript:void(0);"
               @click="navigateToEditEventPage(getEvent?.id)"
             >
               Edit Event
@@ -109,7 +109,7 @@
         </div>
         <div class="info bg-gray">
           <div class="row">
-            <div class="col-sm-6 col-lg-5">
+            <div class="col-sm-6 col-lg-6">
               <div class="info-card position-relative">
                 <div
                   class="icon bg-info rounded-circle text-center position-absolute start-0 text-white"
@@ -127,7 +127,7 @@
                 </span>
               </div>
             </div>
-            <div class="col-sm-6 col-lg-5">
+            <div class="col-sm-6 col-lg-6">
               <div class="info-card position-relative">
                 <div
                   class="icon bg-info rounded-circle text-center position-absolute start-0 text-white"
@@ -146,7 +146,7 @@
               </div>
             </div>
 
-            <div class="col-sm-6 col-lg-5">
+            <div class="col-sm-6 col-lg-6">
               <div class="info-card position-relative">
                 <div
                   class="icon bg-success rounded-circle text-center position-absolute start-0 text-white"
@@ -163,7 +163,7 @@
                 </span>
               </div>
             </div>
-            <div class="col-sm-6 col-lg-5">
+            <div class="col-sm-6 col-lg-6">
               <div class="info-card position-relative">
                 <div
                   class="icon bg-warning rounded-circle text-center position-absolute start-0 text-white"
@@ -180,7 +180,7 @@
                 >
               </div>
             </div>
-            <div class="col-sm-6 col-lg-5">
+            <div class="col-sm-6 col-lg-6">
               <div class="info-card position-relative">
                 <div
                   class="icon bg-danger rounded-circle text-center position-absolute start-0 text-white"
@@ -199,7 +199,7 @@
                 >
               </div>
             </div>
-            <div class="col-sm-6 col-lg-5">
+            <div class="col-sm-6 col-lg-6">
               <div class="info-card position-relative">
                 <div
                   class="icon bg-danger rounded-circle text-center position-absolute start-0 text-white"
@@ -238,59 +238,74 @@
       <div
         class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing contact-card"
       >
-        <div class="mb-10 mb-sm-15 mb-lg-20">
-          <h3 class="card-title fw-bold mb-0 fs-15 fs-md-16 fs-lg-18">
-            Promoter information's
-          </h3>
-        </div>
-        <div class="card-body p-20 p-md-25 p-lg-30">
-          <div class="mb-15 mb-md-20 mb-lg-25 d-flex justify-content-between">
-            <div class="position-relative rounded-circle">
-              <img
-                v-if="
-                  storageUrl &&
-                  getEvent?.partner?.attributes.user?.data?.attributes?.photo
-                    ?.data?.attributes?.url
-                "
-                :src="
-                  storageUrl +
-                  getEvent?.partner?.attributes.user?.data?.attributes?.photo
-                    ?.data?.attributes.url
-                "
-                class="rounded-circle"
-                width="40"
-                height="40"
-                alt="user"
-              />
+        <div class="card mb-25 border-0 rounded-0 bg-white profile-intro-card">
+          <div class="card-body p-15 p-sm-20 p-sm-25 p-lg-30 letter-spacing">
+            <div
+              class="mb-15 mb-md-20 d-flex align-items-center justify-content-between"
+            >
+              <h5 class="card-title fw-bold mb-0 fs-lg-18">
+                Promoter information's
+              </h5>
+            </div>
+            <div
+              class="user-info d-sm-flex align-items-center justify-content-between"
+            >
+              <div class="d-flex align-items-center">
+                <div class="image">
+                  <img
+                    v-if="
+                      storageUrl &&
+                      getEvent?.partner?.attributes.user?.data?.attributes
+                        ?.photo?.data?.attributes?.url
+                    "
+                    :src="
+                      storageUrl +
+                      getEvent?.partner?.attributes.user?.data?.attributes
+                        ?.photo?.data?.attributes.url
+                    "
+                    class="rounded-circle"
+                    width="85"
+                    height="85"
+                    alt="user"
+                  />
+                </div>
+                <div class="ms-15 ms-md-20">
+                  <h5 class="text-black fw-black mb-1">
+                    {{
+                      getEvent?.partner?.attributes.name +
+                      " " +
+                      getEvent?.partner?.attributes.surname
+                    }}
+                  </h5>
+                  <!-- <span class="d-block text-muted">@victordynamic</span> -->
+                </div>
+              </div>
+            </div>
+            <div class="content pe-0">
+              <span class="d-block text-black fs-md-15 fs-lg-16 fw-medium mb-8">
+                Phone
+              </span>
+              <p class="fs-md-15 mb-0 text-paragraph lh-base">
+                {{ getEvent?.partner.attributes?.phone }}
+              </p>
+            </div>
+            <div class="content pe-0">
+              <span class="d-block text-black fs-md-15 fs-lg-16 fw-medium mb-8">
+                Email
+              </span>
+              <p class="fs-md-15 mb-0 text-paragraph lh-base">
+                {{ getEvent?.partner?.attributes.user?.data.attributes.email }}
+              </p>
+            </div>
+            <div class="content pe-0">
+              <span class="d-block text-black fs-md-15 fs-lg-16 fw-medium mb-8">
+                Address
+              </span>
+              <p class="fs-md-15 mb-0 text-paragraph lh-base">
+                {{ getEvent?.partner.attributes.address }}
+              </p>
             </div>
           </div>
-          <h5 class="fs-15 fs-md-18 fw-bold text-black mb-0">
-            {{
-              getEvent?.partner?.attributes.name +
-              " " +
-              getEvent?.partner?.attributes.surname
-            }}
-          </h5>
-          <ul class="info-list ps-0 mb-0 list-unstyled">
-            <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
-              <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
-                >PHONE:</span
-              >
-              {{ getEvent?.partner.attributes?.phone }}
-            </li>
-            <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
-              <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
-                >EMAIL:</span
-              >
-              {{ getEvent?.partner?.attributes.user?.data.attributes.email }}
-            </li>
-            <li class="text-paragraph fs-md-15 fs-lg-16 position-relative">
-              <span class="fw-semibold text-muted fs-12 fs-md-13 fs-lg-14"
-                >ADDRESS:</span
-              >
-              {{ getEvent?.partner.attributes.address }}
-            </li>
-          </ul>
         </div>
       </div>
     </div>

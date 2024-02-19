@@ -330,11 +330,7 @@
       </form>
     </div>
   </div>
-  <loading
-    v-model:active="isLoading"
-    :can-cancel="true"
-    :is-full-page="true"
-  />
+  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
 </template>
 
 <script>
@@ -552,9 +548,6 @@ export default defineComponent({
     if (this.$route.params && this.$route.params.idEvent) {
       this.isLoading = true;
       await this.fetchOneEvent(this.$route.params.idEvent);
-      // console.log("dd", this.getEvent);
-      // console.log("ss", this.getEvent.categoryEvents);
-
       this.eventName = this.getEvent.name;
       this.description = this.getEvent.description;
       if (this.getEvent.categoryEvents && this.getEvent.categoryEvents.length) {
@@ -565,7 +558,6 @@ export default defineComponent({
           })
         );
       }
-      // this.selectedCategories = [];
       this.price = this.getEvent.price;
       this.location = this.getEvent.location;
       this.startDate = this.getEvent.startDate;
@@ -612,7 +604,7 @@ fieldset {
   border: none;
   padding: 0;
   cursor: pointer;
-  color: red;
+  color: rgb(232, 227, 227);
 }
 
 fieldset > label {
