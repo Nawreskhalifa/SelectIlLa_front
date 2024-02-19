@@ -164,6 +164,7 @@
                 <button
                   class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-20 pe-20 pt-md-11 pb-md-11 ps-md-25 pe-md-25 ps-xl-40 pe-xl-40 rounded-1"
                   type="submit"
+                  @click="taketo"
                 >
                   UPDATE
                 </button>
@@ -335,6 +336,10 @@ export default defineComponent({
     };
   },
   methods: {
+    taketo(){
+            const id = this.$route.params.id;
+            this.$router.push({ name: 'updatevilla', params: { id: id}})
+    },
     async fetchVilla() {
        this.isLoading = true ;
 
