@@ -93,7 +93,6 @@ export default {
         // Afficher un message de succès
         swal({
           text: "Reservation Canceled Successfully!",
-          icon: "success",
           closeOnClickOutside: false,
         });
         this.$emit("close");

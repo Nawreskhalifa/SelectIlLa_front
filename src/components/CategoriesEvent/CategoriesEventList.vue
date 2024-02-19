@@ -69,7 +69,7 @@
             <a
               class="dropdown-item d-flex align-items-center"
               href="javascript:void(0);"
-              @click="deleteSelectedCategories"
+              @click.prevent="deleteSelectedCategories"
             >
               <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
               Delete Selected
@@ -287,21 +287,19 @@ export default defineComponent({
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
       checkboxes.forEach((checkbox, index) => {
         if (checkbox.checked) {
-          selectedCategories.push(this.getCustomers[index].id);
+          if (this.getCategoriesEvent && this.getCategoriesEvent[index]) {
+            // Add null check
+            selectedCategories.push(this.getCategoriesEvent[index].id);
+          }
         }
       });
 
-      if (selectedCategories.length === 0) {
-        swal("Please select at least one category to delete.");
-        return;
-      }
 
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover these categories!",
-        icon: "warning",
+        dangerMode:true,
         buttons: ["Cancel", "Delete"],
-        dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
           // Call the deleteCustomer action or API endpoint to delete the selected customers
@@ -314,10 +312,7 @@ export default defineComponent({
             perPage: 4,
           });
           swal("Selected categories have been deleted!", {
-            icon: "success",
           });
-        } else {
-          swal("Selected categories are safe!");
         }
       });
     },

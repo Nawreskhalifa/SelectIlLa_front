@@ -73,7 +73,6 @@ export default {
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this category!",
-        icon: "warning",
         buttons: ["Cancel", "Delete"],
         dangerMode: true,
       }).then(async (willDelete) => {
@@ -84,11 +83,8 @@ export default {
           // Afficher un message de succès
           swal({
             text: 'Category deleted Successfully!',
-            icon: 'success',
             closeOnClickOutside: false
           })
-        } else {
-          swal("Category is safe!");
         }
       });
     },

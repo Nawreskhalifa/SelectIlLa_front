@@ -420,7 +420,6 @@ export default {
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover these events!",
-        icon: "warning",
         buttons: ["Cancel", "Delete"],
         dangerMode: true,
       }).then(async (willDelete) => {
@@ -433,10 +432,7 @@ export default {
             perPage: this.perPage,
           });
           swal("Selected events have been deleted!", {
-            icon: "success",
           });
-        } else {
-          swal("Selected events are safe!");
         }
       });
     },
@@ -569,7 +565,6 @@ export default {
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this event!",
-        icon: "warning",
         buttons: ["Cancel", "Delete"],
         dangerMode: true,
       }).then(async (willDelete) => {
@@ -577,11 +572,8 @@ export default {
           await this.deleteEvent(id);
           swal({
             text: "Event deleted Successfully!",
-            icon: "success",
             closeOnClickOutside: false,
           });
-        } else {
-          swal("Category is safe!");
         }
       });
     },

@@ -100,13 +100,11 @@ export default {
       } else if (response.status == httpCodes.HTTP_NOT_FOUND) {
         swal({
           text: response.message,
-          icon: "error",
           closeOnClickOutside: false,
         });
       } else {
         swal({
           text: this.errorMsg,
-          icon: "error",
           closeOnClickOutside: false,
         });
       }

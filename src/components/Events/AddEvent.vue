@@ -481,7 +481,6 @@ export default defineComponent({
           // Afficher un message de succès
           swal({
             text: "Event Added Successfully!",
-            icon: "success",
             closeOnClickOutside: false,
           });
         }

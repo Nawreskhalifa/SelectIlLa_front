@@ -540,14 +540,12 @@ export default defineComponent({
             // Affichez un message de succès
             swal({
               text: "Files uploaded Successfully!",
-              icon: "success",
               closeOnClickOutside: false,
             });
           } else {
             // Affichez un message d'erreur
             swal({
               text: "An error occurred, please try again",
-              icon: "error",
               closeOnClickOutside: false,
             });
           }
@@ -556,7 +554,6 @@ export default defineComponent({
         // Gérez les erreurs
         swal({
           text: "An error occurred, please try again",
-          icon: "error",
           closeOnClickOutside: false,
         });
       }
@@ -591,7 +588,6 @@ export default defineComponent({
       swal({
         title: "Are you sure?",
         text: "Once accepted, you will not be able to cancel these reservations!",
-        icon: "warning",
         buttons: ["Cancel", "Confirm"],
         dangerMode: true,
       }).then(async (willDelete) => {
@@ -631,10 +627,7 @@ export default defineComponent({
           this.isLoading = false;
 
           swal("Selected pending reservations have been accepted!", {
-            icon: "success",
           });
-        } else {
-          swal("Selected reservations are safe!");
         }
       });
     },
@@ -724,7 +717,6 @@ export default defineComponent({
       this.isLoading = false;
       swal({
         text: "An error occurred, please try again",
-        icon: "error",
         closeOnClickOutside: false,
       });
     }

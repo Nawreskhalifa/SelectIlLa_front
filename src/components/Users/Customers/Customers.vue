@@ -475,7 +475,6 @@ export default defineComponent({
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover these customers!",
-        icon: "warning",
         buttons: ["Cancel", "Delete"],
         dangerMode: true,
       }).then(async (willDelete) => {
@@ -491,10 +490,7 @@ export default defineComponent({
           this.isLoading = false;
 
           swal("Selected customers have been deleted!", {
-            icon: "success",
           });
-        } else {
-          swal("Selected customers are safe!");
         }
       });
     },
@@ -552,15 +548,12 @@ export default defineComponent({
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this customer!",
-        icon: "warning",
         buttons: ["Cancel", "Delete"],
         dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
           // Call the deleteCustomer action or API endpoint to delete the customer
           await this.deleteCustomer(id);
-        } else {
-          swal("Customer is safe!");
         }
       });
     },

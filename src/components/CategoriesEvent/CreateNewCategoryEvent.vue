@@ -100,7 +100,6 @@ export default defineComponent({
         if (response.success) {
           swal({
             text: "Category already exists!",
-            icon: "error",
             closeOnClickOutside: false,
           });
         } else {
@@ -109,7 +108,6 @@ export default defineComponent({
           // Afficher un message de succès
           swal({
             text: "Category Added Successfully!",
-            icon: "success",
             closeOnClickOutside: false,
           });
           // Reset form fields after submission

@@ -553,7 +553,6 @@ export default defineComponent({
       if (response.data && response.data.length > 0) {
         swal({
           text: "Email already exists!",
-          icon: "error",
           closeOnClickOutside: false,
         });
       } else {
