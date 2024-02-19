@@ -626,8 +626,7 @@ export default defineComponent({
           });
           this.isLoading = false;
 
-          swal("Selected pending reservations have been accepted!", {
-          });
+          swal("Selected pending reservations have been accepted!", {});
         }
       });
     },
