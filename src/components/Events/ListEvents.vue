@@ -16,7 +16,7 @@
       <div class="d-flex align-items-center">
         <form
           class="search-box position-relative"
-          @submit.prevent="handleSearch"
+          @submit.prevent="handleFilterChange"
         >
           <input
             type="text"
@@ -24,7 +24,7 @@
             placeholder="Search here"
             style="width: calc(100% - 40px)"
             v-model="searchText"
-            @input="handleSearch"
+            @input="handleFilterChange"
           />
           <button
             class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-15 fs-lg-16 bg-primary"
@@ -52,7 +52,7 @@
           v-model="selectedCategory"
           @change="handleFilterChange"
         >
-          <option value="" selected>All</option>
+          <option value="All" selected>All Categories</option>
           <option
             v-for="category in getCategoriesEvent"
             :key="category.id"
@@ -62,25 +62,24 @@
           </option>
         </select>
         <select
-          v-model="isActiveFilter"
+          v-model="activeFilter"
           @change="handleFilterChange"
           class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
         >
-          <option value="All">All</option>
+          <option value="All">All Status</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
+      </div>
+      <div class="d-sm-flex align-items-center">
         <button
           v-if="isFilterActive"
-          class="default-outline-btn transition border fw-medium text-black pt-2 pb-4 ps-1 pe-4 pt-md-6 pb-md-3 ps-md-1 pe-md-1 rounded-1 fs-md-5 fs-lg-5 bg-transparent"
+          class="default-outline-btn position-relative transition fw-medium text-black pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 bg-transparent fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1"
           type="button"
           @click="resetFilters"
         >
           Reset
-          <i
-            class="flaticon-refresh position-relative ms-5 top-2 fs-15"
-            style="margin-left: 3px"
-          ></i>
+          <i class="flaticon-refresh position-relative ms-5 top-2 fs-15"></i>
         </button>
       </div>
       <a
@@ -374,10 +373,10 @@ export default {
       currentPage: 1,
       isHovered: false,
       searchText: "",
-      isActiveFilter: "All",
+      activeFilter: "All",
       selectAllChecked: false,
       selectedCount: 0,
-      selectedCategory: "",
+      selectedCategory: "All",
       perPage: 4,
     };
   },
@@ -401,7 +400,7 @@ export default {
     resetFilters() {
       // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
       this.searchText = "";
-      this.isActiveFilter = "All";
+      this.activeFilter = "All";
       this.selectedCategory = "All";
       // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
       this.handleFilterChange();
@@ -412,7 +411,8 @@ export default {
       checkboxes.forEach((checkbox, index) => {
         if (checkbox.checked) {
           if (this.getEvents && this.getEvents[index]) {
-          selectedEvents.push(this.getEvents[index].id);}
+            selectedEvents.push(this.getEvents[index].id);
+          }
         }
       });
 
@@ -457,7 +457,7 @@ export default {
         page: this.currentPage,
         perPage: this.perPage,
         name: this.searchText,
-        isActive: this.isActiveFilter,
+        isActive: this.activeFilter,
         category: this.selectedCategory,
       });
     },
@@ -472,14 +472,6 @@ export default {
         } else {
           this.selectedCount--;
         }
-      });
-    },
-    async handleSearch() {
-      console.log(this.searchText);
-      await this.fetchAllEvents({
-        page: this.currentPage,
-        perPage: this.perPage,
-        name: this.searchText,
       });
     },
     async onPageChange(pageNumber) {
@@ -591,7 +583,11 @@ export default {
       "getCategoriesEvent",
     ]),
     isFilterActive() {
-      return this.searchText !== "" || this.isActiveFilter !== "All";
+      return (
+        this.searchText !== "" ||
+        this.activeFilter !== "All" ||
+        this.selectedCategory !== "All"
+      );
     },
   },
   async mounted() {
@@ -599,7 +595,6 @@ export default {
     await this.fetchAllEvents({
       page: this.currentPage,
       perPage: this.perPage,
-      name: null,
     });
     await this.fetchAllCategoriesEvent({ page: null });
   },
