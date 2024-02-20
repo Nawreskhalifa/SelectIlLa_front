@@ -40,8 +40,19 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Categories
               </label>
+              <VueMultiselect
+                v-model="selectedCategories"
+                :options="getCategoriesEvent"
+                :multiple="true"
+                :close-on-select="false"
+                placeholder="Select some categories"
+                label="name"
+                track-by="id"
+                color="blue"
 
-              <select
+                :option-class="{ 'selected-option': isSelected }"
+              />
+              <!-- <select
                 v-model="category"
                 class="form-select shadow-none fw-semibold rounded-0 select-same-width"
                 style="height: 47px; border-color: #eeeee4"
@@ -55,8 +66,8 @@
                 >
                   {{ category?.name }}
                 </option>
-              </select>
-              <div
+              </select> -->
+              <!-- <div
                 class="members-list"
                 v-if="selectedCategories && selectedCategories.length > 0"
               >
@@ -74,7 +85,7 @@
                     <i class="flaticon-close"></i>
                   </button>
                 </div>
-              </div>
+              </div> -->
               <span
                 v-if="formSubmitted && selectedCategories.length === 0"
                 class="text-danger"
@@ -422,10 +433,13 @@ import { storageUrl } from "../../utils/constants";
 import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import VueMultiselect from "vue-multiselect";
+
 export default defineComponent({
   name: "EditEvent",
   components: {
     Loading,
+    VueMultiselect,
   },
   data() {
     return {
