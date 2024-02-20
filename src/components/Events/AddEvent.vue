@@ -239,7 +239,7 @@
                   </label>
                 </option>
               </select> -->
-              <div
+              <!-- <div
                 class="members-list"
                 v-if="selectedCategoryNames && selectedCategoryNames.length > 0"
               >
@@ -257,9 +257,9 @@
                     <i class="flaticon-close"></i>
                   </button>
                 </div>
-              </div>
+              </div> -->
               <span
-                v-if="formSubmitted && selectedCategoryNames.length === 0"
+                v-if="formSubmitted && selectedCategories.length === 0"
                 class="text-danger"
                 >Please select at least one category!</span
               >

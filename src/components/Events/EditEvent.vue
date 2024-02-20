@@ -521,9 +521,11 @@ export default defineComponent({
     deleteAllSelectedPhotos() {
       this.newPhotos = [];
       this.photos = [];
-      this.photosFromDatabase.forEach((item) => {
-        this.updatedPhotos.push(item.id);
-      });
+      if (this.photosFromDatabase) {
+        this.photosFromDatabase.forEach((item) => {
+          this.updatedPhotos.push(item.id);
+        });
+      }
       this.photosFromDatabase = [];
     },
     handleFileUpload(event) {
@@ -642,11 +644,10 @@ export default defineComponent({
         this.selectedCategories = this.getEvent.categoryEvents.map(
           (category) => ({
             ...category,
-            checked: true,
           })
         );
       }
-      console.log(this.getEvent);
+      console.log("selcted: ", this.selectedCategories);
       this.price = this.getEvent.price;
       this.location = this.getEvent.location;
       this.startDate = this.getEvent.startDate;
@@ -658,7 +659,7 @@ export default defineComponent({
       this.status = this.getEvent.active;
       this.promoterName = this.getEvent.namePromoter;
       this.promoterInfo = this.getEvent.promotingInfo;
-      this.coverImageIndex=this.getEvent.coverImageIndex;
+      this.coverImageIndex = this.getEvent.coverImageIndex;
       this.photosFromDatabase = this.getEvent.photos;
       if (this.getEvent.partner) {
         this.selectedPartner = this.getEvent.partner.id;
