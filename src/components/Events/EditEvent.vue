@@ -325,49 +325,25 @@
                 </span>
               </div>
               <div
-                v-if="photosFromDatabase && photosFromDatabase?.length > 0"
+                v-if="allPhotos && allPhotos.length > 0"
                 class="image-preview"
               >
                 <div
-                  v-for="(photo, index) in photosFromDatabase"
+                  v-for="(photo, index) in allPhotos"
                   :key="index"
                   class="image-item"
                 >
-                  <img :src="storageUrl + photo.url" alt="Selected Image" />
-                  <button
-                    type="button"
-                    @click="removeImageFromDatabase(photo, index)"
-                    class="delete_icon"
-                  >
-                    <i class="fas fa-times-circle"></i>
-                    <!-- Icône de suppression -->
-                  </button>
-                  <input
-                    type="radio"
-                    :id="'radio_' + index"
-                    v-model="coverImageIndex"
-                    :value="index"
-                    class="set_cover_button"
-                    title="Set as a cover image"
-                    style="cursor: pointer"
+                  <img
+                    :src="
+                      isBlobUrl(photo.url) ? photo.url : storageUrl + photo.url
+                    "
+                    alt="Selected Image"
                   />
-                </div>
-              </div>
-              <div
-                v-if="newPhotos && newPhotos.length > 0"
-                class="image-preview"
-              >
-                <!-- Afficher les nouvelles images téléchargées -->
-                <div
-                  v-for="(newPhoto, index) in newPhotos"
-                  :key="'new_' + index"
-                  class="image-item"
-                >
-                  <img :src="newPhoto.url" :alt="newPhoto.name" />
+
                   <button
-                    @click="removeNewImage(index)"
-                    class="delete_icon"
                     type="button"
+                    @click="removeImage(index, photo)"
+                    class="delete_icon"
                   >
                     <i class="fas fa-times-circle"></i>
                     <!-- Icône de suppression -->
@@ -385,6 +361,86 @@
               </div>
             </div>
           </div>
+
+          <!-- <div class="col-md-12">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Upload Images
+              </label>
+              <div class="file-upload text-center position-relative">
+                <input
+                  type="file"
+                  multiple
+                  v-on:change="handleFileUpload"
+                  accept="image/*"
+                  class="d-block shadow-none border-0 position-absolute start-0 end-0 top-0 bottom-0 z-1 opacity-0"
+                />
+                <i class="flaticon-image"></i>
+                <span class="d-block text-muted">
+                  Drop Images Here Or
+                  <span class="text-black fw-medium position-relative">
+                    Click To Upload
+                  </span>
+                </span>
+              </div>
+              <div
+                v-if="allPhotos && allPhotos?.length > 0"
+                class="image-preview"
+              >
+                <div
+                  v-for="(photo, index) in allPhotos"
+                  :key="index"
+                  class="image-item"
+                >
+                  <img :src="storageUrl + photo.url" alt="Selected Image" />
+                  <button
+                    type="button"
+                    @click="removeImageFromDatabase(photo, index)"
+                    class="delete_icon"
+                  >
+                    <i class="fas fa-times-circle"></i>
+                  </button>
+                  <input
+                    type="radio"
+                    :id="'radio_' + index"
+                    v-model="coverImageIndex"
+                    :value="index"
+                    class="set_cover_button"
+                    title="Set as a cover image"
+                    style="cursor: pointer"
+                  />
+                </div>
+              </div>
+              <div
+                v-if="newPhotos && newPhotos.length > 0"
+                class="image-preview"
+              >
+                <div
+                  v-for="(newPhoto, index) in newPhotos"
+                  :key="'new_' + index"
+                  class="image-item"
+                >
+                  <img :src="newPhoto.url" :alt="newPhoto.name" />
+                  <button
+                    @click="removeNewImage(index)"
+                    class="delete_icon"
+                    type="button"
+                  >
+                    <i class="fas fa-times-circle"></i>
+                  </button>
+                  <input
+                    type="radio"
+                    :id="'radio_' + index"
+                    v-model="coverImageIndex"
+                    :value="index"
+                    class="set_cover_button"
+                    title="Set as a cover image"
+                    style="cursor: pointer"
+                  />
+                </div>
+              </div>
+            </div>
+          </div> -->
           <div class="col-md-12">
             <div class="d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center justify-content-between">
@@ -477,6 +533,7 @@ export default defineComponent({
       formSubmitted: false,
       status: false,
       coverImageIndex: 0,
+      allPhotos: [],
     };
   },
   methods: {
@@ -490,17 +547,29 @@ export default defineComponent({
     setFormSubmitted() {
       this.formSubmitted = true;
     },
-    objetExisteDansListe(objetRecherche, listeObjets) {
+    photoExistsInList(photo, list) {
       // Parcourir la liste d'objets
-      for (let objet of listeObjets) {
-        // Vérifier si l'objet courant correspond à l'objet recherché
-        if (objet.id === objetRecherche.id) {
-          // Retourner true si l'objet est trouvé
-          return true;
-        }
-      }
-      // Retourner false si l'objet n'est pas trouvé dans la liste
-      return false;
+      return list.some((item) => item.url === photo.url);
+    },
+    async blobToDataURL(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(blob);
+      });
+    },
+    displayBlobImage(blobUrl) {
+      fetch(blobUrl)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const imageUrl = URL.createObjectURL(blob);
+          return imageUrl;
+        })
+        .catch((error) => {
+          console.error("Error fetching blob image:", error);
+          return null;
+        });
     },
     async addCategoryEvent() {
       // Vous pouvez accéder à la catégorie sélectionnée via selectedCategories
@@ -531,7 +600,19 @@ export default defineComponent({
       this.updatedPhotos.push(obj.id);
       this.photosFromDatabase.splice(index, 1);
     },
+    removeImage(index, obj) {
+      if (this.coverImageIndex === index) {
+        this.coverImageIndex = 0;
+      }
+      if (this.photoExistsInList(obj, this.photosFromDatabase)) {
+        this.removeImageFromDatabase(obj, index);
+      } else {
+        this.removeNewImage(index);
+      }
+      this.allPhotos = this.allPhotos.filter((item) => item !== obj);
+    },
     deleteAllSelectedPhotos() {
+      this.coverImageIndex = 0;
       this.newPhotos = [];
       this.photos = [];
       if (this.photosFromDatabase) {
@@ -540,6 +621,7 @@ export default defineComponent({
         });
       }
       this.photosFromDatabase = [];
+      this.allPhotos = [];
     },
     handleFileUpload(event) {
       const files = event.target.files;
@@ -553,10 +635,18 @@ export default defineComponent({
           file: file,
         };
         this.newPhotos.push(newPhoto);
+        this.allPhotos.push(newPhoto);
+        console.log(this.allPhotos);
 
         // this.photos.push(...Array.from(event.target.files));
         // console.log(this.photos)
       }
+    },
+    isBlobUrl(url) {
+      return url.startsWith("blob:");
+    },
+    convertBlobToUrlObject(blobUrl) {
+      return URL.createObjectURL(blobUrl);
     },
     deleteFromCategories(cat) {
       this.selectedCategories = this.selectedCategories.filter((item) => {
@@ -564,11 +654,11 @@ export default defineComponent({
       });
     },
 
-    removeImage(index) {
-      // Supprimer l'image à l'index spécifié
-      this.photos.splice(index, 1);
-      this.selectedPhotos.splice(index, 1);
-    },
+    // removeImage(index) {
+    //   // Supprimer l'image à l'index spécifié
+    //   this.photos.splice(index, 1);
+    //   this.selectedPhotos.splice(index, 1);
+    // },
     async createEvent() {
       this.isLoading = true;
 
@@ -674,6 +764,7 @@ export default defineComponent({
       this.promoterInfo = this.getEvent.promotingInfo;
       this.coverImageIndex = this.getEvent.coverImageIndex;
       this.photosFromDatabase = this.getEvent.photos;
+      this.allPhotos = this.getEvent.photos;
       if (this.getEvent.partner) {
         this.selectedPartner = this.getEvent.partner.id;
       }

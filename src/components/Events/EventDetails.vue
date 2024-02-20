@@ -31,7 +31,8 @@
               href="javascript:void(0);"
               @click="navigateToEditEventPage(getEvent?.id)"
             >
-              Edit Event
+              <i class="flaticon-pen lh-2 me-16 position-relative top-1"></i>
+              Edit
             </a>
           </div>
         </div>
