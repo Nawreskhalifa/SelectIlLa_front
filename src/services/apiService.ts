@@ -25,6 +25,25 @@ api.interceptors.request.use(
     throw error;
   },
 );
+export async function UpdateCustomer(customer, id) {
+  try {
+    const response = await axios.put(`${endPoints.findCustomer}${id} `,
+      customer, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    });
+
+    return { success: response.status === httpCodes.HTTP_OK, data: response.data, status: response.status };
+  } catch (error: any) {
+    return {
+      status: error?.response?.status,
+      success: error?.response?.data?.success,
+      error: error?.response?.data?.message,
+    };
+  }
+}
 export async function postCustomer(customer) {
   try {
     const response = await api.post(endPoints.allCustomers, customer, {
@@ -79,7 +98,44 @@ export async function RegistreUser(user) {
     };
   }
 }
+export async function UpdateUser(user, id) {
+  try {
+    console.log(user)
+    const response = await axios.put(
+      `${endPoints.findUser}/${id} `,
+      user,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
 
+    );
+
+    if (response.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } else {
+      console.error('Failed to  update new user data:', response);
+      return {
+        data: response,
+        success: false,
+        error: 'Failed to  update  user data',
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error('Error updating reservation:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
+}
 export async function makeApiRequest(
   method: string,
   endpoint: string,
@@ -165,17 +221,17 @@ api.interceptors.response.use(
 
 export async function logIn(identifier: string, password: string) {
   try {
-     const response = await axios.post(endPoints.login, {
+    const response = await axios.post(endPoints.login, {
       identifier: identifier,
       password: password
     });
 
-     const { jwt, user } = response.data;
+    const { jwt, user } = response.data;
     window.localStorage.setItem(keys.token, jwt);
     window.localStorage.setItem(keys.userData, JSON.stringify(user));
-     return { message: "", data: response.data, status: response.status };
+    return { message: "", data: response.data, status: response.status };
   } catch (error: any) {
-     return {
+    return {
       status: error?.response?.data.error.status,
       message: error?.response.data.error.message,
       data: null
@@ -258,8 +314,8 @@ export async function deleteVehicle(vehicleId) {
   }
 }
 
-export async function fetchVehicleById(vehicleId,query="?populate=deep"){
-    try {
+export async function fetchVehicleById(vehicleId, query = "?populate=deep") {
+  try {
     const response = await axios.get(`${endPoints.vehicles}/${vehicleId}/${query}`);
     return response.data;
   } catch (error) {
@@ -267,8 +323,8 @@ export async function fetchVehicleById(vehicleId,query="?populate=deep"){
     throw error;
   }
 }
-export async function fetchVillaById(id,query="?populate=deep"){
-    try {
+export async function fetchVillaById(id, query = "?populate=deep") {
+  try {
     const response = await axios.get(`${endPoints.villa}/${id}/${query}`);
     return response.data;
   } catch (error) {
@@ -359,31 +415,31 @@ export async function uploadFiles(files, ref, field, refId) {
       },
     });
 
-      if (postFilesResponse.status === httpCodes.HTTP_OK) {
-        return {
-          success: true,
-          data: {
-            filesData: postFilesResponse.data,
-          },
-          status: httpCodes.HTTP_OK,
-        };
-      } else {
-        console.error('Failed to post files:', postFilesResponse);
-        return {
-          success: false,
-          error: 'Failed to post files',
-          status: postFilesResponse.status,
-          data:postFilesResponse
-        };
-      }
-    } catch (error) {
-      console.error('Error uploading files:', error);
+    if (postFilesResponse.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: {
+          filesData: postFilesResponse.data,
+        },
+        status: httpCodes.HTTP_OK,
+      };
+    } else {
+      console.error('Failed to post files:', postFilesResponse);
       return {
         success: false,
-        error,
+        error: 'Failed to post files',
+        status: postFilesResponse.status,
+        data: postFilesResponse
       };
     }
+  } catch (error) {
+    console.error('Error uploading files:', error);
+    return {
+      success: false,
+      error,
+    };
   }
+}
 
 
 export async function deleteFiles(id) {
@@ -444,9 +500,9 @@ export async function search(table, field, query, searchInput) {
     };
   }
 }
-export async function searchInS(table, field,field2, query, searchInput) {
+export async function searchInS(table, field, field2, query, searchInput) {
   try {
-    const url =process.env.VUE_APP_API_BASE_URL
+    const url = process.env.VUE_APP_API_BASE_URL
     const response = await axios.get(
       `${url}${table}?populate=deep&filters[${field}][${field2}][${query}]=${searchInput}`
     );
@@ -991,20 +1047,20 @@ export async function getFile(id) {
     throw error;
   }
 }
-export async function getRole(RoleName){
-  try{
-     const res = await axios(`${endPoints.roles}`)
-    if(res.data){
-         res.data.roles =res.data.roles.filter(item => {
+export async function getRole(RoleName) {
+  try {
+    const res = await axios(`${endPoints.roles}`)
+    if (res.data) {
+      res.data.roles = res.data.roles.filter(item => {
 
-return item.name.trim() === RoleName.trim()
-         })
+        return item.name.trim() === RoleName.trim()
+      })
     }
-  return {
- roles : res.data
-  }
-  }catch(error){
-      return {
+    return {
+      roles: res.data
+    }
+  } catch (error) {
+    return {
       success: false,
       error,
     };
@@ -1022,7 +1078,7 @@ export async function updateReservation(id, updatedData) {
         },
       }
     );
-
+    console.log(response);
     if (response.status === httpCodes.HTTP_OK) {
       return {
         success: true,
@@ -1049,13 +1105,13 @@ export async function updateReservation(id, updatedData) {
 
 export async function postPartner(partner) {
   try {
-       const response = await axios.post(endPoints.partners, partner, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      });
-      return { success: response.status === httpCodes.HTTP_OK, data: response.data, status: response.status };
+    const response = await axios.post(endPoints.partners, partner, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    });
+    return { success: response.status === httpCodes.HTTP_OK, data: response.data, status: response.status };
   } catch (error: any) {
       return {
           status: error?.response?.status,
@@ -1110,87 +1166,87 @@ export async function postPartner(partner) {
   }else{
         response = await axios.get(`${endPoints.makes}?populate=deep`);
 
-  }
-      if (response) {
-         return response.data;
-      } else {
-         throw new Error("Failed to fetch makes");
-      }
-    } catch (error) {
-      console.error("Error fetching makes:", error);
-      throw error;
     }
+    if (response) {
+      return response.data;
+    } else {
+      throw new Error("Failed to fetch makes");
+    }
+  } catch (error) {
+    console.error("Error fetching makes:", error);
+    throw error;
   }
-    export async function fetchBrands(query="") {
-    try {
-      let response
-      if(query){
-        response = await axios.get(`${endPoints.brands}?populate=deep&${query}`);
-      }else{
-        response = await axios.get(`${endPoints.brands}?populate=deep`);
+}
+export async function fetchBrands(query = "") {
+  try {
+    let response
+    if (query) {
+      response = await axios.get(`${endPoints.brands}?populate=deep&${query}`);
+    } else {
+      response = await axios.get(`${endPoints.brands}?populate=deep`);
 
-      }
-      if (response) {
-         return response.data;
-      } else {
-         throw new Error("Failed to fetch brands ");
-      }
-    } catch (error) {
-      console.error("Error fetching brands:", error);
-      throw error;
     }
+    if (response) {
+      return response.data;
+    } else {
+      throw new Error("Failed to fetch brands ");
+    }
+  } catch (error) {
+    console.error("Error fetching brands:", error);
+    throw error;
   }
+}
 // http://localhost:1337/api/brands
-  export async function  fetchBrandMyMake(id){
-try {
-      const response = await axios.get(`${endPoints.brands}?populate=deep&filters[make][id][$eq]=${id}`);
-      if (response) {
-         return response.data;
-      } else {
-         throw new Error("Failed to fetch brands ");
-      }
-    } catch (error) {
-      console.error("Error fetching brands:", error);
-      throw error;
+export async function fetchBrandMyMake(id) {
+  try {
+    const response = await axios.get(`${endPoints.brands}?populate=deep&filters[make][id][$eq]=${id}`);
+    if (response) {
+      return response.data;
+    } else {
+      throw new Error("Failed to fetch brands ");
     }
+  } catch (error) {
+    console.error("Error fetching brands:", error);
+    throw error;
   }
-    export async function  postMake(make){
-try {
-       const postDataResponse = await axios.post(endPoints.makes,make, {
-        headers: {
-          'Content-Type': 'application/json',
-          "Accept": "application/json"
-        },
-      });
-      if (postDataResponse) {
-         return postDataResponse.data;
-      } else {
-         throw new Error("Failed to post make ");
-      }
-    } catch (error) {
-      console.error("Error posting  make:", error);
-      throw error;
+}
+export async function postMake(make) {
+  try {
+    const postDataResponse = await axios.post(endPoints.makes, make, {
+      headers: {
+        'Content-Type': 'application/json',
+        "Accept": "application/json"
+      },
+    });
+    if (postDataResponse) {
+      return postDataResponse.data;
+    } else {
+      throw new Error("Failed to post make ");
     }
+  } catch (error) {
+    console.error("Error posting  make:", error);
+    throw error;
   }
-      export async function  postBrand(brand){
-try {
-       const postDataResponse = await axios.post(endPoints.brands,brand, {
-        headers: {
-          'Content-Type': 'application/json',
-          "Accept": "application/json"
-        },
-      });
-      if (postDataResponse) {
-         return postDataResponse.data;
-      } else {
-         throw new Error("Failed to post brand ");
-      }
-    } catch (error) {
-      console.error("Error posting  brand:", error);
-      throw error;
+}
+export async function postBrand(brand) {
+  try {
+    const postDataResponse = await axios.post(endPoints.brands, brand, {
+      headers: {
+        'Content-Type': 'application/json',
+        "Accept": "application/json"
+      },
+    });
+    if (postDataResponse) {
+      return postDataResponse.data;
+    } else {
+      throw new Error("Failed to post brand ");
     }
+  } catch (error) {
+    console.error("Error posting  brand:", error);
+    throw error;
   }
-  export async function editMake(makeId, updatedMakeData) {
+}
+export async function editMake(makeId, updatedMakeData) {
   try {
     const response = await axios.put(
       `${endPoints.makes}/${makeId}`,

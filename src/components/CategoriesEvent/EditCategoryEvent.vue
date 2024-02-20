@@ -1,4 +1,9 @@
 <template>
+  <BreadCrumb
+  :PrevPage="'Categories Events List'"
+  :url="'/categories-event'"
+  PageTitle="Edit Category"
+/>
   <div class="card mb-25 border-0 rounded-0 bg-white create-new-project-box">
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
       <form @submit.prevent="EditCategory">
@@ -59,13 +64,15 @@ import { endPoints } from "../../utils/endPoints";
 import { methodsHttpNames } from "../../utils/methods";
 import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
+import BreadCrumb from "../Common/BreadCrumb.vue";
+
 import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 export default defineComponent({
   name: "EditCategoryEvent",
   components: {
-    Loading,
+    Loading,BreadCrumb
   },
   data() {
     return {

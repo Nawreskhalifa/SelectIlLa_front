@@ -7,8 +7,8 @@ const state = {
   eventsLoading: false,
   events: [],
   event: null,
-  totalPages: 1,
-  totalItems: 0,
+  totalEventPages: 1,
+  totalEventItems: 0,
   open: false
 };
 const getters = {
@@ -16,16 +16,16 @@ const getters = {
   getEventsLoading: (state) => state.eventsLoading,
   getEvents: (state) => state.events,
   getEvent: (state) => state.event,
-  getTotalPages: (state) => state.totalPages,
-  getTotalItems: (state) => state.totalItems,
+  getTotalEventPages: (state) => state.totalEventPages,
+  getTotalEventItems: (state) => state.totalEventItems,
   isOpen: (state) => state.open
 };
 const mutations = {
   SET_TOTAL_ITEMS(state, payload = 0) {
-    state.totalItems = payload;
+    state.totalEventItems = payload;
   },
   SET_TOTAL_PAGES(state, payload = 1) {
-    state.totalPages = payload;
+    state.totalEventPages = payload;
   },
   SET_EVENTS_LOADING(state, payload = false) {
     state.eventsLoading = payload;
@@ -139,6 +139,7 @@ const actions = {
         filters
       );
       if (response.success) {
+        console.log(response.data.meta.pagination)
         commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
         commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
         commit("SET_EVENTS", (response.data.data).map(decodeApiToEvent));

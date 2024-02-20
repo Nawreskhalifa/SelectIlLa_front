@@ -1,4 +1,10 @@
 <template>
+  <BreadCrumb
+    :PrevPage="'Customers List'"
+    :url="'/customersList'"
+    :PageTitle="customer.name"
+  />
+
   <div class="row">
     <div class="col-lg-5 col-xl-4">
       <CustomersInformation :customerId="idCustomer" />
@@ -190,9 +196,7 @@
                           :class="{ disabled: selectedCount === 0 }"
                           class="dropdown-item d-flex align-items-center"
                           href="javascript:void(0);"
-                          @click="
-                            selectedCount !== 0 && AcceptSelectedReservations
-                          "
+                          @click="AcceptSelectedReservations"
                         >
                           <i class="ph ph-check-square-offset"> </i>
 
@@ -465,10 +469,11 @@ import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import { updateReservation, acceptReservation } from "@/services/apiService";
+import BreadCrumb from "../../Common/BreadCrumb.vue";
 
 export default defineComponent({
   name: "CustomerDetail",
-  components: { CustomersInformation, Media, Loading },
+  components: { CustomersInformation, Media, Loading, BreadCrumb },
   props: {
     // Define the 'customer id' prop
     customerId: {
@@ -594,7 +599,7 @@ export default defineComponent({
         if (willDelete) {
           await Promise.all(
             selectedReservations.map(async (reservation) => {
-              if (reservation.status === "Pending") {
+              if (reservation.attributes.status === "Pending") {
                 const res = await updateReservation(reservation.id, {
                   data: {
                     status: "Confirmed",

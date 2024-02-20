@@ -202,23 +202,44 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Categories
               </label>
-
-              <select
+              <VueMultiselect
+                v-model="selectedCategories"
+                :options="getCategoriesEvent"
+                :multiple="true"
+                :close-on-select="false"
+                placeholder="Select some categories"
+                label="name"
+                track-by="id"
+                :option-class="{ 'selected-option': isSelected }"
+              />
+              <!-- <select
                 v-model="selectedCategories"
                 class="form-select shadow-none fw-semibold rounded-0 select-same-width"
                 style="height: 47px; border-color: #eeeee4"
                 @change="addCategoryEvent"
               >
-                <option selected>Select a Category</option>
+                <option selected disabled>Select a Category</option>
                 <option
                   v-for="category in getCategoriesEvent"
                   :key="category.id"
                   :value="category.id"
                 >
-                  {{ category.name }}
+                  <input
+                    type="checkbox"
+                    :id="'category_' + category.id"
+                    :value="category.id"
+                    v-model="selectedCategories"
+                    class="category-checkbox"
+                  />
+                  <label
+                    :for="'category_' + category.id"
+                    class="category-label"
+                  >
+                    {{ category.name }}
+                  </label>
                 </option>
-              </select>
-              <div
+              </select> -->
+              <!-- <div
                 class="members-list"
                 v-if="selectedCategoryNames && selectedCategoryNames.length > 0"
               >
@@ -236,9 +257,9 @@
                     <i class="flaticon-close"></i>
                   </button>
                 </div>
-              </div>
+              </div> -->
               <span
-                v-if="formSubmitted && selectedCategoryNames.length === 0"
+                v-if="formSubmitted && selectedCategories.length === 0"
                 class="text-danger"
                 >Please select at least one category!</span
               >
@@ -305,6 +326,15 @@
                     <i class="fas fa-times-circle"></i>
                     <!-- Icône de suppression -->
                   </button>
+                  <input
+                    type="radio"
+                    :id="'radio_' + index"
+                    v-model="coverImageIndex"
+                    :value="index"
+                    class="set_cover_button"
+                    title="Set as a cover image"
+                    style="cursor: pointer"
+                  />
                 </div>
               </div>
             </div>
@@ -349,11 +379,13 @@ import { endPoints } from "@/utils/endPoints";
 import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import VueMultiselect from "vue-multiselect";
 
 export default defineComponent({
   name: "AddEvent",
   components: {
     Loading,
+    VueMultiselect,
   },
   data() {
     return {
@@ -388,6 +420,7 @@ export default defineComponent({
       selectedCategoryNames: [],
       partner: [],
       formSubmitted: false,
+      coverImageIndex: 0,
     };
   },
   methods: {
@@ -397,6 +430,10 @@ export default defineComponent({
       "fetchOneCategoryEvent",
       "fetchAllPartners",
     ]),
+    setCoverPhoto(index) {
+      // Mettre à jour une variable pour indiquer quelle photo est sélectionnée comme couverture
+      this.coverImageIndex = index;
+    },
     deleteFromCategories(cat) {
       this.selectedCategoryNames = this.selectedCategoryNames.filter((item) => {
         return item.id !== cat.id; // Ajoutez le return ici
@@ -456,13 +493,11 @@ export default defineComponent({
     async createEvent() {
       this.isLoading = true;
       const formData = new FormData();
-
       try {
-        this.selectedCategoryNames.forEach((item) => {
+        this.selectedCategories.forEach((item) => {
           // Ajouter le tableau d'identifiants de catégories à formData
           formData.append("category_events", JSON.stringify(item.id));
         });
-        console.log(this.partner);
         formData.append("partner", this.partner);
         // Ajouter chaque champ du formulaire à l'objet FormData
         formData.append("name", this.eventName);
@@ -477,6 +512,8 @@ export default defineComponent({
         formData.append("total_bottles", this.bottles.toString());
         formData.append("name_promoter", this.promoterName);
         formData.append("promiting_info", this.promoterInfo);
+        formData.append("cover_image_index", this.coverImageIndex);
+
         if (this.photos && this.photos.length) {
           this.photos.forEach((photo) => {
             formData.append("files.photos", photo);
@@ -490,6 +527,7 @@ export default defineComponent({
           undefined
         );
         if (response.success) {
+          console.log(response);
           this.isLoading = false;
 
           await this.addEvent(response.data.data);
@@ -540,7 +578,472 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+fieldset[disabled] .multiselect {
+  pointer-events: none;
+}
+
+.multiselect__spinner {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  width: 40px;
+  height: 38px;
+  background: #fff;
+  display: block;
+}
+
+.multiselect__spinner::before,
+.multiselect__spinner::after {
+  position: absolute;
+  content: "";
+  top: 50%;
+  left: 50%;
+  margin: -8px 0 0 -8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 100%;
+  border-color: #41b883 transparent transparent;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: 0 0 0 1px transparent;
+}
+
+.multiselect__spinner::before {
+  animation: spinning 2.4s cubic-bezier(0.41, 0.26, 0.2, 0.62);
+  animation-iteration-count: infinite;
+}
+
+.multiselect__spinner::after {
+  animation: spinning 2.4s cubic-bezier(0.51, 0.09, 0.21, 0.8);
+  animation-iteration-count: infinite;
+}
+
+.multiselect__loading-enter-active,
+.multiselect__loading-leave-active {
+  transition: opacity 0.4s ease-in-out;
+  opacity: 1;
+}
+
+.multiselect__loading-enter,
+.multiselect__loading-leave-active {
+  opacity: 0;
+}
+
+.multiselect,
+.multiselect__input,
+.multiselect__single {
+  font-family: inherit;
+  font-size: 16px;
+  touch-action: manipulation;
+}
+
+.multiselect {
+  box-sizing: content-box;
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: 40px;
+  text-align: left;
+  color: #35495e;
+}
+
+.multiselect * {
+  box-sizing: border-box;
+}
+
+.multiselect:focus {
+  outline: none;
+}
+
+.multiselect--disabled {
+  background: #ededed;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.multiselect--active {
+  z-index: 50;
+}
+
+.multiselect--active:not(.multiselect--above) .multiselect__current,
+.multiselect--active:not(.multiselect--above) .multiselect__input,
+.multiselect--active:not(.multiselect--above) .multiselect__tags {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.multiselect--active .multiselect__select {
+  transform: rotateZ(180deg);
+}
+
+.multiselect--above.multiselect--active .multiselect__current,
+.multiselect--above.multiselect--active .multiselect__input,
+.multiselect--above.multiselect--active .multiselect__tags {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.multiselect__input,
+.multiselect__single {
+  position: relative;
+  display: inline-block;
+  min-height: 20px;
+  line-height: 20px;
+  border: none;
+  border-radius: 5px;
+  background: #fff;
+  padding: 0 0 0 5px;
+  width: calc(100%);
+  transition: border 0.1s ease;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  vertical-align: top;
+}
+
+.multiselect__input::placeholder {
+  color: #35495e;
+}
+
+.multiselect__tag ~ .multiselect__input,
+.multiselect__tag ~ .multiselect__single {
+  width: auto;
+}
+
+.multiselect__input:hover,
+.multiselect__single:hover {
+  border-color: #cfcfcf;
+}
+
+.multiselect__input:focus,
+.multiselect__single:focus {
+  border-color: #a8a8a8;
+  outline: none;
+}
+
+.multiselect__single {
+  padding-left: 5px;
+  margin-bottom: 8px;
+}
+
+.multiselect__tags-wrap {
+  display: inline;
+}
+
+.multiselect__tags {
+  min-height: 40px;
+  display: block;
+  padding: 8px 40px 0 8px;
+  border-radius: 5px;
+  border: 1px solid #e8e8e8;
+  background: #fff;
+  font-size: 14px;
+}
+
+.multiselect__tag {
+  position: relative;
+  display: inline-block;
+  padding: 4px 26px 4px 10px;
+  border-radius: 5px;
+  margin-right: 10px;
+  color: #fff;
+  line-height: 1;
+  background: #0056b3;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+.multiselect__tag-icon {
+  cursor: pointer;
+  margin-left: 7px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  font-weight: 700;
+  font-style: initial;
+  width: 22px;
+  text-align: center;
+  line-height: 22px;
+  transition: all 0.2s ease;
+  border-radius: 5px;
+}
+
+.multiselect__tag-icon::after {
+  content: "×";
+  color: #370a99;
+  font-size: 14px;
+}
+
+.multiselect__tag-icon:focus::after,
+.multiselect__tag-icon:hover::after {
+  color: white;
+}
+
+.multiselect__current {
+  line-height: 16px;
+  min-height: 40px;
+  box-sizing: border-box;
+  display: block;
+  overflow: hidden;
+  padding: 8px 12px 0;
+  padding-right: 30px;
+  white-space: nowrap;
+  margin: 0;
+  text-decoration: none;
+  border-radius: 5px;
+  border: 1px solid #e8e8e8;
+  cursor: pointer;
+}
+
+.multiselect__select {
+  line-height: 16px;
+  display: block;
+  position: absolute;
+  box-sizing: border-box;
+  width: 40px;
+  height: 38px;
+  right: 1px;
+  top: 1px;
+  padding: 4px 8px;
+  margin: 0;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.multiselect__select::before {
+  position: relative;
+  right: 0;
+  top: 65%;
+  color: black;
+  margin-top: 4px;
+  border-style: solid;
+  border-width: 5px 5px 0 5px;
+  border-color: black transparent transparent transparent;
+  content: "";
+}
+
+.multiselect__placeholder {
+  color: #000000;
+  display: inline-block;
+  margin-bottom: 10px;
+  padding-top: 2px;
+}
+
+.multiselect--active .multiselect__placeholder {
+  display: none;
+}
+
+.multiselect__content-wrapper {
+  position: absolute;
+  display: block;
+  background: #fff;
+  width: 100%;
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid #e8e8e8;
+  border-top: none;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  z-index: 50;
+  -webkit-overflow-scrolling: touch;
+}
+
+.multiselect__content {
+  list-style: none;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  min-width: 100%;
+  vertical-align: top;
+}
+
+.multiselect--above .multiselect__content-wrapper {
+  bottom: 100%;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom: none;
+  border-top: 1px solid #e8e8e8;
+}
+
+.multiselect__content::-webkit-scrollbar {
+  display: none;
+}
+
+.multiselect__element {
+  display: block;
+}
+
+.multiselect__option {
+  display: block;
+  padding: 12px;
+  min-height: 40px;
+  line-height: 16px;
+  text-decoration: none;
+  text-transform: none;
+  position: relative;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.multiselect__option::after {
+  top: 0;
+  right: 0;
+  position: absolute;
+  line-height: 40px;
+  padding-right: 12px;
+  padding-left: 20px;
+  font-size: 13px;
+}
+
+.multiselect__option--highlight {
+  background: #ededed;
+  outline: none;
+  color: black;
+}
+
+.multiselect__option--highlight::after {
+  content: attr(data-select);
+  background: #ededed;
+}
+
+.multiselect__option--selected {
+  background: #ededed;
+  color: #020202;
+  font-weight: bold;
+}
+
+.multiselect__option--selected::after {
+  content: attr(data-selected);
+  color: #ededed;
+  background: inherit;
+}
+
+.multiselect__option--selected.multiselect__option--highlight {
+  color: #020202;
+  font-weight: bold;
+}
+
+.multiselect__option--selected.multiselect__option--highlight::after {
+  background: #ededed;
+  content: attr(data-deselect);
+  color: black;
+}
+
+.multiselect--disabled .multiselect__current,
+.multiselect--disabled .multiselect__select {
+  background: #ededed;
+  color: #a6a6a6;
+}
+
+.multiselect__option--disabled {
+  background: #ededed !important;
+  color: #a6a6a6 !important;
+  cursor: text;
+  pointer-events: none;
+}
+
+.multiselect__option--group {
+  background: #ededed;
+  color: #35495e;
+}
+
+.multiselect__option--group.multiselect__option--highlight {
+  background: #ededed;
+  color: #fff;
+}
+
+.multiselect__option--group.multiselect__option--highlight::after {
+  background: #ededed;
+}
+
+.multiselect__option--disabled.multiselect__option--highlight {
+  background: #ededed;
+}
+
+.multiselect__option--group-selected.multiselect__option--highlight {
+  background: #ededed;
+  color: #f9fcfc;
+}
+
+.multiselect__option--group-selected.multiselect__option--highlight::after {
+  background: #ededed;
+  content: attr(data-deselect);
+  color: #fff;
+}
+
+.multiselect-enter-active,
+.multiselect-leave-active {
+  transition: all 0.15s ease;
+}
+
+.multiselect-enter,
+.multiselect-leave-active {
+  opacity: 0;
+}
+
+.multiselect__strong {
+  margin-bottom: 8px;
+  line-height: 20px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+*[dir="rtl"] .multiselect {
+  text-align: right;
+}
+
+*[dir="rtl"] .multiselect__select {
+  right: auto;
+  left: 1px;
+}
+
+*[dir="rtl"] .multiselect__tags {
+  padding: 8px 8px 0 40px;
+}
+
+*[dir="rtl"] .multiselect__content {
+  text-align: right;
+}
+
+*[dir="rtl"] .multiselect__option::after {
+  right: auto;
+  left: 0;
+}
+
+*[dir="rtl"] .multiselect__clear {
+  right: auto;
+  left: 12px;
+}
+
+*[dir="rtl"] .multiselect__spinner {
+  right: auto;
+  left: 1px;
+}
+
+@keyframes spinning {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(2turn);
+  }
+}
+</style>
+
 <style scoped>
+.selected-option {
+  background-color: #1771d1; /* Couleur de fond bleue pour les options sélectionnées */
+  color: #fff; /* Couleur du texte pour les options sélectionnées */
+}
 fieldset {
   border: none;
 }
@@ -568,13 +1071,16 @@ details {
 
 .delete_icon {
   position: absolute;
-  top: -1px;
-  right: 10px;
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: rgb(232, 227, 227);
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  left: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #121111; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
+  margin-right: 10px; /* Ajouter une marge à droite pour créer de l'espace entre les boutons */
 }
 
 select,
@@ -641,5 +1147,17 @@ li > label:has(input:checked) {
 }
 .select-same-width {
   width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
+}
+.set_cover_button {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  right: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #0056b3; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
 }
 </style>

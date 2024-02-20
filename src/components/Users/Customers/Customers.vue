@@ -70,18 +70,17 @@
           @change="handleFilterChange"
         />
       </div>
-      <button
-        v-if="isFilterActive"
-        class="default-outline-btn transition border fw-medium text-black pt-2 pb-4 ps-1 pe-4 pt-md-6 pb-md-3 ps-md-1 pe-md-1 rounded-1 fs-md-5 fs-lg-5 bg-transparent"
-        type="button"
-        @click="resetFilters"
-      >
-        Reset
-        <i
-          class="flaticon-refresh position-relative ms-5 top-2 fs-15"
-          style="margin-left: 3px"
-        ></i>
-      </button>
+      <div class="d-sm-flex align-items-center">
+        <button
+          v-if="isFilterActive"
+          class="default-outline-btn position-relative transition fw-medium text-black pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 bg-transparent fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1"
+          type="button"
+          @click="resetFilters"
+        >
+          Reset
+          <i class="flaticon-refresh position-relative ms-5 top-2 fs-15"></i>
+        </button>
+      </div>
       <div class="d-sm-flex align-items-center">
         <button
           class="default-outline-btn position-relative transition fw-medium text-black pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 bg-transparent fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1"
@@ -116,7 +115,7 @@
               :class="{ disabled: selectedCount === 0 }"
               class="dropdown-item d-flex align-items-center"
               href="javascript:void(0);"
-              @click="selectedCount !== 0 && deleteSelectedCustomers()"
+              @click="deleteSelectedCustomers"
             >
               <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
               Delete Selected
@@ -188,7 +187,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(customer, index) in getCustomers" :key="index">
+            <tr
+              v-for="(customer, index) in getCustomers"
+              :key="index"
+              @click="navigateToCustomerDetailPage(customer.id, $event)"
+              style="cursor: pointer"
+            >
               <th
                 class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
               >
@@ -246,12 +250,12 @@
                       <a
                         class="dropdown-item d-flex align-items-center"
                         href="javascript:void(0);"
-                        @click="navigateToCustomerDetailPage(customer.id)"
+                        @click="navigateToEditCustomerPage(customer.id)"
                       >
                         <i
-                          class="flaticon-view lh-1 me-8 position-relative top-1"
+                          class="flaticon-pen lh-1 me-8 position-relative top-1"
                         ></i>
-                        View
+                        Edit
                       </a>
                     </li>
                     <li>
@@ -516,6 +520,9 @@ export default defineComponent({
         page: this.currentPage,
         perPage: this.perPage,
         name: this.searchText,
+        gender: this.genderFilter,
+        startDate: this.startDate,
+        endDate: this.endDate,
       });
       this.isLoading = false;
     },
@@ -527,14 +534,49 @@ export default defineComponent({
       await this.fetchAllCustomers({
         page: pageNumber,
         perPage: this.perPage,
-        name: null,
       });
       this.isLoading = false;
     },
-    navigateToCustomerDetailPage(customerId) {
-      // Utilisez le routeur de Vue pour naviguer vers la page détaillée du client
+    navigateToCustomerDetailPage(customerId, event) {
+      if (
+        event.target.tagName.toLowerCase() === "input" ||
+        event.target.classList.contains("dropdown-toggle")
+      ) {
+        // Si l'utilisateur a cliqué sur une case à cocher ou un dropdown, arrêtez ici
+        return;
+      }
+
+      // Vérifiez si l'utilisateur a cliqué sur un lien ou un élément qui n'est pas un dropdown
+      const isLinkOrNonDropdownClicked =
+        event.target.tagName.toLowerCase() === "a" ||
+        !event.target.closest(".dropdown");
+      // Ajoutez des conditions supplémentaires pour traiter les actions Delete, View et Edit
+      const dropdownItemClicked = event.target.closest(".dropdown-item");
+      if (dropdownItemClicked) {
+        const action = dropdownItemClicked.getAttribute("data-action");
+        if (action === "delete") {
+          // Traitement de l'action de suppression
+          this.deleteTheCustomer(customerId);
+          return;
+        } else if (action === "edit") {
+          // Traitement de l'action d'édition
+          this.navigateToEditCustomerPage(customerId);
+          return;
+        }
+      }
+      if (isLinkOrNonDropdownClicked && !dropdownItemClicked) {
+        // Si l'utilisateur a cliqué sur un lien ou un élément non dropdown, effectuez la redirection
+        this.$router.push({
+          name: "CustomerDetailPage",
+          params: { customerId: customerId },
+        });
+      }
+    },
+
+    navigateToEditCustomerPage(customerId) {
+      // Utilisez le routeur de Vue pour naviguer vers la page edit du client
       this.$router.push({
-        name: "CustomerDetailPage",
+        name: "EditCustomerPage",
         params: { customerId: customerId },
       });
     },

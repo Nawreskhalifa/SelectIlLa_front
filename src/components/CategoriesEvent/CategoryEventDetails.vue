@@ -1,4 +1,9 @@
 <template>
+  <BreadCrumb
+  :PrevPage="'Categories Events List'"
+  :url="'/categories-event'"
+  :PageTitle="getCategoryEvent?.name"
+/>
   <div class="row">
     <div class="col-xxxl-8">
       <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing project-card">
@@ -50,9 +55,12 @@
 <script >
 import swal from "sweetalert";
 import { mapActions, mapGetters } from "vuex";
+import BreadCrumb from "../Common/BreadCrumb.vue";
 
 export default {
   name: "CategoryEventDetails",
+  components: { BreadCrumb },
+
   methods: {
     ...mapActions(["fetchOneCategoryEvent", "deleteCategoryEvent"]),
     navigateToEditCategoryPage(idCategoryEvent) {
