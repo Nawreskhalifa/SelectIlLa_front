@@ -250,14 +250,12 @@
                       <a
                         class="dropdown-item d-flex align-items-center"
                         href="javascript:void(0);"
-                        @click="
-                          navigateToCustomerDetailPage(customer.id, $event)
-                        "
+                        @click="navigateToEditCustomerPage(customer.id)"
                       >
                         <i
-                          class="flaticon-view lh-1 me-8 position-relative top-1"
+                          class="flaticon-pen lh-1 me-8 position-relative top-1"
                         ></i>
-                        View
+                        Edit
                       </a>
                     </li>
                     <li>
@@ -540,12 +538,45 @@ export default defineComponent({
       this.isLoading = false;
     },
     navigateToCustomerDetailPage(customerId, event) {
-      if (event.target.tagName.toLowerCase() === "input") {
-        return; // Ne rien faire si c'est la case à cocher qui a été cliquée
+      if (
+        event.target.tagName.toLowerCase() === "input" ||
+        event.target.classList.contains("dropdown-toggle")
+      ) {
+        // Si l'utilisateur a cliqué sur une case à cocher ou un dropdown, arrêtez ici
+        return;
       }
-      // Utilisez le routeur de Vue pour naviguer vers la page détaillée du client
+
+      // Vérifiez si l'utilisateur a cliqué sur un lien ou un élément qui n'est pas un dropdown
+      const isLinkOrNonDropdownClicked =
+        event.target.tagName.toLowerCase() === "a" ||
+        !event.target.closest(".dropdown");
+      // Ajoutez des conditions supplémentaires pour traiter les actions Delete, View et Edit
+      const dropdownItemClicked = event.target.closest(".dropdown-item");
+      if (dropdownItemClicked) {
+        const action = dropdownItemClicked.getAttribute("data-action");
+        if (action === "delete") {
+          // Traitement de l'action de suppression
+          this.deleteTheCustomer(customerId);
+          return;
+        } else if (action === "edit") {
+          // Traitement de l'action d'édition
+          this.navigateToEditCustomerPage(customerId);
+          return;
+        }
+      }
+      if (isLinkOrNonDropdownClicked && !dropdownItemClicked) {
+        // Si l'utilisateur a cliqué sur un lien ou un élément non dropdown, effectuez la redirection
+        this.$router.push({
+          name: "CustomerDetailPage",
+          params: { customerId: customerId },
+        });
+      }
+    },
+
+    navigateToEditCustomerPage(customerId) {
+      // Utilisez le routeur de Vue pour naviguer vers la page edit du client
       this.$router.push({
-        name: "CustomerDetailPage",
+        name: "EditCustomerPage",
         params: { customerId: customerId },
       });
     },

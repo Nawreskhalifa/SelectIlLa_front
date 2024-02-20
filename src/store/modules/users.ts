@@ -251,6 +251,31 @@ const actions = {
         }
         return true;
     },
+    async fetchOneCustomer({ commit }, id) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.deleteCustomer}${id}?populate=deep`,
+                undefined,
+                undefined
+            );
+            if (response.success) {
+                commit('SET_CUSTOMER', response.data.data);
+                commit('SET_USERS_LOADING', false);
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages);
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
+            }
+            return false;
+        }
+        return true;
+    },
     async AddNewCustomer({ commit },) {
         commit('SET_USERS_LOADING', true);
         commit('SET_USERS_ERROR', null);

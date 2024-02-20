@@ -22,6 +22,7 @@ import EventDetailsPage from "../pages/Events/EventDetailsPage.vue";
 import CustomersListPage from "../pages/Users/Customers/CustomersListPage.vue";
 import CustomersPage from "../pages/Ecommerce/CustomersPage.vue";
 import AddCustomerPage from "../pages/Users/Customers/AddCustomerPage.vue"
+import EditCustomerPage from "../pages/Users/Customers/EditCustomerPage.vue"
 import CustomerDetailPage from '../pages/Users/Customers/CustomerDetailPage.vue';
 import LoginPage from "../pages/Authentication/LoginPage.vue";
 import Dashboard from "../pages/Dashboard/EcommercePage.vue";
@@ -84,6 +85,14 @@ const routes = [
     path: "/add-customer",
     name: "AddCustomerPage",
     component: AddCustomerPage,
+    beforeEnter: guardMyroute,
+    meta: { auth: true }
+
+  },
+  {
+    path: "/edit-customer/:customerId",
+    name: "EditCustomerPage",
+    component: EditCustomerPage,
     beforeEnter: guardMyroute,
     meta: { auth: true }
 

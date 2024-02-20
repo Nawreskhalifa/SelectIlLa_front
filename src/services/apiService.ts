@@ -25,6 +25,25 @@ api.interceptors.request.use(
     throw error;
   },
 );
+export async function UpdateCustomer(customer, id) {
+  try {
+    const response = await axios.put(`${endPoints.findCustomer}${id} `,
+      customer, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    });
+
+    return { success: response.status === httpCodes.HTTP_OK, data: response.data, status: response.status };
+  } catch (error: any) {
+    return {
+      status: error?.response?.status,
+      success: error?.response?.data?.success,
+      error: error?.response?.data?.message,
+    };
+  }
+}
 export async function postCustomer(customer) {
   try {
     const response = await api.post(endPoints.allCustomers, customer, {
@@ -79,7 +98,44 @@ export async function RegistreUser(user) {
     };
   }
 }
+export async function UpdateUser(user, id) {
+  try {
+    console.log(user)
+    const response = await axios.put(
+      `${endPoints.findUser}/${id} `,
+      user,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
 
+    );
+
+    if (response.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } else {
+      console.error('Failed to  update new user data:', response);
+      return {
+        data: response,
+        success: false,
+        error: 'Failed to  update  user data',
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error('Error updating reservation:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
+}
 export async function makeApiRequest(
   method: string,
   endpoint: string,
