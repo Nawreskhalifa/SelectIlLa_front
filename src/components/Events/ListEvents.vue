@@ -138,7 +138,11 @@
           </div>
           <router-link :to="`/event-details/${event.id}`">
             <img
-              v-if="storageUrl && event?.photos && event?.coverImageIndex <= event?.photos.length"
+              v-if="
+                storageUrl &&
+                event?.photos &&
+                event?.coverImageIndex <= event?.photos.length
+              "
               :src="storageUrl + event?.photos[event?.coverImageIndex]?.url"
               alt="event-image"
               class="card-image"
@@ -297,11 +301,12 @@
   </div>
   <div class="col-12">
     <div
-      class="pagination-area d-md-flex mb-25 justify-content-between align-items-center"
+      class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
     >
       <p class="mb-0 text-paragraph">
-        Showing <span class="fw-bold">{{ getEvents.length }}</span> out of
-        <span class="fw-bold">{{ getTotalItems }}</span> results
+        Showing
+        <span class="fw-bold">{{ getEvents?.length }}</span> out of
+        <span class="fw-bold">{{ getTotalEventItems }}</span> results
       </p>
       <nav class="mt-15 mt-md-0">
         <ul class="pagination mb-0">
@@ -317,7 +322,7 @@
           </li>
           <li
             class="page-item"
-            v-for="page in Math.ceil(getTotalItems / perPage)"
+            v-for="page in getTotalEventPages"
             :key="page"
             :class="{ active: page === currentPage }"
           >
@@ -327,16 +332,14 @@
           </li>
           <li
             class="page-item"
-            :class="{
-              disabled: currentPage === Math.ceil(getTotalItems / perPage),
-            }"
+            :class="{ disabled: currentPage === getTotalEventPages }"
           >
             <a
               class="page-link"
               href="#"
               aria-label="Next"
               @click="
-                currentPage !== Math.ceil(getTotalItems / perPage) &&
+                currentPage !== getTotalEventPages &&
                   onPageChange(currentPage + 1)
               "
             >
@@ -346,13 +349,13 @@
         </ul>
       </nav>
     </div>
-    <loading
-      v-model:active="getEventsLoading"
-      :can-cancel="true"
-      :on-cancel="onCancel"
-      :is-full-page="fullPage"
-    />
   </div>
+  <loading
+    v-model:active="getEventsLoading"
+    :can-cancel="true"
+    :on-cancel="onCancel"
+    :is-full-page="fullPage"
+  />
 </template>
 
 <script>
@@ -380,12 +383,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions([
-      "fetchAllEvents",
-      "deleteEvent",
-      "getEventsLoading",
-      "fetchAllCategoriesEvent",
-    ]),
+    ...mapActions(["fetchAllEvents", "deleteEvent", "fetchAllCategoriesEvent"]),
 
     updateSelectionCounter(event, index) {
       if (event.target.checked) {
@@ -480,8 +478,7 @@ export default {
         perPage: this.perPage,
         name: null,
       });
-      console.log(this.getEvents)
-
+      console.log(this.getEvents);
     },
     getDayOfMonth(inputDate) {
       // Création d'un objet Date à partir de la chaîne de date d'entrée
@@ -580,8 +577,9 @@ export default {
       "getEventsError",
       "getEventsLoading",
       "getEvents",
-      "getTotalItems",
+      "getTotalEventPages",
       "getCategoriesEvent",
+      "getTotalEventItems",
     ]),
     isFilterActive() {
       return (
@@ -593,12 +591,12 @@ export default {
   },
   async mounted() {
     this.storageUrl = storageUrl;
+    await this.fetchAllCategoriesEvent({ page: null });
     await this.fetchAllEvents({
       page: this.currentPage,
-      perPage: this.perPage,
+      perPage: 4,
+      name: null,
     });
-    console.log(this.getEvents)
-    await this.fetchAllCategoriesEvent({ page: null });
   },
 };
 </script>

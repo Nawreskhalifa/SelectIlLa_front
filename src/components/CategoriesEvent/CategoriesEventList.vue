@@ -177,8 +177,7 @@
         </table>
       </div>
       <div
-        class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
-      >
+        class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center">
         <p class="mb-0 text-paragraph">
           Showing
           <span class="fw-bold">{{ getCategoriesEvent.length }}</span> out of
