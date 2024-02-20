@@ -7,25 +7,17 @@
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">Make</label>
-                <select
-                v-model="make"
-                class="form-select shadow-none fw-semibold rounded-0"
-                @change="getBrands(make)"
-              >
-                 <option
-                  v-for="make in makes"
-                  :key="make?.id"
-                  :value="make"
-                >
-                  {{ make.attributes.name }}
-                </option>
-              </select>
+              <select v-model="make" class="form-select shadow-none fw-semibold rounded-0" @change="getBrands(make)">
+    <option v-for="make in makes" :key="make?.id" :value="make">{{ make.attributes.name }}</option>
+  </select>
+  <div v-if="makesLoading" class="loader"></div>
+
               <div style="display: flex; flex-direction: row;"><span>+</span>
  <p class="fs-md-15 fs-lg-16"><a @click.prevent="addMake"  style="cursor: pointer;" class="link-secondary">Add new make</a></p>
               </div>
 
 
-              <div v-if="makeError" class="text-danger">{{ makeError }}</div>
+  <div v-if="makeErrorVisible" class="text-danger">Make is required.</div>
             </div>
           </div>
 
@@ -34,22 +26,24 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Brand
               </label>
- <select v-model="brand" class="form-select shadow-none fw-semibold rounded-0" :disabled="!make">
-  <template v-if="brands && brands.length > 0">
-    <option v-for="br in brands" :key="br?.id" :value="br">
-      {{ br?.attributes?.name }}
-    </option>
-  </template>
-  <template v-else>
-    <option disabled>Select A Make First</option>
-  </template>
-</select>
- <div   v-if="make"  style="display: flex; flex-direction: row;"><span>+</span>
+  <select v-model="brand" class="form-select shadow-none fw-semibold rounded-0" :disabled="!make">
+    <template v-if="brandsLoading">
+      <option>Loading brands...</option>
+    </template>
+    <template v-else-if="brands && brands.length > 0">
+      <option v-for="br in brands" :key="br?.id" :value="br">{{ br?.attributes?.name }}</option>
+    </template>
+    <template v-else>
+      <option disabled>Select A Make First</option>
+    </template>
+  </select>
+  <div v-if="brandsLoading" class="loader"></div>
+  <div   v-if="make"  style="display: flex; flex-direction: row;"><span>+</span>
  <p class="fs-md-15 fs-lg-16"><a @click.prevent="addBrand"  style="cursor: pointer;" class="link-secondary">Add Brand To {{make.attributes.name}}</a></p>
               </div>
 
 
-              <div v-if="brandError" class="text-danger">{{ brandError }}</div>
+  <div v-if="brandErrorVisible" class="text-danger">Brand is required.</div>
             </div>
           </div>
 
@@ -65,6 +59,8 @@
                 placeholder="e.g. style"
               />
             </div>
+              <div v-if="styleErrorVisible" class="text-danger">Style is required.</div>
+
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -74,9 +70,12 @@
               <input
                 v-model="deposit"
                 type="number"
+                min="0"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g deposit"
               />
+  <div v-if="depositErrorVisible" class="text-danger">Deposit is required.</div>
+
             </div>
           </div>
           <div class="col-md-6">
@@ -91,6 +90,8 @@
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 2532152"
               />
+  <div v-if="msrpErrorVisible" class="text-danger">MSRP is required.</div>
+
             </div>
           </div>
           <div class="col-md-12">
@@ -108,10 +109,11 @@ v-model:content="description"
 
                    toolbar="full"
                 />
+               <div v-if="descriptionErrorVisible" class="text-danger">Description is required.</div>
+
+
               </div>
-              <div v-if="descriptionError" class="text-danger">
-                {{ descriptionError }}
-              </div>
+
             </div>
           </div>
 
@@ -173,6 +175,8 @@ v-model:content="description"
                   placeholder="e.g. 120.00"
                 />
               </div>
+  <div v-if="dailyErrorVisible" class="text-danger">Daily amount is required.</div>
+
             </div>
           </div>
 
@@ -192,6 +196,8 @@ v-model:content="description"
                   placeholder="e.g. 15"
                 />
               </div>
+  <div v-if="miceErrorVisible" class="text-danger">Mice amount is required.</div>
+
             </div>
           </div>
 
@@ -206,6 +212,8 @@ v-model:content="description"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 50"
               />
+  <div v-if="newDailyErrorVisible" class="text-danger">New Daily amount is required.</div>
+
             </div>
           </div>
 
@@ -240,6 +248,8 @@ v-model:content="description"
                 />
               </div>
             </div>
+  <div v-if="imageErrorVisible" class="text-danger">Please upload at least one image.</div>
+
           </div>
 
           <div class="col-md-12 text-danger"></div>
@@ -267,8 +277,11 @@ v-model:content="description"
                 type="number"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 4"
+                   max="10"
+                   min="2"
               />
-              <div v-if="seatsError" class="text-danger">{{ seatsError }}</div>
+  <div v-if="seatsErrorVisible" class="text-danger">Seats amount is required.</div>
+        <div v-if="seats > 5" class="text-danger">Seats cannot exceed 5.</div>
             </div>
           </div>
           <div class="col-md-6">
@@ -290,6 +303,8 @@ v-model:content="description"
                 </option>
               </select>
             </div>
+              <div v-if="partnerErrorVisible" class="text-danger">Please select a partner.</div>
+
           </div>
 
           <div class="col-md-12">
@@ -308,14 +323,14 @@ v-model:content="description"
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add Make & Brand</h5>
+            <h5 class="modal-title">Add Make </h5>
             <button type="button" class="btn-close" @click="closeModal"></button>
           </div>
           <div class="modal-body">
             <label class="d-block text-black fw-semibold mb-10">Make :</label>
             <input v-model="newMake" type="text" class="form-control" placeholder="e.g Ford" />
-            <label class="d-block text-black fw-semibold mb-10">Brand :</label>
-            <input v-model="newBrand" type="text" class="form-control" placeholder="e.g F -150" />
+            <!-- <label class="d-block text-black fw-semibold mb-10">Brand :</label>
+            <input v-model="newBrand" type="text" class="form-control" placeholder="e.g F -150" /> -->
           </div>
           <!-- Modal Footer -->
           <div class="modal-footer">
@@ -338,15 +353,14 @@ v-model:content="description"
             <label class="d-block text-black fw-semibold mb-10">Brand :</label>
             <input v-model="newBrand" type="text" class="form-control" placeholder="e.g F -150" />
           </div>
-          <!-- Modal Footer -->
-          <div class="modal-footer">
+           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="closeModalBrand">Close</button>
             <button type="button" class="btn btn-primary" @click="saveOnlyBrand">Save changes</button>
           </div>
         </div>
       </div>
     </div>
-    <loading
+    <Loading
         v-model:active="isLoading"
         :can-cancel="true"
          :is-full-page="true"
@@ -370,6 +384,8 @@ export default defineComponent({
    components:{Loading},
 
   setup() {
+      const makesLoading = ref(false);
+    const brandsLoading = ref(false);
     const router = useRouter();
     const allPartners = ref();
     const  isLoading=  ref(false);
@@ -392,6 +408,18 @@ export default defineComponent({
     const make = ref();
        const newMake = ref("");
     const newBrand = ref("");
+        const makeErrorVisible = ref(false);
+    const brandErrorVisible = ref(false);
+    const descriptionErrorVisible = ref(false);
+     const seatsErrorVisible = ref(false);
+    const dailyErrorVisible = ref(false);
+    const miceErrorVisible = ref(false);
+    const newDailyErrorVisible = ref(false);
+    const imageErrorVisible = ref(false);
+    const depositErrorVisible = ref(false);
+    const msrpErrorVisible = ref(false);
+     const styleErrorVisible = ref(false);
+    const partnerErrorVisible = ref(false);
     const modal = ref(false)
     const modalBrand = ref(false )
     const modules = {
@@ -405,10 +433,7 @@ export default defineComponent({
         },
       },
     };
-    /////const  addToAllCat = () => {
-  /// // AllSelected.value.push(selectedCategory.value)
-    //console.log(AllSelected.value)
-////}
+
     const fetchPartnersList = async () => {
       const data = await fetchPartners();
       allPartners.value = data;
@@ -417,12 +442,7 @@ export default defineComponent({
     const addBrand = async () => {
       modalBrand.value = true
     }
-  //   const selectedCategoryNames = computed(() => {
-  //   return AllSelected.value.map((categoryId) => {
-  //     const selectedCategory = categories.value.find(category => category.id === categoryId);
-  //     return selectedCategory ? selectedCategory.attributes.name : '';
-  //   });
-  // });
+
     const makeError = ref("");
     const brandError = ref("");
     const descriptionError = ref("");
@@ -437,10 +457,7 @@ export default defineComponent({
         autoClose: 1000,
       });
     };
-    const fetchCategories = async () => {
-      const data = await fetchVehicleCategories();
-      categories.value = data.data;
-    };
+
     const selectedFilesRef = ref([] as File[]);
     const imageUrls = ref([] as string[]);
 
@@ -463,20 +480,22 @@ export default defineComponent({
       }
     };
     const fetchMakesCat = async () => {
+       makesLoading.value = true;
        const  {data}= await fetchMakes()
+                      makesLoading.value = false;
+
        makes.value = data
+
 
     }
     const changeText = (event) => {
-  // Extracting text from delta
-  console.log(event )
+   console.log(event )
   const newText = event.delta.ops
     .filter(op => op.insert)
     .map(op => op.insert)
     .join('');
 
-  // Updating description variable
-  description.value = newText;
+   description.value = newText;
   console.log(newText)
 };
 
@@ -506,81 +525,115 @@ export default defineComponent({
   AllSelected.value = AllSelected.value.filter((item) => item !== cat);
 };
     const submitForm = async () => {
-            isLoading.value = true
+    isLoading.value = true;
 
-      makeError.value = "";
-      brandError.value = "";
-      descriptionError.value = "";
-      categoryError.value = "";
-       seatsError.value = "";
-      dailyError.value = "";
-      miceError.value = "";
-      newDailyError.value = "";
-
-
-
-
-      if (selectedFiles.value.length === 0) {
-        imageError.value = "Please upload at least one image.";
+    makeError.value = "";
+    brandError.value = "";
+    descriptionError.value = "";
+    categoryError.value = "";
+    seatsError.value = "";
+    dailyError.value = "";
+    miceError.value = "";
+    newDailyError.value = "";
+    imageError.value = "";
+ if (!make.value) {
+        makeErrorVisible.value = true;
       }
 
-
-      if (!daily.value.trim()) {
-        dailyError.value = "Daily amount is required.";
+      if (!brand.value) {
+        brandErrorVisible.value = true;
       }
 
-      if (!mice.value.trim()) {
-        miceError.value = "Mice amount is required.";
+      if (!description.value.ops[0].insert) {
+        descriptionErrorVisible.value = true;
       }
 
-      if (
-        makeError.value ||
-        brandError.value ||
-        descriptionError.value ||
-        categoryError.value ||
-         seatsError.value ||
-        dailyError.value ||
-        miceError.value ||
-        newDailyError.value
+      if (!seats.value) {
+        seatsErrorVisible.value = true;
+      }
+       if (!style.value) {
+        styleErrorVisible.value = true;
+      }
+
+      if (!selectedPartner.value) {
+        partnerErrorVisible.value = true;
+      }
+
+      if (!daily.value) {
+        dailyErrorVisible.value = true;
+      }
+
+      if (!mice.value) {
+        miceErrorVisible.value = true;
+      }
+     if (!deposit.value) {
+        depositErrorVisible.value = true;
+      }
+
+      if (!msrp.value) {
+        msrpErrorVisible.value = true;
+      }
+
+      if (!newDaily.value) {
+        newDailyErrorVisible.value = true;
+      }
+
+      if (selectedFilesRef.value.length === 0) {
+        imageErrorVisible.value = true;
+      }
+
+        if (
+        makeErrorVisible.value ||
+        brandErrorVisible.value ||
+        descriptionErrorVisible.value ||
+        seatsErrorVisible.value ||
+        dailyErrorVisible.value ||
+        miceErrorVisible.value ||
+               styleErrorVisible.value ||
+        partnerErrorVisible.value ||
+        newDailyErrorVisible.value ||
+        depositErrorVisible.value ||
+        msrpErrorVisible.value ||
+        imageErrorVisible.value
       ) {
         window.scrollTo({ top: 0, behavior: "smooth" });
+        isLoading.value = false;
         return;
       }
-      const selectedC= AllSelected.value.filter(item =>{
-    return parseInt(item)
-  })
-  console.log(selectedC,"sele")
-      const vehicleData = {
+
+    const selectedC = AllSelected.value.filter((item) => parseInt(item));
+    const vehicleData = {
         data: {
-          make: make.value.id,
-          brand: brand.value.id,
-          style: style.value,
-          msrp: msrp.value,
-          daily: parseFloat(daily.value),
-          mice: parseFloat(mice.value),
-          new_daily: parseFloat(newDaily.value),
-          deposit: parseFloat(deposit.value),
-          description: description.value.ops[0].insert,
-           // category_vehicles: selectedC ,
-          seats: parseInt(seats.value),
-          partner: [parseInt(selectedPartner.value)]
+            make: make.value.id,
+            brand: brand.value.id,
+            style: style.value,
+            msrp: msrp.value,
+            daily: parseFloat(daily.value),
+            mice: parseFloat(mice.value),
+            new_daily: parseFloat(newDaily.value),
+            deposit: parseFloat(deposit.value),
+            description: description.value.ops[0].insert,
+            seats: parseInt(seats.value),
+            partner: [parseInt(selectedPartner.value)]
         },
-      };
-
-      console.log(vehicleData);
-
-      const result = await postVehicle(selectedFilesRef, vehicleData);
-      if (result.success) {
-        showToatSuccess();
-              isLoading.value = false
-
-        router.push("/vehiclelist");
-      }
     };
+
+    const result = await postVehicle(selectedFilesRef, vehicleData);
+    if (result.success) {
+        showToatSuccess();
+        isLoading.value = false;
+        router.push("/vehiclelist");
+    }
+};
+
    const getBrands = async (selectedMake) => {
+          brandsLoading.value = true;
+
   try {
      const { data } = await fetchBrandMyMake(selectedMake.id);
     brands.value = data;
+            brandsLoading.value = false;
+
   } catch (error) {
     console.error("Error fetching brands:", error);
   }
@@ -600,41 +653,41 @@ const closeModalBrand =() => {
         const  newMakePost = await postMake({data:{name :newMake.value}})
         console.log(newMakePost.data,"posted make")
         if(newMakePost.data){
-    const newBrandPost= await postBrand({data:{name:newBrand.value , make:newMakePost.data.id}})
-    if(newBrandPost){
+    // const newBrandPost= await postBrand({data:{name:newBrand.value , make:newMakePost.data.id}})
+    // if(newBrandPost){
      console.log("already")
            setTimeout(() => {
 isLoading.value = false
            fetchMakesCat()
            }, 2000);
-    }
-        }
+         }
       closeModal();
     };
- const saveOnlyBrand = async () => {
+  const saveOnlyBrand = async () => {
   try {
     isLoading.value = true;
-
     const response = await postBrand({ data: { name: newBrand.value, make: make.value?.id } });
 
-    if (response  ) {
-       await getBrands(make.value.id);
-
-       newBrand.value = '';
-
-      console.log("Brand added successfully:", response.data);
-
-       modalBrand.value = false;
+    if (response ) {
+       const res : any = await fetchBrandMyMake(make.value.id);
+       console.log(res,"dfs")
+      if (res) {
+        brands.value = res?.data;
+        newBrand.value = '';
+closeModalBrand()
+        console.log("Brand added successfully:", response.data);
+      } else {
+        console.error("Failed to get brands.");
+      }
     } else {
       console.error("Failed to add brand. Response:", response);
     }
   } catch (error) {
     console.error("Error adding brand:", error);
   } finally {
-     isLoading.value = false;
+    isLoading.value = false;
   }
 };
-
 
 
 
@@ -650,6 +703,9 @@ isLoading.value = false
 fetchMakesCat()
     return {
       modules,
+            makesLoading,
+      brandsLoading,
+
       fullPage,
       addMake,
        make,
@@ -672,6 +728,8 @@ saveOnlyBrand,
       getBrands,
        deposit,
       style,
+      styleErrorVisible,
+      partnerErrorVisible,
       addBrand,
       msrp,
       showToatSuccess,
@@ -685,12 +743,23 @@ saveOnlyBrand,
 changeText,
        seatsError,
       dailyError,
+      imageError,
       miceError,
        newDailyError,
        closeModalBrand,
       selectedPartner,
       submitForm,
+        makeErrorVisible,
+      brandErrorVisible,
+      descriptionErrorVisible,
+      seatsErrorVisible,
+      dailyErrorVisible,
+      miceErrorVisible,
+      newDailyErrorVisible,
+      imageErrorVisible,
       selectedFilesRef,
+       depositErrorVisible,
+      msrpErrorVisible,
       // addToAllCat,
        AllSelected ,
       imageUrls,
@@ -702,6 +771,20 @@ changeText,
 });
 </script>
 <style scoped>
+.loader {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin-left: 5px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 .preview-image {
   max-width: 100%;
   max-height: 300px;

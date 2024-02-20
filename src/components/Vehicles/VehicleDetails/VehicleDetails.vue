@@ -23,7 +23,7 @@
                   >
                     <swiper-slide v-for="(product, id) in products" :key="id">
                       <img
-                        :src="getFullImageUrl(product.attributes.url)"
+                        :src="getFullImageUrl(product?.attributes?.url)"
                         alt="product-details"
                       />
                     </swiper-slide>
@@ -57,7 +57,7 @@
                   >
                     <swiper-slide v-for="(product, id) in products" :key="id">
                       <img
-                        :src="getFullImageUrl(product.attributes.url)"
+                        :src="getFullImageUrl(product?.attributes?.url)"
                         alt="product-details"
                       />
                     </swiper-slide>
@@ -74,30 +74,30 @@
                     <div class="reviews d-flex align-items-center">
                       <span class="text-black fw-bold fs-13 ms-5 me-5">
                         Style :
-                        {{ vehicle.attributes.style }}</span
+                        {{ vehicle.attributes?.style }}</span
                       ><br />
                       <span class="text-muted fw-medium fs-13">
-                        - msrp : {{ vehicle.attributes.msrp }}</span
+                        - msrp : {{ vehicle.attributes?.msrp }}</span
                       >
                     </div>
                     <div
                       class="mt-10 mb-12 mb-md-15 price d-flex align-items-center"
                     >
                       <span class="text-primary fw-bold fs-md-15 fs-lg-16">
-                        daily : {{ vehicle.attributes.daily }}
+                        daily : {{ vehicle.attributes?.daily }}
                       </span>
                       <!-- <span class="text-muted fs-13 fw-medium ms-5 me-8">$3250.00</span>
                                       <span class="text-success fw-medium"><span class="fw-black">60%</span> Off</span> -->
                     </div>
                     <p class="text-paragraph fs-md-15 fs-xxxl-16 lh-base">
-                      {{ vehicle.attributes.description }}
+                      {{ vehicle.attributes?.description }}
                     </p>
                     <ul class="info ps-0 list-unstyled">
                       <li class="text-paragraph fs-md-15 fs-xxxl-16">
                         <span class="text-black fw-semibold d-inline-block"
                           >deposit:</span
                         >
-                        {{ vehicle.attributes.deposit }}
+                        {{ vehicle.attributes?.deposit }}
                       </li>
                       <li class="text-paragraph fs-md-15 fs-xxxl-16">
                         <span class="text-black fw-semibold d-inline-block">
@@ -108,35 +108,35 @@
                       <!-- <li
                         class="text-paragraph fs-md-15 fs-xxxl-16"
                         v-if="
-                          vehicle.attributes.category_vehicles.data.length > 0
+                          vehicle.attributes?.category_vehicles.data.length > 0
                         "
                       >
                         <span class="text-black fw-semibold d-inline-block">
                           Category:
                         </span>
                         <span
-                          v-for="categorie in vehicle.attributes
+                          v-for="categorie in vehicle.attributes?
                             .category_vehicles.data"
                           :key="categorie.id"
-                          >{{ categorie.attributes.name }}
+                          >{{ categorie.attributes?.name }}
                         </span>
                       </li> -->
                       <li class="text-paragraph fs-md-15 fs-xxxl-16">
                         <span class="text-black fw-semibold d-inline-block"
                           >seats:</span
                         >
-                        {{ vehicle.attributes.seats }} <br />
+                        {{ vehicle.attributes?.seats }} <br />
                       </li>
                     </ul>
                     <div class="box">
                       <p class="text-paragraph fs-md-15 fs-xxxl-16 lh-base">
                         mice
                         <span class="text-black fw-medium">
-                          {{ vehicle.attributes.mice }} $</span
+                          {{ vehicle.attributes?.mice }} $</span
                         >
                         new_daily
                         <span class="text-black fw-medium">
-                          {{ vehicle.attributes.new_daily }} $</span
+                          {{ vehicle.attributes?.new_daily }} $</span
                         >
                       </p>
                     </div>
@@ -145,7 +145,7 @@
                         <i
                           class="ph ph-check lh-1 fs-16 position-relative top-1 me-1"
                         ></i>
-                        available : {{ vehicle.attributes.available }}
+                        available : {{ vehicle.attributes?.available }}
                       </span>
                     </span>
                     <div class="buttons-list d-sm-flex align-items-center">
@@ -186,7 +186,7 @@ export default defineComponent({
 
   data() {
     return {
-      products: this.vehicle.attributes.photos.data,
+      products: this.vehicle.attributes?.photos.data,
     };
   },
   setup(props, { emit }) {

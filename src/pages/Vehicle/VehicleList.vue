@@ -7,7 +7,7 @@
 import { defineComponent } from "vue";
 
 import BreadCrumb from "../../components/Common/BreadCrumb.vue";
-import VehiclesList from "../../components/Vehicles/VehicleGrid/VehicleGrid.vue";
+import VehiclesList from "../../components/Vehicles/VehicleGrid/SingleItem.vue";
 
 export default defineComponent({
   name: "ProductsGridPage",

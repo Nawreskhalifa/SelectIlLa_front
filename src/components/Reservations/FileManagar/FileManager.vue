@@ -1,79 +1,68 @@
 <template>
-  <div class="file-management">
-    <div v-if="!selectedFile">
-      <div class="file-grid">
-        <div class="file-card" v-for="(file, index) in documents?.data" :key="index" @click="selectFile(file)">
-          <div class="file-card-int">
-            <img class="file-icon" :src="getIcon(file.attributes.name)" alt="File Icon">
-            <div class="file-name">{{  truncatedFileName(file.attributes.name) }}</div>
-          </div>
-          <div class="download" @click="downloadFile(file.attributes.url)">
-            <i class="fas fa-download" aria-hidden="true"></i>
+  <div style="width: 100%; height: 100%;">
+    <ModalFiles :visible="modalVisible" :selectedFile="selectedFile" @close="closeModal" />
+    <div class="file-management">
+      <div  >
+        <div class="file-grid">
+          <div class="file-card" v-for="(file, index) in documents?.data" :key="index" @click="selectFile(file)">
+            <div class="file-card-int">
+              <img class="file-icon" :src="getIcon(file.attributes.name)" alt="File Icon">
+              <div class="file-name">{{ truncatedFileName(file.attributes.name) }}</div>
+            </div>
+            <div class="download" @click="downloadFile(file.attributes.url)">
+              <i class="fas fa-download" aria-hidden="true"></i>
+            </div>
           </div>
         </div>
       </div>
+      <!-- <div v-else>
+        <button @click="goBack" class="back-button">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <div class="file-content">
+          <PdfViewer v-if="isPdf(selectedFile)" :urlLink="selectedFile.attributes.url"></PdfViewer>
+          <img v-else-if="isImage(selectedFile)" :src="ImageWithUrl(selectedFile.attributes.url)" alt="File Image" class="file-image">
+        </div>
+      </div> -->
     </div>
-    <div v-else>
-      <button @click="goBack" class="back-button">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
-      <div class="file-content">
-        <PdfViewer v-if="isPdf(selectedFile)" :urlLink="selectedFile.attributes.url"></PdfViewer>
-        <img v-else-if="isImage(selectedFile)" :src="ImageWithurl(selectedFile.attributes.url)" alt="File Image" class="file-image">
-      </div>
-    </div>
+    <!-- <button @click="openModal">Open Modal</button> -->
   </div>
-
- <!-- Modal -->
-<ModalFiles v-show="visible" @close="close">
-      <template v-slot:header> Modal
- Header </template>
-
-      <template v-slot:body> You can put your contents within body </template>
-
-      <template v-slot:footer> You can put your footer here </template>
-    </ModalFiles>
-    <!-- <button @click="openModal"></button> -->
 </template>
 
 <script>
-import PdfViewer from './PdfViewr.vue';
-import ModalFiles from "../../Common/ReusableModal.vue";
-
+// import PdfViewer from './PdfViewr.vue';
+import ModalFiles from './FileModal.vue';
+import {downloadItem } from "@/services/apiService"
 export default {
   components: {
-    PdfViewer,
+    // PdfViewer,
     ModalFiles,
-   },
+  },
   props: {
     documents: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      selectedFile: null ,
-            visible: false,
-
+      selectedFile: null,
+      modalVisible: false,
     };
   },
   methods: {
     openModal() {
-      this.visible = true;
+      this.modalVisible = true;
     },
-    close() {
-      this.visible = false;
-    },
-
-    ImageWithurl(url){
-      return `${process.env.VUE_APP_STORAGE_URL}${url}`
+    closeModal() {
+      this.modalVisible = false;
     },
     selectFile(file) {
-      if (this.isPdf(file)) {
-        window.open(`/pdf/${file.id}`, '_blank');
-      } else {
+      if (this.isPdf(file) || this.isImage(file)) {
         this.selectedFile = file;
+        this.openModal();
+      } else {
+        window.open(`/pdf/${file.id}`, '_blank');
       }
     },
     isPdf(file) {
@@ -100,9 +89,15 @@ export default {
         return require('@/assets/file.png');
       }
     },
-    downloadFile(url) {
-      //
-     },
+  async downloadFile(url) {
+  try {
+    const fileName = url.substring(url.lastIndexOf('/') + 1);
+    await downloadItem({ url, label: fileName });
+  } catch (error) {
+    console.error(error);
+  }
+},
+
     goBack() {
       this.selectedFile = null;
     },
@@ -113,8 +108,11 @@ export default {
       } else {
         return fileName;
       }
-    }
-  }
+    },
+    ImageWithUrl(url) {
+      return `${process.env.VUE_APP_STORAGE_URL}${url}`;
+    },
+  },
 };
 </script>
 

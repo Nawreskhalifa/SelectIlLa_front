@@ -75,17 +75,15 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(110, 110, 110, 0.7);
+  background-color: rgba(214, 214, 214, 0.7);
 }
 
 .modal-inner {
   position: relative;
   max-width: 400px;
   width: 80%;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   background-color: #fff;
-  padding: 32px;
+  padding: 25px;
   text-align: center;
 
   .confirmation-text {
@@ -118,6 +116,7 @@ export default {
 
       &:hover {
         background-color: #34495e;
+        color: white;
       }
     }
   }

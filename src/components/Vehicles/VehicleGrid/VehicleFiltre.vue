@@ -1,6 +1,6 @@
 <template>
   <div class="products-sidebar-filter bg-white letter-spacing mb-25">
-    <div
+    <!-- <div
       class="title"
       style="
         display: flex;
@@ -11,66 +11,48 @@
     >
       <h5 class="mb-0 fw-semibold text-secondary">Options</h5>
       <div>
-         <!-- <div class="checkbox-wrapper">
-          <input type="checkbox" id="selectAllCheckbox" v-model="selectAll"  />
-          <label class="checkbox-label" for="selectAllCheckbox">
-             <i v-if="selectAll" class="fas fa-check"></i>
-          </label>
-        </div> -->
-<div class="dropdown">
-                  <button
-                    class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <i class="flaticon-dots"></i>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <!-- <li>
-                      <a
-                        class="dropdown-item d-flex align-items-center"
-                        @click.prevent="openEdit(partner)"
-                        ><i
-                          class="flaticon-pen lh-1 me-8 position-relative top-1"
-                        ></i>
-                        Add</a
-                      >
-                    </li> -->
-                     <li>
-                      <a
-                        class="dropdown-item d-flex align-items-center"
-                        ><i
-                          class="fas fa-check lh-1 me-8 position-relative top-1"
-                        ></i>
-                        Select  All </a
-                      >
-                    </li>
-                     <li>
-                      <a
-                        class="dropdown-item d-flex align-items-center"
-                        ><i
-                          class="flaticon-delete lh-1 me-8 position-relative top-1"
-                        ></i>
-                        Delete All </a
-                      >
-                    </li>
-                    <li>
-                      <a
-                        class="dropdown-item d-flex align-items-center"
-                         ><i
-                          class="fas fa-ban lh-1 me-8 position-relative top-1"
-                        ></i>
-                        Disable All </a
-                      >
-                    </li>
-                  </ul>
-                </div>
-      </div>
 
-    </div>
-    <div class="sidebar-item">
-  <router-link to="/addvehicle" class="btn btn-primary d-block w-100 mt-15 mb-25">ADD VEHICLE</router-link>
+        <div class="dropdown">
+          <button
+            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="flaticon-dots"></i>
+          </button>
+          <ul class="dropdown-menu">
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center"
+                ><i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
+                Select All
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center"
+                ><i
+                  class="flaticon-delete lh-1 me-8 position-relative top-1"
+                ></i>
+                Delete All
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center"
+                ><i class="fas fa-ban lh-1 me-8 position-relative top-1"></i>
+                Disable All
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div> -->
+    <div class="sidebar-item" style="padding-top: 30px;">
+      <router-link
+        to="/addvehicle"
+        class="btn btn-primary d-block w-100 mt-15 mb-25"
+        >+ ADD VEHICLE</router-link
+      >
 
       <h6 class="text-black fw-bold fs-md-15">Search</h6>
       <div class="search-box -relative mb-15">
@@ -85,23 +67,27 @@
 
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Makes</h6>
-      <ul class="categories-list ps-0 mb-0 list-unstyled">
-        <li  @click="byCategory('All')" class="cat">
-            <span class="d-block fs-md-15 fw-medium">All</span>
-            <span class="d-block fw-medium text-muted">{{makes.length}}</span>
-         </li>
-<li v-for="item in makes" :key="item.id"  class="cat" @click="byCategory(item) ">
-    <span class="d-block fs-md-15 fw-medium">{{item.attributes.name}}</span>
-            <span class="d-block fw-medium text-muted">{{item?.attributes?.vehicles?.data?.length }}</span>
-</li>
-    <button
-          v-if="moreMakesAvailable"
-          type="button"
-          class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
-          @click="seeMoreMakes"
+      <ul
+        class="categories-list ps-0 mb-0 list-unstyled"
+        style="max-height: 200px; overflow-y: auto; padding-right: 5px"
+      >
+        <li @click="byCategory('All')" class="cat">
+          <span class="d-block fs-md-15 fw-medium">All</span>
+          <span class="d-block fw-medium text-muted">{{ allVehicles }}</span>
+        </li>
+        <li
+          v-for="item in makesWithVehicles(makes)"
+          :key="item.id"
+          class="cat"
+          @click="byCategory(item)"
         >
-        See More
-      </button>
+          <span class="d-block fs-md-15 fw-medium">{{
+            item.attributes.name
+          }}</span>
+          <span class="d-block fw-medium text-muted">{{
+            item?.attributes?.vehicles?.data?.length
+          }}</span>
+        </li>
       </ul>
       <!-- <button
         type="button"
@@ -110,9 +96,12 @@
         See More
       </button> -->
     </div>
-    <!-- <div class="sidebar-item">
+    <div class="sidebar-item" v-if="brands.length > 0">
       <h6 class="text-black fw-bold fs-md-15">Brands</h6>
-      <ul class="brands-list ps-0 mb-0 list-unstyled">
+      <ul
+        class="brands-list ps-0 mb-0 list-unstyled"
+        style="max-height: 200px; overflow-y: auto; padding-right: 5px"
+      >
         <li
           class="d-flex align-items-center justify-content-between text-paragraph"
           @click="byBrand('All')"
@@ -127,12 +116,13 @@
               All
             </label>
           </div>
-          <span class="d-block fw-medium text-muted">{{brands.length}}</span>
+          <span class="d-block fw-medium text-muted">{{ brands.length }}</span>
         </li>
 
         <li
           class="d-flex align-items-center justify-content-between text-paragraph"
-          v-for="item in brands" :key="item.id"
+          v-for="item in brands"
+          :key="item.id"
           @click="byBrand(item)"
         >
           <div class="form-check mb-0">
@@ -142,49 +132,90 @@
               id="sugarBrand"
             />
             <label class="form-check-label fs-md-15 fw-medium" for="sugarBrand">
-              {{item.attributes.name}}
+              {{ item.attributes.name }}
             </label>
           </div>
-          <span class="d-block fw-medium text-muted">{{item.attributes?.vehicles?.data?.length}}</span>
+          <span class="d-block fw-medium text-muted">{{
+            item.attributes?.vehicles?.data?.length
+          }}</span>
         </li>
-           <button
+        <!-- <button
           v-if="moreBrandsAvailable"
           type="button"
           class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
           @click="seeMoreBrands"
         >
         See More
-      </button>
-      </ul> -->
+      </button> -->
+      </ul>
       <!-- <button
         type="button"
         class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
       >
         See More
       </button> -->
-     <!-- </div> -->
+    </div>
+    <div class="sidebar-item">
+      <h6 class="text-black fw-bold fs-md-15">Daily</h6>
+      <div class="pricing-filter" id="pricing-filter">
+        <div class="range-slider">
+          <input
+            type="range"
+            class="min-price"
+            min="10"
+            v-model="minPrice"
+            @change="updateRange"
+          />
+          <input
+            type="range"
+            class="max-price"
+            max="6000"
+            v-model="maxPrice"
+            @change="updateRange"
+          />
+        </div>
+        <div
+          class="price-content d-flex align-items-center justify-content-between"
+        >
+          <span id="min-value" class="d-block text-black fw-medium fs-13">
+            ${{ minPrice }}
+          </span>
+          <span id="max-value" class="d-block text-black fw-medium fs-13">
+            ${{ maxPrice }}
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
-
 </template>
 
 <script>
-import { fetchVehicleCategories ,fetchBrands,fetchMakes } from "@/services/apiService";
+import { fetchMakesFiltre } from "@/services/apiService";
 
 export default {
   data() {
     return {
       categories: [],
+      selectedMake: {},
       searchInput: "",
       selectAll: false,
-    makes: [],
+      makes: [],
       brands: [],
       makeLimit: 4,
       brandLimit: 4,
       moreMakesAvailable: true,
-      moreBrandsAvailable: true
+      moreBrandsAvailable: true,
+      minPrice: 10,
+      maxPrice: 6000,
     };
   },
   watch: {
+    minPrice(newValue, oldValue) {
+      this.updateRange();
+    },
+    maxPrice(newValue, oldValue) {
+      this.updateRange();
+    },
     async searchInput(newValue, oldValue) {
       this.$emit("newFiltredData", newValue);
     },
@@ -193,6 +224,23 @@ export default {
     },
   },
   methods: {
+    makesWithVehicles(makes) {
+      return makes.filter((item) => {
+        return (
+          item &&
+          item.attributes.vehicles &&
+          item.attributes.vehicles.data &&
+          item.attributes.vehicles.data.length != 0
+        );
+      });
+    },
+
+    updateRange() {
+      if (parseInt(this.minPrice) > parseInt(this.maxPrice)) {
+        [this.minPrice, this.maxPrice] = [this.maxPrice, this.minPrice];
+      }
+    },
+
     // async fetchCategories() {
     //   try {
     //     const data = await fetchVehicleCategories("populate=*");
@@ -203,52 +251,91 @@ export default {
     //   }
     // },
     async seeMoreMakes() {
-      const { data } = await fetchMakes(`pagination[start]=${this.makes.length}&pagination[limit]=${this.makeLimit}`);
-       this.makes = await this.makes.concat(data);
-      console.log(this.makes,"okay")
+      const { data } = await fetchMakesFiltre(
+        `pagination[start]=${this.makes.length}&pagination[limit]=${this.makeLimit}`
+      );
+      this.makes = await this.makes.concat(data);
+      console.log(this.makes, "okay");
       this.moreMakesAvailable = data.length === this.makeLimit;
     },
-    async seeMoreBrands() {
-      const { data } = await fetchBrands(`pagination[start]=${this.brands.length}&pagination[limit]=${this.brandLimit}`);
-      this.brands = this.brands.concat(data);
-      this.moreBrandsAvailable = data.length === this.brandLimit;
+    // async seeMoreBrands() {
+    //   const { data } = await fetchBrandsFiltre(`pagination[start]=${this.brands.length}&pagination[limit]=${this.brandLimit}`);
+    //   this.brands = this.brands.concat(data);
+    //   this.moreBrandsAvailable = data.length === this.brandLimit;
+    // },
+    async getMakesAndBrands() {
+      const { data } = await fetchMakesFiltre();
+      this.makes = data;
+      console.log(this.makes, "oks");
+      // const br = await fetchBrandsFiltre(queryBrands)
+      //  this.brands = br.data
     },
-async getMakesAndBrands(queryMakes="" , queryBrands=""){
-  const {data} = await fetchMakes(queryMakes)
-    this.makes = data
-    console.log(this.makes,"oks")
-  const br = await fetchBrands(queryBrands)
-   this.brands = br.data
-} ,
-   async byCategory(category) {
-    console.log(category)
-  if (category === "All") {
-    this.$emit("byCategory", "");
-  } else {
-    this.$emit("byCategory", category);
-  }
-},
+
+    async byCategory(category) {
+      if (category === "All") {
+        this.$emit("byCategory", "");
+        this.brands = [];
+      } else {
+        if (
+          category &&
+          category.attributes &&
+          category.attributes.brands &&
+          category.attributes.brands.data
+        )
+          this.brands = category.attributes.brands.data;
+        this.$emit("byCategory", category);
+        this.selectedMake = category;
+      }
+    },
 
     async byBrand(brand) {
-  if (brand === "All") {
-    this.$emit("byBrand", "");
-  } else {
-    this.$emit("byBrand", brand);
-  }
-}
-
+      if (brand === "All") {
+        this.$emit("byCategory", this.selectedMake);
+      } else {
+        this.$emit("byBrand", brand);
+      }
+    },
   },
   mounted() {
-    console.log("ok")
+    console.log("ok");
     this.seeMoreMakes();
-    this.seeMoreBrands();
-    this.getMakesAndBrands("pagination[start]=4&pagination[limit]=4","pagination[start]=4&pagination[limit]=5")
+    this.getMakesAndBrands();
+  },
+  computed: {
+    allVehicles() {
+      let totalVehicles = 0;
+      if (this.makes) {
+        this.makes.forEach((item) => {
+          if (item.attributes.vehicles && item.attributes.vehicles.data) {
+            totalVehicles += item.attributes.vehicles.data.length;
+          }
+        });
+      }
+      return totalVehicles;
+    },
   },
 };
 </script>
 
 <style scoped>
- .checkbox-wrapper {
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: grey;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: grey;
+}
+.checkbox-wrapper {
   position: relative;
   display: inline-block;
   width: 30px;
@@ -280,13 +367,13 @@ async getMakesAndBrands(queryMakes="" , queryBrands=""){
 }
 
 .cat:hover {
-  background-color: #6560F0;
+  background-color: #6560f0;
   border-radius: 5px;
-  color: white
+  color: white;
 }
 
 .cat {
-  padding:6px;
+  padding: 6px;
   cursor: pointer;
 }
 </style>

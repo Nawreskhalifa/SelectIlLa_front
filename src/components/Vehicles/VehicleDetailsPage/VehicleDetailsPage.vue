@@ -20,7 +20,7 @@
             class="productDetailsSwiper"
           >
 <swiper-slide v-for="product in vehicle?.attributes?.photos?.data" :key="product.id">
-              <img :src="getFullImageUrl(product.attributes.url)" alt="product-details" />
+              <img :src="getFullImageUrl(product?.attributes?.url)" alt="product-details" />
             </swiper-slide>
           </swiper>
         </div>
@@ -51,7 +51,7 @@
             class="productDetailsThumbSwiper"
           >
 <swiper-slide v-for="product in vehicle?.attributes?.photos?.data" :key="product.id">
-              <img :src="getFullImageUrl(product.attributes.url)" alt="product-details" />
+              <img :src="getFullImageUrl(product?.attributes?.url)" style="cursor: pointer;" alt="product-details" />
             </swiper-slide>
           </swiper>
         </div>
@@ -200,14 +200,14 @@
 <div class="user-info d-sm-flex align-items-center justify-content-between" v-if="vehicle && vehicle.attributes && vehicle.attributes.partner && vehicle.attributes.partner.data && vehicle.attributes.partner.data.attributes && vehicle.attributes.partner.data.attributes.user && vehicle.attributes.partner.data.attributes.user.data && vehicle.attributes.partner.data.attributes.user.data.attributes">
     <div class="d-flex align-items-center">
         <div class="image">
-            <img :src="getFullImageUrl(vehicle.attributes.partner.data.attributes.photo?.data.attributes.url)" class="rounded-circle" width="85" height="85" alt="user" />
+            <img :src="getFullImageUrl(vehicle?.attributes?.partner?.data?.attributes?.photo?.data?.attributes?.url)" class="rounded-circle" width="85" height="85" alt="user" />
         </div>
         <div class="ms-15 ms-md-20">
-            <h5 class="text-black fw-black mb-1">{{vehicle.attributes.partner.data.attributes.name}} {{vehicle.attributes.partner.data.attributes.surname}}</h5>
+            <h5 class="text-black fw-black mb-1">{{vehicle.attributes?.partner.data?.attributes?.name}} {{vehicle.attributes.partner.data.attributes.surname}}</h5>
             <span class="d-block text-muted">{{vehicle.attributes.partner.data.attributes.user.data.attributes.email}}</span>
         </div>
     </div>
-    <a href="/profile-settings" class="border-0 bg-gray fs-13 fw-medium text-primary ps-8 pe-8 pt-1 pb-1 text-decoration-none d-inline-block mt-12 mt-sm-0">Check Profile <i class="fas fa-eye lh-1 position-relative top-1"></i></a>
+    <a href="/profile-settings" class="border-0 bg-gray fs-13 fw-medium text-primary ps-8 pe-8 pt-1 pb-1 text-decoration-none d-inline-block mt-12 mt-sm-0" @click.prevent="checkDetails(vehicle.attributes.partner.data.id)">Check Profile <i class="fas fa-eye lh-1 position-relative top-1"></i></a>
 </div>
 
 <div class="content pe-0" v-if="vehicle && vehicle.attributes && vehicle.attributes.partner && vehicle.attributes.partner.data && vehicle.attributes.partner.data.attributes && vehicle.attributes.partner.data.attributes.user && vehicle.attributes.partner.data.attributes.user.data && vehicle.attributes.partner.data.attributes.user.data.attributes">
@@ -221,7 +221,7 @@
 
 
 </div>
-<div class="row info-card">
+<!-- <div class="row info-card">
     <div class="col-6 col-sm-4 col-xxl-6 col-xxxl-4" v-if="vehicle && vehicle.attributes && vehicle.attributes.partner && vehicle.attributes.partner.data && vehicle.attributes.partner.data.attributes && vehicle.attributes.partner.data.attributes.villas">
         <div class="info p-10 p-sm-15 p-md-20">
             <span class="d-block text-black-emphasis mb-1">Villas</span>
@@ -241,7 +241,7 @@
         </div>
     </div>
 
-</div>
+</div> -->
 </div></div></div></div></div>
 
     <loading
@@ -297,6 +297,10 @@ export default defineComponent({
     };
   },
   methods: {
+    checkDetails(id){
+      this.$router.push({ name: "partnerdetails", params: { id:  id } });
+
+    },
      taketo(){
             const id = this.$route.params.id;
             this.$router.push({ name: 'updatevehicle', params: { id: id }})

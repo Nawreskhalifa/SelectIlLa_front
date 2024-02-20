@@ -1,5 +1,6 @@
 <template>
   <header
+  style="position: fixed; top: 2px;"
     :class="[
       'header-area bg-white text-center text-md-start pt-15 pb-15 ps-15 pe-15 ps-md-20 pe-md-20 pe-lg-30 transition mb-25 position-fixed',
       { sticky: isSticky },

@@ -231,9 +231,10 @@ export async function register(userApi: UserApi) {
   }
 }
 
-export async function fetchVehicles(start = 0, limit = 2) {
+export async function fetchVehicles() {
   try {
-    const response = await axios.get(`${endPoints.vehicles}/?populate=*&pagination[start]=${start}&pagination[limit]=${limit}`);
+// &pagination[start]=${start}&pagination[limit]=${limit}
+    const response = await axios.get(`${endPoints.vehicles}/?populate=*`);
     if (response) {
       console.log(response.data)
       return response.data;
@@ -392,6 +393,31 @@ export async function deleteFiles(id) {
   } catch (error) {
     console.error(`Error deleting files with ID ${id}:`, error);
     throw error;
+  }
+}
+
+export async function searchVehicle(table, field,field2, query, searchInput) {
+  try {
+    const url =process.env.VUE_APP_API_BASE_URL
+    const response = await axios.get(
+      `${url}${table}?populate=*&filters[${field}][${field2}][${query}]=${searchInput}`
+    );
+
+    if (response) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      }
+    } else {
+      throw new Error("Failed to fetch vehicles");
+    }
+  } catch (error) {
+    console.error('Error getting vehicle:', error);
+    return {
+      success: false,
+      error,
+    };
   }
 }
 export async function search(table, field, query, searchInput) {
@@ -1038,6 +1064,44 @@ export async function postPartner(partner) {
       };
   }
 }
+ export async function fetchMakesFiltre(query="") {
+    try {
+      let response  ;
+  if(query){
+        response = await axios.get(`${endPoints.makes}?populate=*&${query}`);
+  }else{
+        response = await axios.get(`${endPoints.makes}?populate[brands][populate]=vehicles&populate[vehicles]=*`);
+
+  }
+      if (response) {
+         return response.data;
+      } else {
+         throw new Error("Failed to fetch makes");
+      }
+    } catch (error) {
+      console.error("Error fetching makes:", error);
+      throw error;
+    }
+  }
+    export async function fetchBrandsFiltre(query="") {
+    try {
+      let response
+      if(query){
+        response = await axios.get(`${endPoints.brands}?populate=*&${query}`);
+      }else{
+        response = await axios.get(`${endPoints.brands}?populate=*`);
+
+      }
+      if (response) {
+         return response.data;
+      } else {
+         throw new Error("Failed to fetch brands ");
+      }
+    } catch (error) {
+      console.error("Error fetching brands:", error);
+      throw error;
+    }
+  }
   export async function fetchMakes(query="") {
     try {
       let response  ;
@@ -1266,5 +1330,33 @@ export async function updateTags(tagId, tagData) {
   } catch (error) {
     console.error(`Error updating tag with ID ${tagId}:`, error);
     throw error;
+  }
+}
+export async function downloadItem({ url, label }) {
+  try {
+    const extension = await label.split('.').pop().toLowerCase();
+    let type;
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        type = 'image/jpeg';
+        break;
+      case 'png':
+        type = 'image/png';
+        break;
+      case 'gif':
+        type = 'image/gif';
+        break;
+      default:
+        type = 'application/octet-stream';
+    }
+    const blob = new Blob([url], { type });
+    const link = await document.createElement('a');
+    link.href = await URL.createObjectURL(blob);
+    link.download = await label;
+    await link.click();
+    await URL.revokeObjectURL(link.href);
+  } catch (error) {
+    console.error('Error downloading file:', error);
   }
 }

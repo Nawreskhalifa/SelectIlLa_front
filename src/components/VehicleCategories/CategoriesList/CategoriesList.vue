@@ -53,11 +53,11 @@
               <div class="card-body letter-spacing">
                 <div
                   class="scrollable-container"
-                  :style="{ maxHeight: showAllItems ? 'none' : '100%' }"
+                 style="max-height: 400px; overflow-y: auto;"
                 >
                   <ul class="to-do-list style-two ps-0 list-unstyled mb-0">
                     <li
-                      v-for="make in paginatedMakes"
+                      v-for="make in makes"
                       :key="make.id"
                       :class="{ selected: make.selected }"
                       class="to-do-list-item d-flex align-items-center justify-content-between hoverli"
@@ -113,7 +113,7 @@
                     </li>
                   </ul>
                 </div>
-                <div
+                <!-- <div
                   class="text-center mt-2"
                   v-if="!showAllItems && makes.length > pageSize"
                 >
@@ -125,7 +125,7 @@
                   <button class="btn btn-link" @click="showAllItems = false">
                     Show less
                   </button>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -159,8 +159,8 @@
           </div>
           <div class="responsive">
             <div class="row">
-              <div class="col-lg-12">
-                <div v-for="brand in paginatedBrands" :key="brand.id">
+              <div class="col-lg-12"               style="max-height: 400px; overflow-y: auto;">
+                 <div  v-for="brand in brands" :key="brand.id">
                   <div
                     class="card mb-3"
                     @click="handleBrandClick(brand)"
@@ -208,7 +208,7 @@
                     </div>
                   </div>
                 </div>
-                <div v-if="!showAllBrands && brands.length > pageSize">
+                <!-- <div v-if="!showAllBrands && brands.length > pageSize">
                   <button class="btn btn-link" @click="showAllBrands = true">
                     Show more
                   </button>
@@ -217,7 +217,7 @@
                   <button class="btn btn-link" @click="showAllBrands = false">
                     Show less
                   </button>
-                </div>
+                </div> -->
               </div>
             </div>
             <hr />
@@ -235,10 +235,11 @@
               Tags
               <span class="badge bg-primary fs-20" v-if="openedBrand">{{
                 openedBrand?.attributes?.name
-              }}</span>
+              }}
+            </span>
             </h6>
             <div
-              class="card-select mt-10 mt-md-0 mb-10 mb-md-0 d-inline-block d-sm-flex align-items-center ps-10 pe-10 pt-5 pb-5"
+              class="card-select mt-10 mt-md-0 mb-10 mb-md-0 d-inline-block d-sm-flex align-items-center ps-10 pe-10 pt-5 pb-5  "
               v-if="openedBrand"
             >
               <span
@@ -283,6 +284,7 @@
               <div
                 v-if="!isAdd && !openedBrand.attributes?.name"
                 class="col-lg-12"
+                 style="max-height: 400px; overflow-y: auto;"
               >
                 <div v-for="tag in tags" :key="tag.id">
                   <div class="card mb-3" style="cursor: pointer">
@@ -328,7 +330,7 @@
                   </div>
                 </div>
 
-                <div v-if="!showAllBrands && brands.length > pageSize">
+                <!-- <div v-if="!showAllBrands && brands.length > pageSize">
                   <button class="btn btn-link" @click="showAllBrands = true">
                     Show more
                   </button>
@@ -337,7 +339,7 @@
                   <button class="btn btn-link" @click="showAllBrands = false">
                     Show less
                   </button>
-                </div>
+                </div> -->
               </div>
               <div
                 v-if="!isAdd && openedBrand.attributes?.name"
@@ -383,7 +385,7 @@
                   </div>
                 </div>
 
-                <div v-if="!showAllBrands && brands.length > pageSize">
+                <!-- <div v-if="!showAllBrands && brands.length > pageSize">
                   <button class="btn btn-link" @click="showAllBrands = true">
                     Show more
                   </button>
@@ -392,7 +394,7 @@
                   <button class="btn btn-link" @click="showAllBrands = false">
                     Show less
                   </button>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -793,6 +795,27 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+ }
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: grey;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: grey;
+}
 .hoverli:hover {
   color: white !important;
   background-color: #6560f0;

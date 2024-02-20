@@ -21,7 +21,7 @@
         </div>
       </div>
     </div>
-      <ul v-show="dropdownVisible" class="dropdown form-control">
+      <ul v-show="dropdownVisible" class="dropdown form-control" style="z-index:9999">
     <li v-for="(option, index) in options" :key="index" @click="toggleSelection(option)" :class="{ 'selected': isSelected(option) }">
       <span v-if="option.attributes">{{ option.attributes.name }}</span>
       <span v-if="option.name">{{ option.name }}</span>

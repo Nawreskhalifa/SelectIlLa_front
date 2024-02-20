@@ -1,13 +1,13 @@
 <template>
   <div class="pdf">
-    <PDFViewer
+ <PDFViewer
+      ref="pdfViewer"
       :source="url"
-      style="height: 100px; width: 100vw"
-      @download="handleDownload"
+      style="height: 100%; width: 100%"
+      @pdf-rendered="scrollToElement"
     />
   </div>
 </template>
-
 <script>
 import PDFViewer from "pdf-viewer-vue";
 
@@ -28,8 +28,25 @@ export default {
   },
   methods: {
     handleDownload() {
-      // Handle download event if needed
-    },
+      ///
+     },
+        scrollToElement() {
+    const elementId = "my-target-element";
+
+    const pdfViewer = this.$refs.pdfViewer;
+    if (!pdfViewer) {
+      console.error("PDF Viewer   not found.");
+      return;
+    }
+
+     const targetElement = pdfViewer.$el.querySelector(`#${elementId}`);
+
+    if (targetElement) {
+       targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      console.error(`Element with ID '${elementId}' not found.`);
+    }
+  },
   },
   mounted() {
     console.log(this.url, "url");
@@ -37,8 +54,5 @@ export default {
 };
 </script>
 <style scoped>
-.pdf {
-  position: fixed;
-  width: 100%;
-}
+
 </style>
