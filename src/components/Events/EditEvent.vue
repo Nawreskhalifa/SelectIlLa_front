@@ -332,6 +332,15 @@
                     <i class="fas fa-times-circle"></i>
                     <!-- Icône de suppression -->
                   </button>
+                  <input
+                    type="radio"
+                    :id="'radio_' + index"
+                    v-model="coverImageIndex"
+                    :value="index"
+                    class="set_cover_button"
+                    title="Set as a cover image"
+                    style="cursor: pointer"
+                  />
                 </div>
               </div>
               <div
@@ -353,6 +362,15 @@
                     <i class="fas fa-times-circle"></i>
                     <!-- Icône de suppression -->
                   </button>
+                  <input
+                    type="radio"
+                    :id="'radio_' + index"
+                    v-model="coverImageIndex"
+                    :value="index"
+                    class="set_cover_button"
+                    title="Set as a cover image"
+                    style="cursor: pointer"
+                  />
                 </div>
               </div>
             </div>
@@ -445,6 +463,7 @@ export default defineComponent({
       selectedPartner: [],
       formSubmitted: false,
       status: false,
+      coverImageIndex: 0,
     };
   },
   methods: {
@@ -565,6 +584,7 @@ export default defineComponent({
         formData.append("name_promoter", this.promoterName);
         formData.append("promiting_info", this.promoterInfo);
         formData.append("active", this.status);
+        formData.append("cover_image_index", this.coverImageIndex);
 
         const response = await makeApiRequest(
           methodsHttpNames.PUT,
@@ -638,6 +658,7 @@ export default defineComponent({
       this.status = this.getEvent.active;
       this.promoterName = this.getEvent.namePromoter;
       this.promoterInfo = this.getEvent.promotingInfo;
+      this.coverImageIndex=this.getEvent.coverImageIndex;
       this.photosFromDatabase = this.getEvent.photos;
       if (this.getEvent.partner) {
         this.selectedPartner = this.getEvent.partner.id;
@@ -668,13 +689,16 @@ fieldset {
 
 .delete_icon {
   position: absolute;
-  top: -1px;
-  right: 10px;
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: rgb(232, 227, 227);
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  left: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #121111; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
+  margin-right: 10px; /* Ajouter une marge à droite pour créer de l'espace entre les boutons */
 }
 
 fieldset > label {
@@ -762,5 +786,17 @@ li > label:has(input:checked) {
 }
 .select-same-width {
   width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
+}
+.set_cover_button {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  right: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #0056b3; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
 }
 </style>

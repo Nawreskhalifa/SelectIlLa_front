@@ -291,39 +291,6 @@
                 </span>
               </div>
               <div v-if="photos.length > 0" class="image-preview">
-                <div v-for="(photo, index) in selectedPhotos" :key="index" class="image-item">
-                    <img :src="photo.url" alt="Selected Image" />
-                    <button @click="removeImage(index)" class="delete_icon" type="button">
-                        <i class="fas fa-times-circle"></i>
-                        <!-- Icône de suppression -->
-                    </button>
-                </div>
-            </div>
-            </div>
-          </div>
-
-          <!-- <div class="col-md-12">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Upload Images
-              </label>
-              <div class="file-upload text-center position-relative">
-                <input
-                  type="file"
-                  multiple
-                  v-on:change="handleFileUpload"
-                  accept="image/*"
-                  class="d-block shadow-none border-0 position-absolute start-0 end-0 top-0 bottom-0 z-1 opacity-0"
-                />
-                <i class="flaticon-image"></i>
-                <span class="d-block text-muted">
-                  Drop Images Here Or
-                  <span class="text-black fw-medium position-relative">
-                    Click To Upload
-                  </span>
-                </span>
-              </div>
-              <div v-if="photos.length > 0" class="image-preview">
                 <div
                   v-for="(photo, index) in selectedPhotos"
                   :key="index"
@@ -336,11 +303,21 @@
                     type="button"
                   >
                     <i class="fas fa-times-circle"></i>
+                    <!-- Icône de suppression -->
                   </button>
+                  <input
+                    type="radio"
+                    :id="'radio_' + index"
+                    v-model="coverImageIndex"
+                    :value="index"
+                    class="set_cover_button"
+                    title="Set as a cover image"
+                    style="cursor: pointer"
+                  />
                 </div>
               </div>
             </div>
-          </div> -->
+          </div>
           <div class="col-md-12">
             <div class="d-flex align-items-center justify-content-between">
               <button
@@ -420,6 +397,7 @@ export default defineComponent({
       selectedCategoryNames: [],
       partner: [],
       formSubmitted: false,
+      coverImageIndex: 0,
     };
   },
   methods: {
@@ -429,6 +407,10 @@ export default defineComponent({
       "fetchOneCategoryEvent",
       "fetchAllPartners",
     ]),
+    setCoverPhoto(index) {
+      // Mettre à jour une variable pour indiquer quelle photo est sélectionnée comme couverture
+      this.coverImageIndex = index;
+    },
     deleteFromCategories(cat) {
       this.selectedCategoryNames = this.selectedCategoryNames.filter((item) => {
         return item.id !== cat.id; // Ajoutez le return ici
@@ -488,7 +470,6 @@ export default defineComponent({
     async createEvent() {
       this.isLoading = true;
       const formData = new FormData();
-
       try {
         this.selectedCategoryNames.forEach((item) => {
           // Ajouter le tableau d'identifiants de catégories à formData
@@ -508,6 +489,8 @@ export default defineComponent({
         formData.append("total_bottles", this.bottles.toString());
         formData.append("name_promoter", this.promoterName);
         formData.append("promiting_info", this.promoterInfo);
+        formData.append("cover_image_index", this.coverImageIndex);
+
         if (this.photos && this.photos.length) {
           this.photos.forEach((photo) => {
             formData.append("files.photos", photo);
@@ -521,6 +504,7 @@ export default defineComponent({
           undefined
         );
         if (response.success) {
+          console.log(response);
           this.isLoading = false;
 
           await this.addEvent(response.data.data);
@@ -599,13 +583,16 @@ details {
 
 .delete_icon {
   position: absolute;
-  top: -1px;
-  right: 10px;
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: rgb(232, 227, 227);
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  left: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #121111; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
+  margin-right: 10px; /* Ajouter une marge à droite pour créer de l'espace entre les boutons */
 }
 
 select,
@@ -672,5 +659,17 @@ li > label:has(input:checked) {
 }
 .select-same-width {
   width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
+}
+.set_cover_button {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  right: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #0056b3; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
 }
 </style>

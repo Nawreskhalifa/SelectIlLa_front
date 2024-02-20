@@ -136,11 +136,10 @@
               @change="updateSelectionCounter($event, index)"
             />
           </div>
-
           <router-link :to="`/event-details/${event.id}`">
             <img
-              v-if="storageUrl && event?.photos"
-              :src="storageUrl + event?.photos[0]?.url"
+              v-if="storageUrl && event?.photos && event?.coverImageIndex <= event?.photos.length"
+              :src="storageUrl + event?.photos[event?.coverImageIndex]?.url"
               alt="event-image"
               class="card-image"
             />
@@ -481,6 +480,8 @@ export default {
         perPage: this.perPage,
         name: null,
       });
+      console.log(this.getEvents)
+
     },
     getDayOfMonth(inputDate) {
       // Création d'un objet Date à partir de la chaîne de date d'entrée
@@ -596,6 +597,7 @@ export default {
       page: this.currentPage,
       perPage: this.perPage,
     });
+    console.log(this.getEvents)
     await this.fetchAllCategoriesEvent({ page: null });
   },
 };
