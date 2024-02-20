@@ -202,22 +202,43 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Categories
               </label>
-
-              <select
+              <VueMultiselect
+                v-model="selectedCategories"
+                :options="getCategoriesEvent"
+                :multiple="true"
+                :close-on-select="false"
+                placeholder="Select some categories"
+                label="name"
+                track-by="id"
+                :option-class="{ 'selected-option': isSelected }"
+              />
+              <!-- <select
                 v-model="selectedCategories"
                 class="form-select shadow-none fw-semibold rounded-0 select-same-width"
                 style="height: 47px; border-color: #eeeee4"
                 @change="addCategoryEvent"
               >
-                <option selected>Select a Category</option>
+                <option selected disabled>Select a Category</option>
                 <option
                   v-for="category in getCategoriesEvent"
                   :key="category.id"
                   :value="category.id"
                 >
-                  {{ category.name }}
+                  <input
+                    type="checkbox"
+                    :id="'category_' + category.id"
+                    :value="category.id"
+                    v-model="selectedCategories"
+                    class="category-checkbox"
+                  />
+                  <label
+                    :for="'category_' + category.id"
+                    class="category-label"
+                  >
+                    {{ category.name }}
+                  </label>
                 </option>
-              </select>
+              </select> -->
               <div
                 class="members-list"
                 v-if="selectedCategoryNames && selectedCategoryNames.length > 0"
@@ -358,11 +379,13 @@ import { endPoints } from "@/utils/endPoints";
 import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import VueMultiselect from "vue-multiselect";
 
 export default defineComponent({
   name: "AddEvent",
   components: {
     Loading,
+    VueMultiselect,
   },
   data() {
     return {
@@ -471,7 +494,7 @@ export default defineComponent({
       this.isLoading = true;
       const formData = new FormData();
       try {
-        this.selectedCategoryNames.forEach((item) => {
+        this.selectedCategories.forEach((item) => {
           // Ajouter le tableau d'identifiants de catégories à formData
           formData.append("category_events", JSON.stringify(item.id));
         });
@@ -555,7 +578,13 @@ export default defineComponent({
   },
 });
 </script>
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
+
 <style scoped>
+.selected-option {
+  background-color: #007bff; /* Couleur de fond bleue pour les options sélectionnées */
+  color: #fff; /* Couleur du texte pour les options sélectionnées */
+}
 fieldset {
   border: none;
 }
