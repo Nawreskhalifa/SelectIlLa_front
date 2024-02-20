@@ -260,7 +260,39 @@
               >
             </div>
           </div>
-
+          <div class="col-md-12">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">Status</label>
+              <div
+                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+              >
+                <input
+                  class="form-check-input shadow-none"
+                  type="radio"
+                  name="communicationRadio"
+                  id="activeRadio"
+                  v-model="status"
+                  :value="true"
+                />
+                <label class="form-check-label" for="activeRadio">Active</label>
+              </div>
+              <div
+                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+              >
+                <input
+                  class="form-check-input shadow-none"
+                  type="radio"
+                  name="communicationRadio"
+                  id="deactivatedRadio"
+                  v-model="status"
+                  :value="false"
+                />
+                <label class="form-check-label" for="deactivatedRadio"
+                  >In Active</label
+                >
+              </div>
+            </div>
+          </div>
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
@@ -373,7 +405,7 @@ import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 export default defineComponent({
-  name: "AddEvent",
+  name: "EditEvent",
   components: {
     Loading,
   },
@@ -412,6 +444,7 @@ export default defineComponent({
       categoriesSelected: [],
       selectedPartner: [],
       formSubmitted: false,
+      status: false,
     };
   },
   methods: {
@@ -531,11 +564,8 @@ export default defineComponent({
         formData.append("total_bottles", this.bottles.toString());
         formData.append("name_promoter", this.promoterName);
         formData.append("promiting_info", this.promoterInfo);
-        // if (this.newPhotos && this.newPhotos.length >= 1) {
-        //   this.newPhotos.forEach((photo) => {
-        //     formData.append("files.photos", photo);
-        //   });
-        // }
+        formData.append("active", this.status);
+
         const response = await makeApiRequest(
           methodsHttpNames.PUT,
           `${endPoints.findEvent}/${this.getEvent.id}`,
@@ -563,7 +593,6 @@ export default defineComponent({
           // Afficher un message de succès
           swal({
             text: "Event Updated Successfully!",
-            icon: "success",
             closeOnClickOutside: false,
           });
         }
@@ -597,6 +626,7 @@ export default defineComponent({
           })
         );
       }
+      console.log(this.getEvent);
       this.price = this.getEvent.price;
       this.location = this.getEvent.location;
       this.startDate = this.getEvent.startDate;
@@ -605,6 +635,7 @@ export default defineComponent({
       this.endTime = this.getEvent.endTime;
       this.seats = this.getEvent.totalSeats;
       this.bottles = this.getEvent.totalBottles;
+      this.status = this.getEvent.active;
       this.promoterName = this.getEvent.namePromoter;
       this.promoterInfo = this.getEvent.promotingInfo;
       this.photosFromDatabase = this.getEvent.photos;
