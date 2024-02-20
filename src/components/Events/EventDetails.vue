@@ -1,4 +1,9 @@
 <template>
+  <BreadCrumb
+    :PrevPage="'Events List'"
+    :url="'/events'"
+    :PageTitle="getEvent?.name"
+  />
   <div class="row">
     <div
       class="card mb-30 border-0 rounded-0 bg-white event-details-card container-fluid"
@@ -330,12 +335,15 @@ import "swiper/css/scrollbar";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import BreadCrumb from "../Common/BreadCrumb.vue";
+
 export default defineComponent({
   name: "EventDetails",
   components: {
     Loading,
     Swiper,
     SwiperSlide,
+    BreadCrumb,
   },
   setup() {
     const onSwiper = (swiper) => {

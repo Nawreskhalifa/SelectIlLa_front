@@ -1,4 +1,9 @@
 <template>
+  <BreadCrumb
+  :PrevPage="'Customers List'"
+  :url="'/customersList'"
+  :PageTitle="'Edit Customer'"
+/>
   <div class="card mb-25 border-0 rounded-0 bg-white add-user-card">
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
       <form @submit.prevent="EditUser">
@@ -297,6 +302,7 @@ import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import { storageUrl } from "../../../utils/constants";
 import { mapActions, mapGetters } from "vuex";
+import BreadCrumb from "../../Common/BreadCrumb.vue";
 
 import {
   getRole,
@@ -310,6 +316,7 @@ export default defineComponent({
   name: "EditUser",
   components: {
     Loading,
+    BreadCrumb
   },
   data() {
     return {

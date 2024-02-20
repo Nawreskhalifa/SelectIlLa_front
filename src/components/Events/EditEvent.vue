@@ -1,4 +1,9 @@
 <template>
+  <BreadCrumb
+    :PrevPage="'Events List'"
+    :url="'/events'"
+    :PageTitle="'Edit Event'"
+  />
   <div class="card mb-25 border-0 rounded-0 bg-white edit-course-card">
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
       <form @submit.prevent="createEvent">
@@ -51,40 +56,6 @@
                 color="blue"
                 :option-class="{ 'selected-option': isSelected }"
               />
-              <!-- <select
-                v-model="category"
-                class="form-select shadow-none fw-semibold rounded-0 select-same-width"
-                style="height: 47px; border-color: #eeeee4"
-                @change="addCategoryEvent"
-              >
-                <option selected>Select a Category</option>
-                <option
-                  v-for="category in getCategoriesEvent"
-                  :key="category.id"
-                  :value="category"
-                >
-                  {{ category?.name }}
-                </option>
-              </select> -->
-              <!-- <div
-                class="members-list"
-                v-if="selectedCategories && selectedCategories.length > 0"
-              >
-                <div
-                  v-for="(perv, i) in selectedCategories"
-                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
-                  :key="i"
-                >
-                  {{ perv?.name }}
-                  <button
-                    type="button"
-                    class="bg-transparent p-0 border-0 lh-1 transition"
-                    @click="deleteFromCategories(perv)"
-                  >
-                    <i class="flaticon-close"></i>
-                  </button>
-                </div>
-              </div> -->
               <span
                 v-if="formSubmitted && selectedCategories.length === 0"
                 class="text-danger"
@@ -361,86 +332,6 @@
               </div>
             </div>
           </div>
-
-          <!-- <div class="col-md-12">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Upload Images
-              </label>
-              <div class="file-upload text-center position-relative">
-                <input
-                  type="file"
-                  multiple
-                  v-on:change="handleFileUpload"
-                  accept="image/*"
-                  class="d-block shadow-none border-0 position-absolute start-0 end-0 top-0 bottom-0 z-1 opacity-0"
-                />
-                <i class="flaticon-image"></i>
-                <span class="d-block text-muted">
-                  Drop Images Here Or
-                  <span class="text-black fw-medium position-relative">
-                    Click To Upload
-                  </span>
-                </span>
-              </div>
-              <div
-                v-if="allPhotos && allPhotos?.length > 0"
-                class="image-preview"
-              >
-                <div
-                  v-for="(photo, index) in allPhotos"
-                  :key="index"
-                  class="image-item"
-                >
-                  <img :src="storageUrl + photo.url" alt="Selected Image" />
-                  <button
-                    type="button"
-                    @click="removeImageFromDatabase(photo, index)"
-                    class="delete_icon"
-                  >
-                    <i class="fas fa-times-circle"></i>
-                  </button>
-                  <input
-                    type="radio"
-                    :id="'radio_' + index"
-                    v-model="coverImageIndex"
-                    :value="index"
-                    class="set_cover_button"
-                    title="Set as a cover image"
-                    style="cursor: pointer"
-                  />
-                </div>
-              </div>
-              <div
-                v-if="newPhotos && newPhotos.length > 0"
-                class="image-preview"
-              >
-                <div
-                  v-for="(newPhoto, index) in newPhotos"
-                  :key="'new_' + index"
-                  class="image-item"
-                >
-                  <img :src="newPhoto.url" :alt="newPhoto.name" />
-                  <button
-                    @click="removeNewImage(index)"
-                    class="delete_icon"
-                    type="button"
-                  >
-                    <i class="fas fa-times-circle"></i>
-                  </button>
-                  <input
-                    type="radio"
-                    :id="'radio_' + index"
-                    v-model="coverImageIndex"
-                    :value="index"
-                    class="set_cover_button"
-                    title="Set as a cover image"
-                    style="cursor: pointer"
-                  />
-                </div>
-              </div>
-            </div>
-          </div> -->
           <div class="col-md-12">
             <div class="d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center justify-content-between">
@@ -489,12 +380,14 @@ import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import VueMultiselect from "vue-multiselect";
+import BreadCrumb from "../Common/BreadCrumb.vue";
 
 export default defineComponent({
   name: "EditEvent",
   components: {
     Loading,
     VueMultiselect,
+    BreadCrumb,
   },
   data() {
     return {
