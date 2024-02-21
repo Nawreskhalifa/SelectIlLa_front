@@ -96,6 +96,8 @@ export default {
         return text;
       } else if (text) {
         return text.slice(0, maxLength) + "...";
+      } else {
+        return text;
       }
     },
     navigateToCategoryDetailPage(idCategoryEvent) {
