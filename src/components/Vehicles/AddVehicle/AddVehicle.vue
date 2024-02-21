@@ -691,104 +691,114 @@ export default defineComponent({
       AllSelected.value = AllSelected.value.filter((item) => item !== cat);
     };
     const submitForm = async () => {
-      isLoading.value = true;
+    makeErrorVisible.value = false;
+    brandErrorVisible.value = false;
+    descriptionErrorVisible.value = false;
+    seatsErrorVisible.value = false;
+    dailyErrorVisible.value = false;
+    miceErrorVisible.value = false;
+    newDailyErrorVisible.value = false;
+    imageErrorVisible.value = false;
+    depositErrorVisible.value = false;
+    msrpErrorVisible.value = false;
+    styleErrorVisible.value = false;
+    partnerErrorVisible.value = false;
 
-      makeError.value = "";
-      brandError.value = "";
-      descriptionError.value = "";
-      categoryError.value = "";
-      seatsError.value = "";
-      dailyError.value = "";
-      miceError.value = "";
-      newDailyError.value = "";
-      imageError.value = "";
-      if (!make.value) {
+    isLoading.value = true;
+
+    let hasError = false;
+
+    if (!make.value) {
         makeErrorVisible.value = true;
-      }
+        hasError = true;
+    }
 
-      if (!brand.value) {
+    if (!brand.value) {
         brandErrorVisible.value = true;
-      }
+        hasError = true;
+    }
 
-      if (!description.value.ops[0].insert) {
+    if (!description.value || !description.value.ops || !description.value.ops[0].insert) {
         descriptionErrorVisible.value = true;
-      }
+        hasError = true;
+    }
 
-      if (!seats.value) {
+    if (!seats.value) {
         seatsErrorVisible.value = true;
-      }
+        hasError = true;
+    }
 
-
-      if (!selectedPartner.value) {
+    if (!selectedPartner.value) {
         partnerErrorVisible.value = true;
-      }
+        hasError = true;
+    }
 
-      if (!daily.value) {
+    if (!daily.value) {
         dailyErrorVisible.value = true;
-      }
+        hasError = true;
+    }
 
-      if (!mice.value) {
+    if (!mice.value) {
         miceErrorVisible.value = true;
-      }
-      if (!deposit.value) {
+        hasError = true;
+    }
+
+    if (!deposit.value) {
         depositErrorVisible.value = true;
-      }
+        hasError = true;
+    }
 
-      if (!msrp.value) {
+    if (!msrp.value) {
         msrpErrorVisible.value = true;
-      }
+        hasError = true;
+    }
 
-      if (!newDaily.value) {
+    if (!newDaily.value) {
         newDailyErrorVisible.value = true;
-      }
+        hasError = true;
+    }
 
-      if (selectedFilesRef.value.length === 0) {
+    if (selectedFilesRef.value.length === 0) {
         imageErrorVisible.value = true;
-      }
+        hasError = true;
+    }
 
-      if (
-        makeErrorVisible.value ||
-        brandErrorVisible.value ||
-        descriptionErrorVisible.value ||
-        seatsErrorVisible.value ||
-        dailyErrorVisible.value ||
-        miceErrorVisible.value ||
-         partnerErrorVisible.value ||
-        newDailyErrorVisible.value ||
-        depositErrorVisible.value ||
-        msrpErrorVisible.value ||
-        imageErrorVisible.value
-      ) {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+    if (!style.value) {
+        styleErrorVisible.value = true;
+        hasError = true;
+    }
+
+    if (hasError) {
         isLoading.value = false;
         return;
-      }
+    }
 
-      const selectedC = AllSelected.value.filter((item) => parseInt(item));
-      const vehicleData = {
+    const selectedC = AllSelected.value.filter((item) => parseInt(item));
+    const vehicleData = {
         data: {
-          make: make.value.id,
-          brand: brand.value.id,
-           msrp: msrp.value,
-          daily: parseFloat(daily.value),
-          mice: parseFloat(mice.value),
-          new_daily: parseFloat(newDaily.value),
-          deposit: parseFloat(deposit.value),
-          description: description.value.ops[0].insert,
-          seats: parseInt(seats.value),
-          partner: [parseInt(selectedPartner.value)],
-          style:style.value ,
-          cover_image_index:[coverImageIndex.value]
+            make: make.value.id,
+            brand: brand.value.id,
+            msrp: msrp.value,
+            daily: parseFloat(daily.value),
+            mice: parseFloat(mice.value),
+            new_daily: parseFloat(newDaily.value),
+            deposit: parseFloat(deposit.value),
+            description: description.value.ops[0].insert,
+            seats: parseInt(seats.value),
+            partner: [parseInt(selectedPartner.value)],
+            style: style.value,
+            cover_image_index: [coverImageIndex.value]
         },
-      };
+    };
 
-      const result = await postVehicle(selectedFilesRef, vehicleData);
-      if (result.success) {
+    const result = await postVehicle(selectedFilesRef, vehicleData);
+    if (result.success) {
         showToatSuccess();
         isLoading.value = false;
         router.push("/vehiclelist");
-      }
-    };
+    }
+};
+
 
     const getBrands = async (selectedMake) => {
       brandsLoading.value = true;

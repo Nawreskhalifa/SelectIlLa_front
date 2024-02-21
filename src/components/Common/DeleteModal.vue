@@ -75,7 +75,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(214, 214, 214, 0.7);
+  background-color: rgba(117, 117, 117, 0.7);
 }
 
 .modal-inner {

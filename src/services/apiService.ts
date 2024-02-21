@@ -1542,3 +1542,40 @@ export async function allVehiclesApi(filters) {
     };
   }
 }
+
+
+
+
+export async function AllVillaApi(filters) {
+  try {
+    let queryParams = `populate=*`;
+
+    if (filters.daily && filters.daily.length === 2) {
+      const [minDaily, maxDaily] = filters.daily;
+      queryParams += `&filters[daily][$gte]=${minDaily}&filters[daily][$lte]=${maxDaily}`;
+    }
+
+    if (filters.name) {
+      queryParams += `&filters[name][$contains]=${filters.name.trim()}`;
+    }
+
+    if (filters.category_villas) {
+      queryParams += `&filters[category_villas][id][$eq]=${filters.category_villas.id}`;
+    }
+
+    // if (filters.searchQuery) {
+    //   queryParams += `&filters[name][$contains]=${filters.searchQuery.trim()}`;
+    // }
+
+    const response = await axios.get(`http://localhost:1337/api/villas?${queryParams}`);
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Failed to fetch villas");
+    }
+  } catch (error) {
+    console.error('Error getting villas:', error);
+    throw error;
+  }
+}

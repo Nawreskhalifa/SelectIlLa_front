@@ -346,41 +346,7 @@ v-model:content="description"
       </form>
     </div>
   </div>
-   <!-- <div class="members-list">
-                <div
-                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
-                >
-                  Designer
-                  <button
-                    type="button"
-                    class="bg-transparent p-0 border-0 lh-1 transition"
-                  >
-                    <i class="flaticon-close"></i>
-                  </button>
-                </div>
-                <div
-                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
-                >
-                  Brand Designer
-                  <button
-                    type="button"
-                    class="bg-transparent p-0 border-0 lh-1 transition"
-                  >
-                    <i class="flaticon-close"></i>
-                  </button>
-                </div>
-                <div
-                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
-                >
-                  Motion Designer
-                  <button
-                    type="button"
-                    class="bg-transparent p-0 border-0 lh-1 transition"
-                  >
-                    <i class="flaticon-close"></i>
-                  </button>
-                </div>
-              </div> -->
+
                  <loading
         v-model:active="isLoading"
         :can-cancel="true"

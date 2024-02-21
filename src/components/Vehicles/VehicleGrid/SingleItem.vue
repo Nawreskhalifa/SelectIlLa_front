@@ -498,23 +498,6 @@ const data = await allVehiclesApi("");
     this.originalVehicles = data.data;
     this.vehicles = [...this.originalVehicles];
     }
-      //try {
-      //   console.log("Filtering by category:", event);
-      //   if (event) {
-      //     const data = await searchVehicle(
-      //       "vehicles",
-      //       "make",
-      //       "id",
-      //       "$eq",
-      //       event.id
-      //     );
-      //     this.vehicles = data.data.data;
-      //   } else {
-      //     this.vehicles = [...this.originalVehicles];
-      //   }
-      // } catch (error) {
-      //   console.error("Error in getByCat:", error);
-      // }
     },
     async getByBrand(brand) {
         try {
