@@ -1,23 +1,37 @@
 <template>
   <div class="card mb-25 border-0 rounded-0 bg-white add-product-box">
-
-     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
+    <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
       <form @submit.prevent="submitForm">
         <div class="row">
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">Make</label>
-              <select v-model="make" class="form-select shadow-none fw-semibold rounded-0" @change="getBrands(make)">
-    <option v-for="make in makes" :key="make?.id" :value="make">{{ make.attributes.name }}</option>
-  </select>
-  <div v-if="makesLoading" class="loader"></div>
+              <select
+                v-model="make"
+                class="form-select shadow-none fw-semibold rounded-0"
+                @change="getBrands(make)"
+              >
+                <option v-for="make in makes" :key="make?.id" :value="make">
+                  {{ make.attributes.name }}
+                </option>
+              </select>
+              <div v-if="makesLoading" class="loader"></div>
 
-              <div style="display: flex; flex-direction: row;"><span>+</span>
- <p class="fs-md-15 fs-lg-16"><a @click.prevent="addMake"  style="cursor: pointer;" class="link-secondary">Add new make</a></p>
+              <div style="display: flex; flex-direction: row">
+                <span>+</span>
+                <p class="fs-md-15 fs-lg-16">
+                  <a
+                    @click.prevent="addMake"
+                    style="cursor: pointer"
+                    class="link-secondary"
+                    >Add new make</a
+                  >
+                </p>
               </div>
 
-
-  <div v-if="makeErrorVisible" class="text-danger">Make is required.</div>
+              <div v-if="makeErrorVisible" class="text-danger">
+                Make is required.
+              </div>
             </div>
           </div>
 
@@ -26,41 +40,73 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Brand
               </label>
-  <select v-model="brand" class="form-select shadow-none fw-semibold rounded-0" :disabled="!make">
-    <template v-if="brandsLoading">
-      <option>Loading brands...</option>
-    </template>
-    <template v-else-if="brands && brands.length > 0">
-      <option v-for="br in brands" :key="br?.id" :value="br">{{ br?.attributes?.name }}</option>
-    </template>
-    <template v-else>
-      <option disabled>There is no Brands for {{make?.attributes?.name}}</option>
-    </template>
-  </select>
-  <div v-if="brandsLoading" class="loader"></div>
-  <div   v-if="make"  style="display: flex; flex-direction: row;"><span>+</span>
- <p class="fs-md-15 fs-lg-16"><a @click.prevent="addBrand"  style="cursor: pointer;" class="link-secondary">Add Brand To {{make.attributes.name}}</a></p>
+              <select
+                v-model="brand"
+                class="form-select shadow-none fw-semibold rounded-0"
+                :disabled="!make"
+              >
+                <template v-if="brandsLoading">
+                  <option>Loading brands...</option>
+                </template>
+                <template v-else-if="brands && brands.length > 0">
+                  <option v-for="br in brands" :key="br?.id" :value="br">
+                    {{ br?.attributes?.name }}
+                  </option>
+                </template>
+                <template v-else>
+                  <option disabled>
+                    There is no Brands for {{ make?.attributes?.name }}
+                  </option>
+                </template>
+              </select>
+              <div v-if="brandsLoading" class="loader"></div>
+              <div v-if="make" style="display: flex; flex-direction: row">
+                <span>+</span>
+                <p class="fs-md-15 fs-lg-16">
+                  <a
+                    @click.prevent="addBrand"
+                    style="cursor: pointer"
+                    class="link-secondary"
+                    >Add Brand To {{ make.attributes.name }}</a
+                  >
+                </p>
               </div>
 
-
-  <div v-if="brandErrorVisible" class="text-danger">Brand is required.</div>
+              <div v-if="brandErrorVisible" class="text-danger">
+                Brand is required.
+              </div>
             </div>
           </div>
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Style
-              </label>
-              <input
+              <label class="d-block text-black fw-semibold mb-10">Style</label>
+              <select
                 v-model="style"
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. style"
-              />
-            </div>
-              <div v-if="styleErrorVisible" class="text-danger">Style is required.</div>
+                class="form-select shadow-none fw-semibold rounded-0"
+               >
+                <option v-for="st in styles" :key="st?.id" :value="st">
+                  {{ st.attributes.name }}
+                </option>
+              </select>
+              <!-- <div v-if="makesLoading" class="loader"></div> -->
 
+              <div style="display: flex; flex-direction: row">
+                <span>+</span>
+                <p class="fs-md-15 fs-lg-16">
+                  <a
+                    @click.prevent="addStyleModal"
+                    style="cursor: pointer"
+                    class="link-secondary"
+                    >Add new Style</a
+                  >
+                </p>
+              </div>
+
+              <div v-if="makeErrorVisible" class="text-danger">
+                Make is required.
+              </div>
+            </div>
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -74,24 +120,27 @@
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g deposit"
               />
-  <div v-if="depositErrorVisible" class="text-danger">Deposit is required.</div>
-
+              <div v-if="depositErrorVisible" class="text-danger">
+                Deposit is required.
+              </div>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10">
-                  <abbr title="Manufacturer's Suggested Retail Price"
-                    >MSRP</abbr
-                  ></label>
-               <input
+              <label class="d-block text-black fw-semibold mb-10">
+                <abbr title="Manufacturer's Suggested Retail Price"
+                  >MSRP</abbr
+                ></label
+              >
+              <input
                 v-model="msrp"
                 type="number"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 2532152"
               />
-  <div v-if="msrpErrorVisible" class="text-danger">MSRP is required.</div>
-
+              <div v-if="msrpErrorVisible" class="text-danger">
+                MSRP is required.
+              </div>
             </div>
           </div>
           <div class="col-md-12">
@@ -100,20 +149,17 @@
                 Description
               </label>
               <div class="mb-0">
-                   <QuillEditor
-                                     style="height: 12em"
-
+                <QuillEditor
+                  style="height: 12em"
                   theme="snow"
                   placeholder="Write your meta description"
-v-model:content="description"
-
-                   toolbar="full"
+                  v-model:content="description"
+                  toolbar="full"
                 />
-               <div v-if="descriptionErrorVisible" class="text-danger">Description is required.</div>
-
-
+                <div v-if="descriptionErrorVisible" class="text-danger">
+                  Description is required.
+                </div>
               </div>
-
             </div>
           </div>
 
@@ -175,8 +221,9 @@ v-model:content="description"
                   placeholder="e.g. 120.00"
                 />
               </div>
-  <div v-if="dailyErrorVisible" class="text-danger">Daily amount is required.</div>
-
+              <div v-if="dailyErrorVisible" class="text-danger">
+                Daily amount is required.
+              </div>
             </div>
           </div>
 
@@ -196,8 +243,9 @@ v-model:content="description"
                   placeholder="e.g. 15"
                 />
               </div>
-  <div v-if="miceErrorVisible" class="text-danger">Mice amount is required.</div>
-
+              <div v-if="miceErrorVisible" class="text-danger">
+                Mice amount is required.
+              </div>
             </div>
           </div>
 
@@ -212,8 +260,9 @@ v-model:content="description"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 50"
               />
-  <div v-if="newDailyErrorVisible" class="text-danger">New Daily amount is required.</div>
-
+              <div v-if="newDailyErrorVisible" class="text-danger">
+                New Daily amount is required.
+              </div>
             </div>
           </div>
 
@@ -223,13 +272,13 @@ v-model:content="description"
                 Vehicle Image
               </label>
               <div class="file-upload text-center position-relative">
-                <img
+                <!-- <img
                   v-for="(url, index) in imageUrls"
                   :src="url"
                   :key="index"
                   alt="Uploaded Image"
                   class="preview-image"
-                />
+                /> -->
                 <span class="d-block text-muted">
                   Drop Files Here Or
                   <span
@@ -245,11 +294,38 @@ v-model:content="description"
                   ref="fileInput"
                   @change="handleFileChange"
                   multiple
+                  accept="image/*"
                 />
               </div>
             </div>
-  <div v-if="imageErrorVisible" class="text-danger">Please upload at least one image.</div>
-
+            <div v-if="imageUrls.length > 0" class="image-preview">
+              <div
+                v-for="(photo, index) in imageUrls"
+                :key="index"
+                class="image-item"
+              >
+                <img :src="photo" alt="Selected Image" />
+                <button
+                  @click="removeImage(index)"
+                  class="delete_icon"
+                  type="button"
+                >
+                  <i class="fas fa-times-circle"></i>
+                </button>
+                <input
+                  type="radio"
+                  :id="'radio_' + index"
+                  v-model="coverImageIndex"
+                  :value="index"
+                  class="set_cover_button"
+                  title="Set as a cover image"
+                  style="cursor: pointer"
+                />
+              </div>
+            </div>
+            <div v-if="imageErrorVisible" class="text-danger">
+              Please upload at least one image.
+            </div>
           </div>
 
           <div class="col-md-12 text-danger"></div>
@@ -277,11 +353,15 @@ v-model:content="description"
                 type="number"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 4"
-                   max="10"
-                   min="2"
+                max="10"
+                min="2"
               />
-  <div v-if="seatsErrorVisible" class="text-danger">Seats amount is required.</div>
-        <div v-if="seats > 5" class="text-danger">Seats cannot exceed 5.</div>
+              <div v-if="seatsErrorVisible" class="text-danger">
+                Seats amount is required.
+              </div>
+              <div v-if="seats > 5" class="text-danger">
+                Seats cannot exceed 5.
+              </div>
             </div>
           </div>
           <div class="col-md-6">
@@ -303,8 +383,9 @@ v-model:content="description"
                 </option>
               </select>
             </div>
-              <div v-if="partnerErrorVisible" class="text-danger">Please select a partner.</div>
-
+            <div v-if="partnerErrorVisible" class="text-danger">
+              Please select a partner.
+            </div>
           </div>
 
           <div class="col-md-12">
@@ -318,110 +399,168 @@ v-model:content="description"
         </div>
       </form>
     </div>
-</div>
-<div class="modal" :class="{ 'hide': !modal }">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Add Make </h5>
-            <button type="button" class="btn-close" @click="closeModal"></button>
-          </div>
-          <div class="modal-body">
-            <label class="d-block text-black fw-semibold mb-10">Make :</label>
-            <input v-model="newMake" type="text" class="form-control" placeholder="e.g Ford" />
-            <!-- <label class="d-block text-black fw-semibold mb-10">Brand :</label>
+  </div>
+   <div class="modal" :class="{ hide: !modalStyle }">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Style</h5>
+          <button type="button" class="btn-close" @click="closeModalStyle"></button>
+        </div>
+        <div class="modal-body">
+          <label class="d-block text-black fw-semibold mb-10">Style:</label>
+          <input v-model="newStyle" type="text" class="form-control" placeholder="Enter style name" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="closeModalStyle">Close</button>
+          <button type="button" class="btn btn-primary" @click="saveStyle">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" :class="{ hide: !modal }">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Make</h5>
+          <button type="button" class="btn-close" @click="closeModal"></button>
+        </div>
+        <div class="modal-body">
+          <label class="d-block text-black fw-semibold mb-10">Make :</label>
+          <input
+            v-model="newMake"
+            type="text"
+            class="form-control"
+            placeholder="e.g Ford"
+          />
+          <!-- <label class="d-block text-black fw-semibold mb-10">Brand :</label>
             <input v-model="newBrand" type="text" class="form-control" placeholder="e.g F -150" /> -->
-          </div>
-          <!-- Modal Footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
-            <button type="button" class="btn btn-primary" @click="saveChanges">Save changes</button>
-          </div>
+        </div>
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="closeModal">
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" @click="saveChanges">
+            Save changes
+          </button>
         </div>
       </div>
     </div>
-    <div v-if="make " class="modal" :class="{ 'hide': !modalBrand }">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Add Brand To  {{make.attributes.name}}</h5>
-            <button type="button" class="btn-close" @click="closeModalBrand"></button>
-          </div>
-          <div class="modal-body">
-            <label class="d-block text-black fw-semibold mb-10">Make :</label>
-            <input   type="text" class="form-control" :value="make.attributes.name" disabled />
-            <label class="d-block text-black fw-semibold mb-10">Brand :</label>
-            <input v-model="newBrand" type="text" class="form-control" placeholder="e.g F -150" />
-          </div>
-           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeModalBrand">Close</button>
-            <button type="button" class="btn btn-primary" @click="saveOnlyBrand">Save changes</button>
-          </div>
+  </div>
+  <div v-if="make" class="modal" :class="{ hide: !modalBrand }">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Brand To {{ make.attributes.name }}</h5>
+          <button
+            type="button"
+            class="btn-close"
+            @click="closeModalBrand"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <label class="d-block text-black fw-semibold mb-10">Make :</label>
+          <input
+            type="text"
+            class="form-control"
+            :value="make.attributes.name"
+            disabled
+          />
+          <label class="d-block text-black fw-semibold mb-10">Brand :</label>
+          <input
+            v-model="newBrand"
+            type="text"
+            class="form-control"
+            placeholder="e.g F -150"
+          />
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="closeModalBrand"
+          >
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" @click="saveOnlyBrand">
+            Save changes
+          </button>
         </div>
       </div>
     </div>
-    <Loading
-        v-model:active="isLoading"
-        :can-cancel="true"
-         :is-full-page="true"
-      />
+  </div>
+  <Loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
 </template>
 <script lang="ts">
-import { defineComponent, ref  ,computed } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import BlotFormatter from "quill-blot-formatter";
 import ImageUploader from "quill-image-uploader";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
-import { fetchVehicleCategories  , fetchPartners,fetchMakes, fetchBrands,fetchBrandMyMake,postBrand , postMake} from "@/services/apiService";
+import {
+  fetchVehicleCategories,
+  fetchPartners,
+  fetchMakes,
+  fetchBrands,
+  fetchStyles,
+  fetchBrandMyMake,
+  postBrand,
+  addStyle,
+  postMake,
+} from "@/services/apiService";
 import { postVehicle } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useRouter } from "vue-router";
- import MakeModal from "../AddMake/MakeModal.vue"
+import MakeModal from "../AddMake/MakeModal.vue";
 
 export default defineComponent({
   name: "AddProduct",
-   components:{Loading},
+  components: { Loading },
 
   setup() {
-      const makesLoading = ref(false);
+    const makesLoading = ref(false);
+    const coverImageIndex = ref(0);
+
     const brandsLoading = ref(false);
     const router = useRouter();
     const allPartners = ref();
-    const  isLoading=  ref(false);
-     const  fullPage= ref(true) ;
+    const isLoading = ref(false);
+    const fullPage = ref(true);
     const selectedPartner = ref("");
     const categories = ref();
-     const brand = ref();
+    const brand = ref();
     const description = ref();
-     const selectedFiles = ref([]);
+    const selectedFiles = ref([]);
     const AllSelected = ref<string[]>([]);
-    const makes =  ref([]) ;
-    const brands=  ref([]);
-     const seats = ref("");
+    const makes = ref([]);
+    const brands = ref([]);
+    const seats = ref("");
     const daily = ref("");
     const mice = ref("");
     const newDaily = ref("");
     const msrp = ref("");
-    const style = ref("");
+    const styles = ref([]);
+    const style= ref()
     const deposit = ref("");
     const make = ref();
-       const newMake = ref("");
+    const newMake = ref("");
     const newBrand = ref("");
-        const makeErrorVisible = ref(false);
+    const makeErrorVisible = ref(false);
     const brandErrorVisible = ref(false);
     const descriptionErrorVisible = ref(false);
-     const seatsErrorVisible = ref(false);
+    const seatsErrorVisible = ref(false);
     const dailyErrorVisible = ref(false);
     const miceErrorVisible = ref(false);
     const newDailyErrorVisible = ref(false);
     const imageErrorVisible = ref(false);
     const depositErrorVisible = ref(false);
     const msrpErrorVisible = ref(false);
-     const styleErrorVisible = ref(false);
+    const styleErrorVisible = ref(false);
     const partnerErrorVisible = ref(false);
-    const modal = ref(false)
-    const modalBrand = ref(false )
+    const modal = ref(false);
+    const modalBrand = ref(false);
     const modules = {
       module: BlotFormatter,
       ImageUploader,
@@ -440,22 +579,51 @@ export default defineComponent({
       console.log(data, allPartners, "data");
     };
     const addBrand = async () => {
-      modalBrand.value = true
-    }
+      modalBrand.value = true;
+    };
+       const getStyles = async () => {
+      const {data} = await fetchStyles();
+      styles.value = data ;
+      console.log(styles.value,"styless")
+      // console.log(data, styles, "styles");
+     };
 
     const makeError = ref("");
     const brandError = ref("");
     const descriptionError = ref("");
     const categoryError = ref("");
     const imageError = ref("");
-     const seatsError = ref("");
+    const seatsError = ref("");
     const dailyError = ref("");
     const miceError = ref("");
+        const modalStyle = ref(false);
+    const newStyle = ref("");
+  const closeModalStyle = () => {
+      modalStyle.value = false;
+    };
+
     const newDailyError = ref("");
     const showToatSuccess = () => {
       toast.success("Vehicle Created  🚗 👍 ", {
         autoClose: 1000,
       });
+    };
+     const addStyleModal = () => {
+      modalStyle.value = true;
+    };
+
+   const saveStyle = async () => {
+      try {
+        const response = await addStyle({data:{ name: newStyle.value} });
+        if (response) {
+           getStyles();
+          closeModalStyle();
+        } else {
+          console.error("Failed to add style.");
+        }
+      } catch (error) {
+        console.error("Error adding style:", error);
+      }
     };
 
     const selectedFilesRef = ref([] as File[]);
@@ -480,24 +648,22 @@ export default defineComponent({
       }
     };
     const fetchMakesCat = async () => {
-       makesLoading.value = true;
-       const  {data}= await fetchMakes()
-                      makesLoading.value = false;
+      makesLoading.value = true;
+      const { data } = await fetchMakes();
+      makesLoading.value = false;
 
-       makes.value = data
-
-
-    }
+      makes.value = data;
+    };
     const changeText = (event) => {
-   console.log(event )
-  const newText = event.delta.ops
-    .filter(op => op.insert)
-    .map(op => op.insert)
-    .join('');
+      console.log(event);
+      const newText = event.delta.ops
+        .filter((op) => op.insert)
+        .map((op) => op.insert)
+        .join("");
 
-   description.value = newText;
-  console.log(newText)
-};
+      description.value = newText;
+      console.log(newText);
+    };
 
     const uploadImage = async () => {
       const formData = new FormData();
@@ -522,21 +688,21 @@ export default defineComponent({
       }
     };
     const deleteFromCategories = (cat) => {
-  AllSelected.value = AllSelected.value.filter((item) => item !== cat);
-};
+      AllSelected.value = AllSelected.value.filter((item) => item !== cat);
+    };
     const submitForm = async () => {
-    isLoading.value = true;
+      isLoading.value = true;
 
-    makeError.value = "";
-    brandError.value = "";
-    descriptionError.value = "";
-    categoryError.value = "";
-    seatsError.value = "";
-    dailyError.value = "";
-    miceError.value = "";
-    newDailyError.value = "";
-    imageError.value = "";
- if (!make.value) {
+      makeError.value = "";
+      brandError.value = "";
+      descriptionError.value = "";
+      categoryError.value = "";
+      seatsError.value = "";
+      dailyError.value = "";
+      miceError.value = "";
+      newDailyError.value = "";
+      imageError.value = "";
+      if (!make.value) {
         makeErrorVisible.value = true;
       }
 
@@ -551,9 +717,7 @@ export default defineComponent({
       if (!seats.value) {
         seatsErrorVisible.value = true;
       }
-       if (!style.value) {
-        styleErrorVisible.value = true;
-      }
+
 
       if (!selectedPartner.value) {
         partnerErrorVisible.value = true;
@@ -566,7 +730,7 @@ export default defineComponent({
       if (!mice.value) {
         miceErrorVisible.value = true;
       }
-     if (!deposit.value) {
+      if (!deposit.value) {
         depositErrorVisible.value = true;
       }
 
@@ -582,15 +746,14 @@ export default defineComponent({
         imageErrorVisible.value = true;
       }
 
-        if (
+      if (
         makeErrorVisible.value ||
         brandErrorVisible.value ||
         descriptionErrorVisible.value ||
         seatsErrorVisible.value ||
         dailyErrorVisible.value ||
         miceErrorVisible.value ||
-               styleErrorVisible.value ||
-        partnerErrorVisible.value ||
+         partnerErrorVisible.value ||
         newDailyErrorVisible.value ||
         depositErrorVisible.value ||
         msrpErrorVisible.value ||
@@ -601,114 +764,124 @@ export default defineComponent({
         return;
       }
 
-    const selectedC = AllSelected.value.filter((item) => parseInt(item));
-    const vehicleData = {
+      const selectedC = AllSelected.value.filter((item) => parseInt(item));
+      const vehicleData = {
         data: {
-            make: make.value.id,
-            brand: brand.value.id,
-            style: style.value,
-            msrp: msrp.value,
-            daily: parseFloat(daily.value),
-            mice: parseFloat(mice.value),
-            new_daily: parseFloat(newDaily.value),
-            deposit: parseFloat(deposit.value),
-            description: description.value.ops[0].insert,
-            seats: parseInt(seats.value),
-            partner: [parseInt(selectedPartner.value)]
+          make: make.value.id,
+          brand: brand.value.id,
+           msrp: msrp.value,
+          daily: parseFloat(daily.value),
+          mice: parseFloat(mice.value),
+          new_daily: parseFloat(newDaily.value),
+          deposit: parseFloat(deposit.value),
+          description: description.value.ops[0].insert,
+          seats: parseInt(seats.value),
+          partner: [parseInt(selectedPartner.value)],
+          style:style.value ,
+          cover_image_index:[coverImageIndex.value]
         },
-    };
+      };
 
-    const result = await postVehicle(selectedFilesRef, vehicleData);
-    if (result.success) {
+      const result = await postVehicle(selectedFilesRef, vehicleData);
+      if (result.success) {
         showToatSuccess();
         isLoading.value = false;
         router.push("/vehiclelist");
-    }
-};
+      }
+    };
 
-   const getBrands = async (selectedMake) => {
-          brandsLoading.value = true;
+    const getBrands = async (selectedMake) => {
+      brandsLoading.value = true;
 
-  try {
-     const { data } = await fetchBrandMyMake(selectedMake.id);
-    brands.value = data;
-            brandsLoading.value = false;
+      try {
+        const { data } = await fetchBrandMyMake(selectedMake.id);
+        brands.value = data;
+        brandsLoading.value = false;
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    };
 
-  } catch (error) {
-    console.error("Error fetching brands:", error);
-  }
-};
-
-const closeModal = () => {
-    console.log("Closing modal...");
-    modal.value = false ;
-};
-const closeModalBrand =() => {
- modalBrand.value = false
-}
-    const saveChanges =async  () => {
-        console.log("New Make:", newMake.value);
+    const closeModal = () => {
+      console.log("Closing modal...");
+      modal.value = false;
+    };
+    const closeModalBrand = () => {
+      modalBrand.value = false;
+    };
+    const saveChanges = async () => {
+      console.log("New Make:", newMake.value);
       console.log("New Brand:", newBrand.value);
-      isLoading.value = true
-        const  newMakePost = await postMake({data:{name :newMake.value}})
-        console.log(newMakePost.data,"posted make")
-        if(newMakePost.data){
-    // const newBrandPost= await postBrand({data:{name:newBrand.value , make:newMakePost.data.id}})
-    // if(newBrandPost){
-     console.log("already")
-           setTimeout(() => {
-isLoading.value = false
-           fetchMakesCat()
-           }, 2000);
-         }
+      isLoading.value = true;
+      const newMakePost = await postMake({ data: { name: newMake.value } });
+      console.log(newMakePost.data, "posted make");
+      if (newMakePost.data) {
+        // const newBrandPost= await postBrand({data:{name:newBrand.value , make:newMakePost.data.id}})
+        // if(newBrandPost){
+        console.log("already");
+        setTimeout(() => {
+          isLoading.value = false;
+          fetchMakesCat();
+        }, 2000);
+      }
       closeModal();
     };
-  const saveOnlyBrand = async () => {
-  try {
-    isLoading.value = true;
-    const response = await postBrand({ data: { name: newBrand.value, make: make.value?.id } });
+    const saveOnlyBrand = async () => {
+      try {
+        isLoading.value = true;
+        const response = await postBrand({
+          data: { name: newBrand.value, make: make.value?.id },
+        });
 
-    if (response ) {
-       const res : any = await fetchBrandMyMake(make.value.id);
-       console.log(res,"dfs")
-      if (res) {
-        brands.value = res?.data;
-        newBrand.value = '';
-closeModalBrand()
-        console.log("Brand added successfully:", response.data);
-      } else {
-        console.error("Failed to get brands.");
+        if (response) {
+          const res: any = await fetchBrandMyMake(make.value.id);
+          console.log(res, "dfs");
+          if (res) {
+            brands.value = res?.data;
+            newBrand.value = "";
+            closeModalBrand();
+            console.log("Brand added successfully:", response.data);
+          } else {
+            console.error("Failed to get brands.");
+          }
+        } else {
+          console.error("Failed to add brand. Response:", response);
+        }
+      } catch (error) {
+        console.error("Error adding brand:", error);
+      } finally {
+        isLoading.value = false;
       }
-    } else {
-      console.error("Failed to add brand. Response:", response);
-    }
-  } catch (error) {
-    console.error("Error adding brand:", error);
-  } finally {
-    isLoading.value = false;
-  }
-};
+    };
 
+    const removeImage = (index) => {
+      selectedFilesRef.value.splice(index, 1);
+      imageUrls.value.splice(index, 1);
+    };
 
+    const addMake = () => {
+      modal.value = true;
+      console.log(modal.value, " add make ");
+    };
 
- const addMake = () => {
-    modal.value = true;
-    console.log(modal.value ," add make ")
-}
-
-
-
-    fetchPartnersList() ;
-      // fetchCategories();
-fetchMakesCat()
+    fetchPartnersList();
+    // fetchCategories();
+    fetchMakesCat();
+    getStyles();
     return {
       modules,
-            makesLoading,
+        modalStyle,
+       newStyle,
+      addStyleModal,
+      closeModalStyle,
+      saveStyle,
+      styles,
+      makesLoading,
       brandsLoading,
 
       fullPage,
       addMake,
-       make,
+      make,
       allPartners,
       brand,
       description,
@@ -716,19 +889,19 @@ fetchMakesCat()
       // owner,
       modal,
       isLoading,
-saveOnlyBrand,
+      saveOnlyBrand,
       seats,
       daily,
-          newMake,
+      removeImage,
+      newMake,
       newBrand,
       closeModal,
       saveChanges,
       makes,
       brands,
       getBrands,
-       deposit,
-      style,
-      styleErrorVisible,
+      deposit,
+       styleErrorVisible,
       partnerErrorVisible,
       addBrand,
       msrp,
@@ -739,33 +912,35 @@ saveOnlyBrand,
       makeError,
       brandError,
       descriptionError,
-       categoryError,
-changeText,
-       seatsError,
+      categoryError,
+      changeText,
+      seatsError,
       dailyError,
       imageError,
       miceError,
-       newDailyError,
-       closeModalBrand,
+      coverImageIndex,
+      newDailyError,
+      closeModalBrand,
       selectedPartner,
       submitForm,
-        makeErrorVisible,
+      makeErrorVisible,
       brandErrorVisible,
       descriptionErrorVisible,
+      style,
       seatsErrorVisible,
       dailyErrorVisible,
       miceErrorVisible,
       newDailyErrorVisible,
       imageErrorVisible,
       selectedFilesRef,
-       depositErrorVisible,
+      depositErrorVisible,
       msrpErrorVisible,
       // addToAllCat,
-       AllSelected ,
+      AllSelected,
       imageUrls,
       handleFileChange,
       uploadImage,
-      modalBrand
+      modalBrand,
     };
   },
 });
@@ -782,15 +957,19 @@ changeText,
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 .preview-image {
   max-width: 100%;
   max-height: 300px;
   margin-bottom: 10px;
 }
- .modal {
+.modal {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -811,7 +990,7 @@ changeText,
   max-width: 500px;
 }
 
-.hide{
+.hide {
   visibility: hidden;
 }
 .modal-content {
@@ -832,8 +1011,6 @@ changeText,
   width: auto;
   margin: 10px;
 }
-
-
 
 .modal-header {
   display: flex;
@@ -860,5 +1037,49 @@ changeText,
 .btn-close {
   padding: 0.5rem 0.75rem;
   margin: -0.5rem -0.75rem -0.5rem auto;
+}
+
+.delete_icon {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  left: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #ffffff; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
+  margin-right: 10px; /* Ajouter une marge à droite pour créer de l'espace entre les boutons */
+}
+.image-item {
+  position: relative;
+  max-width: 150px;
+  /* Taille maximale d'une image */
+  margin-bottom: 5px;
+}
+
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  overflow-x: auto;
+  max-height: 200px;
+  /* Ajustez la hauteur maximale si nécessaire */
+}
+.select-same-width {
+  width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
+}
+.set_cover_button {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  right: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #0056b3; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
 }
 </style>

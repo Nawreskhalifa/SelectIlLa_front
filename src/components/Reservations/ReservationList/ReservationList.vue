@@ -160,47 +160,45 @@
               </td>
   <td v-if="reservation && reservation.attributes" ><span :class="getStatusClass(reservation.attributes.status)">{{reservation.attributes.status}}</span></td>
               <td class="shadow-none lh-1 fw-medium text-paragraph ">
-                <div class="dropdown">
-            <button
-              class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <i class="flaticon-dots"></i>
-            </button>
-            <ul class="dropdown-menu">
-              <li>
-                <a
-                  class="dropdown-item d-flex align-items-center"
-                                  @click="showDetail(reservation)"
-
-                >
-                  <i class="flaticon-view lh-1 me-8"></i>
-                  Detail
-                </a>
-              </li>
-              <li>
-                <a
-                  class="dropdown-item d-flex align-items-center"
-                                    @click="acceptReservation(reservation)"
-
-                >
-                  <i class="flaticon-pen lh-1 me-8"></i>
-                  Accept
-                </a>
-              </li>
-              <li>
-                <a
-                  class="dropdown-item d-flex align-items-center"
-                  @click="refuseReservation(reservation)"
-                >
-                  <i class="flaticon-delete lh-1 me-8"></i>
-                  Refuse
-                </a>
-              </li>
-            </ul>
-          </div>
+       <div class="dropdown">
+    <button
+      class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
+      type="button"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      <i class="flaticon-dots"></i>
+    </button>
+    <ul class="dropdown-menu">
+      <li>
+        <a
+          class="dropdown-item d-flex align-items-center"
+          @click="showDetail(reservation)"
+        >
+          <i class="flaticon-view lh-1 me-8"></i>
+          Detail
+        </a>
+      </li>
+      <li v-if="reservation.attributes.status !== 'Confirmed'">
+        <a
+          class="dropdown-item d-flex align-items-center"
+          @click="acceptReservation(reservation)"
+        >
+          <i class="flaticon-pen lh-1 me-8"></i>
+          Accept
+        </a>
+      </li>
+      <li v-if="reservation.attributes.status !== 'Confirmed'">
+        <a
+          class="dropdown-item d-flex align-items-center"
+          @click="refuseReservation(reservation)"
+        >
+          <i class="flaticon-delete lh-1 me-8"></i>
+          Refuse
+        </a>
+      </li>
+    </ul>
+  </div>
 
 
               </td>

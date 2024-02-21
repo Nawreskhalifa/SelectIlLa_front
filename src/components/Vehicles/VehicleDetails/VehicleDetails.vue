@@ -74,7 +74,7 @@
                     <div class="reviews d-flex align-items-center">
                       <span class="text-black fw-bold fs-13 ms-5 me-5">
                         Style :
-                        {{ vehicle.attributes?.style }}</span
+                        {{ vehicle.attributes?.style?.data?.attributes?.name }}</span
                       ><br />
                       <span class="text-muted fw-medium fs-13">
                         - msrp : {{ vehicle.attributes?.msrp }}</span

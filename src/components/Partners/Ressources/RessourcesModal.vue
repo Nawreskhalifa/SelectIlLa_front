@@ -1,16 +1,16 @@
    <template>
    <div  style="width: 100%;">
-                  <nav id="navbar-example2" class="navbar navbar-light bg-light">
+    <nav id="navbar-example2" class="navbar navbar-light bg-light">
       <a class="navbar-brand">Resources</a>
       <ul class="nav nav-pills">
-        <li class="nav-item" :class="{ active: villas }">
-          <a class="nav-link" @click="showVillas">Villas</a>
+        <li class="nav-item" v-if="ressources && ressources.villas && ressources.villas.data && ressources.villas.data.length > 0">
+          <a class="nav-link" :class="{ active: villas }" @click="showVillas">Villas</a>
         </li>
-        <li class="nav-item" :class="{ active: vehicles }">
-          <a class="nav-link" @click="showVehicles">Vehicles</a>
+        <li class="nav-item" v-if="ressources && ressources.vehicles && ressources.vehicles.data && ressources.vehicles.data.length > 0">
+          <a class="nav-link" :class="{ active: vehicles }" @click="showVehicles">Vehicles</a>
         </li>
-        <li class="nav-item" :class="{ active: events }">
-          <a class="nav-link" @click="showEvents">Events</a>
+        <li class="nav-item" v-if="ressources && ressources.events && ressources.events.data && ressources.events.data.length > 0">
+          <a class="nav-link" :class="{ active: events }" @click="showEvents">Events</a>
         </li>
       </ul>
     </nav>

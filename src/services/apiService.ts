@@ -1417,3 +1417,128 @@ export async function downloadItem({ url, label }) {
     console.error('Error downloading file:', error);
   }
 }
+export async function editStyle(styleId, updatedStyleData) {
+  try {
+    const response = await axios.put(
+      `${endPoints.styles}/${styleId}`,
+      updatedStyleData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === httpCodes.HTTP_OK) {
+      return {
+        success: true,
+        data: response.data,
+        status: response.status,
+      };
+    } else {
+      console.error('Failed to update style data:', response);
+      return {
+        data: response,
+        success: false,
+        error: 'Failed to update style data',
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error('Error updating style:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
+}
+
+export async function deleteStyle(styleId) {
+  try {
+    const response = await axios.delete(`${endPoints.styles}/${styleId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting style with ID ${styleId}:`, error);
+    throw error;
+  }
+}
+
+export async function fetchStyles(query = "") {
+    try {
+        let response;
+        if (query) {
+            response = await axios.get(`${endPoints.styles}?${query}`);
+        } else {
+            response = await axios.get(`${endPoints.styles}`);
+        }
+
+         if (response ) {
+            return response.data;
+        } else {
+             return [];
+        }
+    } catch (error) {
+        console.error("Error fetching styles:", error);
+        throw error;
+    }
+}
+
+export async function addStyle(styleData) {
+  try {
+    const response = await axios.post(endPoints.styles, styleData);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding style:', error);
+    throw error;
+  }
+}
+export async function allVehiclesApi(filters) {
+  try {
+    let queryParams = `populate=*`;
+    const filterKeys = Object.keys(filters);
+
+    filterKeys.forEach((key) => {
+  const value = filters[key];
+  if (value !== undefined && value !== null) {
+    if (Array.isArray(value)) {
+      if (key === 'daily' && value.length === 2) {
+        const [minDaily, maxDaily] = value;
+        queryParams += `&filters[${key}][$gte]=${minDaily}&filters[${key}][$lte]=${maxDaily}`;
+      } else {
+        value.forEach((v) => {
+          if (key === 'make' || key === 'brand') {
+            queryParams += `&filters[${key}][name][$contains]=${v}`;
+          } else {
+            queryParams += `&filters[${key}][name][$contains]=${v}`;
+          }
+        });
+      }
+    } else {
+      if (key === 'make' || key === 'brand') {
+        queryParams += `&filters[${key}][name][$contains]=${value}`;
+      } else if (key === 'searchQuery') {
+        queryParams += `&filters[$or][0][make][name][$contains]=${value}&filters[$or][1][brand][name][$contains]=${value}`;
+      } else {
+        queryParams += `&filters[${key}][name][$contains]=${value}`;
+      }
+    }
+  }
+});
+
+
+    const response = await axios.get(`${endPoints.vehicles}?${queryParams}`);
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Failed to fetch vehicles");
+    }
+  } catch (error) {
+    console.error('Error getting vehicles:', error);
+    return {
+      success: false,
+      error,
+    };
+  }
+}

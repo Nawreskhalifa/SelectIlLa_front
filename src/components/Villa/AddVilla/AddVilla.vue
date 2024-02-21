@@ -246,13 +246,13 @@ v-model:content="description"
                 Villa Image
               </label>
               <div class="file-upload text-center position-relative">
-                <img
+                <!-- <img
                   v-for="(url, index) in imageUrls"
                   :src="url"
                   :key="index"
                   alt="Uploaded Image"
                   class="preview-image"
-                />
+                /> -->
                 <span class="d-block text-muted">
                   Drop Files Here Or
                   <span
@@ -268,7 +268,33 @@ v-model:content="description"
                   ref="fileInput"
                   @change="handleFileChange"
                   multiple
+                 accept="image/*"
                 />
+              </div>
+              <div v-if="imageUrls.length > 0" class="image-preview">
+                <div
+                  v-for="(photo, index) in imageUrls"
+                  :key="index"
+                  class="image-item"
+                >
+                  <img :src="photo" alt="Selected Image" />
+                  <button
+                    @click="removeImage(index)"
+                    class="delete_icon"
+                    type="button"
+                  >
+                    <i class="fas fa-times-circle"></i>
+                   </button>
+                  <input
+                    type="radio"
+                    :id="'radio_' + index"
+                    v-model="coverImageIndex"
+                    :value="index"
+                    class="set_cover_button"
+                    title="Set as a cover image"
+                    style="cursor: pointer"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -404,6 +430,8 @@ const selectedCategory: Ref<any | null> = ref(null);
     const deposit = ref("");
     const description = ref();
     const minioeuvre_daily = ref("");
+    const coverImageIndex= ref("") ;
+
     const showModal = ref(false)
     // const owner = ref("");
     const selectedPartner = ref("");
@@ -501,7 +529,10 @@ categories.value.push(event)
     const deleteFromCategories = (cat) => {
   AllSelected.value = AllSelected.value.filter((item) => item !== cat);
 };
-
+   const removeImage = (index) => {
+      selectedFilesRef.value.splice(index, 1);
+      imageUrls.value.splice(index, 1);
+    };
     const submitForm = async () => {
         isLoading.value = true;
       nameError.value = "";
@@ -610,6 +641,7 @@ categories.value.push(event)
       newDailyError,
       submitForm,
       selectedFilesRef,
+      removeImage,
       isLoading ,
       imageUrls,
       handleFileChange,
@@ -625,6 +657,7 @@ categories.value.push(event)
       minioeuvre_daily,
       deleteFromCategories,
       selectedPartner,
+      coverImageIndex,
       rooms,
       nameError,
       closeModal
@@ -633,9 +666,47 @@ categories.value.push(event)
 });
 </script>
 <style scoped>
-.preview-image {
-  max-width: 100%;
-  max-height: 300px;
-  margin-bottom: 10px;
+.delete_icon {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  left: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #ffffff; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
+  margin-right: 10px; /* Ajouter une marge à droite pour créer de l'espace entre les boutons */
+}
+.image-item {
+  position: relative;
+  max-width: 150px;
+  /* Taille maximale d'une image */
+  margin-bottom: 5px;
+}
+
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  overflow-x: auto;
+  max-height: 200px;
+  /* Ajustez la hauteur maximale si nécessaire */
+}
+.select-same-width {
+  width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
+}
+.set_cover_button {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  right: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #0056b3; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
 }
 </style>

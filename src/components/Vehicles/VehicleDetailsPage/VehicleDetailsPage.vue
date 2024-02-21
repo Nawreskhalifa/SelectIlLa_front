@@ -85,7 +85,7 @@
                         <span class="text-black fw-semibold d-inline-block">
                           style:
                         </span>
-                                                {{ vehicle.attributes?.style }}
+                                                {{ vehicle.attributes?.style?.data?.attributes.name }}
 
                       </li>
                         <li class="text-paragraph fs-md-15 fs-xxxl-16">
@@ -104,13 +104,13 @@
                     </ul>
             <div class="box">
               <span class="d-block text-paragraph">
-              <span class="text-success" v-if="vehicle && vehicle.attributes &&  vehicle.attributes.isActive === false  ">
+              <span class="text-success" v-if="vehicle && vehicle.attributes &&  vehicle.attributes.isActive === false  " style="cursor:pointer" @click.prevent='active(vehicle.id)'>
                 <i
                   class="flaticon-eye lh-1 fs-16 position-relative top-1 me-1"
                 ></i>
                 ACTIVE
               </span>
-                   <span class="text-danger" v-if="vehicle && vehicle.attributes &&  vehicle.attributes.isActive === true  ">
+                   <span class="text-danger" v-if="vehicle && vehicle.attributes &&  vehicle.attributes.isActive === true" style="cursor:pointer" @click.prevent='desactive(vehicle.id)' >
                 <i
                   class="flaticon-visibility-off lh-1 fs-16 position-relative top-1 me-1"
                 ></i>
@@ -254,11 +254,11 @@
 
  </template>
 
-<script lang="ts">
+<script  >
 import { defineComponent, ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Autoplay, Thumbs } from "swiper/modules";
-import { fetchVehicleById } from "@/services/apiService";
+import { fetchVehicleById ,updateVehicle} from "@/services/apiService";
 import  BreadCrumb from '../../Common/BreadCrumb.vue'
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
@@ -285,7 +285,7 @@ export default defineComponent({
    },
   setup() {
     const thumbsSwiper = ref(null);
-    const setThumbsSwiper = (swiper: any) => {
+    const setThumbsSwiper = (swiper) => {
       thumbsSwiper.value = swiper;
     };
 
@@ -297,6 +297,28 @@ export default defineComponent({
     };
   },
   methods: {
+ async active(id) {
+    const data = {
+      data: {
+        isActive: false
+      }
+    };
+    const res = await updateVehicle(id, data);
+    if (res && typeof this.vehicle === 'object') {
+      this.vehicle.attributes.isActive = true;
+    }
+  },
+  async desactive(id) {
+    const data = {
+      data: {
+        isActive: true
+      }
+    };
+    const res = await updateVehicle(id, data);
+    if (res && typeof this.vehicle === 'object') {
+      this.vehicle.attributes.isActive = false;
+    }
+  },
     checkDetails(id){
       this.$router.push({ name: "partnerdetails", params: { id:  id } });
 

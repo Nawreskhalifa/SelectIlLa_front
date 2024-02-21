@@ -6,6 +6,7 @@
         @allSelected="selectedData"
         @byCategory="getByCat"
         @byBrand="getByBrand"
+@priceRangeChanged="handlePriceRangeChange"
       />
     </div>
     <div class="col-lg-8 col-xxxl-9">
@@ -132,7 +133,7 @@
                   @click="toggleModal(vehicle.id)"
                   :src="
                     getFullImageUrl(
-                      vehicle.attributes?.photos.data[0].attributes?.url
+                      vehicle.attributes?.photos.data[vehicle?.attributes?.cover_image_index].attributes?.url
                     )
                   "
                   class="imagev"
@@ -299,6 +300,7 @@ import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import DeleteModal from "@/components/Common/DeleteModal.vue";
 import {
+  allVehiclesApi,
   searchVehicle,
   fetchVehicles,
   updateVehicle,
@@ -317,7 +319,39 @@ export default {
       currentPage: 1,
       deleteModalVisible: false,
       itemToRemove: "",
+      make: "",
+      brand: "",
+      minPrice: 1,
+      maxPrice: 6000,
+      searchQuery: ""
     };
+  },
+    watch: {
+    make(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVehicles();
+      }
+    },
+    brand(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVehicles();
+      }
+    },
+    minPrice(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVehicles();
+      }
+    },
+    maxPrice(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVehicles();
+      }
+    },
+    searchQuery(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVehicles();
+      }
+    },
   },
   computed: {
     isAnySelected() {
@@ -342,6 +376,39 @@ export default {
     },
   },
   methods: {
+      async fetchVehicles() {
+  try {
+    this.isLoading = true;
+    const filters = {
+      make:this.make,
+      brand: this.brand,
+        daily: [parseInt( this.minPrice), parseInt(this.maxPrice)],
+      // minPrice: this.minPrice,
+      // maxPrice: this.maxPrice,
+      searchQuery: this.searchQuery,
+    };
+            console.log(filters,"daily")
+
+    const data = await allVehiclesApi(filters);
+    this.originalVehicles = data.data;
+    this.vehicles = [...this.originalVehicles];
+  } catch (error) {
+    console.error("Error fetching vehicles:", error);
+  } finally {
+    this.isLoading = false;
+  }
+},
+
+ handlePriceRangeChange(range) {
+console.log(range)
+       this.minPrice =range.min
+       this.maxPrice= range.max
+     },
+
+    toggleModal(id) {
+     this.$router.push({ name: 'vehicledetails', params: { id: id } });
+  },
+
     activateAll() {
       this.vehicles.forEach(async (vehicle) => {
         const updatedData = {
@@ -423,15 +490,42 @@ export default {
       }
     },
     async getByCat(event) {
-      try {
-        console.log("Filtering by category:", event);
-        if (event) {
+    if(event != ""){
+this.make=event.attributes.name
+
+    }else{
+const data = await allVehiclesApi("");
+    this.originalVehicles = data.data;
+    this.vehicles = [...this.originalVehicles];
+    }
+      //try {
+      //   console.log("Filtering by category:", event);
+      //   if (event) {
+      //     const data = await searchVehicle(
+      //       "vehicles",
+      //       "make",
+      //       "id",
+      //       "$eq",
+      //       event.id
+      //     );
+      //     this.vehicles = data.data.data;
+      //   } else {
+      //     this.vehicles = [...this.originalVehicles];
+      //   }
+      // } catch (error) {
+      //   console.error("Error in getByCat:", error);
+      // }
+    },
+    async getByBrand(brand) {
+        try {
+        console.log("Filtering by brand:", brand);
+        if (brand) {
           const data = await searchVehicle(
             "vehicles",
-            "make",
+            "brand",
             "id",
             "$eq",
-            event.id
+            brand.id
           );
           this.vehicles = data.data.data;
         } else {
@@ -441,32 +535,9 @@ export default {
         console.error("Error in getByCat:", error);
       }
     },
-    async getByBrand(brand) {
-      try {
-        console.log("Filtering by brand:", brand);
-        if (brand) {
-          const filteredVehicles = this.originalVehicles.filter((item) => {
-            if (
-              item &&
-              item.attributes &&
-              item.attributes.brand &&
-              item.attributes.brand.data &&
-              item.attributes.brand.data.id
-            ) {
-              return item.attributes.brand.data.id === brand.id;
-            }
-          });
-          this.vehicles = [...this.vehicles, ...filteredVehicles];
-        } else {
-          this.vehicles = [...this.originalVehicles];
-        }
-      } catch (error) {
-        console.error("Error in getByBrand:", error);
-      }
-    },
     async fetchData() {
       try {
-        const data = await fetchVehicles();
+        const data = await allVehiclesApi("");
         this.originalVehicles = data.data;
         this.vehicles = [...this.originalVehicles];
       } catch (error) {
@@ -475,28 +546,17 @@ export default {
         this.isLoading = false;
       }
     },
-    async filtredData(searchInput) {
-      try {
-        this.isLoading = true;
-        if (searchInput.trim()) {
-          const data = await searchVehicle(
-            "vehicles",
-            "make",
-            "name",
-            "$contains",
-            searchInput
-          );
-          this.vehicles = data.data.data;
-        } else {
-          console.log("No search input provided.");
-          await this.fetchData();
-        }
-      } catch (error) {
-        console.error("Error in filtredData:", error);
-      } finally {
-        this.isLoading = false;
-      }
-    },
+ async filtredData(searchInput) {
+  try {
+    this.isLoading = true;
+    this.searchQuery = searchInput;
+  } catch (error) {
+    console.error("Error in filtredData:", error);
+  } finally {
+    this.isLoading = false;
+  }
+}
+,
     async active(value, id) {
       if (value === true) {
         const updatedData = {
@@ -577,7 +637,8 @@ export default {
   },
   async mounted() {
     this.isLoading = true;
-    await this.fetchData();
+    await this.fetchVehicles();
+    this.isLoading= false
   },
   components: {
     VehicleFiltre,

@@ -33,6 +33,6 @@ export const endPoints = {
     registreUser :`${API_BASE_URL}auth/local/register`,
 brands:`${API_BASE_URL}brands`,
 makes:`${API_BASE_URL}makes`,
-tags:`${API_BASE_URL}tags`
-
+tags:`${API_BASE_URL}tags` ,
+styles : `${API_BASE_URL}styles`
 };

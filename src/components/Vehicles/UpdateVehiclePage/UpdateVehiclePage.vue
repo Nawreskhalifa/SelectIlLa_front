@@ -25,54 +25,18 @@
               :multiSelect="false"
               :label="'Brand'"
             />
-
-            <!-- <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">Brand</label>
-              <select
-                v-model="brand"
-                class="form-select shadow-none fw-semibold rounded-0"
-                :disabled="!make"
-              >
-                <template v-if="brandsLoading">
-                  <option>Loading...</option>
-                </template>
-                <template v-else>
-                  <option disabled>Select A Make First</option>
-                  <option v-for="br in brands" :key="br.id" :value="br">
-                    {{ br.attributes.name }}
-                  </option>
-                </template>
-              </select>
-              <div v-if="brandError" class="text-danger">{{ brandError }}</div>
-              <div
-                v-if="brand"
-                class="item d-inline-block fw-medium fs-13 text-primary position-relative"
-              >
-                {{ brand.attributes.name }}
-                <button
-                  type="button"
-                  class="bg-transparent p-0 border-0 transition"
-                  @click="brand = ''"
-                >
-                  <i class="flaticon-close"></i>
-                </button>
-              </div>
-            </div> -->
           </div>
 
           <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Style
-              </label>
-              <input
-                v-model="style"
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. style"
-              />
-            </div>
-          </div>
+             <MultiSelect
+              :options="styles"
+              :selected="style"
+              @update:selectedOne="updateStyle"
+              :placeholder="style?.attributes?.name"
+              :multiSelect="false"
+              :label="'Style'"
+            />
+           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
@@ -111,8 +75,15 @@
                 >
                   Check your uploaded files
                   <i
+                    v-if="!showUploadedFiles"
                     style="margin-left: 15px"
-                    class="fa fa-file"
+                    class="fa-solid fa-arrow-down"
+                    aria-hidden="true"
+                  ></i>
+                  <i
+                    v-if="showUploadedFiles"
+                    style="margin-left: 15px"
+                    class="fa-solid fa-arrow-right"
                     aria-hidden="true"
                   ></i>
                 </button>
@@ -139,28 +110,9 @@
                     align-items: center;
                   "
                 >
-                  <!-- <div
-                    v-for="photo in previousPhotos.attributes.photos.data"
-                    :key="photo.id"
-                    style="width: 120px"
-                  >
-                    <img
-                      :src="getFullPhotoUrl(photo.attributes.url)"
-                      alt="Previous Photo"
-                    />
-                    <i
-                      style="
-                        position: relative;
-                        top: 0;
-                        right: 0;
-                        color: rgb(29, 29, 29);
-                      "
-                      class="fas fa-times-circle"
-                      @click="deleteImage(photo.id)"
-                    ></i>
-                  </div> -->
                   <GallayImages
                     @deletePhoto="deleteImage"
+                    @coverImageIndex="handleCover"
                     galleryID="my-test-gallery"
                     :images="previousPhotos.attributes.photos.data"
                   />
@@ -179,7 +131,7 @@
               <div class="file-upload-area">
                 <div class="file-upload text-center position-relative">
                   <div class="image-grid" style="z-index: 1">
-                    <div
+                    <!-- <div
                       v-for="(url, index) in imageUrls"
                       :key="index"
                       class="uploaded-image"
@@ -196,7 +148,7 @@
                       >
                         Cancel
                       </button>
-                    </div>
+                    </div> -->
                   </div>
                   <span class="d-block text-muted" style="z-index: 0.3">
                     Drop Files Here Or
@@ -213,6 +165,7 @@
                     ref="fileInput"
                     @change="handleFileChange"
                     multiple
+                    accept="image/*"
                   />
                 </div>
               </div>
@@ -301,70 +254,8 @@
               :multiSelect="false"
               :label="'Partner'"
             />
-
-            <!-- <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Partner
-              </label>
-              <ul
-                style="
-                  display: flex;
-                  flex-direction: row;
-                  gap: 10px;
-                  justify-content: flex-start;
-                  align-items: center;
-                "
-              >
-                <li v-if="partner">
-                  {{ getSelectedPartnerName }}
-                  <i class="fas fa-times-circle" @click="partner = ''"></i>
-                </li>
-              </ul>
-              <select
-                v-model="partner"
-                class="form-select shadow-none fw-semibold rounded-0"
-              >
-                <option selected>Select a Partner</option>
-                <option
-                  v-for="partner in partnerData"
-                  :key="partner.id"
-                  :value="partner.id"
-                >
-                  {{ partner.name }}
-                </option>
-              </select>
-              <div v-if="categoryError" class="text-danger">
-                {{ categoryError }}
-              </div>
-            </div> -->
           </div>
           <div class="col-md-12 text-danger"></div>
-          <!-- <div class="col-md-6">
-                      <div class="form-group mb-15 mb-sm-20 mb-md-25" v-if="partner && partner.data && partner.data.attributes">
-                        <label class="d-block text-black fw-semibold mb-10"
-                          >Partner</label
-                        >
- <select>
-  <option :v-for="partner in partnerData">{{ partner. }} </option>
- </select>
-                      </div>
-                    </div> -->
-          <!-- <div class="col-md-6"> -->
-          <!-- <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                        <label class="d-block text-black fw-semibold mb-10"
-                          >Owner</label
-                        >
-                        <input
-                          v-model="owner"
-                          type="text"
-                          class="form-control shadow-none rounded-0 text-black"
-                          placeholder="e.g. Leonardo DiCaprio"
-                        />
-                        <div v-if="ownerError" class="text-danger">
-                          {{ ownerError }}
-                        </div>
-                      </div> -->
-          <!-- </div> -->
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -413,6 +304,7 @@ import {
   fetchBrandMyMake,
   fetchVehicleById,
   updateVehicle,
+  fetchStyles
 } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -422,13 +314,6 @@ import GallayImages from "../../Common/Gallary.vue";
 import MultiSelect from "../../../components/Common/MultiSelect.vue";
 
 export default {
-  //   props: {
-  //     show: Boolean,
-  //     vehicle: {
-  //       type: Object,
-  //       required: true,
-  //     },
-  //   },
   components: {
     Loading,
     GallayImages,
@@ -438,11 +323,13 @@ export default {
     return {
       // this.vehicle.attributes.make?.data.attributes.name
       //
+      coverImageIndex: 0,
       brandsLoading: false,
       previousMake: "",
       previousBrand: "",
       make: "",
       brand: "",
+      style:"",
       description: "",
       // previousCategories: this.vehicle.attributes.category_vehicles.data,
       selectedCategory: "",
@@ -452,7 +339,7 @@ export default {
       mice: "",
       newDaily: "",
       msrp: "",
-      style: "",
+      styles:[],
       deposit: "",
       partner: "",
       showUploadedFiles: false,
@@ -460,37 +347,13 @@ export default {
       categories: [],
       makes: [],
       brands: [],
+
       vehicle: "",
       isLoading: false,
       selectedFiles: [],
       imageUrls: [],
       partnerData: [],
-      //      images: [
-      //     {
-      //       largeURL:
-      //         'https://cdn.photoswipe.com/photoswipe-demo-images/photos/1/img-2500.jpg',
-      //       thumbnailURL:
-      //         'https://cdn.photoswipe.com/photoswipe-demo-images/photos/1/img-200.jpg',
-      //       width: 1875,
-      //       height: 2500,
-      //     },
-      //     {
-      //       largeURL:
-      //         'https://cdn.photoswipe.com/photoswipe-demo-images/photos/2/img-2500.jpg',
-      //       thumbnailURL:
-      //         'https://cdn.photoswipe.com/photoswipe-demo-images/photos/2/img-200.jpg',
-      //       width: 1669,
-      //       height: 2500,
-      //     },
-      //     {
-      //       largeURL:
-      //         'https://cdn.photoswipe.com/photoswipe-demo-images/photos/3/img-2500.jpg',
-      //       thumbnailURL:
-      //         'https://cdn.photoswipe.com/photoswipe-demo-images/photos/3/img-200.jpg',
-      //       width: 2500,
-      //       height: 1666,
-      //     },
-      //   ],
+
     };
   },
 
@@ -514,8 +377,14 @@ export default {
     },
   },
   methods: {
+    handleCover(event){
+this.coverImageIndex =event
+     },
     updatePartner(partner) {
-      this.partner= partner[0]
+      this.partner = partner[0];
+    },
+    updateStyle(event){
+      this.style= event[0]
     },
     updateMake(selectedMake) {
       console.log("okay");
@@ -536,39 +405,6 @@ export default {
     closeModal() {
       this.$emit("close");
     },
-    // async fetchCategories() {
-    //   const data = await fetchVehicleCategories();
-    //   this.categories = data.data;
-    // },
-    // deleteFromCategories(cat) {
-    //   this.previousCategories = this.previousCategories.filter(
-    //     (item) => item !== cat
-    //   );
-    // },
-
-    // addToPrevious() {
-    //   if (this.selectedCategory !== "" || this.selectedCategory !== null) {
-    //     console.log(this.selectedCategory);
-    //     const selectedCategory = this.categories.find(
-    //       (category) => category.id === this.selectedCategory
-    //     );
-    //     if (this.selectedCategory) {
-    //       const exists = this.previousCategories.some(
-    //         (category) => category.id === this.selectedCategory
-    //       );
-
-    //       if (!exists) {
-    //         const selectedCategory = this.categories.find(
-    //           (category) => category.id === this.selectedCategory
-    //         );
-
-    //         if (selectedCategory) {
-    //           this.previousCategories.push(selectedCategory);
-    //         }
-    //       }
-    //     }
-    //   }
-    // },
     async fetchVehicleBId() {
       const id = this.$route.params.id;
       const { data } = await fetchVehicleById(id);
@@ -582,11 +418,11 @@ export default {
         this.brand = this.vehicle.attributes.brand.data;
         this.description = this.vehicle.attributes.description;
         this.seats = this.vehicle.attributes.seats;
-        this.daily = this.vehicle.attributes.daily;
+         this.daily = this.vehicle.attributes.daily;
         this.mice = this.vehicle.attributes.mice;
         this.newDaily = this.vehicle.attributes.new_daily;
         this.msrp = this.vehicle.attributes.msrp;
-        this.style = this.vehicle.attributes.style;
+        this.style = this.vehicle.attributes.style.data;
         this.deposit = this.vehicle.attributes.deposit;
         this.partner = this.vehicle.attributes.partner.data
           ? this.vehicle.attributes.partner.data.id
@@ -603,6 +439,7 @@ export default {
         console.error("Error fetching makes:", error);
       }
     },
+
     async getBrands(selectedMake) {
       try {
         this.brandsLoading = true;
@@ -622,11 +459,56 @@ export default {
     checkUploadedFiles() {
       this.showUploadedFiles = !this.showUploadedFiles;
     },
-    handleFileChange(event) {
-      const input = event.target;
-      this.selectedFiles = Array.from(input.files || []);
-      this.previewImages();
-    },
+    async handleFileChange(event) {
+  try {
+    const input = event.target;
+    console.log('Files selected:', input.files);
+
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const formData = new FormData();
+    Array.from(input.files).forEach((file) => {
+      formData.append('photos', file);
+    });
+     this.isLoading =true
+    const response = await uploadFiles(formData, 'api::vehicle.vehicle', 'photos', this.vehicle.id);
+    console.log(response.data)
+    if (response && Array.isArray(response.data.filesData)) {
+      response.data.filesData.forEach(item => {
+        const transformedData = {
+          id: item.id,
+          attributes: {
+            alternativeText: item.alternativeText || null,
+            caption: item.caption || null,
+            createdAt: item.createdAt,
+            ext: item.ext,
+            url: item.url,
+            formats: {
+              large: {
+                url: item.url,
+                width: item.width,
+                height: item.height,
+              },
+            },
+          },
+        };
+
+        if (transformedData && this.previousPhotos && this.previousPhotos.attributes && this.previousPhotos.attributes.photos && this.previousPhotos.attributes.photos.data && this.previousPhotos.attributes.photos.data.length >= 0) {
+          this.previousPhotos.attributes.photos.data.push(transformedData);
+        }
+      });
+           this.isLoading =false
+    } else {
+      toast.error('Failed to upload images');
+    }
+  } catch (error) {
+    console.error('Error uploading images:', error);
+    toast.error('An error occurred while uploading images');
+  }
+}
+,
 
     previewImages() {
       this.imageUrls = [];
@@ -640,11 +522,7 @@ export default {
       }
     },
     async uploadImage() {
-      if (this.selectedFiles.length === 0) {
-        return;
-      }
-
-      const formData = new FormData();
+      //
     },
     async deleteImage(id) {
       if (
@@ -671,63 +549,24 @@ export default {
       this.partnerData = await fetchPartners();
       console.log(this.partnerData, "partners");
     },
+    async fetchStyles(){
+    const {data}= await fetchStyles()
+    this.styles =data
+    },
 
-    // async submitForm() {
-
-    //   // let partnerUpdate
-    //   //       if(partner && partner.data ){
-
-    //   //       }
-    //   const vehicleData = {
-    //     data: {
-    //       make: this.make.id,
-    //       brand: this.brand.id,
-    //       style: this.style,
-    //       msrp: this.msrp,
-    //       daily: parseFloat(this.daily),
-    //       mice: parseFloat(this.mice),
-    //       new_daily: parseFloat(this.newDaily),
-    //       deposit: parseFloat(this.deposit),
-    //       description: this.description.ops[0].insert,
-    //       owner: this.owner,
-    //        seats: parseInt(this.seats),
-    //       partner: this.partner,
-    //     },
-    //   };
-    //   if (this.selectedFiles.length > 0) {
-    //     await uploadFiles(
-    //       this.selectedFiles,
-    //       "api::vehicle.vehicle",
-    //       "photos",
-    //       this.vehicle.id
-    //     );
-    //   }
-    //   const result = await updateVehicle(this.vehicle.id, vehicleData);
-
-    //   if (result.success) {
-    //     this.$emit("updatedData", result.data.data);
-
-    //     toast.success("Vehicle Updated  🚗 👍 ", {
-    //       autoClose: 1000,
-    //     });
-    //     setTimeout(() => {
-    //       this.closeModal();
-    //     }, 1500);
-    //   }
-    // },
     async submitForm() {
-       this.isLoading = true
+      this.isLoading = true;
       const vehicleData = {
         data: {
           make: this.make.id,
           brand: this.brand.id,
-          style: this.style,
+          style: this.style.id,
           msrp: this.msrp,
+          cover_image_index:this.coverImageIndex ,
           daily: parseFloat(this.daily),
           mice: parseFloat(this.mice),
           new_daily: parseFloat(this.newDaily),
           deposit: parseFloat(this.deposit),
-          // owner: this.owner,
           seats: parseInt(this.seats),
           partner: this.partner,
           description:
@@ -736,27 +575,19 @@ export default {
               : this.vehicle.attributes.description,
         },
       };
-      console.log(vehicleData);
-      if (this.selectedFiles.length > 0) {
-        await uploadFiles(
-          this.selectedFiles,
-          "api::vehicle.vehicle",
-          "photos",
-          this.vehicle.id
-        );
+      try {
+        const result = await updateVehicle(this.vehicle.id, vehicleData);
+        if (result.success) {
+          this.$router.push({ path: "/vehiclelist" });
+          toast.success("Vehicle Updated 🚗 👍", { autoClose: 1000 });
+        } else {
+          toast.error("Failed to update vehicle");
+        }
+      } catch (error) {
+        console.error("Error updating vehicle:", error);
+        toast.error("An error occurred while updating vehicle");
       }
-      const result = await updateVehicle(this.vehicle.id, vehicleData);
-
-      if (result.success) {
-this.isLoading= false
-
-        // this.$emit("updatedData", result.data.data);
-this.$router.push({path: '/vehiclelist'})
-        toast.success("Vehicle Updated  🚗 👍 ", {
-          autoClose: 1000,
-        });
-
-      }
+      this.isLoading = false;
     },
   },
   async mounted() {
@@ -764,6 +595,7 @@ this.$router.push({path: '/vehiclelist'})
     // this.fetchCategories();
     await this.fetchVehicleBId();
     await this.fetchPartner();
+        await this.fetchStyles();
     await this.fetchMakesCat();
     this.isLoading = false;
   },

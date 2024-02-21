@@ -1,52 +1,6 @@
 <template>
   <div class="products-sidebar-filter bg-white letter-spacing mb-25">
-    <!-- <div
-      class="title"
-      style="
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-      "
-    >
-      <h5 class="mb-0 fw-semibold text-secondary">Options</h5>
-      <div>
 
-        <div class="dropdown">
-          <button
-            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <i class="flaticon-dots"></i>
-          </button>
-          <ul class="dropdown-menu">
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center"
-                ><i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
-                Select All
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center"
-                ><i
-                  class="flaticon-delete lh-1 me-8 position-relative top-1"
-                ></i>
-                Delete All
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center"
-                ><i class="fas fa-ban lh-1 me-8 position-relative top-1"></i>
-                Disable All
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div> -->
     <div class="sidebar-item" style="padding-top: 30px;">
       <router-link
         to="/addvehicle"
@@ -89,72 +43,44 @@
           }}</span>
         </li>
       </ul>
-      <!-- <button
-        type="button"
-        class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
-      >
-        See More
-      </button> -->
-    </div>
-    <div class="sidebar-item" v-if="brands.length > 0">
-      <h6 class="text-black fw-bold fs-md-15">Brands</h6>
-      <ul
-        class="brands-list ps-0 mb-0 list-unstyled"
-        style="max-height: 200px; overflow-y: auto; padding-right: 5px"
-      >
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-          @click="byBrand('All')"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="allBrands"
-            />
-            <label class="form-check-label fs-md-15 fw-medium" for="allBrands">
-              All
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">{{ brands.length }}</span>
-        </li>
 
-        <li
-          class="d-flex align-items-center justify-content-between text-paragraph"
-          v-for="item in brands"
-          :key="item.id"
-          @click="byBrand(item)"
-        >
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input shadow-none"
-              type="checkbox"
-              id="sugarBrand"
-            />
-            <label class="form-check-label fs-md-15 fw-medium" for="sugarBrand">
-              {{ item.attributes.name }}
-            </label>
-          </div>
-          <span class="d-block fw-medium text-muted">{{
-            item.attributes?.vehicles?.data?.length
-          }}</span>
-        </li>
-        <!-- <button
-          v-if="moreBrandsAvailable"
-          type="button"
-          class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
-          @click="seeMoreBrands"
-        >
-        See More
-      </button> -->
-      </ul>
-      <!-- <button
-        type="button"
-        class="see-more-btn mt-15 bg-transparent p-0 border-0 position-relative text-uppercase text-primary fw-medium fs-13"
-      >
-        See More
-      </button> -->
     </div>
+      <div class="sidebar-item" v-if="brands.length > 0">
+    <h6 class="text-black fw-bold fs-md-15">Brands</h6>
+    <ul class="brands-list ps-0 mb-0 list-unstyled" style="max-height: 200px; overflow-y: auto; padding-right: 5px">
+      <li class="d-flex align-items-center justify-content-between text-paragraph">
+        <div class="form-check mb-0">
+          <input
+            class="form-check-input shadow-none"
+            type="radio"
+            name="brandSelection"
+            id="allBrands"
+            @click="byBrand('All')"
+          />
+          <label class="form-check-label fs-md-15 fw-medium" for="allBrands">All</label>
+        </div>
+        <span class="d-block fw-medium text-muted">{{ allVehiclesByBrand }}</span>
+      </li>
+
+      <li
+        v-for="item in filteredBrands"
+        :key="item.id"
+        class="d-flex align-items-center justify-content-between text-paragraph"
+        @click="byBrand(item)"
+      >
+        <div class="form-check mb-0">
+          <input
+            class="form-check-input shadow-none"
+            type="radio"
+            name="brandSelection"
+            :id="'brand_' + item.id"
+          />
+          <label :for="'brand_' + item.id" class="form-check-label fs-md-15 fw-medium">{{ item.attributes.name }}</label>
+        </div>
+        <span class="d-block fw-medium text-muted">{{ item.attributes?.vehicles?.data?.length }}</span>
+      </li>
+    </ul>
+  </div>
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Daily</h6>
       <div class="pricing-filter" id="pricing-filter">
@@ -162,14 +88,14 @@
           <input
             type="range"
             class="min-price"
-            min="10"
+            min="1"
             v-model="minPrice"
             @change="updateRange"
           />
           <input
             type="range"
             class="max-price"
-            max="6000"
+            max="1000"
             v-model="maxPrice"
             @change="updateRange"
           />
@@ -206,15 +132,19 @@ export default {
       moreMakesAvailable: true,
       moreBrandsAvailable: true,
       minPrice: 10,
-      maxPrice: 6000,
+      maxPrice: 1000,
+            debounceTimeout: null,
+
     };
   },
   watch: {
     minPrice(newValue, oldValue) {
       this.updateRange();
+      this.debouncedPriceRangeChanged();
     },
     maxPrice(newValue, oldValue) {
       this.updateRange();
+      this.debouncedPriceRangeChanged();
     },
     async searchInput(newValue, oldValue) {
       this.$emit("newFiltredData", newValue);
@@ -224,6 +154,12 @@ export default {
     },
   },
   methods: {
+    debouncedPriceRangeChanged() {
+      clearTimeout(this.debounceTimeout);
+      this.debounceTimeout = setTimeout(() => {
+        this.$emit("priceRangeChanged", { min: this.minPrice, max: this.maxPrice });
+      }, 500);
+    },
     makesWithVehicles(makes) {
       return makes.filter((item) => {
         return (
@@ -240,16 +176,6 @@ export default {
         [this.minPrice, this.maxPrice] = [this.maxPrice, this.minPrice];
       }
     },
-
-    // async fetchCategories() {
-    //   try {
-    //     const data = await fetchVehicleCategories("populate=*");
-    //     this.categories = data.data;
-    //     console.log("Categories:", this.categories);
-    //   } catch (error) {
-    //     console.error("Error fetching categories:", error);
-    //   }
-    // },
     async seeMoreMakes() {
       const { data } = await fetchMakesFiltre(
         `pagination[start]=${this.makes.length}&pagination[limit]=${this.makeLimit}`
@@ -258,17 +184,10 @@ export default {
       console.log(this.makes, "okay");
       this.moreMakesAvailable = data.length === this.makeLimit;
     },
-    // async seeMoreBrands() {
-    //   const { data } = await fetchBrandsFiltre(`pagination[start]=${this.brands.length}&pagination[limit]=${this.brandLimit}`);
-    //   this.brands = this.brands.concat(data);
-    //   this.moreBrandsAvailable = data.length === this.brandLimit;
-    // },
     async getMakesAndBrands() {
       const { data } = await fetchMakesFiltre();
       this.makes = data;
       console.log(this.makes, "oks");
-      // const br = await fetchBrandsFiltre(queryBrands)
-      //  this.brands = br.data
     },
 
     async byCategory(category) {
@@ -288,20 +207,36 @@ export default {
       }
     },
 
-    async byBrand(brand) {
-      if (brand === "All") {
-        this.$emit("byCategory", this.selectedMake);
+
+    byBrand(brand) {
+      if (brand === 'All') {
+        this.$emit('byCategory', this.selectedMake);
       } else {
-        this.$emit("byBrand", brand);
+         const radioButtons = document.getElementsByName('brandSelection');
+        radioButtons.forEach(button => button.checked = false);
+
+         const radioButton = document.getElementById('brand_' + brand.id);
+        radioButton.checked = true;
+
+        this.$emit('byBrand', brand);
       }
     },
-  },
+   },
   mounted() {
     console.log("ok");
     this.seeMoreMakes();
     this.getMakesAndBrands();
   },
   computed: {
+allVehiclesByBrand() {
+      if (!this.selectedMake || !this.selectedMake.attributes?.vehicles?.data) return 0;
+      return this.selectedMake.attributes.vehicles.data.length;
+    },
+     filteredBrands() {
+      return this.brands.filter(brand => {
+        return brand.attributes?.vehicles?.data?.length > 0;
+      });
+    },
     allVehicles() {
       let totalVehicles = 0;
       if (this.makes) {

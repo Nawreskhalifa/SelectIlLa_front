@@ -1,31 +1,78 @@
+// Import necessary dependencies and constants
+import { makeApiRequest } from '@/services/apiService';
+import { endPoints } from '@/utils/endPoints';
+import { methodsHttpNames } from '@/utils/methods';
+
 const state = {
-  selectedItems: [],
+  vehicleError: null,
+  vehicleLoading: false,
+  vehicles: [],
+  totalPages: 1,
+  totalItems: 0,
+};
+
+const getters = {
+  getVehicleError: state => state.vehicleError,
+  getVehicleLoading: state => state.vehicleLoading,
+  getVehicles: state => state.vehicles,
+  getTotalPages: state => state.totalPages,
+  getTotalItems: state => state.totalItems,
 };
 
 const mutations = {
-  SET_SELECTED_ITEMS(state, items) {
-    state.selectedItems = items;
+  SET_VEHICLE_ERROR(state, payload) {
+    state.vehicleError = payload;
+  },
+  SET_VEHICLE_LOADING(state, payload) {
+    state.vehicleLoading = payload;
+  },
+  SET_VEHICLES(state, payload) {
+    state.vehicles = payload;
+  },
+  SET_TOTAL_PAGES(state, payload = 1) {
+    state.totalPages = payload;
+  },
+  SET_TOTAL_ITEMS(state, payload = 0) {
+    state.totalItems = payload;
   },
 };
 
 const actions = {
-  selectItem({ commit, state }, item) {
-    const selectedItems = [...state.selectedItems, item];
-    commit("SET_SELECTED_ITEMS", selectedItems);
+  async fetchAllVehicles({ commit }, { page = null, perPage = 25, make = null, brand = null, minPrice = null, maxPrice = null , searchInput=null  }) {
+    commit('SET_VEHICLE_LOADING', true);
+    commit('SET_VEHICLE_ERROR', null);
+    try {
+      const filters = {
+        pagination: { page, pageSize: perPage },
+        filters: {
+          make: make ? { $eq: make } : undefined,
+          brand: brand ? { $eq: brand } : undefined,
+           daily: minPrice && maxPrice ? { $between: [minPrice, maxPrice] } : undefined,
+        },
+      };
+      const response = await makeApiRequest(
+        methodsHttpNames.GET,
+        endPoints.vehicles,
+        undefined,
+        filters
+      );
+      if (response.success) {
+        commit('SET_VEHICLES', response.data.data);
+        commit('SET_TOTAL_PAGES', response.data.meta.pagination.pageCount);
+        commit('SET_TOTAL_ITEMS', response.data.meta.pagination.total);
+        commit('SET_VEHICLE_LOADING', false);
+      }
+    } catch (error) {
+      commit('SET_VEHICLE_LOADING', false);
+      commit('SET_VEHICLE_ERROR', 'An error occurred while fetching vehicles.');
+      console.error('Error fetching vehicles:', error);
+    }
   },
-  deselectItem({ commit, state }, item) {
-    const selectedItems = state.selectedItems.filter((selected) => selected.id !== item.id);
-    commit("SET_SELECTED_ITEMS", selectedItems);
-  },
-};
-
-const getters = {
-  selectedItems: (state) => state.selectedItems,
-};
+ };
 
 export default {
   state,
-  mutations,
-  actions,
   getters,
+  mutations,
+  actions
 };
