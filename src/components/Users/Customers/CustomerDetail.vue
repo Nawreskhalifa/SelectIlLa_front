@@ -441,14 +441,28 @@
                   </div>
                 </div>
                 <div>
-                  <h6 class="card-title fw-bold mb-0">
+                  <h6
+                    v-if="
+                      getAllDocuments &&
+                      getAllDocuments.data &&
+                      getAllDocuments.data.length
+                    "
+                    class="card-title fw-bold mb-0"
+                  >
                     Attachments of reservations
                   </h6>
 
                   <Media :documents="getAllDocuments" />
                 </div>
                 <div>
-                  <h6 class="card-title fw-bold mb-0">
+                  <h6
+                    v-if="
+                      getDocumentsCustomer &&
+                      getDocumentsCustomer.data &&
+                      getDocumentsCustomer.data.length
+                    "
+                    class="card-title fw-bold mb-0"
+                  >
                     Attachments of customer
                   </h6>
 
