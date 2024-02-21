@@ -13,8 +13,26 @@
         {{ selectedCount }}
         {{ selectedCount === 1 ? "item" : "items" }} selected
       </h6>
-      <div class="d-flex align-items-center">
-        <form
+      <div class="d-flex align-items-center mt-lg-10">
+        <form @submit.prevent="handleFilterChange">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control shadow-none fw-medium ps-1 pt-10 pe-0 letter-spacing"
+              placeholder="Search"
+              v-model="searchText"
+              @input="handleFilterChange"
+            />
+            <button
+              class="default-btn position-relative transition border-0 text-white ps-12 pe-12 rounded-1"
+              type="button"
+              :disabled="getEventsLoading"
+            >
+              <i class="flaticon-search-interface-symbol position-relative"></i>
+            </button>
+          </div>
+        </form>
+        <!-- <form
           class="search-box position-relative"
           @submit.prevent="handleFilterChange"
         >
@@ -22,7 +40,7 @@
             type="text"
             class="form-control shadow-none rounded-0 border-0 pr-40"
             placeholder="Search here"
-            style="width: calc(100% - 40px)"
+            style="width: calc(100% - 100px)"
             v-model="searchText"
             @input="handleFilterChange"
           />
@@ -37,18 +55,16 @@
             "
             :disabled="getEventsLoading"
           >
-            Search
-
             <i
               class="flaticon-search-interface-symbol position-relative ms-5 top-1"
             ></i>
           </button>
-        </form>
+        </form> -->
       </div>
-      <div class="d-sm-flex align-items-center mt-10 mt-lg-0">
+
+      <div class="d-sm-flex align-items-center mt-15 mt-lg-10">
         <select
-          class="form-select shadow-none fw-semibold rounded-0 select-same-width"
-          style="height: 47px; border-color: #eeeee4"
+          class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
           v-model="selectedCategory"
           @change="handleFilterChange"
         >
@@ -62,35 +78,62 @@
           </option>
         </select>
         <select
+          class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          v-model="selectedPartner"
+          @change="handleFilterChange"
+        >
+          <option value="0" selected>All Partners</option>
+          <option
+            v-for="partner in getPartners"
+            :key="partner.id"
+            :value="partner.id"
+          >
+            {{ partner.name }}
+          </option>
+        </select>
+        <select
           v-model="activeFilter"
           @change="handleFilterChange"
           class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
         >
-          <option value="All">All Status</option>
+          <option value="All" selected>All Status</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
+        <flat-pickr
+          v-model="startDate"
+          :config="config"
+          class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          placeholder="Start"
+          name="startDate"
+          @change="handleFilterChange"
+        />
+
+        <flat-pickr v-model="endDate" :config="config" class="project-select
+        form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+        placeholder="End" name="endDate" :disabled="!startDate" minDate:
+        startDate @change="handleFilterChange" />
       </div>
-      <div class="d-sm-flex align-items-center">
+
+      <div class="d-sm-flex align-items-center mt-lg-10">
         <button
           v-if="isFilterActive"
-          class="default-outline-btn position-relative transition fw-medium text-black pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 bg-transparent fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1"
+          class="default-outline-btn position-relative transition border-0 fw-medium text-black pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 bg-transparent fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1"
           type="button"
           @click="resetFilters"
         >
-          Reset
           <i class="flaticon-refresh position-relative ms-5 top-2 fs-15"></i>
         </button>
       </div>
-      <a
-        href="javascript:void(0);"
-        @click="navigateToAddEventPage()"
-        class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
-      >
-        Add New Event
-        <i class="flaticon-plus position-relative ms-5 fs-12"></i>
-      </a>
-      <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+
+      <div class="dropdown mt-15 mt-sm-0 ms-sm-10 mt-lg-10 d-inline-flex">
+        <a
+          href="javascript:void(0);"
+          @click="navigateToAddEventPage()"
+          class="default-btn position-relative transition border-0 fw-medium text-white pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1 bg-primary d-inline-block d-inline-block text-decoration-none"
+        >
+          <i class="ph ph-plus"></i>
+        </a>
         <button
           class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
           type="button"
@@ -255,6 +298,7 @@
                 <span class="fw-semibold text-primary">
                   {{
                     event.partner?.attributes.name +
+                    " " +
                     event.partner?.attributes.surname
                   }}
                 </span>
@@ -364,10 +408,12 @@ import { mapActions, mapGetters } from "vuex";
 import { storageUrl } from "../../utils/constants";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import flatPickr from "vue-flatpickr-component";
 export default {
   name: "ListEvents",
   components: {
     Loading,
+    flatPickr,
   },
   data() {
     return {
@@ -379,11 +425,19 @@ export default {
       selectAllChecked: false,
       selectedCount: 0,
       selectedCategory: "All",
+      selectedPartner: 0,
       perPage: 4,
+      startDate: "",
+      endDate: "",
     };
   },
   methods: {
-    ...mapActions(["fetchAllEvents", "deleteEvent", "fetchAllCategoriesEvent"]),
+    ...mapActions([
+      "fetchAllEvents",
+      "deleteEvent",
+      "fetchAllCategoriesEvent",
+      "fetchAllPartners",
+    ]),
 
     updateSelectionCounter(event, index) {
       if (event.target.checked) {
@@ -399,6 +453,8 @@ export default {
       this.searchText = "";
       this.activeFilter = "All";
       this.selectedCategory = "All";
+      this.startDate = "";
+      this.endDate = "";
       // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
       this.handleFilterChange();
     },
@@ -456,6 +512,9 @@ export default {
         name: this.searchText,
         isActive: this.activeFilter,
         category: this.selectedCategory,
+        partner: this.selectedPartner,
+        startDate: this.startDate,
+        endDate: this.endDate,
       });
     },
     selectAllEvents() {
@@ -580,27 +639,45 @@ export default {
       "getTotalEventPages",
       "getCategoriesEvent",
       "getTotalEventItems",
+      "getPartners",
     ]),
     isFilterActive() {
       return (
         this.searchText !== "" ||
         this.activeFilter !== "All" ||
-        this.selectedCategory !== "All"
+        this.selectedCategory !== "All" ||
+        this.startDate !== "" ||
+        this.endDate !== ""
       );
     },
   },
   async mounted() {
     this.storageUrl = storageUrl;
     await this.fetchAllCategoriesEvent({ page: null });
+    await this.fetchAllPartners();
     await this.fetchAllEvents({
       page: this.currentPage,
       perPage: 4,
       name: null,
     });
+    console.log(this.getEvents);
   },
 };
 </script>
 <style scoped>
+/* Pour les navigateurs Web modernes */
+.project-select::placeholder {
+  color: black; /* Couleur du texte du placeholder */
+}
+
+/* Pour les anciens navigateurs Web */
+.project-select:-ms-input-placeholder {
+  color: black; /* Couleur du texte du placeholder */
+}
+
+.project-select::-ms-input-placeholder {
+  color: black; /* Couleur du texte du placeholder */
+}
 .card-image {
   position: relative;
   max-height: 250px;

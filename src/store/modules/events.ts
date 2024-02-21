@@ -78,7 +78,7 @@ const actions = {
     }
     return true;
   },
-  async fetchAllEvents({ commit }, { page, perPage = 25, name, isActive = 'All', category = 'All' }: { page: number, perPage?: number, name: string | null, isActive?: string, category?: string }) {
+  async fetchAllEvents({ commit }, { page, perPage = 25, name, isActive = 'All', category = 'All', partner = 0, startDate, endDate }: { page: number, perPage?: number, name: string | null, isActive?: string, category?: string, partner?: number, startDate?: string, endDate?: string }) {
     commit("SET_EVENTS_LOADING", true);
     commit("SET_EVENTS_ERROR");
 
@@ -94,52 +94,65 @@ const actions = {
             partner?: { name?: { $contains: string }; surname?: { $contains: string } };
           }>;
           $and?: Array<{
-            active?: { $eq: boolean }, category_events?: { name: { $eq: string } },
+            active?: { $eq: boolean }, category_events?: { name: { $eq: string } }, partner?: { id: { $eq: number } }, start_date?: { $gte?: string }, end_date?: { $lte?: string }
           }>;
         };
-      } = {
-      };
+      } = {};
+
       if (page) {
         filters.pagination = { page: page, pageSize: perPage };
       }
 
-      // Add the filters if name is specified
       if (name) {
-        filters.filters = {
-          ...(filters.filters || {}),
-          $or: [
-            { name: { $contains: name } },
-            { description: { $contains: name } },
-            { location: { $contains: name } },
-            { category_events: { name: { $contains: name } } },
-            { partner: { name: { $contains: name } } },
-            { partner: { surname: { $contains: name } } }
-          ]
-        };
+        filters.filters = filters.filters || {};
+        filters.filters.$or = [
+          { name: { $contains: name } },
+          { description: { $contains: name } },
+          { location: { $contains: name } },
+          { category_events: { name: { $contains: name } } },
+          { partner: { name: { $contains: name } } },
+          { partner: { surname: { $contains: name } } }
+        ];
       }
 
-      // Add the active filter if specified
       if (isActive !== 'All') {
-        filters.filters = {
-          ...(filters.filters || {}),
-          $and: [{ active: { $eq: isActive === 'true' } }] // Utilisation de $and avec un seul élément
-        };
+        filters.filters = filters.filters || {};
+        filters.filters.$and = filters.filters.$and || [];
+        filters.filters.$and.push({ active: { $eq: isActive === 'true' } });
       }
-      // Add the category filter if specified
+
       if (category !== 'All') {
-        filters.filters = {
-          ...(filters.filters || {}),
-          $and: [{ category_events: { name: { $eq: category } } }] // Utilisation de $and avec un seul élément
-        };
+        filters.filters = filters.filters || {};
+        filters.filters.$and = filters.filters.$and || [];
+        filters.filters.$and.push({ category_events: { name: { $eq: category } } });
       }
+
+      if (partner && partner > 0) {
+        filters.filters = filters.filters || {};
+        filters.filters.$and = filters.filters.$and || [];
+        filters.filters.$and.push({ partner: { id: { $eq: partner } } });
+      }
+
+      if (startDate) {
+        filters.filters = filters.filters || {};
+        filters.filters.$and = filters.filters.$and || [];
+        filters.filters.$and.push({ start_date: { $gte: startDate } });
+      }
+
+      if (endDate) {
+        filters.filters = filters.filters || {};
+        filters.filters.$and = filters.filters.$and || [];
+        filters.filters.$and.push({ end_date: { $lte: endDate } });
+      }
+
       const response = await makeApiRequest(
         methodsHttpNames.GET,
         `${endPoints.allEvents}/?populate=deep`,
         undefined,
         filters
       );
+
       if (response.success) {
-        console.log(response.data.meta.pagination)
         commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
         commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
         commit("SET_EVENTS", (response.data.data).map(decodeApiToEvent));
@@ -161,6 +174,7 @@ const actions = {
       return false;
     }
   },
+
 
   async deleteEvent({ commit }, id) {
     commit("SET_EVENTS_LOADING", true);
