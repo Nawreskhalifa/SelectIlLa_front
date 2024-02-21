@@ -84,7 +84,7 @@
     </div>
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Categories</h6>
-       <ul class="categories-list ps-0 mb-0 list-unstyled">
+       <ul class="categories-list ps-0 mb-0 list-unstyled" style="max-height: 200px; overflow-y: auto; padding-right: 5px">
   <li class="cat" v-if="categories.length > 0">
     <span class="d-block fs-md-15 fw-medium" @click="byCategory()">All</span>
         <span class="d-block fw-medium text-muted">{{ totalVehiclesCount  }}</span>

@@ -12,8 +12,72 @@
           v-model="searchInput"
         />
       </div>
-      <div class="d-sm-flex align-items-center gap-2">
-        <button
+        <div class="d-sm-flex align-items-center gap-2">
+        <div class="reviews-select rounded-1 d-flex me-10 mt-10 mt-lg-0">
+          <span class="text-muted fs-12 position-relative fw-medium text-uppercase">
+            Ressources
+          </span>
+       <select class="form-select shadow-none bg-transparent border-0 fw-semibold rounded-0" v-model="selectedStatus" @change="handleOptionClick(selectedStatus)">
+  <option value="">All</option>
+  <option value="Villas">Villas</option>
+  <option value="Events">Events</option>
+  <option value="Vehicles">Vehicles</option>
+</select>
+</div>
+
+             <!-- <div class="dropdown">
+    <button
+      class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
+      type="button"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      <i class="flaticon-dots"></i>
+    </button>
+    <ul class="dropdown-menu">
+      <li>
+        <a
+          class="dropdown-item d-flex align-items-center"
+                  @click="allData"
+
+        >
+          <i class="flaticon-view lh-1 me-8"></i>
+          Detail
+        </a>
+      </li>
+      <li>
+        <a
+          class="dropdown-item d-flex align-items-center"
+                    @click="vehicleData"
+
+        >
+          <i class="flaticon-view lh-1 me-8"></i>
+          Vehicles
+        </a>
+      </li>
+      <li  >
+        <a
+          class="dropdown-item d-flex align-items-center"
+                    @click="eventData"
+
+         >
+          <i class="flaticon-pen lh-1 me-8"></i>
+          Events
+        </a>
+      </li>
+      <li  >
+        <a
+          class="dropdown-item d-flex align-items-center"
+                   @click="villaData"
+
+        >
+          <i class="flaticon-delete lh-1 me-8"></i>
+          Villas
+         </a>
+      </li>
+    </ul>
+  </div> -->
+        <!-- <button
           class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
           type="button"
           :class="{ selected: allCheckboxesChecked }"
@@ -45,7 +109,7 @@
           @click="villaData"
         >
           Villas
-        </button>
+        </button> -->
         <div class="d-sm-flex align-items-center mt-10 mt-lg-0">
           <router-link
             to="/add-partner"
@@ -307,12 +371,11 @@
               </a>
             </li>
             <li class="page-item" v-for="page in maxPage" :key="page">
-              <a
-                class="page-link"
-                :class="{ active: page === checkList.currentPage }"
-                @click="currentPage = page"
-                >{{ page }}
-              </a>
+            <a
+  class="page-link"
+  :class="{ active: page === currentPage }"
+  @click="currentPage = page"
+>{{ page }}</a>
             </li>
             <li class="page-item">
               <a class="page-link" aria-label="Next" @click="nextPage">
@@ -335,7 +398,7 @@
     v-model:active="isLoading"
     :can-cancel="true"
     :on-cancel="onCancel"
-    :is-full-page="fullPage"
+    :is-full-page="'false'"
   />
 </template>
 
@@ -374,6 +437,32 @@ export default {
     };
   },
   methods: {
+   async   handleOptionClick(option) {
+                     this.isLoading = true;
+
+      switch (option) {
+        case 'All':
+         await  this.allData();
+
+          break;
+        case 'Villas':
+         await  this.villaData();
+
+          break;
+        case 'Events':
+       await    this.eventData();
+
+          break;
+        case 'Vehicles':
+       await    this.vehicleData();
+
+          break;
+        default:
+          break;
+      }
+                     this.isLoading = false;
+
+    },
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
@@ -477,10 +566,14 @@ export default {
     },
 
     async allData() {
+                  this.loading = true;
+
       this.checkList.event = true;
       this.checkList.villa = true;
       this.checkList.vehicle = true;
       await this.fetchAllPartners();
+                        this.loading = false;
+
     },
     openRessources(partner) {
       this.partnerEdit = partner;
@@ -518,10 +611,7 @@ export default {
       if (this.partners) {
         const startIndex = (this.currentPage - 1) * this.pageSize;
         const endIndex = startIndex + this.pageSize;
-        const partnersWithRole = this.partners.filter(
-          (item) => item.user?.role?.name === "Partner"
-        );
-        return partnersWithRole.slice(startIndex, endIndex);
+        return this.chechIfPartner.slice(startIndex, endIndex);
       } else {
         return [];
       }
@@ -555,6 +645,10 @@ export default {
 <style scoped>
 .selected {
   background-color: rgb(89, 64, 231) !important ;
+  color: white !important;
+}
+.active {
+background-color: rgb(89, 64, 231) !important ;
   color: white !important;
 }
 </style>
