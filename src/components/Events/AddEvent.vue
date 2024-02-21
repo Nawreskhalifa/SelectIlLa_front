@@ -1105,19 +1105,30 @@ details {
 }
 
 .delete_icon {
+  font-size: 8px;
   position: absolute;
-  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  top: 3px;; /* Ajustez la position verticale selon vos besoins */
   left: 5px; /* Ajustez la position horizontale selon vos besoins */
-  background-color: transparent; /* Couleur de fond du bouton */
-  color: #121111; /* Couleur du texte */
+  background-color: #cfcfcf; /* Couleur de fond du bouton */
+  color: #ffffff; /* Couleur du texte */
   border: none; /* Supprimer la bordure */
-  padding: 5px; /* Espacement intérieur */
   border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
   cursor: pointer; /* Curseur pointeur au survol */
   transition: background-color 0.3s ease; /* Animation de transition */
   margin-right: 10px; /* Ajouter une marge à droite pour créer de l'espace entre les boutons */
 }
-
+.set_cover_button {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  right: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #0056b3; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
+}
 select,
 summary {
   border-collapse: collapse;
@@ -1182,17 +1193,5 @@ li > label:has(input:checked) {
 }
 .select-same-width {
   width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
-}
-.set_cover_button {
-  position: absolute;
-  top: 5px; /* Ajustez la position verticale selon vos besoins */
-  right: 5px; /* Ajustez la position horizontale selon vos besoins */
-  background-color: transparent; /* Couleur de fond du bouton */
-  color: #0056b3; /* Couleur du texte */
-  border: none; /* Supprimer la bordure */
-  padding: 5px; /* Espacement intérieur */
-  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
-  cursor: pointer; /* Curseur pointeur au survol */
-  transition: background-color 0.3s ease; /* Animation de transition */
 }
 </style>

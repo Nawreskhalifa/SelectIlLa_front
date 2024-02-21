@@ -316,7 +316,7 @@
                     @click="removeImage(index, photo)"
                     class="delete_icon"
                   >
-                    <i class="fas fa-times-circle"></i>
+                    <i class="fas fa-times"></i>
                     <!-- Icône de suppression -->
                   </button>
                   <input
@@ -1146,13 +1146,13 @@ fieldset {
 }
 
 .delete_icon {
+  font-size: 8px;
   position: absolute;
-  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  top: 3px;; /* Ajustez la position verticale selon vos besoins */
   left: 5px; /* Ajustez la position horizontale selon vos besoins */
-  background-color: transparent; /* Couleur de fond du bouton */
-  color: #121111; /* Couleur du texte */
+  background-color: #cfcfcf; /* Couleur de fond du bouton */
+  color: #ffffff; /* Couleur du texte */
   border: none; /* Supprimer la bordure */
-  padding: 5px; /* Espacement intérieur */
   border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
   cursor: pointer; /* Curseur pointeur au survol */
   transition: background-color 0.3s ease; /* Animation de transition */
