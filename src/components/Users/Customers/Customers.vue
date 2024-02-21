@@ -52,7 +52,7 @@
         <input
           id="start-date"
           type="date"
-          class="form-control datepicker project-select form-select shadow-none fw-semibold rounded-1 mt-1 mt-sm-0 ms-sm-1"
+          class="form-control shadow-none rounded-0 text-black"
           placeholder="Start Date"
           v-model="startDate"
           :max="getCurrentDate()"
@@ -63,7 +63,7 @@
         <input
           id="end-date"
           type="date"
-          class="form-control datepicker project-select form-select shadow-none fw-semibold rounded-1 mt-1 mt-sm-0 ms-sm-1"
+          class="form-control shadow-none rounded-0 text-black"
           placeholder="End Date"
           v-model="endDate"
           :max="getCurrentDate()"
