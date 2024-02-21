@@ -6,13 +6,13 @@
     ]"
     id="sidebar-area"
   >
-      <div class="logo position-absolute start-0 end-0 top-0 bg-black">
+    <div class="logo position-absolute start-0 end-0 top-0 bg-black">
       <router-link
         to="/"
         class="d-flex align-items-center text-white text-decoration-none"
       >
         <img src="../../assets/images/favicon.png" alt="logo-icon" />
-        <span class="fw-bold ms-10">SELECTITLA</span>
+        <span class="fw-bold">SELECTITLA</span>
       </router-link>
       <div class="border-bottom"></div>
 
@@ -21,13 +21,12 @@
         class="sidebar-burger-menu position-absolute lh-1 bg-transparent p-0 border-0"
         @click="updateOpen"
       >
-        <i class="ph-duotone ph-caret-double-right"></i>
+        <i class="flaticon-menu-3"></i>
       </button>
     </div>
     <div class="sidebar-menu">
-
       <ul
-        class="sidebar-navbar-nav ps-0 mb-0 list-unstyled accordion "
+        class="sidebar-navbar-nav ps-0 mb-0 list-unstyled accordion"
         id="sidebarNavAccordion"
       >
         <li class="sidebar-nav-item">
@@ -122,7 +121,6 @@
                     Create Category
                   </router-link>
                 </li>
-
               </ul>
             </div>
           </div>
@@ -159,8 +157,11 @@
                   </router-link>
                 </li>
                 <li class="sidebar-sub-menu-item">
-                  <router-link to="/VehicleListCategory" class="sidebar-sub-menu-link">
-                     Makes And  Brands
+                  <router-link
+                    to="/VehicleListCategory"
+                    class="sidebar-sub-menu-link"
+                  >
+                    Makes And Brands
                   </router-link>
                 </li>
               </ul>
@@ -198,7 +199,7 @@
                     Add Villa
                   </router-link>
                 </li>
-                 <li class="sidebar-sub-menu-item">
+                <li class="sidebar-sub-menu-item">
                   <router-link
                     to="/VillaListCategory"
                     class="sidebar-sub-menu-link"
@@ -271,7 +272,7 @@
             <i class="fa-solid fa-dungeon"></i>
             <span class="title">Villa Categories </span>
           </a> -->
-          <!-- <div
+        <!-- <div
             id="sidebarCollapseFive"
             class="accordion-collapse collapse"
             data-bs-parent="#sidebarCollapseFive"
@@ -381,17 +382,16 @@
             </div>
           </div>
         </li> -->
-    <li class="sidebar-nav-item">
+        <li class="sidebar-nav-item">
           <router-link to="/partnersList" class="sidebar-nav-link d-block">
-                                   <i class="fas fa-handshake"></i>
-
+            <i class="fas fa-handshake"></i>
 
             <span class="title">Partners</span>
           </router-link>
         </li>
-          <li class="sidebar-nav-item">
+        <li class="sidebar-nav-item">
           <router-link to="/reservationList" class="sidebar-nav-link d-block">
-                        <i class="flaticon-layer-2"></i>
+            <i class="flaticon-layer-2"></i>
 
             <span class="title">Reservations</span>
           </router-link>
@@ -458,12 +458,11 @@ export default defineComponent({
     return {
       stateStoreInstance,
       open,
-     };
+    };
   },
   computed: {
     ...mapGetters(["isOpen"]),
   },
-
 
   methods: {
     ...mapMutations(["SET_LOG_OUT", "updateOpen"]),
@@ -481,5 +480,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+.custom-bg-color {
+  background-color: #eeeee4;
+}
 </style>
