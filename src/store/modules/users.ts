@@ -19,6 +19,7 @@ const state = {
     totalItemsReservation: 0,
     reservation: null,
     documentsCustomer: [],
+    allDocuments: [],
 }
 const getters = {
     getUsersError: state => state.userError,
@@ -34,9 +35,14 @@ const getters = {
     getTotalItemsReservation: (state) => state.totalItemsReservation,
     getReservation: (state) => state.reservation,
     getDocumentsCustomer: (state) => state.documentsCustomer,
+    getAllDocuments: (state) => state.allDocuments,
+
 
 }
 const mutations = {
+    SET_ALL_DOCUMENTS(state, payload) {
+        state.allDocuments = payload;
+    },
     SET_DOCUMENTS_CUSTOMER(state, payload) {
         state.documentsCustomer = payload;
     },
@@ -380,7 +386,7 @@ const actions = {
                 { populate: { documents: true } }
             );
             if (response.success) {
-                commit('SET_DOCUMENTS_CUSTOMER', response.data.data.attributes.documents.data)
+                commit('SET_DOCUMENTS_CUSTOMER', response.data.data.attributes.documents)
                 commit('SET_USERS_LOADING')
             }
 
@@ -457,6 +463,44 @@ const actions = {
                 commit("SET_USERS_ERROR", error.response.data.error.messages);
             } else {
                 commit("SET_USERS_ERROR", ["Une erreur est survenue"]);
+            }
+            return false;
+        }
+        return true;
+    },
+    async fetchAllDocumentsByCustomer({ commit }, { idCustomer }) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
+        try {
+            const filters: any = { customer: { id: { $eq: idCustomer } } };
+
+
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.reservations}?populate=deep`,
+                undefined,
+                { filters }
+            );
+            if (response.success) {
+                const result: any = { data: [] };
+                if (response.data.data && response.data.data.length) {
+                    response.data.data.forEach(element => {
+                        if (element.attributes.documents.data && element.attributes.documents.data.length) {
+                            element.attributes.documents.data.forEach(elt => {
+                                result.data.push(elt); // Ajout de l'élément à result.data
+                            });
+                        }
+                    });
+                }
+                commit('SET_ALL_DOCUMENTS', result);
+                commit('SET_USERS_LOADING', false);
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages);
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
             }
             return false;
         }

@@ -19,6 +19,7 @@
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. Adam"
                 required
+                disabled
               />
               <p v-if="formSubmitted && !name" class="text-danger">
                 First name is required
@@ -36,6 +37,7 @@
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. Smith"
                 required
+                disabled
               />
               <p v-if="formSubmitted && !surname" class="text-danger">
                 Last name is required
@@ -50,6 +52,7 @@
               <select
                 class="form-select shadow-none fw-semibold rounded-0"
                 v-model="gender"
+                disabled
               >
                 <option value="">Select Gender</option>
 
@@ -73,6 +76,7 @@
                 placeholder="e.g. EnvyTheme Software"
                 required
                 :max="getCurrentDate()"
+                disabled
               />
               <p v-if="formSubmitted && !dateOfBirth" class="text-danger">
                 Date of birth is required

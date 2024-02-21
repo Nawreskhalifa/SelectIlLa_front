@@ -292,6 +292,39 @@
           </div>
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">Status</label>
+              <div
+                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+              >
+                <input
+                  class="form-check-input shadow-none"
+                  type="radio"
+                  name="communicationRadio"
+                  id="activeRadio"
+                  v-model="status"
+                  :value="true"
+                />
+                <label class="form-check-label" for="activeRadio">Active</label>
+              </div>
+              <div
+                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+              >
+                <input
+                  class="form-check-input shadow-none"
+                  type="radio"
+                  name="communicationRadio"
+                  id="deactivatedRadio"
+                  v-model="status"
+                  :value="false"
+                />
+                <label class="form-check-label" for="deactivatedRadio"
+                  >In Active</label
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
                 Upload Images
               </label>
@@ -390,6 +423,7 @@ export default defineComponent({
   data() {
     return {
       isLoading: false,
+      status: true,
       selectedPhotos: [],
       selectedCategories: [],
       currentDate: new Date().toISOString().split("T")[0], // Date actuelle
@@ -513,6 +547,7 @@ export default defineComponent({
         formData.append("name_promoter", this.promoterName);
         formData.append("promiting_info", this.promoterInfo);
         formData.append("cover_image_index", this.coverImageIndex);
+        formData.append("active", this.status);
 
         if (this.photos && this.photos.length) {
           this.photos.forEach((photo) => {
