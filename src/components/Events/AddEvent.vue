@@ -355,6 +355,8 @@
                     @click="removeImage(index)"
                     class="delete_icon"
                     type="button"
+                    title="delete this image"
+                    style="cursor: pointer"
                   >
                     <i class="fas fa-times-circle"></i>
                     <!-- Icône de suppression -->

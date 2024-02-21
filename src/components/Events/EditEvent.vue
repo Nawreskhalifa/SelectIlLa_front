@@ -315,6 +315,8 @@
                     type="button"
                     @click="removeImage(index, photo)"
                     class="delete_icon"
+                    title="delete this image"
+                    style="cursor: pointer"
                   >
                     <i class="fas fa-times"></i>
                     <!-- Icône de suppression -->
@@ -1148,7 +1150,7 @@ fieldset {
 .delete_icon {
   font-size: 8px;
   position: absolute;
-  top: 3px;; /* Ajustez la position verticale selon vos besoins */
+  top: 3px; /* Ajustez la position verticale selon vos besoins */
   left: 5px; /* Ajustez la position horizontale selon vos besoins */
   background-color: #cfcfcf; /* Couleur de fond du bouton */
   color: #ffffff; /* Couleur du texte */
