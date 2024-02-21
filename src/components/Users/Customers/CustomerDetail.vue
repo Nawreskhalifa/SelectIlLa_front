@@ -440,10 +440,20 @@
                     </button>
                   </div>
                 </div>
-                <Media
-                  :documentsReservations="getDocuments"
-                  :documentsCustomer="getDocumentsCustomer"
-                />
+                <div>
+                  <h6 class="card-title fw-bold mb-0">
+                    Attachments of reservations
+                  </h6>
+
+                  <Media :documents="getAllDocuments" />
+                </div>
+                <div>
+                  <h6 class="card-title fw-bold mb-0">
+                    Attachments of customer
+                  </h6>
+
+                  <Media :documents="getDocumentsCustomer" />
+                </div>
               </div>
             </div>
           </div>
@@ -463,7 +473,7 @@
 import CustomersInformation from "./CustomerInformation.vue";
 import { mapActions, mapGetters } from "vuex";
 import { defineComponent } from "vue";
-import Media from "./FileManagar/FileManager.vue";
+import Media from "../../Reservations/FileManagar/FileManager.vue";
 import { uploadFiles } from "@/services/apiService";
 import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
@@ -499,6 +509,7 @@ export default defineComponent({
       "fetchAllCustomers",
       "fetchAllAttachmentsByCustomer",
       "fetchDocumentsCustomer",
+      "fetchAllDocumentsByCustomer",
     ]),
     async openFileDialog() {
       try {
@@ -691,6 +702,7 @@ export default defineComponent({
       "getTotalItemsReservation",
       "getUsersLoading",
       "getDocumentsCustomer",
+      "getAllDocuments",
     ]),
   },
   async mounted() {
@@ -702,7 +714,10 @@ export default defineComponent({
         perPage: 5,
         idCustomer: this.idCustomer,
       });
-
+      await this.fetchAllDocumentsByCustomer({
+        idCustomer: this.idCustomer,
+      });
+      console.log("new documents :", this.getAllDocuments);
       await this.fetchDocumentsCustomer(this.idCustomer);
       if (!this.getCustomers || !this.getCustomers.length) {
         this.isLoading = false;
