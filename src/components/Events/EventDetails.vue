@@ -2,7 +2,7 @@
   <BreadCrumb
     :PrevPage="'Events List'"
     :url="'/events'"
-    :PageTitle="getEvent?.name"
+    :PageTitle="truncateText(getEvent?.name)"
   />
   <div class="row">
     <div
@@ -431,12 +431,12 @@ export default defineComponent({
       return day + "-" + month + "-" + year;
     },
 
-    truncateDescription(description) {
-      const maxLength = 65;
-      if (description.length <= maxLength) {
-        return description;
+    truncateText(text) {
+      const maxLength = 35;
+      if (text.length <= maxLength) {
+        return text;
       } else {
-        return description.slice(0, maxLength) + "...";
+        return text.slice(0, maxLength) + "...";
       }
     },
     navigateToEditCategoryPage(idCategoryEvent) {
