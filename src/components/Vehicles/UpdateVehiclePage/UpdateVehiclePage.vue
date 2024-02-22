@@ -247,7 +247,7 @@
 
           <div class="col-md-6">
             <MultiSelect
-              :options="partnerData"
+              :options="transormPartner"
               :selected="partner"
               @update:selectedOne="updatePartner"
               :placeholder="getSelectedPartnerName"
@@ -366,6 +366,13 @@ export default {
     },
   },
   computed: {
+     transormPartner(){
+      let trans = []
+        this.partnerData.forEach((item)=> {
+           trans.push({id : item.id  , attributes : { name : item.name}})
+        })
+        return trans
+    },
     getSelectedPartnerName() {
       if (this.partnerData && this.partnerData.length > 0) {
         const selectedPartner = this.partnerData.find(

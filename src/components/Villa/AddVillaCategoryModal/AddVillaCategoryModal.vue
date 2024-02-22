@@ -3,7 +3,7 @@
     <div v-show="show" class="modal">
       <transition name="modal-animation-inner">
         <div v-show="show" class="modal-inner">
-                      <button class="close_icon" @click="closeModal">×</button>
+          <button class="close_icon" @click="closeModal">×</button>
 
           <div class="card mb-25 border-0 rounded-0 bg-white add-product-box">
             <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
@@ -31,16 +31,19 @@
                         ></textarea>
                       </div>
                     </div>
+<div class="col-md-12">
+                    <!-- Error message for name and description -->
+                    <p v-if="!isFormValid" class="text-danger">Name and description are required.</p>
                   </div>
 
-                  <div class="col-md-12">
+
+
                     <button
                       class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16"
                       type="submit"
                     >
                       Create Category
                     </button>
-
                   </div>
                 </div>
               </form>
@@ -73,6 +76,11 @@ export default {
       router: useRouter(),
     };
   },
+  computed: {
+    isFormValid() {
+      return this.name.trim() !== "" && this.description.trim() !== "";
+    }
+  },
   methods: {
     showToatSuccess() {
       toast.success("Vehicle Category Created 🚗 👍", {
@@ -80,34 +88,33 @@ export default {
       });
     },
     async createCategory() {
-    if (this.name.trim() !== "" && this.description.trim() !== "") {
+      if (this.isFormValid) {
         const category = {
-            data: {
-                Name: this.name,
-                description: this.description,
-            },
+          data: {
+            Name: this.name,
+            description: this.description,
+          },
         };
         try {
-            const response = await postVillaCategory(category);
-            if (response.success) {
-                this.showToatSuccess();
-                   this.$emit('addedCat',response.data.data);
-                this.$emit('close');
-                // this.router.push("/VehicleListCategory");
-            } else {
-                console.error("API request failed:", response.error);
-                // Handle failed API response
-            }
+          const response = await postVillaCategory(category);
+          if (response.success) {
+            this.showToatSuccess();
+            this.$emit('addedCat', response.data.data);
+            this.$emit('close');
+            // this.router.push("/VehicleListCategory");
+          } else {
+            console.error("API request failed:", response.error);
+            // Handle failed API response
+          }
         } catch (error) {
-            console.error("API request failed:", error);
-         }
-    } else {
+          console.error("API request failed:", error);
+        }
+      } else {
         console.error("Name and description are required.");
-     }
-}
-,
-    async closeModal(){
-this.$emit('close')
+      }
+    },
+    async closeModal() {
+      this.$emit('close')
     }
   },
 };

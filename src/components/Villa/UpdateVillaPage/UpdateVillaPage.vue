@@ -74,18 +74,25 @@
               </div>
               <div class="col-md-6 d-flex align-items-end">
                 <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                  <button
-                    type="button"
-                    class="form-control shadow-none rounded-0 text-black"
-                    @click="checkUploadedFiles"
-                  >
-                    Check your uploaded files
-                    <i
-                      style="margin-left: 15px"
-                      class="fa fa-file"
-                      aria-hidden="true"
-                    ></i>
-                  </button>
+                <button
+                  type="button"
+                  class="form-control shadow-none rounded-0 text-black"
+                  @click="checkUploadedFiles"
+                >
+                  Check your uploaded files
+                  <i
+                    v-if="!showUploadedFiles"
+                    style="margin-left: 15px"
+                    class="fa-solid fa-arrow-down"
+                    aria-hidden="true"
+                  ></i>
+                  <i
+                    v-if="showUploadedFiles"
+                    style="margin-left: 15px"
+                    class="fa-solid fa-arrow-right"
+                    aria-hidden="true"
+                  ></i>
+                </button>
                 </div>
               </div>
             </div>
@@ -194,7 +201,7 @@
                 <label class="d-block text-black fw-semibold mb-10">
                   Description
                 </label>
-                <div class="mb-0">
+                <div class="mb-0" v-if="description">
                   <QuillEditor
                                     style="height: 12em"
 
@@ -210,46 +217,17 @@
               </div>
             </div>
 
-            <div class="col-md-12">
+            <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10">
-                  Update Villas
-                </label>
-                <ul
-                  style="
-                    display: flex;
-                    flex-direction: row;
-                    gap: 10px;
-                    justify-content: flex-start;
-                    align-items: center;
-                  "
-                >
-                  <li
-                    class="single_cat"
-                    v-for="cat in previousCategories"
-                    :key="cat.id"
-                  >
-                    <span> {{ cat.attributes.Name }}</span>
-                    <i
-                      class="fas fa-times-circle"
-                      @click="deleteFromCategories(cat)"
-                    ></i>
-                  </li>
-                </ul>
-                <select
-                  v-model="selectedCategory"
-                  class="form-select shadow-none fw-semibold rounded-0"
-                  @change="addToPrevious"
-                >
-                  <option selected>Select a Category</option>
-                  <option
-                    v-for="category in categories"
-                    :key="category.id"
-                    :value="category.id"
-                  >
-                    {{ category.attributes.Name }}
-                  </option>
-                </select>
+                  <MultiSelectVilla
+              :options="categories"
+              :selected="category"
+              :selectedTagsProp="previousCategories"
+              @update:selected="updateCategories"
+              :placeholder="'eg .Mountain view Villas'"
+              :multiSelect="multiple"
+              :label="'Categories'"
+            />
                 <div v-if="categoryError" class="text-danger">
                   {{ categoryError }}
                 </div>
@@ -280,14 +258,13 @@
             <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
                 <label class="d-block text-black fw-semibold mb-10">Pool</label>
-                <div class="input-group">
+
                   <input
                     v-model="pool"
                     type="number"
                     class="form-control shadow-none rounded-0 text-black"
                     placeholder="e.g. 15"
                   />
-                </div>
               </div>
             </div>
 
@@ -305,9 +282,8 @@
               </div>
             </div>
             <div class="col-md-6">
-                  <div class="col-md-6" >
-            <MultiSelect
-              :options="partnerData"
+             <MultiSelect
+              :options="transormPartner"
               :selected="partner"
               @update:selectedOne="updatePartner"
               :placeholder="partner?.data?.attributes?.name"
@@ -315,28 +291,9 @@
               :label="'Partner'"
             />
 
-          </div>
 
             </div>
 
-            <div class="col-md-12 text-danger"></div>
-
-            <!-- <div class="col-md-6">
-                      <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                        <label class="d-block text-black fw-semibold mb-10"
-                          >Owner</label
-                        >
-                        <input
-                          v-model="owner"
-                          type="text"
-                          class="form-control shadow-none rounded-0 text-black"
-                          placeholder="e.g. Leonardo DiCaprio"
-                        />
-                        <div v-if="ownerError" class="text-danger">
-                          {{ ownerError }}
-                        </div>
-                      </div>
-                    </div> -->
 
             <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -406,12 +363,11 @@ import {
   fetchVillaById,
   fetchPartners,
 } from "@/services/apiService";
-import { toast } from "vue3-toastify";
-import "vue3-toastify/dist/index.css";
 import GallayImages from "../../Common/Gallary.vue";
 import MultiSelect from "../../../components/Common/MultiSelect.vue";
-
-
+import MultiSelectVilla from "../../../components/Common/MultiVilla.vue";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 
@@ -419,7 +375,8 @@ export default {
   components: {
     Loading,
     GallayImages,
-    MultiSelect
+    MultiSelect,
+    MultiSelectVilla
     //   Loading
   },
   data() {
@@ -430,6 +387,7 @@ export default {
       rooms: 0,
       baths: 0,
       pool: 0,
+      allCategories:[] ,
       view: "",
       sleeps: 0,
       daily: 0,
@@ -451,6 +409,13 @@ export default {
     };
   },
   computed: {
+    transormPartner(){
+      let trans = []
+        this.partnerData.forEach((item)=> {
+           trans.push({id : item.id  , attributes : { name : item.name}})
+        })
+        return trans
+    },
     getSelectedPartnerName() {
       if (this.partnerData && this.partnerData.length > 0) {
         const selectedPartner = this.partnerData.find(
@@ -464,13 +429,20 @@ export default {
   watch: {
     previousCategories: {
       handler(newValue, oldValue) {
-        console.log(newValue);
+        console.log(newValue,"wiou");
       },
       deep: true,
     },
   },
 
   methods: {
+
+  async updateCategories(event) {
+  console.log(event);
+  this.allCategories.push(...event);
+  console.log(this.allCategories, "all ok");
+},
+
 updatePartner(event) {
   console.log(this.partner = event[0]);
 this.partner = event[0]
@@ -544,11 +516,55 @@ this.partner = event[0]
     checkUploadedFiles() {
       this.showUploadedFiles = !this.showUploadedFiles;
     },
-    handleFileChange(event) {
-      const input = event.target;
-      this.selectedFiles = Array.from(input.files || []);
-      this.previewImages();
-    },
+       async handleFileChange(event) {
+           this.isLoading =true
+  try {
+    const input = event.target;
+    console.log('Files selected:', input.files);
+
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const formData = new FormData();
+    Array.from(input.files).forEach((file) => {
+      formData.append('photos', file);
+    });
+    const response = await uploadFiles(formData,"api::villa.villa", 'photos',  this.villa.id);
+    console.log(response.data)
+    if (response && Array.isArray(response.data.filesData)) {
+      response.data.filesData.forEach(item => {
+        const transformedData = {
+          id: item.id,
+          attributes: {
+            alternativeText: item.alternativeText || null,
+            caption: item.caption || null,
+            createdAt: item.createdAt,
+            ext: item.ext,
+            url: item.url,
+            formats: {
+              large: {
+                url: item.url,
+                width: item.width,
+                height: item.height,
+              },
+            },
+          },
+        };
+
+        if (transformedData && this.previousPhotos && this.previousPhotos.attributes && this.previousPhotos.attributes.photos && this.previousPhotos.attributes.photos.data && this.previousPhotos.attributes.photos.data.length >= 0) {
+          this.previousPhotos.attributes.photos.data.push(transformedData);
+        }
+      });
+           this.isLoading =false
+    } else {
+      toast.error('Failed to upload images');
+    }
+  } catch (error) {
+    console.error('Error uploading images:', error);
+    toast.error('An error occurred while uploading images');
+  }
+},
     previewImages() {
       this.imageUrls = [];
 
@@ -585,16 +601,21 @@ this.partner = event[0]
     //   const result =
     //   console.log(result);
     // },
+
     async fetchAllPartners() {
       this.partnerData = await fetchPartners();
       console.log(this.partnerData, "data");
     },
     async submitForm() {
       this.isLoading = true;
-      const allCategories = this.previousCategories.map((item) => {
-        return item.id;
-      });
-      console.log(allCategories);
+      let vehicleCategories = [] ;
+          this.previousCategories.forEach(category => {
+  vehicleCategories.push(category.id);
+}),
+      // const allCategories = this.previousCategories.map((item) => {
+      //   return item.id;
+      // });
+      // console.log(allCategories);
       console.log(this.partner);
       const villaData = {
         data: {
@@ -609,7 +630,7 @@ this.partner = event[0]
           new_daily: parseFloat(this.newDaily),
           deposit: parseFloat(this.deposit),
           minioeuvre_daily: this.minioeuvre_daily.toString(),
-          category_villas: allCategories,
+          category_villas: vehicleCategories ,
           partner: this.partner,
           description:
             this.description.ops && this.description.ops.length > 0
@@ -617,15 +638,7 @@ this.partner = event[0]
               : this.villa.attributes.description,
         },
       };
-      console.log(villaData);
-      if (this.selectedFiles.length > 0) {
-        await uploadFiles(
-          this.selectedFiles,
-          "api::villa.villa",
-          "photos",
-          this.villa.id
-        );
-      }
+
       const result = await updateVilla(this.villa.id, villaData);
 
       if (result.success) {
@@ -647,6 +660,7 @@ this.$router.push({path: '/villalist'})
   await   this.getVillaById();
    await  this.fetchCategories();
    await  this.fetchAllPartners();
+   console.log(this.partnerData,"ok")
    this.isLoading = false
   },
 };

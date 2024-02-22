@@ -36,7 +36,8 @@ import AddPartner from "@/pages/Partners/AddPartner/AddPartner.vue";
 import PdfViewer from "../pages/PDF/PdfVww.vue"
 import ReservationDetailsPage from '../pages/Users/Customers/ReservationDetailsPage.vue'
 import UpdateVehicle from '../pages/Vehicle/UpdateVehiclePage.vue';
-import updateVilla from '../pages/Villa/UpdateVilla.vue'
+import updateVilla from '../pages/Villa/UpdateVilla.vue';
+import EditPartner from '../components/Partners/EditPartner/EditPartner.vue' ;
 function guardMyroute(to, from, next) {
   const isAuthenticated = localStorage.getItem('user');
 
@@ -137,6 +138,14 @@ const routes = [
     path: "/updatevehicle/:id",
     name: "updatevehicle",
     component: UpdateVehicle,
+    beforeEnter: guardMyroute,
+    props: true,
+    meta: { auth: true }
+  },
+    {
+    path: "/updatepartner/:id",
+    name: "updatepartner",
+    component: EditPartner,
     beforeEnter: guardMyroute,
     props: true,
     meta: { auth: true }

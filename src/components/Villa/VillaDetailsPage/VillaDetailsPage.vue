@@ -235,10 +235,10 @@
             <div class="product-reviews">
 <div class="card-body p-15 p-sm-20 p-sm-25 p-lg-30 letter-spacing">
 
-<div class="user-info d-sm-flex align-items-center justify-content-between" v-if="villa && villa.attributes && villa.attributes.partner && villa.attributes.partner.data && villa.attributes.partner.data.attributes && villa.attributes.partner.data.attributes.user && villa.attributes.partner.data.attributes.user.data && villa.attributes.partner.data.attributes.user.data.attributes">
+<div class="user-info d-sm-flex align-items-center justify-content-between" v-if="villa && villa.attributes && villa.attributes?.partner && villa.attributes?.partner.data && villa.attributes.partner.data.attributes && villa.attributes.partner.data.attributes.user && villa.attributes.partner.data.attributes.user.data && villa.attributes.partner.data.attributes.user.data.attributes">
     <div class="d-flex align-items-center">
         <div class="image">
-            <img :src="getFullImageUrl(villa.attributes.partner.data.attributes.photo?.data.attributes.url)" class="rounded-circle" width="85" height="85" alt="user" />
+            <img :src="getFullImageUrl(villa.attributes?.partner?.data?.attributes?.photo?.data?.attributes?.url)" class="rounded-circle" width="85" height="85" alt="user" />
         </div>
         <div class="ms-15 ms-md-20">
             <h5 class="text-black fw-black mb-1">{{villa.attributes.partner.data.attributes?.name}} {{villa.attributes.partner.data.attributes.surname}}</h5>

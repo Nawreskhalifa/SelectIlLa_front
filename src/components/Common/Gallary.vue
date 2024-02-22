@@ -104,14 +104,15 @@ export default {
 
 <style scoped>
  .container {
-  max-width: 90rem;
-  width: 95%;
+  max-width: 60vw;
+  width: 100%;
    margin: 0 auto;
 }
 
 .image-container {
   overflow-x: auto;
   white-space: nowrap;
+  max-width: 100%;
 }
 
 .card {

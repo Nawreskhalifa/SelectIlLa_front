@@ -323,6 +323,16 @@
                         Add</a
                       >
                     </li> -->
+                      <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        @click.prevent="openEdit(partner)"
+                        ><i
+                          class="flaticon-pen lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Edit</a
+                      >
+                    </li>
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
@@ -494,6 +504,7 @@ export default {
       const response = await deleteVillaCategory(id);
     },
     async openEdit(partner) {
+      this.$router.push({name: 'updatepartner', params: { id : partner.id }})
       this.ModalVisible = !this.ModalVisible;
       this.partnerEdit = partner;
     },

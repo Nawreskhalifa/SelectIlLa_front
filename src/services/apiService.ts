@@ -44,6 +44,25 @@ export async function UpdateCustomer(customer, id) {
     };
   }
 }
+export async function UpdatePartner(partner, id) {
+  try {
+    const response = await axios.put(`${endPoints.allPartners}${id} `,
+      partner, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    });
+
+    return { success: response.status === httpCodes.HTTP_OK, data: response.data, status: response.status };
+  } catch (error: any) {
+    return {
+      status: error?.response?.status,
+      success: error?.response?.data?.success,
+      error: error?.response?.data?.message,
+    };
+  }
+}
 export async function postCustomer(customer) {
   try {
     const response = await api.post(endPoints.allCustomers, customer, {

@@ -122,14 +122,12 @@
                 Description
               </label>
               <div class="mb-0">
-                   <QuillEditor
-                                                       style="height: 12em"
-
+                <QuillEditor
+                  style="height: 12em"
                   theme="snow"
                   placeholder="Write your meta description"
-v-model:content="description"
-
-                   toolbar="full"
+                  v-model:content="description"
+                  toolbar="full"
                 />
               </div>
               <div v-if="descriptionError" class="text-danger">
@@ -138,76 +136,33 @@ v-model:content="description"
             </div>
           </div>
 
-          <div class="col-md-8">
+          <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Category Villa
-              </label>
-              <!-- <ul
-              style="
-                display: flex;
-                flex-direction: row;
-                gap: 10px;
-                justify-content: flex-start;
-                align-items: center;
-              "
-            >
-              <li
-                class="single_cat"
-                v-for="cat in AllSelected"
-                :key="cat"
-              >
-                <span> {{ cat}}</span>
-                <i
-                  class="fas fa-times-circle"
-                  @click="deleteFromCategories(cat)"
-                ></i>
-              </li>
-            </ul> -->
-              <select
-                v-model="selectedCategory"
-                class="form-select shadow-none fw-semibold rounded-0"
-                @change="addToAllCat"
-              >
-                <option disabled>Select a Category</option>
-                <option
-  v-for="category in categories"
-  :key="category.id"
-  :value="category"
->
-  {{ category.attributes.Name }}
-</option>
+              <MultiSelectVilla
+                :options="transformedCategories"
+                :selected="category"
+                @update:selected="updateCategories"
+                :placeholder="'eg .Mountain view Villas'"
+                :multiSelect="'multiple'"
+                :label="'Categories'"
+              />
 
-              </select>
-              <div
-                class="members-list"
-                v-if="AllSelected && AllSelected.length > 0"
-              >
-                <div
-                  v-for="(perv, i) in AllSelected"
-                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
-                  :key="i"
-                >
-                  {{ perv?.attributes.Name }}
-                  <button
-                    type="button"
-                    class="bg-transparent p-0 border-0 lh-1 transition"
-                    @click="deleteFromCategories(perv)"
-                  >
-                    <i class="flaticon-close"></i>
-                  </button>
-                </div>
-              </div>
               <div v-if="categoryError" class="text-danger">
                 {{ categoryError }}
               </div>
-               <div    style="display: flex; flex-direction: row;"><span>+</span>
- <p class="fs-md-15 fs-lg-16"><a   style="cursor: pointer;" class="link-secondary" @click="OpenVilla">add new category  </a></p>
+              <div style="display: flex; flex-direction: row">
+                <span>+</span>
+                <p class="fs-md-15 fs-lg-16">
+                  <a
+                    style="cursor: pointer"
+                    class="link-secondary"
+                    @click="OpenVilla"
+                    >add new category
+                  </a>
+                </p>
               </div>
             </div>
           </div>
-
-
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -222,7 +177,7 @@ v-model:content="description"
               />
             </div>
           </div>
-<div class="col-md-6">
+          <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">Daily</label>
               <div class="input-group">
@@ -268,7 +223,7 @@ v-model:content="description"
                   ref="fileInput"
                   @change="handleFileChange"
                   multiple
-                 accept="image/*"
+                  accept="image/*"
                 />
               </div>
               <div v-if="imageUrls.length > 0" class="image-preview">
@@ -284,7 +239,7 @@ v-model:content="description"
                     type="button"
                   >
                     <i class="fas fa-times-circle"></i>
-                   </button>
+                  </button>
                   <input
                     type="radio"
                     :id="'radio_' + index"
@@ -298,21 +253,6 @@ v-model:content="description"
               </div>
             </div>
           </div>
-
-          <div class="col-md-12 text-danger"></div>
-
-          <!-- <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">Owner</label>
-              <input
-                v-model="owner"
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. Leonardo DiCaprio"
-              />
-              <div v-if="ownerError" class="text-danger">{{ ownerError }}</div>
-            </div>
-          </div> -->
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -347,15 +287,15 @@ v-model:content="description"
     </div>
   </div>
 
-                 <loading
-        v-model:active="isLoading"
-        :can-cancel="true"
-         :is-full-page="true"
-      />
-              <AddVillaCategoryModal @addedCat="addedCategory" :show="showModal" @close="closeModal" />
- </template>
+  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
+  <AddVillaCategoryModal
+    @addedCat="addedCategory"
+    :show="showModal"
+    @close="closeModal"
+  />
+</template>
 <script lang="ts">
-import { Ref, defineComponent, ref } from "vue";
+import { Ref, defineComponent, ref, computed } from "vue";
 import BlotFormatter from "quill-blot-formatter";
 import ImageUploader from "quill-image-uploader";
 import {
@@ -368,21 +308,23 @@ import "vue3-toastify/dist/index.css";
 import { useRouter } from "vue-router";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
- import AddVillaCategoryModal from "../AddVillaCategoryModal/AddVillaCategoryModal.vue"
+import MultiSelectVilla from "@/components/Common/MultiSelect.vue";
+import AddVillaCategoryModal from "../AddVillaCategoryModal/AddVillaCategoryModal.vue";
 export default defineComponent({
   name: "AddVilla",
-   components: {
+  components: {
     AddVillaCategoryModal,
-    Loading
-   },
+    Loading,
+    MultiSelectVilla,
+  },
   setup() {
     const router = useRouter();
-   const AllSelected = ref<Array<any>>([]);
-const selectedCategory: Ref<any | null> = ref(null);
-     const selectedFiles = ref([]);
-         const  isLoading=  ref(false);
+    const AllSelected = ref<Array<any>>([]);
+    const selectedCategory: Ref<any | null> = ref(null);
+    const selectedFiles = ref([]);
+    const isLoading = ref(false);
     const categories = ref();
-    const  started = ref(true )
+    const started = ref(true);
     const allPartners = ref();
     const name = ref("");
     const city = ref("");
@@ -391,14 +333,37 @@ const selectedCategory: Ref<any | null> = ref(null);
     const pool = ref("");
     const view = ref("");
     const sleeps = ref("");
+    const selectedCat = ref([]);
     const daily = ref("");
     const newDaily = ref("");
     const deposit = ref("");
     const description = ref();
     const minioeuvre_daily = ref("");
-    const coverImageIndex= ref("") ;
+    const coverImageIndex = ref("");
+    const category = ref("");
+    const updateCategories = (selectedCategories) => {
+      AllCat.value = selectedCategories;
+      console.log(AllCat.value);
+    };
 
-    const showModal = ref(false)
+    const transformedCategories = computed(() => {
+      if (!categories.value) return [];
+
+      return categories.value.map((category) => {
+        if (category.attributes && category.attributes.Name) {
+          return {
+            ...category,
+            attributes: {
+              ...category.attributes,
+              name: category.attributes.Name,
+            },
+          };
+        } else {
+          return category;
+        }
+      });
+    });
+    const showModal = ref(false);
     // const owner = ref("");
     const selectedPartner = ref("");
     const modules = {
@@ -412,23 +377,23 @@ const selectedCategory: Ref<any | null> = ref(null);
         },
       },
     };
-    const closeModal = async ()=>{
-       showModal.value =false
-
-    }
+    const closeModal = async () => {
+      showModal.value = false;
+    };
     const OpenVilla = async () => {
-      console.log("okay")
-       showModal.value =true
-       console.log(showModal.value)
-    }
-    const addedCategory = async(event) =>{
-categories.value.push(event)
-    }
+      console.log("okay");
+      showModal.value = true;
+      console.log(showModal.value);
+    };
+    const addedCategory = async (event) => {
+      categories.value.push(event);
+    };
+    const AllCat = ref([]);
     const nameError = ref("");
     const cityError = ref("");
     const descriptionError = ref("");
     const categoryError = ref("");
-     const seatsError = ref("");
+    const seatsError = ref("");
     const dailyError = ref("");
     const roomsError = ref("");
     const newDailyError = ref("");
@@ -437,10 +402,10 @@ categories.value.push(event)
         autoClose: 1000,
       });
     };
-    const  addToAllCat = () => {
-    AllSelected.value.push(selectedCategory.value)
-    console.log(AllSelected.value,"are selected")
-}
+    const addToAllCat = () => {
+      AllSelected.value.push(selectedCategory.value);
+      console.log(AllSelected.value, "are selected");
+    };
     const fetchPartnersList = async () => {
       const data = await fetchPartners();
       allPartners.value = data;
@@ -470,6 +435,7 @@ categories.value.push(event)
         reader.readAsDataURL(file);
       }
     };
+
     const uploadImage = async () => {
       const formData = new FormData();
       selectedFilesRef.value.forEach((file, index) => {
@@ -493,19 +459,18 @@ categories.value.push(event)
       }
     };
     const deleteFromCategories = (cat) => {
-  AllSelected.value = AllSelected.value.filter((item) => item !== cat);
-};
-   const removeImage = (index) => {
+      AllSelected.value = AllSelected.value.filter((item) => item !== cat);
+    };
+    const removeImage = (index) => {
       selectedFilesRef.value.splice(index, 1);
       imageUrls.value.splice(index, 1);
     };
     const submitForm = async () => {
-        isLoading.value = true;
       nameError.value = "";
       cityError.value = "";
       descriptionError.value = "";
       categoryError.value = "";
-       seatsError.value = "";
+      seatsError.value = "";
       dailyError.value = "";
       roomsError.value = "";
       newDailyError.value = "";
@@ -517,15 +482,9 @@ categories.value.push(event)
         cityError.value = "city is required.";
       }
 
-
-
-      if (!selectedCategory.value) {
+      if (!AllSelected.value) {
         categoryError.value = "Please select a category.";
       }
-
-      // if (!owner.value.trim()) {
-      //   ownerError.value = "Owner is required.";
-      // }
 
       if (!daily.value.trim()) {
         dailyError.value = "Daily amount is required.";
@@ -536,7 +495,7 @@ categories.value.push(event)
         roomsError.value ||
         descriptionError.value ||
         categoryError.value ||
-         seatsError.value ||
+        seatsError.value ||
         dailyError.value ||
         cityError.value ||
         newDailyError.value
@@ -544,10 +503,12 @@ categories.value.push(event)
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
-      const selectedC= AllSelected.value.filter(item =>{
-    return parseInt(item.id)
-  })
-  console.log(selectedC,"categories check ")
+      isLoading.value = true;
+
+      const selectedC = AllSelected.value.filter((item) => {
+        return parseInt(item.id);
+      });
+      console.log(selectedC, "categories check ");
       const vehicleData = {
         data: {
           name: name.value,
@@ -560,7 +521,7 @@ categories.value.push(event)
           daily: parseFloat(daily.value),
           new_daily: parseFloat(newDaily.value),
           deposit: parseFloat(deposit.value),
-           description: description.value.ops[0].insert,
+          description: description.value.ops[0].insert,
           minioeuvre_daily: minioeuvre_daily.value.toString(),
           partner: [parseInt(selectedPartner.value)],
           category_villas: selectedC,
@@ -571,18 +532,16 @@ categories.value.push(event)
 
       if (result.success) {
         showToatSuccess();
-                isLoading.value = false;
+        isLoading.value = false;
 
         router.push("/villalist");
-      }else{
-    console.error("Error:", result.error);
-
+      } else {
+        console.error("Error:", result.error);
       }
     };
 
     fetchCategories();
     fetchPartnersList();
-    // fetchPartnersList();
 
     return {
       modules,
@@ -593,22 +552,24 @@ categories.value.push(event)
       description,
       selectedCategory,
       selectedFiles,
-       addedCategory,
+      addedCategory,
       daily,
       deposit,
+      category,
+      updateCategories,
       showToatSuccess,
       newDaily,
       descriptionError,
       categoryError,
-       seatsError,
+      seatsError,
       dailyError,
       OpenVilla,
-  showModal,
+      showModal,
       newDailyError,
       submitForm,
       selectedFilesRef,
       removeImage,
-      isLoading ,
+      isLoading,
       imageUrls,
       handleFileChange,
       uploadImage,
@@ -617,6 +578,7 @@ categories.value.push(event)
       name,
       pool,
       view,
+      transformedCategories,
       baths,
       sleeps,
       AllSelected,
@@ -626,7 +588,7 @@ categories.value.push(event)
       coverImageIndex,
       rooms,
       nameError,
-      closeModal
+      closeModal,
     };
   },
 });

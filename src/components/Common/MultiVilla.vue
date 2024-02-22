@@ -6,21 +6,21 @@
       <div v-if="selectedTags.length === 0" class="placeholder">{{ placeholder }}</div>
       <div v-else>
         <div v-if="multiSelect">
-          <div v-for="(tag, index) in selectedTags" :key="index" class="tag" :data-selected="tag.id">
-            {{ tag?.attributes?.name }}
-            <span class="close-icon" @click.stop="removeTag(tag.id)">x</span>
+          <div v-for="(tag, index) in selectedTags" :key="index" class="tag">
+            {{ tag.attributes ? tag.attributes.Name : tag.Name }}
+            <span class="close-icon" @click.stop="removeTag(index)">x</span>
           </div>
         </div>
-        <div v-else class="tag" :data-selected="selectedTags[0].id">
-          {{ selectedTags[0]?.attributes?.name }}
-          <span class="close-icon" @click="removeTag(selectedTags[0].id)">x</span>
+        <div v-else class="tag">
+          <span>{{ selectedTags[0].attributes ? selectedTags[0].attributes.Name : selectedTags[0].Name }}</span>
+          <span class="close-icon" @click="removeTag(0)" @click.stop="toggleDropdown">x</span>
         </div>
       </div>
     </div>
 
     <ul v-show="dropdownVisible" class="dropdown form-control" style="z-index:9999">
-      <li v-for="(option, index) in options" :key="index" @click="toggleSelection(option)" :class="{ 'selected': isSelected(option) }">
-        {{ option?.attributes?.name }}
+      <li v-for="(option, index) in filteredOptions" :key="index" @click="toggleSelection(option)">
+        <span>{{ option.attributes ? option.attributes.Name : option.Name }}</span>
         <span v-if="multiSelect && isSelected(option)" class="checkmark">✔</span>
       </li>
     </ul>
@@ -38,12 +38,12 @@ export default {
       type: String,
       default: 'Select tags...',
     },
-    value: {
+    selectedTagsProp: {
       type: Array,
       default: () => [],
     },
     label: {
-      type: String,
+      type: String
     },
     multiSelect: {
       type: Boolean,
@@ -52,49 +52,59 @@ export default {
   },
   data() {
     return {
-      selectedTags: this.value,
+      selectedTags: this.selectedTagsProp,
       dropdownVisible: false,
     };
   },
+ computed: {
+  filteredOptions() {
+    return this.options.filter(option => {
+      return !this.selectedTags.some(tag => tag.id === option.id);
+    });
+  },
+},
+
   watch: {
-    value(newVal) {
+    selectedTagsProp(newVal) {
       this.selectedTags = newVal;
     },
     selectedTags(newVal) {
-      this.$emit('input', newVal);
+      this.$emit('update:selected', newVal);
     },
   },
   methods: {
     toggleDropdown() {
       this.dropdownVisible = !this.dropdownVisible;
     },
-    toggleSelection(tag) {
+    toggleSelection(option) {
       if (this.multiSelect) {
-        const index = this.selectedTags.findIndex(t => t.id === tag.id);
-        if (index !== -1) {
-          this.removeTag(tag.id);
+        if (!this.isSelected(option)) {
+          this.selectedTags.push(option);
         } else {
-          this.selectedTags.push(tag);
-          this.$emit('update:selected', this.selectedTags);
+          this.removeTag(this.selectedTags.findIndex(tag => tag.id === option.id));
         }
       } else {
-        this.selectedTags = [tag];
-        this.$emit('update:selectedOne', this.selectedTags);
-        this.toggleDropdown();
+        this.selectedTags = [option];
+        this.dropdownVisible = false;
       }
     },
-    removeTag(tagId) {
-      this.selectedTags = this.selectedTags.filter(tag => tag.id !== tagId);
-      this.$emit('update:selected', this.selectedTags);
+    removeTag(index) {
+      this.selectedTags.splice(index, 1);
     },
     isSelected(option) {
-      return this.selectedTags.some(tag => tag.id === option.id);
+      return this.selectedTags.some(tag => tag === option);
     },
   },
 };
 </script>
 
 <style scoped>
+/* Add this CSS */
+.selected {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
 .multiselect-container {
   position: relative;
   width: 100%;
@@ -102,14 +112,14 @@ export default {
 }
 
 .selected-tags {
-  padding: 12px 15px;
+  padding:12px 15px ;
   border: 1px solid #ccc;
   border-radius: 0px;
   cursor: pointer;
 }
 
 .placeholder {
-  color: black !important;
+  color: black !important ;
   background-color: white;
 }
 
@@ -121,7 +131,7 @@ export default {
   padding: 4px 8px;
   border-radius: 4px;
   margin-right: 4px;
-  margin-bottom:4px
+  margin-bottom: 4px;
 }
 
 .close-icon {
@@ -155,11 +165,5 @@ export default {
 
 .checkmark {
   float: right;
-}
-
-.selected {
-  background-color: #f0f0f0;
-  font-weight: bold;
-  display: none;
 }
 </style>
