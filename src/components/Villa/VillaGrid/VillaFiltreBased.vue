@@ -5,14 +5,31 @@
        <router-link to="/addvilla" class="btn btn-primary d-block w-100 mt-15 mb-25"> + ADD VILLA</router-link>
 
 
-      <h6 class="text-black fw-bold fs-md-15">Search</h6>
-      <div class="search-box -relative mb-15">
-        <input
+
+       <div class="search-box -relative mb-15 "  >
+        <!-- <input
           type="text"
           class="form-control shadow-none text-black rounded-0 border-0"
-          placeholder="Search Villa"
+          placeholder="Search Vehicles"
           v-model="searchInput"
-        />
+        /> -->
+        <div class="input-group" style="display: flex; align-items: center;">
+            <input
+              type="text"
+              class="form-control shadow-none fw-medium ps-1 pt-10 pe-0 letter-spacing "
+              placeholder="Search"
+
+              v-model="searchInput"
+            />
+            <button
+              class="default-btn   transition border-0 text-white ps-12 pe-12 rounded-1"
+              disabled
+              style="height: 100%   !important; align-self: flex-end; z-index: 100; position:absolute; right: 0;"
+              type="button"
+            >
+              <i class="flaticon-search-interface-symbol "></i>
+            </button>
+          </div>
       </div>
     </div>
 
@@ -62,17 +79,60 @@
         </div>
       </div>
     </div>
+
+      <div class="sidebar-item">
+      <h6 class="text-black fw-bold fs-md-15">NEW DAILY </h6>
+      <div class="pricing-filter" id="pricing-filter">
+        <div class="range-slider">
+          <input
+            type="range"
+            class="min-price"
+            min="1000"
+            max="100000"
+            v-model="minMsrp"
+            @change="updateRangeMsrp"
+          />
+          <input
+            type="range"
+            class="max-price"
+            max="40000"
+            v-model="maxMsrp"
+            @change="updateRangeMsrp"
+          />
+        </div>
+        <div
+          class="price-content d-flex align-items-center justify-content-between"
+        >
+          <span id="min-value" class="d-block text-black fw-medium fs-13">
+            ${{ minMsrp }}
+          </span>
+          <span id="max-value" class="d-block text-black fw-medium fs-13">
+            ${{ maxMsrp }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-item" style="display: flex ;  justify-content: start; align-items: center; width: 100% !important;" >
+       <div style="width: 100%;">
+         <h6 class="text-black fw-bold fs-md-15">Partner</h6>
+        <select class="project-select form-select shadow-none fw-semibold rounded-1 " style="width: 100%;" >
+          <option v-for="partner in partners" :key="partner.id">{{partner.name}}</option>
+        </select>
+       </div>
+    </div>
+
   </div>
 </template>
 
 <script>
-import { fetchVillaCategories, } from "@/services/apiService";
+import { fetchVillaCategories, fetchPartners} from "@/services/apiService";
 
 export default {
   data() {
     return {
       categories: [],
        searchInput: "",
+       partners:[],
       selectAll: false,
    all: true,
          minPrice: 10,
@@ -108,6 +168,11 @@ export default {
     }
   },
     methods: {
+       async getPartner (){
+     const data= await  fetchPartners()
+     console.log(data,"partners")
+     this.partners = data
+     },
         debouncedPriceRangeChanged() {
       clearTimeout(this.debounceTimeout);
       this.debounceTimeout = setTimeout(() => {
@@ -147,8 +212,9 @@ export default {
 this.$emit("filtreBycategory", { category: categorie });
     }
   },
-  mounted() {
-    this.fetchCategories();
+ async  mounted() {
+  await this.getPartner()
+  await   this.fetchCategories();
   },
  };
 </script>

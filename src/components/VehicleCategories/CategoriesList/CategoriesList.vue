@@ -27,7 +27,7 @@
   </div>
 
   <div class="row">
-    <div class="col-lg-4 col-xxxl-3">
+    <div class="col-lg-6 col-xxxl-3">
       <div
         class="card mb-25 border-0 rounded-0 bg-white letter-spacing chat-sidebar"
       >
@@ -133,7 +133,7 @@
       </div>
     </div>
 
-    <div class="col-lg-4 col-xxxl-4">
+    <div class="col-lg-6 col-xxxl-4">
       <div class="card mb-25 border-0 rounded-0 bg-white">
         <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
           <div
@@ -225,7 +225,7 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-4 col-xxxl-4">
+    <div class="col-lg-6 col-xxxl-4">
       <div class="card mb-25 border-0 rounded-0 bg-white">
         <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
           <div
@@ -402,7 +402,7 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-4 col-xxxl-3">
+    <div class="col-lg-6 col-xxxl-3">
       <div
         class="card mb-25 border-0 rounded-0 bg-white letter-spacing chat-sidebar"
       >

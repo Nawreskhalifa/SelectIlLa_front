@@ -8,14 +8,31 @@
         >+ ADD VEHICLE</router-link
       >
 
-      <h6 class="text-black fw-bold fs-md-15">Search</h6>
-      <div class="search-box -relative mb-15">
-        <input
+      <!-- <h6 class="text-black fw-bold fs-md-15">Search</h6> -->
+      <div class="search-box -relative mb-15 "  >
+        <!-- <input
           type="text"
           class="form-control shadow-none text-black rounded-0 border-0"
           placeholder="Search Vehicles"
           v-model="searchInput"
-        />
+        /> -->
+        <div class="input-group" style="display: flex; align-items: center;">
+            <input
+              type="text"
+              class="form-control shadow-none fw-medium ps-1 pt-10 pe-0 letter-spacing "
+              placeholder="Search"
+
+              v-model="searchInput"
+            />
+            <button
+              class="default-btn   transition border-0 text-white ps-12 pe-12 rounded-1"
+              disabled
+              style="height: 100%   !important; align-self: flex-end; z-index: 100; position:absolute; right: 0;"
+              type="button"
+            >
+              <i class="flaticon-search-interface-symbol "></i>
+            </button>
+          </div>
       </div>
     </div>
 
@@ -114,11 +131,93 @@
         </div>
       </div>
     </div>
+    <div class="sidebar-item">
+      <h6 class="text-black fw-bold fs-md-15">MSRP</h6>
+      <div class="pricing-filter" id="pricing-filter">
+        <div class="range-slider">
+          <input
+            type="range"
+            class="min-price"
+            min="1000"
+            max="100000"
+            v-model="minMsrp"
+            @change="updateRangeMsrp"
+          />
+          <input
+            type="range"
+            class="max-price"
+            max="40000"
+            v-model="maxMsrp"
+            @change="updateRangeMsrp"
+          />
+        </div>
+        <div
+          class="price-content d-flex align-items-center justify-content-between"
+        >
+          <span id="min-value" class="d-block text-black fw-medium fs-13">
+            ${{ minMsrp }}
+          </span>
+          <span id="max-value" class="d-block text-black fw-medium fs-13">
+            ${{ maxMsrp }}
+          </span>
+        </div>
+      </div>
+    </div>
+     <div class="sidebar-item">
+      <h6 class="text-black fw-bold fs-md-15">NEW DAILY </h6>
+      <div class="pricing-filter" id="pricing-filter">
+        <div class="range-slider">
+          <input
+            type="range"
+            class="min-price"
+            min="1000"
+            max="100000"
+            v-model="minMsrp"
+            @change="updateRangeMsrp"
+          />
+          <input
+            type="range"
+            class="max-price"
+            max="40000"
+            v-model="maxMsrp"
+            @change="updateRangeMsrp"
+          />
+        </div>
+        <div
+          class="price-content d-flex align-items-center justify-content-between"
+        >
+          <span id="min-value" class="d-block text-black fw-medium fs-13">
+            ${{ minMsrp }}
+          </span>
+          <span id="max-value" class="d-block text-black fw-medium fs-13">
+            ${{ maxMsrp }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-item" style="display: flex ;  justify-content: start; align-items: center; width: 100% !important;" >
+       <div style="width: 100%;">
+         <h6 class="text-black fw-bold fs-md-15">Partner</h6>
+        <select class="project-select form-select shadow-none fw-semibold rounded-1 " style="width: 100%;" >
+          <option v-for="partner in partners" :key="partner.id" >{{partner.name}}</option>
+        </select>
+       </div>
+    </div>
+        <div class="sidebar-item" style="display: flex ;  justify-content: start; align-items: center; width: 100% !important;" >
+       <div style="width: 100%;">
+         <h6 class="text-black fw-bold fs-md-15">Styles </h6>
+        <select class="project-select form-select shadow-none fw-semibold rounded-1 " style="width: 100%;" >
+          <option v-for="style in styles" :key="style.id">{{style?.attributes?.name}}</option>
+        </select>
+       </div>
+    </div>
+
   </div>
 </template>
 
 <script>
-import { fetchMakesFiltre } from "@/services/apiService";
+import { fetchMakesFiltre ,fetchStyles } from "@/services/apiService";
+ import { fetchPartners, fetchUserByPartner } from "@/services/apiService";
 
 export default {
   data() {
@@ -128,14 +227,18 @@ export default {
       searchInput: "",
       selectAll: false,
       makes: [],
+      styles :[],
       all : true ,
       brands: [],
+      partners:[],
       makeLimit: 4,
       brandLimit: 4,
       moreMakesAvailable: true,
       moreBrandsAvailable: true,
       minPrice: 10,
       maxPrice: 1000,
+      minMsrp:10000,
+      maxMsrp: 100000,
             debounceTimeout: null,
 
     };
@@ -157,7 +260,17 @@ export default {
     },
   },
   methods: {
-
+   async getStyles(){
+  const data =await fetchStyles()
+   this.styles = data.data
+   console.log(this.styles,"styles")
+   } ,
+    async getPartner (){
+     const data= await  fetchPartners()
+     console.log(data,"partners")
+     this.partners = data
+     },
+    //  ...mapActions["fetchPartners"]
     debouncedPriceRangeChanged() {
       clearTimeout(this.debounceTimeout);
       this.debounceTimeout = setTimeout(() => {
@@ -238,10 +351,12 @@ toggleCategorySelection(make) {
       }
     },
    },
-  mounted() {
+ async  mounted() {
     console.log("ok");
-    this.seeMoreMakes();
-    this.getMakesAndBrands();
+    await this.getPartner()
+    await this.getStyles()
+   await  this.seeMoreMakes();
+   await  this.getMakesAndBrands();
   },
   computed: {
 allVehiclesByBrand() {

@@ -544,7 +544,6 @@ export default {
 
     async vehicleData() {
       await this.fetchAllPartners();
-
       this.checkList.event = false;
       this.checkList.villa = false;
       this.checkList.vehicle = true;
