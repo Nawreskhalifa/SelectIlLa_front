@@ -36,36 +36,32 @@
         class="rounded-1 d-flex me-1 mt-1 mt-lg-0"
         style="display: flex; align-items: center; gap: 1px"
       >
-        <label class="text-muted fs-md-1" for="start-date">From</label>
-        <input
-          id="start-date"
-          type="date"
-          class="form-control shadow-none rounded-0 text-black"
-          placeholder="Start Date"
+        <flat-pickr
           v-model="startDate"
-          :max="getCurrentDate()"
+          :config="{ maxDate:getCurrentDate() }"
+          class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          placeholder="Start"
+          name="startDate"
           @change="handleFilterChange"
         />
 
-        <label class="text-muted fs-md-6" for="end-date">To </label>
-        <input
-          id="end-date"
-          type="date"
-          class="form-control shadow-none rounded-0 text-black"
-          placeholder="End Date"
+        <flat-pickr
           v-model="endDate"
-          :max="getCurrentDate()"
+          :config="{ minDate: startDate , maxDate:getCurrentDate() }"
+          class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          placeholder="End"
+          name="endDate"
+          :disabled="!startDate"
           @change="handleFilterChange"
         />
       </div>
-      <div class="d-sm-flex align-items-center">
+      <div class="d-sm-flex align-items-center mt-lg-10">
         <button
           v-if="isFilterActive"
-          class="default-outline-btn position-relative transition fw-medium text-black pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 bg-transparent fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1"
+          class="default-outline-btn position-relative transition border-0 fw-medium text-black pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 bg-transparent fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1"
           type="button"
           @click="resetFilters"
         >
-          Reset
           <i class="flaticon-refresh position-relative ms-5 top-2 fs-15"></i>
         </button>
       </div>
@@ -79,6 +75,13 @@
         </button>
       </div>
       <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+        <a
+        href="javascript:void(0);"
+        @click="navigateToAddCustomerPage()"
+        class="default-btn position-relative transition border-0 fw-medium text-white pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1 bg-primary d-inline-block d-inline-block text-decoration-none"
+      >
+        <i class="ph ph-plus"></i>
+      </a>
         <button
           class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
           type="button"
@@ -330,10 +333,13 @@ import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import { storageUrl } from "@/utils/constants";
 import swal from "sweetalert";
+import flatPickr from "vue-flatpickr-component";
+
 export default defineComponent({
   name: "CustomersList",
   components: {
     Loading,
+    flatPickr,
   },
   data() {
     return {
@@ -353,6 +359,11 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(["fetchAllCustomers", "deleteCustomer"]),
+    navigateToAddCustomerPage() {
+      this.$router.push({
+        name: "AddCustomerPage",
+      });
+    },
     truncateLocation(location) {
       const maxLength = 40;
       if (location.length <= maxLength) {

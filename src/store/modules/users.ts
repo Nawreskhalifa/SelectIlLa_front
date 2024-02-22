@@ -3,7 +3,6 @@ import { makeApiRequest } from '@/services/apiService'
 import { endPoints } from '@/utils/endPoints'
 import { methodsHttpNames } from '@/utils/methods'
 import { decodeCustomer } from '@/models/Customer/Customer'
-import { decodePartner } from '@/models/Partner/Partner'
 
 const state = {
     userError: null,
@@ -267,6 +266,7 @@ const actions = {
                 undefined,
                 undefined
             );
+            console.log('ghj',response.data.data)
             if (response.success) {
                 commit('SET_CUSTOMER', response.data.data);
                 commit('SET_USERS_LOADING', false);

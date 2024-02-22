@@ -6,6 +6,7 @@ import events from './modules/events'
 import partner from './modules/Partner'
 import BreadC from './modules/BreadC'
 import Vehicle from './modules/Vehicle'
+import reservations from './modules/reservations'
 export default createStore(Vuex.Store, {
     modules: {
         users,
@@ -13,6 +14,7 @@ export default createStore(Vuex.Store, {
         partner,
         BreadC,
         Vehicle,
-        events
+        events,
+        reservations
     }
 })
