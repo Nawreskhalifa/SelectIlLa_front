@@ -81,10 +81,15 @@
           @change="handleFilterChange"
         />
 
-        <flat-pickr v-model="endDate" :config="config" class="project-select
-        form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-        placeholder="End" name="endDate" :disabled="!startDate" minDate:
-        startDate @change="handleFilterChange" />
+        <flat-pickr
+          v-model="endDate"
+          :config="{ minDate: startDate }"
+          class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          placeholder="End"
+          name="endDate"
+          :disabled="!startDate"
+          @change="handleFilterChange"
+        />
       </div>
 
       <div class="d-sm-flex align-items-center mt-lg-10">
