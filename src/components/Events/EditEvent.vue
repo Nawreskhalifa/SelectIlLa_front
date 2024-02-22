@@ -126,11 +126,12 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Start Date
               </label>
-              <input
-                type="date"
-                class="form-control shadow-none text-black fs-md-15 lg-5"
-                required
+              <flat-pickr
                 v-model="startDate"
+                class="form-control shadow-none text-black fs-md-15 lg-5"
+                placeholder="Start"
+                name="startDate"
+                :config="{ minDate: currentDate }"
               />
               <span v-if="formSubmitted && !startDate" class="text-danger"
                 >Start Date is required!</span
@@ -147,12 +148,18 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Start Time
               </label>
-              <input
-                type="Time"
-                class="form-control shadow-none text-black fs-md-15 lg-5"
-                required
+              <flat-pickr
                 v-model="startTime"
-                :min="currentDate"
+                class="form-control shadow-none text-black fs-md-15 lg-5"
+                placeholder="Start"
+                name="start Time"
+                :config="{
+                  enableTime: true,
+                  noCalendar: true,
+                  dateFormat: 'H:i',
+                  time_24hr: true,
+                  minTime: currentTime,
+                }"
               />
               <span v-if="formSubmitted && !startTime" class="text-danger"
                 >Start Time is required!</span
@@ -164,12 +171,14 @@
               <label class="d-block text-black fw-semibold mb-10">
                 End Date
               </label>
-              <input
-                type="date"
-                class="form-control shadow-none text-black fs-md-15 lg-5"
-                required
+              <flat-pickr
                 v-model="endDate"
-                :min="startDate"
+                class="form-control shadow-none text-black fs-md-15 lg-5"
+                placeholder="Start"
+                name="endDate"
+                :disabled="!startDate"
+                required
+                :config="{ minDate: startDate }"
               />
               <span v-if="formSubmitted && !endDate" class="text-danger"
                 >End Date is required!</span
@@ -186,11 +195,19 @@
               <label class="d-block text-black fw-semibold mb-10">
                 End Time
               </label>
-              <input
-                type="Time"
-                class="form-control shadow-none text-black fs-md-15 lg-5"
-                required
+              <flat-pickr
                 v-model="endTime"
+                class="form-control shadow-none text-black fs-md-15 lg-5"
+                placeholder="Start"
+                name="end Time"
+                :disabled="!startTime"
+                :config="{
+                  enableTime: true,
+                  noCalendar: true,
+                  dateFormat: 'H:i',
+                  time_24hr: true,
+                  minTime: startTime,
+                }"
               />
               <span v-if="formSubmitted && !endTime" class="text-danger"
                 >End Time is required!</span
@@ -315,8 +332,10 @@
                     type="button"
                     @click="removeImage(index, photo)"
                     class="delete_icon"
+                    title="delete this image"
+                    style="cursor: pointer"
                   >
-                    <i class="fas fa-times-circle"></i>
+                    <i class="fas fa-times"></i>
                     <!-- Icône de suppression -->
                   </button>
                   <input
@@ -381,6 +400,7 @@ import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import VueMultiselect from "vue-multiselect";
 import BreadCrumb from "../Common/BreadCrumb.vue";
+import flatPickr from "vue-flatpickr-component";
 
 export default defineComponent({
   name: "EditEvent",
@@ -388,6 +408,7 @@ export default defineComponent({
     Loading,
     VueMultiselect,
     BreadCrumb,
+    flatPickr,
   },
   data() {
     return {
@@ -460,7 +481,6 @@ export default defineComponent({
           return imageUrl;
         })
         .catch((error) => {
-          console.error("Error fetching blob image:", error);
           return null;
         });
     },
@@ -529,10 +549,6 @@ export default defineComponent({
         };
         this.newPhotos.push(newPhoto);
         this.allPhotos.push(newPhoto);
-        console.log(this.allPhotos);
-
-        // this.photos.push(...Array.from(event.target.files));
-        // console.log(this.photos)
       }
     },
     isBlobUrl(url) {
@@ -546,12 +562,6 @@ export default defineComponent({
         return item.id !== cat.id;
       });
     },
-
-    // removeImage(index) {
-    //   // Supprimer l'image à l'index spécifié
-    //   this.photos.splice(index, 1);
-    //   this.selectedPhotos.splice(index, 1);
-    // },
     async createEvent() {
       this.isLoading = true;
 
@@ -596,7 +606,6 @@ export default defineComponent({
             this.newPhotos.forEach((item) => {
               this.photos.push(item.file);
             });
-            console.log(this.photos);
             await uploadFiles(
               this.photos,
               "api::event.event",
@@ -616,8 +625,6 @@ export default defineComponent({
         }
       } catch (error) {
         this.isLoading = false;
-
-        console.log(error);
       }
     },
   },
@@ -643,7 +650,6 @@ export default defineComponent({
           })
         );
       }
-      console.log("selcted: ", this.selectedCategories);
       this.price = this.getEvent.price;
       this.location = this.getEvent.location;
       this.startDate = this.getEvent.startDate;
@@ -676,7 +682,6 @@ export default defineComponent({
     const day = String(today.getDate()).padStart(2, "0");
     this.currentDate = `${year}-${month}-${day}`;
     // Initialise startDate avec la date actuelle
-    this.startDate = this.currentDate;
   },
 });
 </script>
@@ -1146,13 +1151,13 @@ fieldset {
 }
 
 .delete_icon {
+  font-size: 8px;
   position: absolute;
-  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  top: 3px; /* Ajustez la position verticale selon vos besoins */
   left: 5px; /* Ajustez la position horizontale selon vos besoins */
-  background-color: transparent; /* Couleur de fond du bouton */
-  color: #121111; /* Couleur du texte */
+  background-color: #cfcfcf; /* Couleur de fond du bouton */
+  color: #ffffff; /* Couleur du texte */
   border: none; /* Supprimer la bordure */
-  padding: 5px; /* Espacement intérieur */
   border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
   cursor: pointer; /* Curseur pointeur au survol */
   transition: background-color 0.3s ease; /* Animation de transition */

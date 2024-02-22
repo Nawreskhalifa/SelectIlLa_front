@@ -109,7 +109,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="category in getCategoriesEvent" :key="category.id">
+            <tr
+              v-for="category in getCategoriesEvent"
+              :key="category.id"
+              @click="navigateToCategoryDetailPage(category?.id, $event)"
+              style="cursor: pointer"
+            >
               <td class="shadow-none lh-1 fw-medium text-paragraph">
                 <div class="d-flex align-items-center">
                   <div class="form-check mb-0">
@@ -137,7 +142,7 @@
                     <i class="flaticon-dots"></i>
                   </button>
                   <ul class="dropdown-menu">
-                    <li>
+                    <!-- <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
                         @click.prevent="
@@ -148,7 +153,7 @@
                         ></i>
                         View</a
                       >
-                    </li>
+                    </li> -->
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
@@ -177,7 +182,8 @@
         </table>
       </div>
       <div
-        class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center">
+        class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
+      >
         <p class="mb-0 text-paragraph">
           Showing
           <span class="fw-bold">{{ getCategoriesEvent.length }}</span> out of
@@ -349,14 +355,49 @@ export default defineComponent({
         });
       }
     },
-    navigateToCategoryDetailPage(idCategoryEvent) {
-      if (idCategoryEvent !== null && idCategoryEvent !== undefined) {
+    navigateToCategoryDetailPage(idCategoryEvent, event) {
+      if (
+        event.target.tagName.toLowerCase() === "input" ||
+        event.target.classList.contains("dropdown-toggle")
+      ) {
+        // Si l'utilisateur a cliqué sur une case à cocher ou un dropdown, arrêtez ici
+        return;
+      }
+
+      // Vérifiez si l'utilisateur a cliqué sur un lien ou un élément qui n'est pas un dropdown
+      const isLinkOrNonDropdownClicked =
+        event.target.tagName.toLowerCase() === "a" ||
+        !event.target.closest(".dropdown");
+      // Ajoutez des conditions supplémentaires pour traiter les actions Delete, View et Edit
+      const dropdownItemClicked = event.target.closest(".dropdown-item");
+      if (dropdownItemClicked) {
+        const action = dropdownItemClicked.getAttribute("data-action");
+        if (action === "delete") {
+          // Traitement de l'action de suppression
+          this.deleteCategory(idCategoryEvent);
+          return;
+        } else if (action === "edit") {
+          // Traitement de l'action d'édition
+          this.navigateToEditCategoryPage(idCategoryEvent);
+          return;
+        }
+      }
+      if (isLinkOrNonDropdownClicked && !dropdownItemClicked) {
+        // Si l'utilisateur a cliqué sur un lien ou un élément non dropdown, effectuez la redirection
         this.$router.push({
           name: "CategoryEventDetails",
           params: { idCategoryEvent: idCategoryEvent },
         });
       }
     },
+    // navigateToCategoryDetailPage(idCategoryEvent) {
+    //   if (idCategoryEvent !== null && idCategoryEvent !== undefined) {
+    //     this.$router.push({
+    //       name: "CategoryEventDetails",
+    //       params: { idCategoryEvent: idCategoryEvent },
+    //     });
+    //   }
+    // },
     async deleteCategory(id) {
       this.showModal = true;
       this.modalMessage = "Are you sure you want to delete this category?";
