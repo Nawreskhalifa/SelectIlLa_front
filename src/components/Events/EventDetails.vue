@@ -431,12 +431,15 @@ export default defineComponent({
       return day + "-" + month + "-" + year;
     },
 
+
     truncateText(text) {
       const maxLength = 35;
-      if (text.length <= maxLength) {
+      if (text &&  text.length <= maxLength) {
         return text;
-      } else {
+      } else if(text) {
         return text.slice(0, maxLength) + "...";
+      }else {
+        return text
       }
     },
     navigateToEditCategoryPage(idCategoryEvent) {

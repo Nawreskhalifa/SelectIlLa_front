@@ -10,7 +10,7 @@
         <input
           type="text"
           class="form-control shadow-none text-black rounded-0 border-0"
-          placeholder="Search product"
+          placeholder="Search Villa"
           v-model="searchInput"
         />
       </div>

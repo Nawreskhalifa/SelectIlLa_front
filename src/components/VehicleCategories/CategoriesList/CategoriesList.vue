@@ -35,7 +35,7 @@
           <input
             type="text"
             class="form-control shadow-none text-black rounded-0 border-0"
-            placeholder="Search message"
+            placeholder="Search Makes"
             v-model="searchInput"
             @input="searchMake"
           />
