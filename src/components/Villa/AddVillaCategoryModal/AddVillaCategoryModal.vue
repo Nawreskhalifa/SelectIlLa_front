@@ -3,9 +3,9 @@
     <div v-show="show" class="modal">
       <transition name="modal-animation-inner">
         <div v-show="show" class="modal-inner">
-          <button class="close_icon" @click="closeModal">×</button>
+          <button class="close_icon" @click="closeModal"><i class="flaticon-close" style="width: 2px;"></i></button>
 
-          <div class="card mb-25 border-0 rounded-0 bg-white add-product-box">
+          <div class="card   mb-25 border-0 rounded-0 bg-white add-product-box">
             <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
               <form @submit.prevent="createCategory">
                 <div class="row">
@@ -16,10 +16,14 @@
                         v-model="name"
                         type="text"
                         class="form-control shadow-none rounded-0 text-black"
-                        placeholder="e.g. Sensung Smart Watch"
+                        placeholder="e.g.Smart house"
                       />
+                                                               <p v-if=" tabed & !isFormValid" class="text-danger">Name field  is required</p>
+
                     </div>
+
                   </div>
+
                   <div class="col-md-12">
                     <div class="form-group mb-15 mb-sm-20 mb-md-25">
                       <label class="d-block text-black fw-semibold mb-10">Description</label>
@@ -27,13 +31,12 @@
                         <textarea
                           v-model="description"
                           class="form-control shadow-none rounded-0 text-black"
-                          placeholder="Write your product description"
+                          placeholder="Write your  meta description "
+                          rows="4"
                         ></textarea>
                       </div>
                     </div>
 <div class="col-md-12">
-                    <!-- Error message for name and description -->
-                    <p v-if="!isFormValid" class="text-danger">Name and description are required.</p>
                   </div>
 
 
@@ -42,7 +45,7 @@
                       class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16"
                       type="submit"
                     >
-                      Create Category
+                       Save
                     </button>
                   </div>
                 </div>
@@ -74,11 +77,12 @@ export default {
       name: "",
       description: "",
       router: useRouter(),
+      tabed:false
     };
   },
   computed: {
     isFormValid() {
-      return this.name.trim() !== "" && this.description.trim() !== "";
+      return this.name.trim() !== "";
     }
   },
   methods: {
@@ -88,6 +92,7 @@ export default {
       });
     },
     async createCategory() {
+    this.tabed = this.isFormValid === false
       if (this.isFormValid) {
         const category = {
           data: {
@@ -98,6 +103,8 @@ export default {
         try {
           const response = await postVillaCategory(category);
           if (response.success) {
+            this.name =""
+            this.description =""
             this.showToatSuccess();
             this.$emit('addedCat', response.data.data);
             this.$emit('close');
@@ -158,6 +165,10 @@ export default {
   left: 0;
   background-color: rgba(110, 110, 110, 0.7);
 }
+.card {
+  display: flex;
+  flex-direction: column; /* Changed to column layout */
+}
 
 .modal-inner {
   position: relative;
@@ -166,8 +177,8 @@ export default {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   background-color: #fff;
-  padding: 32px;
-  text-align: center;
+  padding:  15px;
+  text-align: start;
 
   .confirmation-text {
     font-size: 18px;
@@ -206,12 +217,15 @@ export default {
   .close_icon {
     position: absolute;
     top: 0;
-    right: 5px;
-    font-size: 50px;
+    right: 2px;
+    font-size: 20px;
+     font-style: bold;
     color: #333;
     background-color: #fff;
     border:none ;
     cursor: pointer;
+    z-index: 9;
   }
 }
+
 </style>

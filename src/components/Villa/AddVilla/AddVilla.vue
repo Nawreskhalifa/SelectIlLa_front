@@ -10,7 +10,7 @@
                 v-model="name"
                 type="text"
                 class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g.    Smart House"
+                placeholder="e.g.Smart House"
               />
               <div v-if="nameError" class="text-danger">{{ nameError }}</div>
             </div>
@@ -28,92 +28,46 @@
               <div v-if="cityError" class="text-danger">{{ cityError }}</div>
             </div>
           </div>
+ <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <MultiSelectVilla
+                :options="transformedCategories"
+                :selected="category"
+                @update:selected="updateCategories"
+                :placeholder="'eg .Mountain view Villas'"
+                :multiSelect="'multiple'"
+                :label="'Categories'"
+              />
 
-          <div class="col-md-6">
+              <div v-if="categoryError" class="text-danger">
+                {{ categoryError }}
+              </div>
+              <div style="display: flex; flex-direction: row">
+                <p class="fs-md-15 fs-lg-16">
+                                   <a  class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"   style="cursor: pointer;"  @click="OpenVilla" ><i   class="flaticon-plus lh-2 me-16 position-relative top-1"></i> add new category </a>
+
+                </p>
+              </div>
+            </div>
+          </div>
+<div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Rooms
+                Partner
               </label>
-              <input
-                v-model="rooms"
-                type="number"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. 2"
-              />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Baths
-              </label>
-              <input
-                v-model="baths"
-                type="number"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. 2"
-              />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"> Pool </label>
-              <input
-                v-model="pool"
-                type="number"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. 1"
-              />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"> View </label>
-              <input
-                v-model="view"
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="view description   .... "
-              />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                sleeps
-              </label>
-              <input
-                v-model="sleeps"
-                type="number"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. 50"
-              />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Deposit
-              </label>
-              <input
-                v-model="deposit"
-                type="number"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g deposit"
-              />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Minioeuvre daily
-              </label>
-              <input
-                v-model="minioeuvre_daily"
-                type="text"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. minioeuvre_daily"
-              />
+              <select
+                v-model="selectedPartner"
+                class="form-select shadow-none fw-semibold rounded-0"
+              >
+                <option disabled selected>Select a partner</option>
+                <option
+                  v-for="partner in allPartners"
+                  :key="partner.id"
+                  :value="partner.id"
+                >
+                  {{ partner.name }}
+                </option>
+              </select>
             </div>
           </div>
           <div class="col-md-12">
@@ -135,36 +89,107 @@
               </div>
             </div>
           </div>
-
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <MultiSelectVilla
-                :options="transformedCategories"
-                :selected="category"
-                @update:selected="updateCategories"
-                :placeholder="'eg .Mountain view Villas'"
-                :multiSelect="'multiple'"
-                :label="'Categories'"
+              <label class="d-block text-black fw-semibold mb-10">
+                Rooms
+              </label>
+              <input
+                v-model="rooms"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 2"
+                min="0"
               />
-
-              <div v-if="categoryError" class="text-danger">
-                {{ categoryError }}
-              </div>
-              <div style="display: flex; flex-direction: row">
-                <span>+</span>
-                <p class="fs-md-15 fs-lg-16">
-                  <a
-                    style="cursor: pointer"
-                    class="link-secondary"
-                    @click="OpenVilla"
-                    >add new category
-                  </a>
-                </p>
-              </div>
             </div>
           </div>
-
           <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Baths
+              </label>
+              <input
+                v-model="baths"
+                type="number"
+                                min="0"
+
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 2"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"> Pool </label>
+              <input
+                v-model="pool"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 1"
+                min="0"
+
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"> View </label>
+              <input
+                v-model="view"
+                type="text"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g.Seaview  "
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Sleeps
+              </label>
+              <input
+                v-model="sleeps"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 3"
+                                min="0"
+
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Deposit
+              </label>
+              <input
+                v-model="deposit"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g 20"
+                                min="1"
+
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"
+                >
+                Daily
+                </label
+              >
+              <input
+                v-model="daily"
+                type="text"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 50"
+                                min="0"
+
+              />
+            </div>
+          </div>
+            <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10"
                 >New Daily</label
@@ -174,10 +199,61 @@
                 type="number"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 50"
+                                min="1"
+
               />
             </div>
           </div>
           <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+               Mini Daily Work
+              </label>
+              <input
+                v-model="minioeuvre_daily"
+                type="text"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 212520"
+              />
+            </div>
+          </div>
+
+<div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">Status</label>
+              <div
+                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+              >
+                <input
+                  class="form-check-input shadow-none"
+                  type="radio"
+                  name="communicationRadio"
+                  id="activeRadio"
+                  v-model="status"
+                  :value="false"
+                />
+                <label class="form-check-label" for="activeRadio">Active</label>
+              </div>
+              <div
+                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+              >
+                <input
+                  class="form-check-input shadow-none"
+                  type="radio"
+                  name="communicationRadio"
+                  id="deactivatedRadio"
+                  v-model="status"
+                  :value="true"
+                />
+                <label class="form-check-label" for="deactivatedRadio"
+                  >In Active</label
+                >
+              </div>
+            </div>
+          </div>
+
+
+   <!-- <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">Daily</label>
               <div class="input-group">
@@ -194,11 +270,11 @@
                 />
               </div>
             </div>
-          </div>
+          </div> -->
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Villa Image
+                Upload  Images
               </label>
               <div class="file-upload text-center position-relative">
                 <!-- <img
@@ -208,6 +284,8 @@
                   alt="Uploaded Image"
                   class="preview-image"
                 /> -->
+                                                                  <i class="flaticon-image"></i>
+
                 <span class="d-block text-muted">
                   Drop Files Here Or
                   <span
@@ -216,6 +294,7 @@
                   >
                     Click To Upload
                   </span>
+
                 </span>
                 <input
                   type="file"
@@ -225,6 +304,7 @@
                   multiple
                   accept="image/*"
                 />
+
               </div>
               <div v-if="imageUrls.length > 0" class="image-preview">
                 <div
@@ -240,6 +320,7 @@
                   >
                     <i class="fas fa-times-circle"></i>
                   </button>
+
                   <input
                     type="radio"
                     :id="'radio_' + index"
@@ -254,39 +335,19 @@
             </div>
           </div>
 
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Partner
-              </label>
-              <select
-                v-model="selectedPartner"
-                class="form-select shadow-none fw-semibold rounded-0"
-              >
-                <option disabled selected>Select a partner</option>
-                <option
-                  v-for="partner in allPartners"
-                  :key="partner.id"
-                  :value="partner.id"
-                >
-                  {{ partner.name }}
-                </option>
-              </select>
-            </div>
-          </div>
+
           <div class="col-md-12">
             <button
               class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16"
               type="submit"
             >
-              Create Villa
+              Save Villa
             </button>
           </div>
         </div>
       </form>
     </div>
   </div>
-
   <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
   <AddVillaCategoryModal
     @addedCat="addedCategory"
@@ -336,6 +397,7 @@ export default defineComponent({
     const selectedCat = ref([]);
     const daily = ref("");
     const newDaily = ref("");
+    const status = ref(false) ;
     const deposit = ref("");
     const description = ref();
     const minioeuvre_daily = ref("");
@@ -525,6 +587,7 @@ export default defineComponent({
           minioeuvre_daily: minioeuvre_daily.value.toString(),
           partner: [parseInt(selectedPartner.value)],
           category_villas: selectedC,
+          isActive: status.value
         },
       };
 
@@ -547,6 +610,7 @@ export default defineComponent({
       modules,
       started,
       categories,
+      status,
       addToAllCat,
       allPartners,
       description,

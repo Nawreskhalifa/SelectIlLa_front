@@ -13,7 +13,7 @@
         <input
           type="text"
           class="form-control shadow-none text-black rounded-0 border-0"
-          placeholder="Search product"
+          placeholder="Search Vehicles"
           v-model="searchInput"
         />
       </div>

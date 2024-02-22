@@ -780,6 +780,9 @@ fieldset[disabled] .multiselect {
   border-bottom-right-radius: 0;
 }
 
+.edit-course-card.edit-course-card button span::before{
+  background-color:#ffffff !important;
+}
 .multiselect--active .multiselect__select {
   transform: rotateZ(180deg);
 }
