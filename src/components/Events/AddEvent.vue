@@ -81,12 +81,12 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Start Date
               </label>
-              <input
-                type="date"
-                class="form-control shadow-none text-black fs-md-15 lg-5"
-                required
+              <flat-pickr
                 v-model="startDate"
-                :min="currentDate"
+                class="form-control shadow-none text-black fs-md-15 lg-5"
+                placeholder="Start"
+                name="startDate"
+                :config="{ minDate: currentDate }"
               />
               <span v-if="formSubmitted && !startDate" class="text-danger"
                 >Start Date is required!</span
@@ -103,12 +103,18 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Start Time
               </label>
-              <input
-                type="Time"
-                class="form-control shadow-none text-black fs-md-15 lg-5"
-                required
+              <flat-pickr
                 v-model="startTime"
-                :min="currentDate"
+                class="form-control shadow-none text-black fs-md-15 lg-5"
+                placeholder="Start"
+                name="start Time"
+                :config="{
+                  enableTime: true,
+                  noCalendar: true,
+                  dateFormat: 'H:i',
+                  time_24hr: true,
+                  minTime: currentTime,
+                }"
               />
               <span v-if="formSubmitted && !startTime" class="text-danger"
                 >Start Time is required!</span
@@ -120,12 +126,14 @@
               <label class="d-block text-black fw-semibold mb-10">
                 End Date
               </label>
-              <input
-                type="date"
-                class="form-control shadow-none text-black fs-md-15 lg-5"
-                required
+              <flat-pickr
                 v-model="endDate"
-                :min="startDate"
+                class="form-control shadow-none text-black fs-md-15 lg-5"
+                placeholder="Start"
+                name="endDate"
+                :disabled="!startDate"
+                required
+                :config="{ minDate: startDate }"
               />
               <span v-if="formSubmitted && !endDate" class="text-danger"
                 >End Date is required!</span
@@ -142,11 +150,19 @@
               <label class="d-block text-black fw-semibold mb-10">
                 End Time
               </label>
-              <input
-                type="Time"
-                class="form-control shadow-none text-black fs-md-15 lg-5"
-                required
+              <flat-pickr
                 v-model="endTime"
+                class="form-control shadow-none text-black fs-md-15 lg-5"
+                placeholder="Start"
+                name="end Time"
+                :disabled="!startTime"
+                :config="{
+                  enableTime: true,
+                  noCalendar: true,
+                  dateFormat: 'H:i',
+                  time_24hr: true,
+                  minTime: startTime,
+                }"
               />
               <span v-if="formSubmitted && !endTime" class="text-danger"
                 >End Time is required!</span
@@ -212,52 +228,6 @@
                 track-by="id"
                 :option-class="{ 'selected-option': isSelected }"
               />
-              <!-- <select
-                v-model="selectedCategories"
-                class="form-select shadow-none fw-semibold rounded-0 select-same-width"
-                style="height: 47px; border-color: #eeeee4"
-                @change="addCategoryEvent"
-              >
-                <option selected disabled>Select a Category</option>
-                <option
-                  v-for="category in getCategoriesEvent"
-                  :key="category.id"
-                  :value="category.id"
-                >
-                  <input
-                    type="checkbox"
-                    :id="'category_' + category.id"
-                    :value="category.id"
-                    v-model="selectedCategories"
-                    class="category-checkbox"
-                  />
-                  <label
-                    :for="'category_' + category.id"
-                    class="category-label"
-                  >
-                    {{ category.name }}
-                  </label>
-                </option>
-              </select> -->
-              <!-- <div
-                class="members-list"
-                v-if="selectedCategoryNames && selectedCategoryNames.length > 0"
-              >
-                <div
-                  v-for="(perv, i) in selectedCategoryNames"
-                  class="d-inline-block bg-gray rounded-1 fs-12 fw-medium text-primary p-5"
-                  :key="i"
-                >
-                  {{ perv?.name }}
-                  <button
-                    type="button"
-                    class="bg-transparent p-0 border-0 lh-1 transition"
-                    @click="deleteFromCategories(perv)"
-                  >
-                    <i class="flaticon-close"></i>
-                  </button>
-                </div>
-              </div> -->
               <span
                 v-if="formSubmitted && selectedCategories.length === 0"
                 class="text-danger"
@@ -282,10 +252,16 @@
                   :key="partner.id"
                   :value="partner.id"
                 >
-                  {{ partner.name }}
+                  {{ partner.name + " " + partner.surname }}
                 </option>
               </select>
-              <span v-if="formSubmitted && !selectedPartner" class="text-danger"
+              <span
+                v-if="
+                  formSubmitted &&
+                  selectedPartner &&
+                  selectedPartner.length == 0
+                "
+                class="text-danger"
                 >Partner is required!</span
               >
             </div>
@@ -355,6 +331,8 @@
                     @click="removeImage(index)"
                     class="delete_icon"
                     type="button"
+                    title="delete this image"
+                    style="cursor: pointer"
                   >
                     <i class="fas fa-times-circle"></i>
                     <!-- Icône de suppression -->
@@ -413,15 +391,18 @@ import swal from "sweetalert";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import VueMultiselect from "vue-multiselect";
+import flatPickr from "vue-flatpickr-component";
 
 export default defineComponent({
   name: "AddEvent",
   components: {
     Loading,
     VueMultiselect,
+    flatPickr,
   },
   data() {
     return {
+      currentTime: null,
       isLoading: false,
       status: true,
       selectedPhotos: [],
@@ -607,9 +588,12 @@ export default defineComponent({
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, "0");
     const day = String(today.getDate()).padStart(2, "0");
+    const hours = String(today.getHours()).padStart(2, "0");
+    const minutes = String(today.getMinutes()).padStart(2, "0");
+    this.currentTime = `${hours}:${minutes}`;
     this.currentDate = `${year}-${month}-${day}`;
     // Initialise startDate avec la date actuelle
-    this.startDate = this.currentDate;
+    console.log(this.currentDate);
   },
 });
 </script>
@@ -1105,19 +1089,30 @@ details {
 }
 
 .delete_icon {
+  font-size: 8px;
   position: absolute;
-  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  top: 3px; /* Ajustez la position verticale selon vos besoins */
   left: 5px; /* Ajustez la position horizontale selon vos besoins */
-  background-color: transparent; /* Couleur de fond du bouton */
-  color: #121111; /* Couleur du texte */
+  background-color: #cfcfcf; /* Couleur de fond du bouton */
+  color: #ffffff; /* Couleur du texte */
   border: none; /* Supprimer la bordure */
-  padding: 5px; /* Espacement intérieur */
   border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
   cursor: pointer; /* Curseur pointeur au survol */
   transition: background-color 0.3s ease; /* Animation de transition */
   margin-right: 10px; /* Ajouter une marge à droite pour créer de l'espace entre les boutons */
 }
-
+.set_cover_button {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  right: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #0056b3; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
+}
 select,
 summary {
   border-collapse: collapse;
@@ -1182,17 +1177,5 @@ li > label:has(input:checked) {
 }
 .select-same-width {
   width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
-}
-.set_cover_button {
-  position: absolute;
-  top: 5px; /* Ajustez la position verticale selon vos besoins */
-  right: 5px; /* Ajustez la position horizontale selon vos besoins */
-  background-color: transparent; /* Couleur de fond du bouton */
-  color: #0056b3; /* Couleur du texte */
-  border: none; /* Supprimer la bordure */
-  padding: 5px; /* Espacement intérieur */
-  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
-  cursor: pointer; /* Curseur pointeur au survol */
-  transition: background-color 0.3s ease; /* Animation de transition */
 }
 </style>

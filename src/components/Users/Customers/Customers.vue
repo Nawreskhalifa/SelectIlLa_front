@@ -4,35 +4,23 @@
       class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
     >
       <div class="d-flex align-items-center">
-        <form
-          class="search-box position-relative"
-          @submit.prevent="handleSearch"
-        >
-          <input
-            type="text"
-            class="form-control shadow-none rounded-0 border-0 pr-40"
-            placeholder="Search here"
-            style="width: calc(100% - 40px)"
-            v-model="searchText"
-            @input="handleSearch"
-          />
-          <button
-            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-15 fs-lg-16 bg-primary"
-            type="submit"
-            style="
-              position: absolute;
-              right: 0;
-              top: 50%;
-              transform: translateY(-50%);
-            "
-            :disabled="getUsersLoading"
-          >
-            Search
-
-            <i
-              class="flaticon-search-interface-symbol position-relative ms-5 top-1"
-            ></i>
-          </button>
+        <form @submit.prevent="handleSearch">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control shadow-none fw-medium ps-1 pt-10 pe-0 letter-spacing"
+              placeholder="Search"
+              v-model="searchText"
+              @input="handleSearch"
+            />
+            <button
+              class="default-btn position-relative transition border-0 text-white ps-12 pe-12 rounded-1"
+              type="button"
+              :disabled="getUsersLoading"
+            >
+              <i class="flaticon-search-interface-symbol position-relative"></i>
+            </button>
+          </div>
         </form>
       </div>
       <select

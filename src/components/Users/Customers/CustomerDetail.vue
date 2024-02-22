@@ -2,7 +2,7 @@
   <BreadCrumb
     :PrevPage="'Customers List'"
     :url="'/customersList'"
-    :PageTitle="customer.name"
+    :PageTitle="truncateText(customer.name + ' ' + customer.surname)"
   />
 
   <div class="row">
@@ -525,6 +525,14 @@ export default defineComponent({
       "fetchDocumentsCustomer",
       "fetchAllDocumentsByCustomer",
     ]),
+    truncateText(text) {
+      const maxLength = 35;
+      if (text.length <= maxLength) {
+        return text;
+      } else {
+        return text.slice(0, maxLength) + "...";
+      }
+    },
     async openFileDialog() {
       try {
         // Créez un élément de type input de fichier
