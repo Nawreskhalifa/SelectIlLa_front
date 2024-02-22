@@ -143,6 +143,22 @@
               </div>
             </div>
           </div>
+           <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"
+                >New Daily</label
+              >
+              <input
+                v-model="newDaily"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 50"
+              />
+              <div v-if="newDailyErrorVisible" class="text-danger">
+                New Daily amount is required.
+              </div>
+            </div>
+          </div>
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
@@ -249,22 +265,7 @@
             </div>
           </div>
 
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"
-                >New Daily</label
-              >
-              <input
-                v-model="newDaily"
-                type="number"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. 50"
-              />
-              <div v-if="newDailyErrorVisible" class="text-danger">
-                New Daily amount is required.
-              </div>
-            </div>
-          </div>
+
 
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">

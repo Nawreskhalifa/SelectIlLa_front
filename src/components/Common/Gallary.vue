@@ -9,6 +9,7 @@
                   :id="'radio_' + key"
                   v-model="coverImageIndex"
                   :value="key"
+                  :checked="previndex==key"
                   class="set_cover_button"
                   title="Set as a cover image"
                   style="cursor: pointer"
@@ -44,21 +45,26 @@ export default {
   props: {
     galleryID: String,
     images: Array,
+     previousIndex: Number
   },
   data(){
     return{
       coverIndex: 0,
-      coverImageIndex:0
+      coverImageIndex:0,
+      prevIndex : 0
     }
   },
   setup(props) {
     return {
       imagesData: props.images,
-    };
+     };
   },
   watch :{
       coverImageIndex(newIndex) {
          this.$emit('coverImageIndex', newIndex);
+    },
+    previousIndex(newValue){
+this.prevIndex = newValue
     },
  images: {
       deep: true,
@@ -68,7 +74,8 @@ export default {
     }
   } ,
   mounted() {
-    if (!this.lightbox ) {
+    console.log(this.previousIndex , " ok")
+     if (!this.lightbox ) {
       this.lightbox = new PhotoSwipeLightbox({
         gallery: '#' + this.$props.galleryID,
         children: 'a',

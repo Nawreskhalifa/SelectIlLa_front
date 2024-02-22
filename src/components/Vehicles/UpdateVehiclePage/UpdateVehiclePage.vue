@@ -37,6 +37,38 @@
               :label="'Style'"
             />
            </div>
+            <div class="col-md-6">
+            <MultiSelect
+              :options="transormPartner"
+              :selected="partner"
+              @update:selectedOne="updatePartner"
+              :placeholder="getSelectedPartnerName"
+              :multiSelect="false"
+              :label="'Partner'"
+            />
+          </div>
+          <div class="col-md-12">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Description
+              </label>
+              <div class="mb-0" v-if="description">
+                <!-- <div id="editorcontainer" style="height:12em; min-height:100%; overflow-y:auto;"> -->
+
+                <QuillEditor
+                  style="height: 12em"
+                  theme="snow"
+                  :placeholder="description"
+                  v-model:content="description"
+                  toolbar="full"
+                />
+                <!-- </div> -->
+              </div>
+              <div v-if="descriptionError" class="text-danger">
+                {{ descriptionError }}
+              </div>
+            </div>
+          </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
@@ -50,8 +82,7 @@
               />
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-6">
+          <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
                 <label class="d-block text-black fw-semibold mb-10">
                   <abbr title="Manufacturer's Suggested Retail Price"
@@ -66,6 +97,8 @@
                 />
               </div>
             </div>
+          <!-- <div class="row">
+
             <div class="col-md-6 d-flex align-items-end">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
                 <button
@@ -89,9 +122,82 @@
                 </button>
               </div>
             </div>
+          </div> -->
+
+
+
+
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">Daily</label>
+              <div class="input-group">
+                <span
+                  class="input-group-text rounded-0 fs-14 fw-bold text-primary"
+                >
+                  $
+                </span>
+                <input
+                  v-model="daily"
+                  type="text"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="e.g. 120.00"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">Mice</label>
+              <div class="input-group">
+                <span
+                  class="input-group-text rounded-0 fs-14 fw-bold text-primary"
+                >
+                  $
+                </span>
+                <input
+                  v-model="mice"
+                  type="text"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="e.g. 15"
+                />
+              </div>
+            </div>
           </div>
 
-          <div class="col-md-12" v-show="showUploadedFiles">
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"
+                >New Daily</label
+              >
+              <input
+                v-model="newDaily"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 50"
+              />
+            </div>
+          </div>
+
+
+          <!-- <div class="col-md-12 text-danger"></div> -->
+
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Seats
+              </label>
+              <input
+                v-model="seats"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 4"
+              />
+              <div v-if="seatsError" class="text-danger">
+                {{ seatsError }}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12"  >
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <div
                 v-if="
@@ -113,6 +219,7 @@
                   <GallayImages
                     @deletePhoto="deleteImage"
                     @coverImageIndex="handleCover"
+                    :previousIndex = "Number(coverImageIndex)"
                     galleryID="my-test-gallery"
                     :images="previousPhotos.attributes.photos.data"
                   />
@@ -171,111 +278,9 @@
               </div>
             </div>
           </div>
-
-          <div class="col-md-12">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Description
-              </label>
-              <div class="mb-0" v-if="description">
-                <!-- <div id="editorcontainer" style="height:12em; min-height:100%; overflow-y:auto;"> -->
-
-                <QuillEditor
-                  style="height: 12em"
-                  theme="snow"
-                  :placeholder="description"
-                  v-model:content="description"
-                  toolbar="full"
-                />
-                <!-- </div> -->
-              </div>
-              <div v-if="descriptionError" class="text-danger">
-                {{ descriptionError }}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">Daily</label>
-              <div class="input-group">
-                <span
-                  class="input-group-text rounded-0 fs-14 fw-bold text-primary"
-                >
-                  $
-                </span>
-                <input
-                  v-model="daily"
-                  type="text"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="e.g. 120.00"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">Mice</label>
-              <div class="input-group">
-                <span
-                  class="input-group-text rounded-0 fs-14 fw-bold text-primary"
-                >
-                  $
-                </span>
-                <input
-                  v-model="mice"
-                  type="text"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="e.g. 15"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"
-                >New Daily</label
-              >
-              <input
-                v-model="newDaily"
-                type="number"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. 50"
-              />
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <MultiSelect
-              :options="transormPartner"
-              :selected="partner"
-              @update:selectedOne="updatePartner"
-              :placeholder="getSelectedPartnerName"
-              :multiSelect="false"
-              :label="'Partner'"
-            />
-          </div>
-          <div class="col-md-12 text-danger"></div>
-
-          <div class="col-md-6">
-            <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
-                Seats
-              </label>
-              <input
-                v-model="seats"
-                type="number"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. 4"
-              />
-              <div v-if="seatsError" class="text-danger">
-                {{ seatsError }}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
+          <!-- <div class="col-md-6"> -->
             <!-- <MultiSelect  :options="makes" :selected="make" @update:selectedOne="updateMake" :placeholder="make?.attributes?.name" :label="'Tags'"   :multiSelect="true"    /> -->
-          </div>
+          <!-- </div> -->
           <div class="col-md-12">
             <button
               class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16"
@@ -347,8 +352,7 @@ export default {
       categories: [],
       makes: [],
       brands: [],
-
-      vehicle: "",
+       vehicle: "",
       isLoading: false,
       selectedFiles: [],
       imageUrls: [],
@@ -431,10 +435,12 @@ this.coverImageIndex =event
         this.msrp = this.vehicle.attributes.msrp;
         this.style = this.vehicle.attributes.style.data;
         this.deposit = this.vehicle.attributes.deposit;
+        this.coverImageIndex = this.vehicle.attributes.cover_image_index,
         this.partner = this.vehicle.attributes.partner.data
           ? this.vehicle.attributes.partner.data.id
           : null;
         this.previousPhotos = this.vehicle;
+
       }
     },
 

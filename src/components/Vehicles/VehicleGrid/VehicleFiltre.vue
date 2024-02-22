@@ -23,17 +23,19 @@
       <h6 class="text-black fw-bold fs-md-15">Makes</h6>
       <ul
         class="categories-list ps-0 mb-0 list-unstyled"
-        style="max-height: 200px; overflow-y: auto; padding-right: 5px"
+        style="max-height: 200px; overflow-y: auto; padding-right: 5px ;"
       >
-        <li @click="byCategory('All')" class="cat">
+        <li @click="byCategory('All'), toggleCategorySelection()" class="cat"    :class="{ selected: all }">
           <span class="d-block fs-md-15 fw-medium">All</span>
-          <span class="d-block fw-medium text-muted">{{ allVehicles }}</span>
+          <span class="d-block fw-medium text-muted  " >{{ allVehicles }}</span>
         </li>
         <li
           v-for="item in makesWithVehicles(makes)"
           :key="item.id"
+
           class="cat"
-          @click="byCategory(item)"
+          @click="byCategory(item),toggleCategorySelection(item)"
+           :class="{ selected: item.selected}"
         >
           <span class="d-block fs-md-15 fw-medium">{{
             item.attributes.name
@@ -126,6 +128,7 @@ export default {
       searchInput: "",
       selectAll: false,
       makes: [],
+      all : true ,
       brands: [],
       makeLimit: 4,
       brandLimit: 4,
@@ -154,6 +157,7 @@ export default {
     },
   },
   methods: {
+
     debouncedPriceRangeChanged() {
       clearTimeout(this.debounceTimeout);
       this.debounceTimeout = setTimeout(() => {
@@ -189,7 +193,19 @@ export default {
       this.makes = data;
       console.log(this.makes, "oks");
     },
-
+toggleCategorySelection(make) {
+  this.makes.forEach(item => {
+    if (item !== make) {
+      item.selected = false;
+    }
+  });
+  if (make) {
+    this.all = false
+    make.selected = !make.selected;
+  } else {
+    this.all = !this.all
+  }
+},
     async byCategory(category) {
       if (category === "All") {
         this.$emit("byCategory", "");
@@ -300,15 +316,40 @@ allVehiclesByBrand() {
 .checkbox-label i {
   color: #333;
 }
+.cat.selected {
+  background-color: #6560f0;
+  color: #fff;
+}
+
+.cat.selected:hover {
+  background-color:  #6560f0;
+cursor: pointer   !important;
+}
+.cat.selected > span{
+    color: white !important;
+}
+ .cat {
+  padding: 6px;
+  display: flex;
+  flex-direction: row;
+   align-items: start;
+  justify-content: space-between;
+  cursor: pointer !important;
+}
 
 .cat:hover {
   background-color: #6560f0;
   border-radius: 5px;
-  color: white;
+   cursor:pointer;
+    pointer-events: auto;
 }
 
-.cat {
-  padding: 6px;
-  cursor: pointer;
+.cat:hover > span {
+  color: white !important;
+ cursor:pointer;
+    pointer-events: auto;
+        font: bold;
+   padding-left: 2px;
 }
+
 </style>

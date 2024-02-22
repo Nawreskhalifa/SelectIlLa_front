@@ -18,15 +18,15 @@
 
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Categories</h6>
-       <ul class="categories-list ps-0 mb-0 list-unstyled" style="max-height: 200px; overflow-y: auto; padding-right: 5px">
-  <li class="cat" v-if="categories.length > 0">
-    <span class="d-block fs-md-15 fw-medium" @click="byCategory()">All</span>
-        <span class="d-block fw-medium text-muted">{{ totalVehiclesCount  }}</span>
+       <ul class="categories-list ps-0 mb-0 list-unstyled" style="max-height: 200px; overflow-y: auto; padding-right: 5px ;  cursor:pointer">
+  <li class="cat cursor-pointer" v-if="categories.length > 0 " @click="byCategory() , toggleCategorySelection()"  :class="{selected:  all}"  >
+    <span class=" cursor-pointer fs-md-15 fw-medium"   >All</span>
+        <span class="cursor-pointer fw-medium text-muted"   >{{ totalVehiclesCount  }} {{categories?.attributes?.villas.data}}</span>
 
   </li>
-  <li v-for="category in categoriesWithVehicles" :key="category.id" @click="byCategory(category)" class="cat">
-     <span class="d-block fs-md-15 fw-medium">{{ category.attributes.Name }}</span>
-    <span class="d-block fw-medium text-muted">{{ category.attributes.villas.data.length }}</span>
+  <li v-for="category in categoriesWithVehicles" :key="category.id" @click="byCategory(category),toggleCategorySelection(category)"  class="cat" :class="{ selected: category.selected }" >
+     <span class="  fs-md-15 fw-medium">{{ category.attributes.Name }}</span>
+    <span class="  fw-medium text-muted">{{ category.attributes.villas.data.length }}</span>
    </li>
 </ul>
 
@@ -74,7 +74,7 @@ export default {
       categories: [],
        searchInput: "",
       selectAll: false,
-
+   all: true,
          minPrice: 10,
       maxPrice: 1000,
             debounceTimeout: null,
@@ -102,6 +102,7 @@ export default {
   categoriesWithVehicles() {
       return this.categories.filter(category => category.attributes.villas.data.length > 0);
     },
+
       totalVehiclesCount() {
       return this.categories.reduce((total, category) => total + category.attributes.villas.data.length, 0);
     }
@@ -118,6 +119,20 @@ export default {
         [this.minPrice, this.maxPrice] = [this.maxPrice, this.minPrice];
       }
     },
+     toggleCategorySelection(category) {
+  this.categories.forEach(cat => {
+    if (cat !== category) {
+      cat.selected = false;
+    }
+  });
+  if (category) {
+    this.all = false
+    category.selected = !category.selected;
+  } else {
+
+    this.all = !this.all
+  }
+},
     async fetchCategories() {
       try {
         const data = await fetchVillaCategories("populate=*");
@@ -162,7 +177,19 @@ this.$emit("filtreBycategory", { category: categorie });
   width: 30px;
   height: 30px;
 }
+.cat.selected {
+  background-color: #6560f0;
+  color: #fff !important;
+}
+.cat.selected  > span {
+   color: #fff !important;
+}
 
+.cat.selected:hover {
+  background-color:  #6560f0;
+    color: #fff !important;
+
+}
 .checkbox-wrapper input[type="checkbox"] {
   opacity: 0;
   width: 0;
@@ -187,14 +214,24 @@ this.$emit("filtreBycategory", { category: categorie });
   color: #333;
 }
 
+.cat {
+  padding: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: space-between;
+  cursor: pointer !important;
+}
+
 .cat:hover {
   background-color: #6560f0;
   border-radius: 5px;
-  color: white;
 }
 
-.cat {
-  padding: 6px;
-  cursor: pointer;
+.cat:hover > span {
+  color: white !important;
+    cursor: pointer;
+
 }
+
 </style>

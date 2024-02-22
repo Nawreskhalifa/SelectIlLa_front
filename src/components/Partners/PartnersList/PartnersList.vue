@@ -18,7 +18,7 @@
             Ressources
           </span>
        <select class="form-select shadow-none bg-transparent border-0 fw-semibold rounded-0" v-model="selectedStatus" @change="handleOptionClick(selectedStatus)">
-  <option value="">All</option>
+  <option value="All">All</option>
   <option value="Villas">Villas</option>
   <option value="Events">Events</option>
   <option value="Vehicles">Vehicles</option>

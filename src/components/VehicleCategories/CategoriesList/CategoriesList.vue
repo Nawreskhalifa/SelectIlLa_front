@@ -402,6 +402,128 @@
         </div>
       </div>
     </div>
+    <div class="col-lg-4 col-xxxl-3">
+      <div
+        class="card mb-25 border-0 rounded-0 bg-white letter-spacing chat-sidebar"
+      >
+        <div class="card-body">
+          <!-- <input
+            type="text"
+            class="form-control shadow-none text-black rounded-0 border-0"
+            placeholder="Search Makes"
+            v-model="searchInput"
+            @input="searchMake"
+          /> -->
+
+          <button
+            class="btn btn-primary d-block w-100"
+            type="button"
+            @click="openStyle"
+          >
+            Add New Style
+          </button>
+
+          <div class="chat-users-list">
+            <div class="card mb-25 border-0 rounded-0 bg-white to-do-list-box">
+              <div class="card-body letter-spacing">
+                <div
+                  class="scrollable-container"
+                 style="max-height: 400px; overflow-y: auto;"
+                >
+                  <ul class="to-do-list style-two ps-0 list-unstyled mb-0">
+                    <li
+                      v-for="style in styles"
+                      :key="style.id"
+                      :class="{ selected: style.selected }"
+                      class="to-do-list-item d-flex align-items-center justify-content-between hoverli"
+                     >
+                      <div style="width: 95%; cursor: pointer">
+                        <div
+                          class="'form-check mb-0 fs-md-15 fs-lg-16 text-black fw-medium'"
+                          v-if="
+                            style && style.attributes && style?.attributes?.name
+                          "
+                        >
+                          <label class="aria-label">
+                            <h6
+                              style="cursor: pointer"
+                              class="card-title fw-bold mb-0"
+                            >
+                              {{ style.attributes.name }}
+                            </h6>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="dropdown">
+                        <button
+                          class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="flaticon-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a
+                              class="dropdown-item d-flex align-items-center"
+                              @click.prevent="openEditMake(make)"
+                            >
+                              <i class="flaticon-pen lh-1 me-8"></i>
+                              Edit
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              class="dropdown-item d-flex align-items-center"
+                              @click.prevent="deleteMakeMeth(make.id)"
+                            >
+                              <i class="flaticon-delete lh-1 me-8"></i>
+                              Delete
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <!-- <div
+                  class="text-center mt-2"
+                  v-if="!showAllItems && makes.length > pageSize"
+                >
+                  <button class="btn btn-link" @click="showAllItems = true">
+                    Show more
+                  </button>
+                </div>
+                <div class="text-center mt-2" v-else-if="showAllItems">
+                  <button class="btn btn-link" @click="showAllItems = false">
+                    Show less
+                  </button>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+     <Modal v-if="openedSyle" @close="close">
+    <template v-slot:header><h4> Add Style </h4> </template>
+    <template v-slot:body>
+            <div class="col-md-12" style="display:flex ; flex-direction:column ; ">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">Name</label>
+              <input
+                v-model="styleName"
+                type="text"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g.Style2 "
+              />
+             </div>
+                          <button class="btn submit" @click="saveStyle">Submit  </button>
+
+             </div>
+      </template>
+   </Modal>
   </div>
 </template>
 <script>
@@ -415,6 +537,10 @@ import {
   deleteBrand,
   fetchTags,
   postBrand,
+  addStyle,
+  deleteStyle,
+  editStyle,
+  fetchStyles ,
   deleteTags,
   fetchBrandMyMake,
   addTags,
@@ -427,6 +553,8 @@ import UpdateModal from "@/components/VehicleCategories/EditCategory/EditCategor
 import EditMake from "@/components/VehicleCategories/EditMake/EditMake.vue";
 import AddBrand from "../AddNewBrand/AddNewBrand.vue";
 import EditBrand from "../EditBrand/EditBrand.vue";
+import Modal from '../../Common/ReusableModal.vue';
+
 import ChipsComponent from "../../Common/ChipsComponent.vue";
 export default {
   name: "CategoryList",
@@ -436,11 +564,14 @@ export default {
     EditMake,
     EditBrand,
     AddBrand,
+    Modal,
     Loading,
   },
   data() {
     return {
       categories: [],
+      styleName:'',
+      styles :[],
       ModalVisible: false,
       showAllItems: false,
       isLoading: false,
@@ -461,6 +592,7 @@ export default {
       isAdd: false,
       pageSize: 3,
       searchInput: "",
+      openedSyle :false ,
       tags: [],
       perviousTagsAdded: [],
       newTagsAdded: [],
@@ -505,6 +637,22 @@ export default {
     },
   },
   methods: {
+    async saveStyle(){
+     const Data = {
+        data : {
+           name : this.styleName
+        }
+     }
+      const res = await addStyle(Data)
+      console.log(res , 'style added ')
+   if(res ){
+   this.styles.push(res.data)
+   this.openedSyle= false
+   }
+    },
+    close(){
+      this.openedSyle = false
+    } ,
     async deleteTag(tagId) {
       try {
         await deleteTags(tagId);
@@ -756,6 +904,9 @@ export default {
     openAdd() {
       this.ModalVisible = !this.ModalVisible;
     },
+openStyle(){
+  this.openedSyle =true
+} ,
 
     closeModal() {
       this.ModalVisible = !this.ModalVisible;
@@ -784,9 +935,15 @@ export default {
       console.log(data);
       this.tags = data;
     },
+    async getStyles(){
+const data = await fetchStyles()
+this.styles = data.data
+  console.log(this.styles,"nice" )
+    }
   },
   async mounted() {
     this.isLoading = true;
+     await this.getStyles()
     await this.getTags(), await this.getMakes();
     await this.getAllMakes();
     this.isLoading = false;
@@ -795,6 +952,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.submit {
+   background: #6560f0;
+   border: none  ;
+   color:white ;
+}
 /* width */
 ::-webkit-scrollbar {
   width: 5px;

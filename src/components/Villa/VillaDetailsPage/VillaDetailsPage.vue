@@ -245,7 +245,7 @@
             <span class="d-block text-muted">{{villa.attributes.partner.data.attributes.user.data.attributes.email}}</span>
         </div>
     </div>
-    <a href="/profile-settings" class="border-0 bg-gray fs-13 fw-medium text-primary ps-8 pe-8 pt-1 pb-1 text-decoration-none d-inline-block mt-12 mt-sm-0">Check Profile <i class="fas fa-eye lh-1 position-relative top-1"></i></a>
+    <a href="/profile-settings" class="border-0 bg-gray fs-13 fw-medium text-primary ps-8 pe-8 pt-1 pb-1 text-decoration-none d-inline-block mt-12 mt-sm-0" @click.prevent="checkDetails(villa.attributes?.partner?.data?.id)" >Check Profile <i class="fas fa-eye lh-1 position-relative top-1"></i></a>
 </div>
 
 <div class="content pe-0" v-if="villa && villa.attributes && villa.attributes.partner && villa.attributes.partner.data && villa.attributes.partner.data.attributes && villa.attributes.partner.data.attributes.user && villa.attributes.partner.data.attributes.user.data && villa.attributes.partner.data.attributes.user.data.attributes">
@@ -260,7 +260,7 @@
 
 </div>
 <div class="row info-card">
-    <div class="col-6 col-sm-4 col-xxl-6 col-xxxl-4" v-if="villa && villa.attributes && villa.attributes.partner && villa.attributes.partner.data && villa.attributes.partner.data.attributes && villa.attributes.partner.data.attributes.villas">
+    <!-- <div class="col-6 col-sm-4 col-xxl-6 col-xxxl-4" v-if="villa && villa.attributes && villa.attributes.partner && villa.attributes.partner.data && villa.attributes.partner.data.attributes && villa.attributes.partner.data.attributes.villas">
         <div class="info p-10 p-sm-15 p-md-20">
             <span class="d-block text-black-emphasis mb-1">Villas</span>
             <h4 class="d-block text-primary fw-black mb-0">{{ villa.attributes.partner.data.attributes.villas.data.length }}</h4>
@@ -277,7 +277,7 @@
             <span class="d-block text-black-emphasis mb-1">Vehicles</span>
             <h4 class="d-block text-info fw-black mb-0">{{ villa.attributes.partner.data.attributes.villas.data.length }}</h4>
         </div>
-    </div>
+    </div> -->
 
 </div>
 </div></div></div></div></div>
@@ -336,6 +336,10 @@ export default defineComponent({
     };
   },
   methods: {
+      checkDetails(id){
+      this.$router.push({ name: "partnerdetails", params: { id:  id } });
+
+    },
     taketo(){
             const id = this.$route.params.id;
             this.$router.push({ name: 'updatevilla', params: { id: id}})

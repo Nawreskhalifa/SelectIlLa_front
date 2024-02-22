@@ -498,11 +498,12 @@ console.log(range)
     async getByCat(event) {
     if(event.category != ""){
 this.category=event.category
-
     }else{
-const data = await AllVillaApi();
+this.isLoading = true
+const data = await AllVillaApi(" ");
     this.originalvillas = data.data;
     this.villas = [...this.originalvillas];
+    this.isLoading = false
     }
     },
 

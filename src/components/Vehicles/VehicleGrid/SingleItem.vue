@@ -193,8 +193,8 @@
                   class="mt-10 price d-flex align-items-center justify-content-between"
                 >
                   <span class="text-primary fw-bold fs-md-15 fs-lg-16">{{
-                    vehicle?.attributes?.msrp
-                  }}</span>
+                    vehicle?.attributes?.daily
+                  }} $ </span>
                   <div class="lockbtn reviews d-flex align-items-center">
                     <button
                       @click="active(false, vehicle.id)"
@@ -410,7 +410,7 @@ console.log(range)
   },
 
     activateAll() {
-      this.vehicles.forEach(async (vehicle) => {
+       this.vehicles.forEach(async (vehicle) => {
         const updatedData = {
           data: {
             isActive: false,

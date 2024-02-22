@@ -31,8 +31,121 @@
                 />
               </div>
             </div>
+ <div class="col-md-6">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                  <MultiSelectVilla
+              :options="categories"
+              :selected="category"
+              :selectedTagsProp="previousCategories"
+              @update:selected="updateCategories"
+              :placeholder="'eg .Mountain view Villas'"
+              :multiSelect="multiple"
+              :label="'Categories'"
+            />
+                <div v-if="categoryError" class="text-danger">
+                  {{ categoryError }}
+                </div>
+              </div>
+            </div>
+             <div class="col-md-6">
+             <MultiSelect
+              :options="transormPartner"
+              :selected="partner"
+              @update:selectedOne="updatePartner"
+              :placeholder="partner?.data?.attributes?.name"
+              :multiSelect="false"
+              :label="'Partner'"
+            />
+            </div>
+
+
+
+
+            <div class="col-md-12">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <label class="d-block text-black fw-semibold mb-10">
+                  Description
+                </label>
+                <div class="mb-0" v-if="description">
+                  <QuillEditor
+                                    style="height: 12em"
+
+                    theme="snow"
+                    :placeholder="description"
+                    v-model:content="description"
+                    toolbar="full"
+                  />
+                </div>
+                <div v-if="descriptionError" class="text-danger">
+                  {{ descriptionError }}
+                </div>
+              </div>
+            </div>
+
+
 
             <div class="col-md-6">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <label class="d-block text-black fw-semibold mb-10"
+                  >Daily</label
+                >
+                <div class="input-group">
+                  <span
+                    class="input-group-text rounded-0 fs-14 fw-bold text-primary"
+                  >
+                    $
+                  </span>
+                  <input
+                    v-model="daily"
+                    type="text"
+                    class="form-control shadow-none rounded-0 text-black"
+                    placeholder="e.g. 120.00"
+                  />
+                </div>
+              </div>
+            </div>
+
+
+
+            <div class="col-md-6">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <label class="d-block text-black fw-semibold mb-10"
+                  >New Daily</label
+                >
+                <input
+                  v-model="newDaily"
+                  type="number"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="e.g. 50"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <label class="d-block text-black fw-semibold mb-10">
+                  Minioeuvre Daily
+                </label>
+                <input
+                  v-model="minioeuvre_daily"
+                  type="text"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="e.g. 4"
+                />
+              </div>
+            </div>
+   <div class="col-md-6">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <label class="d-block text-black fw-semibold mb-10">Pool</label>
+
+                  <input
+                    v-model="pool"
+                    type="number"
+                    class="form-control shadow-none rounded-0 text-black"
+                    placeholder="e.g. 15"
+                  />
+              </div>
+            </div>
+    <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
                 <label class="d-block text-black fw-semibold mb-10">
                   Rooms
@@ -48,6 +161,32 @@
             <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
                 <label class="d-block text-black fw-semibold mb-10">
+                  Sleeps
+                </label>
+                <input
+                  v-model="sleeps"
+                  type="number"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="e.g. 4"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <label class="d-block text-black fw-semibold mb-10">
+                  View
+                </label>
+                <input
+                  v-model="view"
+                  type="text"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="e.g. 4"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <label class="d-block text-black fw-semibold mb-10">
                   Deposit
                 </label>
                 <input
@@ -56,48 +195,58 @@
                   class="form-control shadow-none rounded-0 text-black"
                   placeholder="e.g deposit"
                 />
+             </div>
+                         </div>
+
+                <div class="col-md-6">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <label class="d-block text-black fw-semibold mb-10">
+                  Baths
+                </label>
+                <input
+                  v-model="deposit"
+                  type="number"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="e.g deposit"
+                />
+             </div>
+</div>
+
+<div class="col-md-6">
+  <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">Status</label>
+              <div
+                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+              >
+                <input
+                  class="form-check-input shadow-none"
+                  type="radio"
+                  name="communicationRadio"
+                  id="activeRadio"
+                  v-model="status"
+                  :value="false"
+                />
+                <label class="form-check-label" for="activeRadio">Active</label>
+              </div>
+              <div
+                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+              >
+                <input
+                  class="form-check-input shadow-none"
+                  type="radio"
+                  name="communicationRadio"
+                  id="deactivatedRadio"
+                  v-model="status"
+                  :value="true"
+                />
+                <label class="form-check-label" for="deactivatedRadio"
+                  >In Active</label
+                >
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                  <label class="d-block text-black fw-semibold mb-10">
-                    Baths </label
-                  >
-                  <input
-                    v-model="baths"
-                    type="number"
-                    class="form-control shadow-none rounded-0 text-black"
-                    placeholder="e.g. 2"
-                  />
-                </div>
-              </div>
-              <div class="col-md-6 d-flex align-items-end">
-                <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <button
-                  type="button"
-                  class="form-control shadow-none rounded-0 text-black"
-                  @click="checkUploadedFiles"
-                >
-                  Check your uploaded files
-                  <i
-                    v-if="!showUploadedFiles"
-                    style="margin-left: 15px"
-                    class="fa-solid fa-arrow-down"
-                    aria-hidden="true"
-                  ></i>
-                  <i
-                    v-if="showUploadedFiles"
-                    style="margin-left: 15px"
-                    class="fa-solid fa-arrow-right"
-                    aria-hidden="true"
-                  ></i>
-                </button>
-                </div>
-              </div>
             </div>
 
-            <div class="col-md-12" v-show="showUploadedFiles">
+              <div class="col-md-12" >
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
                  <div
                           v-if="
@@ -139,6 +288,7 @@
                     <GallayImages
                       @deletePhoto="deleteImage"
                       galleryID="my-test-gallery"
+                      @coverImageIndex="handleCover"
                       :images="previousPhotos.attributes.photos.data"
                     />
                   </div>
@@ -196,144 +346,7 @@
               </div>
             </div>
 
-            <div class="col-md-12">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10">
-                  Description
-                </label>
-                <div class="mb-0" v-if="description">
-                  <QuillEditor
-                                    style="height: 12em"
 
-                    theme="snow"
-                    :placeholder="description"
-                    v-model:content="description"
-                    toolbar="full"
-                  />
-                </div>
-                <div v-if="descriptionError" class="text-danger">
-                  {{ descriptionError }}
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                  <MultiSelectVilla
-              :options="categories"
-              :selected="category"
-              :selectedTagsProp="previousCategories"
-              @update:selected="updateCategories"
-              :placeholder="'eg .Mountain view Villas'"
-              :multiSelect="multiple"
-              :label="'Categories'"
-            />
-                <div v-if="categoryError" class="text-danger">
-                  {{ categoryError }}
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10"
-                  >Daily</label
-                >
-                <div class="input-group">
-                  <span
-                    class="input-group-text rounded-0 fs-14 fw-bold text-primary"
-                  >
-                    $
-                  </span>
-                  <input
-                    v-model="daily"
-                    type="text"
-                    class="form-control shadow-none rounded-0 text-black"
-                    placeholder="e.g. 120.00"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10">Pool</label>
-
-                  <input
-                    v-model="pool"
-                    type="number"
-                    class="form-control shadow-none rounded-0 text-black"
-                    placeholder="e.g. 15"
-                  />
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10"
-                  >New Daily</label
-                >
-                <input
-                  v-model="newDaily"
-                  type="number"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="e.g. 50"
-                />
-              </div>
-            </div>
-            <div class="col-md-6">
-             <MultiSelect
-              :options="transormPartner"
-              :selected="partner"
-              @update:selectedOne="updatePartner"
-              :placeholder="partner?.data?.attributes?.name"
-              :multiSelect="false"
-              :label="'Partner'"
-            />
-
-
-            </div>
-
-
-            <div class="col-md-6">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10">
-                  Sleeps
-                </label>
-                <input
-                  v-model="sleeps"
-                  type="number"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="e.g. 4"
-                />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10">
-                  View
-                </label>
-                <input
-                  v-model="view"
-                  type="text"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="e.g. 4"
-                />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10">
-                  Minioeuvre Daily
-                </label>
-                <input
-                  v-model="minioeuvre_daily"
-                  type="text"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="e.g. 4"
-                />
-              </div>
-            </div>
 
             <div class="col-md-12">
               <button
@@ -383,6 +396,7 @@ export default {
     return {
       villa: {},
       name: "",
+      coverImageI:0,
       city: "",
       rooms: 0,
       baths: 0,
@@ -393,6 +407,7 @@ export default {
       daily: 0,
       newDaily: 0,
       deposit: 0,
+      status:true ,
       description: "",
       minioeuvre_daily: "",
       selectedPartner: "",
@@ -470,6 +485,7 @@ this.partner = event[0]
       this.selectedCategory = "";
       this.showUploadedFiles = false;
       this.previousPhotos = this.villa;
+      this.status=this.villa.attributes.isActive
       this.partner = this.villa.attributes.partner;
     },
 
@@ -606,6 +622,9 @@ this.partner = event[0]
       this.partnerData = await fetchPartners();
       console.log(this.partnerData, "data");
     },
+        handleCover(event){
+this.coverImageIndex =event
+     },
     async submitForm() {
       this.isLoading = true;
       let vehicleCategories = [] ;
@@ -625,12 +644,15 @@ this.partner = event[0]
           baths: parseInt(this.baths),
           pool: parseInt(this.pool),
           view: this.view,
+          isActive : this.status ,
           sleeps: parseInt(this.sleeps),
           daily: parseFloat(this.daily),
           new_daily: parseFloat(this.newDaily),
           deposit: parseFloat(this.deposit),
           minioeuvre_daily: this.minioeuvre_daily.toString(),
           category_villas: vehicleCategories ,
+                    cover_image_index:this.coverImageIndex ,
+
           partner: this.partner,
           description:
             this.description.ops && this.description.ops.length > 0
