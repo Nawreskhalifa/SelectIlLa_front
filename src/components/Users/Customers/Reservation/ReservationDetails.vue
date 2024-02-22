@@ -290,8 +290,8 @@
           <i class="flaticon-document text-info"></i>
           <h5 class="mb-0 fw-bold text-black ms-10 ms-md-15">Documents</h5>
         </div>
-        <div class="card-body" v-if="getReservation?.attributes.documents.data">
-          <Media :documents="getReservation?.attributes.documents.data" />
+        <div class="card-body" v-if="getReservation?.attributes.documents">
+          <Media :documents="getReservation?.attributes.documents" />
         </div>
       </div>
     </div>
@@ -516,7 +516,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import { defineComponent } from "vue";
-import Media from "./FileManager.vue";
+import Media from "../../../Reservations/FileManagar/FileManager.vue";
 import { storageUrl } from "../../../../utils/constants";
 import { updateReservation, acceptReservation } from "@/services/apiService";
 import Loading from "vue-loading-overlay";

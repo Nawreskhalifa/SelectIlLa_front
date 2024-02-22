@@ -2,7 +2,11 @@
   <BreadCrumb
     :PrevPage="'Customers List'"
     :url="'/customersList'"
-    :PageTitle="truncateText(customer.name + ' ' + customer.surname)"
+    :PageTitle="
+      truncateText(
+        getCustomer?.attributes.name + ' ' + getCustomer?.attributes.surname
+      )
+    "
   />
 
   <div class="row">
@@ -110,13 +114,14 @@
                     </thead>
                     <tbody>
                       <tr
-                        v-for="(card, index) in customer?.creditCards"
+                        v-for="(card, index) in getCustomer.attributes
+                          ?.credit_cards"
                         :key="index"
                       >
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
                         >
-                          {{ card.holderName }}
+                          {{ card.holder_name }}
                         </td>
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
@@ -131,7 +136,7 @@
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
                         >
-                          {{ card.expiryDate }}
+                          {{ card.expiry_date }}
                         </td>
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
@@ -520,7 +525,7 @@ export default defineComponent({
   },
   methods: {
     ...mapActions([
-      "fetchAllCustomers",
+      "fetchOneCustomer",
       "fetchAllAttachmentsByCustomer",
       "fetchDocumentsCustomer",
       "fetchAllDocumentsByCustomer",
@@ -718,7 +723,7 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters([
-      "getCustomers",
+      "getCustomer",
       "getDocuments",
       "getTotalPagesReservation",
       "getTotalItemsReservation",
@@ -741,18 +746,13 @@ export default defineComponent({
       });
       console.log("new documents :", this.getAllDocuments);
       await this.fetchDocumentsCustomer(this.idCustomer);
-      if (!this.getCustomers || !this.getCustomers.length) {
+      if (this.customerId) {
         this.isLoading = false;
-        await this.fetchAllCustomers({ page: null });
+
+        await this.fetchOneCustomer(this.customerId);
         this.isLoading = false;
       }
-      if (this.getCustomers && this.getCustomers.length) {
-        this.customer =
-          this.getCustomers.filter((item) => item.id == this.customerId) &&
-          this.getCustomers.filter((item) => item.id == this.customerId).length
-            ? this.getCustomers.filter((item) => item.id == this.customerId)[0]
-            : this.getCustomers.filter((item) => item.id == this.customerId);
-      }
+
       this.isLoading = false;
     } catch (error) {
       this.isLoading = false;

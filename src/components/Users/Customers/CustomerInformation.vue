@@ -5,17 +5,17 @@
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30">
       <div class="profile-info d-sm-flex align-items-center">
         <img
-          v-if="storageUrl && customer?.user?.photo.url"
-          :src="storageUrl + customer.user.photo.url"
+          v-if="storageUrl && getCustomer?.attributes.user.data?.attributes.photo.data?.attributes.url"
+          :src="storageUrl + getCustomer?.attributes.user.data?.attributes.photo.data?.attributes.url"
           class="rounded"
           alt="user"
         />
         <div class="title mt-12 mt-sm-0">
           <h3 class="text-black fw-medium mb-8">
-            {{ customer?.name + " " + customer?.surname }}
+            {{ getCustomer?.attributes.name + " " + getCustomer?.attributes.surname }}
           </h3>
           <span class="d-block fs-md-15 fs-lg-16 text-dark-emphasis mb-8">
-            {{ customer?.user?.role?.name }}
+            {{ getCustomer?.attributes.user.data?.attributes.role.data?.attributes.name }}
           </span>
         </div>
       </div>
@@ -35,23 +35,23 @@
           </div>
           <span class="d-block text-black mb-5 fw-semibold">Date of Birth</span>
           <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
-            {{ customer?.user?.dateOfBirth }}
+            {{ getCustomer?.attributes.user.data?.attributes.date_of_birth }}
           </span>
         </li>
         <li class="position-relative">
           <div class="icon text-success rounded-circle text-center">
-            <i class="flaticon-gender" v-if="customer?.user?.gender === 'Male'"
+            <i class="flaticon-gender" v-if="getCustomer?.attributes.user.data?.attributes.gender === 'Male'"
               >&#9794;</i
             >
             <i
               class="flaticon-gender"
-              v-if="customer?.user?.gender === 'Female'"
+              v-if="getCustomer?.attributes.user.data?.attributes.gender === 'Female'"
               >&#9792;</i
             >
           </div>
           <span class="d-block text-black mb-5 fw-semibold">Gender</span>
           <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
-            {{ customer?.user?.gender }}
+            {{ getCustomer?.attributes.user.data?.attributes.gender }}
           </span>
         </li>
         <li class="position-relative">
@@ -63,7 +63,7 @@
             href="mailto:johnathon23@gmail.com"
             class="d-inline-block fs-md-15 fs-lg-16 text-primary text-decoration-none"
           >
-            {{ customer?.user?.email }}
+            {{ getCustomer?.attributes.user.data?.attributes.email }}
           </a>
         </li>
         <li class="position-relative">
@@ -75,7 +75,7 @@
             href="tel:+1-321-456-8756"
             class="d-inline-block fs-md-15 fs-lg-16 text-muted text-decoration-none"
           >
-            {{ customer?.phone }}
+            {{ getCustomer?.attributes.phone }}
           </a>
         </li>
 
@@ -86,7 +86,7 @@
           </div>
           <span class="d-block text-black mb-5 fw-semibold">Location</span>
           <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
-            {{ customer?.address }}
+            {{getCustomer?.attributes.address }}
           </span>
         </li>
         <li class="position-relative">
@@ -98,7 +98,7 @@
             >Driver's License</span
           >
           <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
-            {{ customer?.driverLicense }}
+            {{ getCustomer?.attributes.driver_license }}
           </span>
         </li>
         <li class="position-relative">
@@ -108,7 +108,7 @@
           </div>
           <span class="d-block text-black mb-5 fw-semibold">Insurance</span>
           <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
-            {{ customer?.Insurance }}
+            {{ getCustomer?.attributes.Insurance }}
           </span>
         </li>
       </ul>
@@ -147,24 +147,17 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchAllCustomers"]),
+    ...mapActions(["fetchOneCustomer"]),
     onCancel() {
       console.log("User cancelled the loader.");
     },
   },
   computed: {
-    ...mapGetters(["getCustomers","getUsersLoading",]),
+    ...mapGetters(["getCustomer","getUsersLoading",]),
   },
   async mounted() {
-    if (!this.getCustomers || !this.getCustomers.length) {
-      await this.fetchAllCustomers({page:null});
-    }
-    if (this.getCustomers && this.getCustomers.length) {
-      this.customer =
-        this.getCustomers.filter((item) => item.id == this.customerId) &&
-        this.getCustomers.filter((item) => item.id == this.customerId).length
-          ? this.getCustomers.filter((item) => item.id == this.customerId)[0]
-          : this.getCustomers.filter((item) => item.id == this.customerId);
+    if (this.customerId) {
+      await this.fetchOneCustomer(this.customerId);
     }
     this.storageUrl = storageUrl;
   },

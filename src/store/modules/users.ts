@@ -267,6 +267,7 @@ const actions = {
                 undefined,
                 undefined
             );
+            console.log('ghj',response.data.data)
             if (response.success) {
                 commit('SET_CUSTOMER', response.data.data);
                 commit('SET_USERS_LOADING', false);
