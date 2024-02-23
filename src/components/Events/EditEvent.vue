@@ -334,8 +334,8 @@
                     title="delete this image"
                     style="cursor: pointer"
                   >
-                    <i class="fas fa-times"></i>
-                    <!-- Icône de suppression -->
+                  <i class="fas fa-times"></i>
+
                   </button>
                   <input
                     type="radio"

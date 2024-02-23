@@ -334,8 +334,7 @@
                     title="delete this image"
                     style="cursor: pointer"
                   >
-                    <i class="fas fa-times-circle"></i>
-                    <!-- Icône de suppression -->
+                    <i class="fas fa-times"></i>
                   </button>
                   <input
                     type="radio"
@@ -1178,7 +1177,7 @@ li > label:has(input:checked) {
 .select-same-width {
   width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
 }
-.edit-course-card.edit-course-card button span::before{
-  background-color:#ffffff !important;
+.edit-course-card.edit-course-card button span::before {
+  background-color: #ffffff !important;
 }
 </style>
