@@ -5,6 +5,12 @@
         @newFiltredData="filtredData"
         @filtreBycategory="getByCat"
         @priceRangeChanged="handlePriceRangeChange"
+       @newDailyRangeChanged="handleNewDailyRangeChanged"
+      @sleepRangeChanged="handleSleepRangeChanged"
+      @roomsRangeChanged="handleRoomsRangeChanged"
+      @partnerChanged="handlePartnerChanged"
+      @reset="reset"
+
       />
     </div>
     <div class="col-lg-8 col-xxxl-9">
@@ -314,10 +320,54 @@ export default {
       category: "" ,
       minPrice: 1,
       maxPrice: 6000,
-      searchQuery: ""
+      searchQuery: "",
+      minRooms: 0,
+maxRooms: 0,
+      minNewDaily: 0,
+maxNewDaily: 0,
+minSleep:0,
+maxSleep: 0,
+partner:""
     };
   },
     watch: {
+
+      partner(newValue, oldValue) {
+  if (newValue !== oldValue) {
+        this.fetchVillasAp();
+      }
+   },
+   minNewDaily(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVillasAp();
+      }
+   },
+  maxNewDaily(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVillasAp();
+      }
+   },
+  minSleep(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVillasAp();
+      }
+   },
+  maxSleep(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVillasAp();
+      }
+   },
+   minRooms(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVillasAp();
+      }
+   },
+  maxRooms(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVillasAp();
+      }
+   },
+
     category(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.fetchVillasAp();
@@ -362,14 +412,50 @@ export default {
     },
   },
   methods: {
+
+     reset() {
+      this.category = "";
+      this.minPrice = 1;
+      this.maxPrice = 6000;
+      this.searchQuery = "";
+      this.minRooms = 0;
+      this.maxRooms = 0;
+      this.minNewDaily = 0;
+      this.maxNewDaily = 0;
+      this.minSleep = 0;
+      this.maxSleep = 0;
+      this.partner = "";
+    },
+    handleNewDailyRangeChanged(range) {
+         this.minNewDaily = range.min
+         this.maxNewDaily = range.max
+    },
+    handleSleepRangeChanged(range) {
+this.minSleep = range.min,
+this.maxSleep = range.max
+    },
+    handleRoomsRangeChanged(range) {
+   this.minRooms = range.min ,
+   this.maxRooms = range.max
+    },
+    handlePartnerChanged(partner) {
+       this.partner = partner
+    },
        async fetchVillasAp() {
       try {
         this.isLoading = true;
         const filters = {
-          daily: [this.minPrice, this.maxPrice],
-          name: this.searchQuery,
-          category_villas: this.category,
-          searchQuery: this.searchQuery,
+           daily: [this.minPrice, this.maxPrice],
+      name: this.searchQuery,
+      category_villas: this.category,
+      minRooms: this.minRooms,
+      maxRooms: this.maxRooms,
+      minNewDaily: this.minNewDaily,
+      maxNewDaily: this.maxNewDaily,
+      minSleep: this.minSleep,
+      maxSleep: this.maxSleep,
+      partner: this.partner,
+
         };
 
         const data = await AllVillaApi(filters);

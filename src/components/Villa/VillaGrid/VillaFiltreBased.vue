@@ -55,14 +55,14 @@
           <input
             type="range"
             class="min-price"
-            min="1"
+            min="10"
             v-model="minPrice"
             @change="updateRange"
           />
           <input
             type="range"
             class="max-price"
-            max="1000"
+            max="20000"
             v-model="maxPrice"
             @change="updateRange"
           />
@@ -87,27 +87,91 @@
           <input
             type="range"
             class="min-price"
-            min="1000"
+            min="10"
             max="100000"
-            v-model="minMsrp"
-            @change="updateRangeMsrp"
+            v-model="minNewDaily"
+            @change="updateRangeNewDaily"
           />
           <input
             type="range"
             class="max-price"
-            max="40000"
-            v-model="maxMsrp"
-            @change="updateRangeMsrp"
+            max="20000"
+            v-model="maxNewDaily"
+            @change="updateRangeNewDaily"
           />
         </div>
         <div
           class="price-content d-flex align-items-center justify-content-between"
         >
           <span id="min-value" class="d-block text-black fw-medium fs-13">
-            ${{ minMsrp }}
+            ${{ minNewDaily }}
           </span>
           <span id="max-value" class="d-block text-black fw-medium fs-13">
-            ${{ maxMsrp }}
+            ${{ maxNewDaily }}
+          </span>
+        </div>
+      </div>
+    </div>
+       <div class="sidebar-item">
+      <h6 class="text-black fw-bold fs-md-15">SLEEPS </h6>
+      <div class="pricing-filter" id="pricing-filter">
+        <div class="range-slider">
+          <input
+            type="range"
+            class="min-price"
+            min="1"
+            max="15"
+            v-model="minSleep"
+            @change="updateRangeSleep"
+          />
+          <input
+            type="range"
+            class="max-price"
+            max="15"
+            v-model="maxSleep"
+            @change="updateRangeSleep"
+          />
+        </div>
+        <div
+          class="price-content d-flex align-items-center justify-content-between"
+        >
+          <span id="min-value" class="d-block text-black fw-medium fs-13">
+            ${{ minSleep }}
+          </span>
+          <span id="max-value" class="d-block text-black fw-medium fs-13">
+            ${{ maxSleep }}
+          </span>
+        </div>
+      </div>
+    </div>
+       <div class="sidebar-item">
+      <h6 class="text-black fw-bold fs-md-15">ROOMS </h6>
+      <div class="pricing-filter" id="pricing-filter">
+        <div class="range-slider">
+          <input
+            type="range"
+            class="min-price"
+            min="1"
+            max="15"
+            v-model="minRooms"
+            @change="updateRangeRooms"
+          />
+          <input
+            type="range"
+            class="max-price"
+            max="15"
+            v-model="maxRooms"
+            @change="updateRangeRooms"
+          />
+        </div>
+        <div
+          class="price-content d-flex align-items-center justify-content-between"
+        >
+          <span id="min-value" class="d-block text-black fw-medium fs-13">
+            ${{ minRooms }}
+          </span>
+          <span id="max-value" class="d-block text-black fw-medium fs-13">
+            ${{ maxRooms }}
           </span>
         </div>
       </div>
@@ -115,12 +179,16 @@
     <div class="sidebar-item" style="display: flex ;  justify-content: start; align-items: center; width: 100% !important;" >
        <div style="width: 100%;">
          <h6 class="text-black fw-bold fs-md-15">Partner</h6>
-        <select class="project-select form-select shadow-none fw-semibold rounded-1 " style="width: 100%;" >
-          <option v-for="partner in partners" :key="partner.id">{{partner.name}}</option>
+        <select class="project-select form-select shadow-none fw-semibold rounded-1 " v-model="partner" @change="handleChangedPartner" style="width: 100%;" >
+          <option v-for="partner in partners" :key="partner.id" :value="partner.id">{{partner.name}}</option>
         </select>
        </div>
     </div>
-
+    <div class="sidebar-item" style="display: flex ;  justify-content: start; align-items: center; width: 100% !important;" >
+       <div style="width: 100%; ">
+         <button class="btn "  @click="reset" style="width: 100%; background-color: #6560f0;  color: white;"><i class="fas fa-refresh"> </i> </button>
+       </div>
+    </div>
   </div>
 </template>
 
@@ -130,14 +198,20 @@ import { fetchVillaCategories, fetchPartners} from "@/services/apiService";
 export default {
   data() {
     return {
-      categories: [],
-       searchInput: "",
-       partners:[],
-      selectAll: false,
-   all: true,
-         minPrice: 10,
-      maxPrice: 1000,
-            debounceTimeout: null,
+     categories: [],
+      searchInput: "",
+      partners: [],
+      minNewDaily: 100,
+      maxNewDaily: 20000,
+      minSleep: 1,
+      maxSleep: 15,
+      minRooms: 1,
+      maxRooms: 15,
+      minPrice: 10,
+      partner:"",
+      maxPrice: 20000,
+      debounceTimeout: null,
+      all: true,
 
     };
   },
@@ -149,6 +223,36 @@ export default {
     maxPrice(newValue, oldValue) {
       this.updateRange();
       this.debouncedPriceRangeChanged();
+    },
+     minNewDaily(newValue, oldValue) {
+      this.updateRangeNewDaily();
+            this.debouncedPriceRangeChanged();
+
+    },
+    maxNewDaily(newValue, oldValue) {
+      this.updateRangeNewDaily();
+            this.debouncedPriceRangeChanged();
+
+    },
+    minSleep(newValue, oldValue) {
+      this.emitSleepRange();
+            this.debouncedPriceRangeChanged();
+
+    },
+    maxSleep(newValue, oldValue) {
+      this.emitSleepRange();
+            this.debouncedPriceRangeChanged();
+
+    },
+    minRooms(newValue, oldValue) {
+      this.emitRoomsRange();
+            this.debouncedPriceRangeChanged();
+
+    },
+    maxRooms(newValue, oldValue) {
+      this.emitRoomsRange();
+            this.debouncedPriceRangeChanged();
+
     },
     async searchInput(newValue, oldValue) {
       this.$emit("newFiltredData", newValue);
@@ -168,6 +272,35 @@ export default {
     }
   },
     methods: {
+        reset(){
+            this.searchInput = "";
+  this.minNewDaily = 100;
+  this.maxNewDaily = 20000;
+  this.minSleep = 1;
+  this.maxSleep = 15;
+  this.minRooms = 1;
+  this.maxRooms = 15;
+  this.minPrice = 10;
+  this.maxPrice = 20000;
+  this.partner = "";
+  this.all = true;
+this.$emit('reset',true)
+    },
+      handleChangedPartner(event){
+        this.emitPartner()
+      },
+         emitNewDailyRange() {
+      this.$emit("newDailyRangeChanged", { min: this.minNewDaily, max: this.maxNewDaily });
+    },
+    emitSleepRange() {
+      this.$emit("sleepRangeChanged", { min: this.minSleep, max: this.maxSleep });
+    },
+    emitRoomsRange() {
+      this.$emit("roomsRangeChanged", { min: this.minRooms, max: this.maxRooms });
+    },
+    emitPartner() {
+      this.$emit("partnerChanged", this.partner);
+    },
        async getPartner (){
      const data= await  fetchPartners()
      console.log(data,"partners")
@@ -198,6 +331,12 @@ export default {
     this.all = !this.all
   }
 },
+  updateRangeNewDaily() {
+      if (parseInt(this.minNewDaily) > parseInt(this.maxNewDaily)) {
+        [this.minNewDaily, this.maxNewDaily] = [this.maxNewDaily, this.minNewDaily];
+      }
+      this.emitNewDailyRange();
+    },
     async fetchCategories() {
       try {
         const data = await fetchVillaCategories("populate=*");
@@ -300,4 +439,9 @@ this.$emit("filtreBycategory", { category: categorie });
 
 }
 
+.btn :hover{
+ background-color: white;
+ color: gray;
+ border: gray;
+}
 </style>

@@ -163,61 +163,46 @@
         </div>
       </div>
     </div>
-     <div class="sidebar-item">
-      <h6 class="text-black fw-bold fs-md-15">NEW DAILY </h6>
-      <div class="pricing-filter" id="pricing-filter">
-        <div class="range-slider">
-          <input
-            type="range"
-            class="min-price"
-            min="1000"
-            max="100000"
-            v-model="minMsrp"
-            @change="updateRangeMsrp"
-          />
-          <input
-            type="range"
-            class="max-price"
-            max="40000"
-            v-model="maxMsrp"
-            @change="updateRangeMsrp"
-          />
-        </div>
-        <div
-          class="price-content d-flex align-items-center justify-content-between"
-        >
-          <span id="min-value" class="d-block text-black fw-medium fs-13">
-            ${{ minMsrp }}
-          </span>
-          <span id="max-value" class="d-block text-black fw-medium fs-13">
-            ${{ maxMsrp }}
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="sidebar-item" style="display: flex ;  justify-content: start; align-items: center; width: 100% !important;" >
-       <div style="width: 100%;">
-         <h6 class="text-black fw-bold fs-md-15">Partner</h6>
-        <select class="project-select form-select shadow-none fw-semibold rounded-1 " style="width: 100%;" >
-          <option v-for="partner in partners" :key="partner.id" >{{partner.name}}</option>
-        </select>
-       </div>
-    </div>
-        <div class="sidebar-item" style="display: flex ;  justify-content: start; align-items: center; width: 100% !important;" >
-       <div style="width: 100%;">
-         <h6 class="text-black fw-bold fs-md-15">Styles </h6>
-        <select class="project-select form-select shadow-none fw-semibold rounded-1 " style="width: 100%;" >
-          <option v-for="style in styles" :key="style.id">{{style?.attributes?.name}}</option>
-        </select>
-       </div>
-    </div>
 
+   <div class="sidebar-item" style="display: flex; justify-content: start; align-items: center; width: 100% !important;">
+    <div style="width: 100%;">
+      <h6 class="text-black fw-bold fs-md-15">Partner</h6>
+      <select v-model="selectedPartner" class="project-select form-select shadow-none fw-semibold rounded-1" style="width: 100%;" @change="handlePartnerSelection">
+        <option v-for="partner in partners" :key="partner.id" :value="partner.id">{{ partner.name }}</option>
+      </select>
+    </div>
   </div>
-</template>
+
+  <div class="sidebar-item" style="display: flex; justify-content: start; align-items: center; width: 100% !important;">
+    <div style="width: 100%;">
+      <h6 class="text-black fw-bold fs-md-15">Styles</h6>
+      <select v-model="selectedStyle" class="project-select form-select shadow-none fw-semibold rounded-1" style="width: 100%;" @change="handleStyleSelection">
+        <option v-for="style in styles" :key="style.id" :value="style.id">{{ style?.attributes?.name }}</option>
+      </select>
+    </div>
+  </div>
+      <div class="sidebar-item" style="display: flex ;  justify-content: start; align-items: center; width: 100% !important;" >
+       <div style="width: 100%; ">
+         <button @click="reset" class="btn " style="width: 100%; background-color: #6560f0;  color: white;"><i class="fas fa-refresh"> </i> </button>
+       </div>
+    </div>
+ <!-- <div class="sidebar-item">
+  <h6 class="text-black fw-bold fs-md-15">Tags</h6>
+  <div class="chips-container">
+
+    <div class="chip" v-for="t in tags  " :key="t.id" :value>{{ t.attributes.name }} <span class="chip-count"> </span></div>
+
+
+   </div>
+</div> -->
+
+
+
+</div>
+ </template>
 
 <script>
-import { fetchMakesFiltre ,fetchStyles } from "@/services/apiService";
- import { fetchPartners, fetchUserByPartner } from "@/services/apiService";
+import { fetchMakesFiltre ,fetchStyles ,fetchPartners ,fetchTags} from "@/services/apiService";
 
 export default {
   data() {
@@ -231,6 +216,8 @@ export default {
       all : true ,
       brands: [],
       partners:[],
+  selectedPartner: null,
+      selectedStyle: null,
       makeLimit: 4,
       brandLimit: 4,
       moreMakesAvailable: true,
@@ -240,6 +227,8 @@ export default {
       minMsrp:10000,
       maxMsrp: 100000,
             debounceTimeout: null,
+            tags : [] ,
+            tag :''
 
     };
   },
@@ -260,6 +249,39 @@ export default {
     },
   },
   methods: {
+  reset() {
+   this.searchInput = "";
+  this.selectedMake = {};
+  this.selectAll = false;
+  this.minPrice = 10;
+  this.maxPrice = 1000;
+  this.minMsrp = 10000;
+  this.maxMsrp = 100000;
+  this.selectedPartner = null;
+  this.selectedStyle = null;
+  this.all = true;
+
+   this.$emit('reset', true);
+},
+
+ updateRangeMsrp() {
+     this.$emit('msrpRangeChanged', { min: this.minMsrp, max: this.maxMsrp });
+  },
+ handlePartnerSelection() {
+      this.$emit('partnerSelected', this.selectedPartner);
+    },
+
+    handleStyleSelection() {
+      this.$emit('styleSelected', this.selectedStyle);
+    },
+
+    handleTagSelection() {
+      this.$emit('tagSelected', this.tag);
+    },
+    async fetTags(){
+ const data= await fetchTags()
+ this.tags = data.data
+    },
    async getStyles(){
   const data =await fetchStyles()
    this.styles = data.data
@@ -270,7 +292,6 @@ export default {
      console.log(data,"partners")
      this.partners = data
      },
-    //  ...mapActions["fetchPartners"]
     debouncedPriceRangeChanged() {
       clearTimeout(this.debounceTimeout);
       this.debounceTimeout = setTimeout(() => {
@@ -384,6 +405,32 @@ allVehiclesByBrand() {
 </script>
 
 <style scoped>
+ .chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.chip {
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chip:hover {
+  background-color: #6560f0;
+  color: white;
+}
+
+.chip-count {
+  margin-left: 5px;
+  font-weight: bold;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
 }

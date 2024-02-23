@@ -44,7 +44,7 @@
               </div>
               <div style="display: flex; flex-direction: row">
                 <p class="fs-md-15 fs-lg-16">
-                                   <a  class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"   style="cursor: pointer;"  @click="OpenVilla" ><i   class="flaticon-plus lh-2 me-16 position-relative top-1"></i> add new category </a>
+                                   <a  class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"   style="cursor: pointer;"  @click.prevent="OpenVilla" ><i   class="flaticon-plus lh-2 me-16 position-relative top-1"></i> add new category </a>
 
                 </p>
               </div>

@@ -140,7 +140,7 @@
               </p>
             </div>
           </div>
-          <div class="col-md-6">
+          <!-- <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
                 Insurance
@@ -156,7 +156,7 @@
                 Insurance type is required
               </p>
             </div>
-          </div>
+          </div> -->
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">

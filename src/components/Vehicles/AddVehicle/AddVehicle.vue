@@ -18,15 +18,9 @@
               <div v-if="makesLoading" class="loader"></div>
 
               <div style="display: flex; flex-direction: row">
-                <span>+</span>
-                <p class="fs-md-15 fs-lg-16">
-                  <a
-                    @click.prevent="addMake"
-                    style="cursor: pointer"
-                    class="link-secondary"
-                    >Add new make</a
-                  >
-                </p>
+                                                   <a  class="card-link-btn lnk text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"   style="cursor: pointer;"                       @click.prevent="addMake" ><i   class="flaticon-plus lh-2 me-16 position-relative top-1"></i> Add new make </a>
+
+
               </div>
 
               <div v-if="makeErrorVisible" class="text-danger">
@@ -61,15 +55,9 @@
               </select>
               <div v-if="brandsLoading" class="loader"></div>
               <div v-if="make" style="display: flex; flex-direction: row">
-                <span>+</span>
-                <p class="fs-md-15 fs-lg-16">
-                  <a
-                    @click.prevent="addBrand"
-                    style="cursor: pointer"
-                    class="link-secondary"
-                    >Add Brand To {{ make.attributes.name }}</a
-                  >
-                </p>
+                                                                   <a  class="card-link-btn lnk text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"   style="cursor: pointer;"                       @click.prevent="addBrand" ><i   class="flaticon-plus lh-2 me-16 position-relative top-1"></i> Add Brand To {{ make.attributes.name }} </a>
+
+
               </div>
 
               <div v-if="brandErrorVisible" class="text-danger">
@@ -92,15 +80,9 @@
               <!-- <div v-if="makesLoading" class="loader"></div> -->
 
               <div style="display: flex; flex-direction: row">
-                <span>+</span>
-                <p class="fs-md-15 fs-lg-16">
-                  <a
-                    @click.prevent="addStyleModal"
-                    style="cursor: pointer"
-                    class="link-secondary"
-                    >Add new Style</a
-                  >
-                </p>
+                                                                                   <a  class="card-link-btn lnk text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"   style="cursor: pointer;"                       @click.prevent="addStyleModal" ><i   class="flaticon-plus lh-2 me-16 position-relative top-1"></i>Add new Style </a>
+
+
               </div>
 
               <div v-if="makeErrorVisible" class="text-danger">
@@ -957,6 +939,9 @@ export default defineComponent({
 });
 </script>
 <style scoped>
+.lnk{
+  margin-top: 5px !important;
+}
 .loader {
   border: 3px solid #f3f3f3;
   border-radius: 50%;

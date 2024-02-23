@@ -6,7 +6,11 @@
         @allSelected="selectedData"
         @byCategory="getByCat"
         @byBrand="getByBrand"
-@priceRangeChanged="handlePriceRangeChange"
+        @priceRangeChanged="handlePriceRangeChange"
+        @msrpRangeChanged="handleMsrpRangeChanged"
+      @partnerSelected="handlePartnerSelected"
+      @styleSelected="handleStyleSelected"
+      @reset="resetFilters"
       />
     </div>
     <div class="col-lg-8 col-xxxl-9">
@@ -321,12 +325,37 @@ export default {
       itemToRemove: "",
       make: "",
       brand: "",
-      minPrice: 1,
-      maxPrice: 6000,
-      searchQuery: ""
+      minPrice: 0,
+      maxPrice: 0,
+      searchQuery: "",
+       partner: "",
+      style: "" ,
+      maxRange : 0 ,
+minRange :0,
+
     };
   },
     watch: {
+        partner(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVehicles();
+      }
+    },
+      style(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVehicles();
+      }
+    },
+      maxRange(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVehicles();
+      }
+    },
+  minRange(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVehicles();
+      }
+    },
     make(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.fetchVehicles();
@@ -376,18 +405,52 @@ export default {
     },
   },
   methods: {
-      async fetchVehicles() {
+ resetFilters() {
+      this.category = "";
+      this.minPrice = 1;
+      this.maxPrice = 6000;
+      this.searchQuery = "";
+      this.minRooms = 0;
+      this.maxRooms = 0;
+      this.minNewDaily = 0;
+      this.maxNewDaily = 0;
+      this.minSleep = 0;
+      this.maxSleep = 0;
+      this.partner = "";
+      this.fetchVehicles();
+    },
+    handleMsrpRangeChanged(range) {
+      this.minRange = range.min
+      this.maxRange =range.max
+     },
+    handlePartnerSelected(partner) {
+      this.partner= partner
+     },
+    handleStyleSelected(style) {
+      this.style = style
+     },
+ async fetchVehicles() {
   try {
     this.isLoading = true;
     const filters = {
-      make:this.make,
+      make: this.make,
       brand: this.brand,
-        daily: [parseInt( this.minPrice), parseInt(this.maxPrice)],
-      // minPrice: this.minPrice,
-      // maxPrice: this.maxPrice,
+      daily: [parseInt(this.minPrice), parseInt(this.maxPrice)],
+      msrp: [parseInt(this.minRange), parseInt(this.maxRange)],
+      partnerId: this.partner,
+      styleId: this.style,
       searchQuery: this.searchQuery,
     };
-            console.log(filters,"daily")
+
+     Object.keys(filters).forEach(key => {
+      if (filters[key] === 0 || filters[key] === "") {
+        delete filters[key];
+      } else if (Array.isArray(filters[key]) && filters[key].some(value => value === 0 || value === "")) {
+         filters[key] = filters[key].filter(value => value !== 0 && value !== "");
+      }
+    });
+
+    console.log(filters);
 
     const data = await allVehiclesApi(filters);
     this.originalVehicles = data.data;
@@ -398,6 +461,7 @@ export default {
     this.isLoading = false;
   }
 },
+
 
  handlePriceRangeChange(range) {
 console.log(range)
@@ -500,23 +564,8 @@ const data = await allVehiclesApi("");
     }
     },
     async getByBrand(brand) {
-        try {
-        console.log("Filtering by brand:", brand);
-        if (brand) {
-          const data = await searchVehicle(
-            "vehicles",
-            "brand",
-            "id",
-            "$eq",
-            brand.id
-          );
-          this.vehicles = data.data.data;
-        } else {
-          this.vehicles = [...this.originalVehicles];
-        }
-      } catch (error) {
-        console.error("Error in getByCat:", error);
-      }
+this.brand =             brand.id
+
     },
     async fetchData() {
       try {

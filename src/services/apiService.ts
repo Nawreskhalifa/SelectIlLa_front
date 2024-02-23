@@ -1512,41 +1512,41 @@ export async function addStyle(styleData) {
     throw error;
   }
 }
-export async function allVehiclesApi(filters) {
+ export async function allVehiclesApi(filters) {
   try {
     let queryParams = `populate=*`;
-    const filterKeys = Object.keys(filters);
 
-    filterKeys.forEach((key) => {
-  const value = filters[key];
-  if (value !== undefined && value !== null) {
-    if (Array.isArray(value)) {
-      if (key === 'daily' && value.length === 2) {
-        const [minDaily, maxDaily] = value;
-        queryParams += `&filters[${key}][$gte]=${minDaily}&filters[${key}][$lte]=${maxDaily}`;
-      } else {
-        value.forEach((v) => {
-          if (key === 'make' || key === 'brand') {
-            queryParams += `&filters[${key}][name][$contains]=${v}`;
-          } else {
-            queryParams += `&filters[${key}][name][$contains]=${v}`;
-          }
-        });
-      }
-    } else {
-      if (key === 'make' || key === 'brand') {
-        queryParams += `&filters[${key}][name][$contains]=${value}`;
-      } else if (key === 'searchQuery') {
-        queryParams += `&filters[$or][0][make][name][$contains]=${value}&filters[$or][1][brand][name][$contains]=${value}`;
-      } else {
-        queryParams += `&filters[${key}][name][$contains]=${value}`;
-      }
+    if (filters.daily && filters.daily.length === 2) {
+      const [minDaily, maxDaily] = filters.daily;
+      queryParams += `&filters[daily][$gte]=${minDaily}&filters[daily][$lte]=${maxDaily}`;
     }
-  }
-});
 
+    if (filters.msrp && filters.msrp.length === 2) {
+      const [minMsrp, maxMsrp] = filters.msrp;
+      queryParams += `&filters[msrp][$gte]=${minMsrp}&filters[msrp][$lte]=${maxMsrp}`;
+    }
 
-    const response = await axios.get(`${endPoints.vehicles}?${queryParams}`);
+    if (filters.partnerId) {
+      queryParams += `&filters[partner][id][$eq]=${filters.partnerId}`;
+    }
+
+    if (filters.styleId) {
+      queryParams += `&filters[style][id][$eq]=${filters.styleId}`;
+    }
+
+    if (filters.make) {
+      queryParams += `&filters[make][name][$contains]=${filters.make}`;
+    }
+
+    if (filters.brand) {
+      queryParams += `&filters[brand][name][$contains]=${filters.brand}`;
+    }
+
+    if (filters.searchQuery) {
+      queryParams += `&filters[$or][0][make][name][$contains]=${filters.searchQuery}&filters[$or][1][brand][name][$contains]=${filters.searchQuery}`;
+    }
+
+    const response = await axios.get(`http://localhost:1337/api/vehicles?${queryParams}`);
 
     if (response.status === 200) {
       return response.data;
@@ -1555,19 +1555,42 @@ export async function allVehiclesApi(filters) {
     }
   } catch (error) {
     console.error('Error getting vehicles:', error);
-    return {
-      success: false,
-      error,
-    };
+    throw error;
   }
 }
 
 
 
 
-export async function AllVillaApi(filters) {
+
+ export async function AllVillaApi(filters) {
   try {
     let queryParams = `populate=*`;
+
+    if (filters.minNewDaily && filters.minNewDaily !== 0 && filters.minNewDaily !== "") {
+      queryParams += `&filters[new_daily][$gte]=${filters.minNewDaily}`;
+    }
+    if (filters.maxNewDaily && filters.maxNewDaily !== 0 && filters.maxNewDaily !== "") {
+      queryParams += `&filters[new_daily][$lte]=${filters.maxNewDaily}`;
+    }
+
+    if (filters.minSleep && filters.minSleep !== 0 && filters.minSleep !== "") {
+      queryParams += `&filters[sleeps][$gte]=${filters.minSleep}`;
+    }
+    if (filters.maxSleep && filters.maxSleep !== 0 && filters.maxSleep !== "") {
+      queryParams += `&filters[sleeps][$lte]=${filters.maxSleep}`;
+    }
+
+    if (filters.minRooms && filters.minRooms !== 0 && filters.minRooms !== "") {
+      queryParams += `&filters[rooms][$gte]=${filters.minRooms}`;
+    }
+    if (filters.maxRooms && filters.maxRooms !== 0 && filters.maxRooms !== "") {
+      queryParams += `&filters[rooms][$lte]=${filters.maxRooms}`;
+    }
+
+    if (filters.partner && filters.partner !== "") {
+      queryParams += `&filters[partner][id][$eq]=${filters.partner}`;
+    }
 
     if (filters.daily && filters.daily.length === 2) {
       const [minDaily, maxDaily] = filters.daily;
@@ -1581,10 +1604,6 @@ export async function AllVillaApi(filters) {
     if (filters.category_villas) {
       queryParams += `&filters[category_villas][id][$eq]=${filters.category_villas.id}`;
     }
-
-    // if (filters.searchQuery) {
-    //   queryParams += `&filters[name][$contains]=${filters.searchQuery.trim()}`;
-    // }
 
     const response = await axios.get(`http://localhost:1337/api/villas?${queryParams}`);
 
