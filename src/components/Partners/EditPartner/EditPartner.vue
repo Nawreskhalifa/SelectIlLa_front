@@ -78,9 +78,7 @@
                 :max="getCurrentDate()"
                 disabled
               />
-              <p v-if="formSubmitted && !dateOfBirth" class="text-danger">
-                Date of birth is required
-              </p>
+
             </div>
           </div>
           <div class="col-md-6">
@@ -374,17 +372,14 @@ export default defineComponent({
       this.formSubmitted = true;
     },
     handleFileUpload(event) {
-      // Vérifie si un fichier a été sélectionné
-      if (event.target.files.length > 0) {
+       if (event.target.files.length > 0) {
         const file = event.target.files[0];
-        const maxSize = 20 * 1024 * 1024; // Taille maximale en octets (ici, 20 Mo)
+        const maxSize = 20 * 1024 * 1024;
 
-        // Vérifier si la taille du fichier est inférieure ou égale à la taille maximale
-        if (file.size > maxSize) {
-          // Afficher un message d'erreur à l'utilisateur
-          this.errors.photo =
+         if (file.size > maxSize) {
+           this.errors.photo =
             "The size of the image exceeds the limit of 20 MB.";
-          return; // Arrêter le traitement
+          return;
         }
 
         // Continuer le traitement si la taille est conforme à la limite
@@ -467,10 +462,7 @@ export default defineComponent({
         isValid = false;
       }
 
-      if (!this.datofbirth) {
-        this.errors.datofbirth = "Date of birth is required";
-        isValid = false;
-      }
+
 
       if (!this.address) {
         this.errors.address = "Address is required";
@@ -482,15 +474,8 @@ export default defineComponent({
         isValid = false;
       }
 
-      if (!this.driver_license) {
-        this.errors.driver_license = "Driver license is required";
-        isValid = false;
-      }
 
-      if (!this.Insurance) {
-        this.errors.Insurance = "Insurance type is required";
-        isValid = false;
-      }
+
 
       if (!this.email) {
         this.errors.email = "Email is required";
@@ -526,8 +511,6 @@ export default defineComponent({
             surname: this.surname,
             phone: this.phone,
             address: this.address,
-            driver_license: this.driver_license,
-            Insurance: this.Insurance,
             user: this.idUser,
             blocked: this.status,
           },
@@ -536,18 +519,17 @@ export default defineComponent({
           customerDetails,
           this.$route.params.id
         );
-        if (result.success) {
+        if (result) {
           this.updatedPhotos.forEach(async (item) => {
             await deleteFiles(item);
           });
           this.isLoading = false;
-          this.$router.push("/customersList");
+          this.$router.push("/partnersList");
         }
       }
     },
 
     async uploadProfilePicture(userId) {
-      // Télécharger la photo de profil
       await uploadFiles(
         [this.photo],
         "plugin::users-permissions.user",
@@ -591,9 +573,7 @@ export default defineComponent({
       this.datofbirth =
         this.partner?.attributes.user.data?.attributes.date_of_birth;
       this.phone = this.partner?.attributes.phone;
-      this.Insurance = this.partner?.attributes.Insurance;
-      this.driver_license = this.partner?.attributes.driver_license;
-      this.status = this.partner?.attributes.user.data?.attributes.blocked;
+        this.status = this.partner?.attributes.user.data?.attributes.blocked;
       this.gender = this.partner?.attributes.user.data?.attributes.gender;
       this.databasePhoto.push({
         id: this.partner?.attributes.user.data?.attributes.photo?.data?.id,

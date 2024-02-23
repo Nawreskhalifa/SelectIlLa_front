@@ -27,9 +27,10 @@
   </div>
 
   <div class="row">
-    <div class="col-lg-6 col-xxxl-3">
+    <div class="col-lg-6 col-xxxl-3" style="height: 20%;!important">
       <div
         class="card mb-25 border-0 rounded-0 bg-white letter-spacing chat-sidebar"
+        style="max-height: 1000px; overflow: hidden;"
       >
         <div class="card-body">
           <input
@@ -53,16 +54,23 @@
               <div class="card-body letter-spacing">
                 <div
                   class="scrollable-container"
-                 style="max-height: 400px; overflow-y: auto;"
+                 style="max-height: 1000px; overflow-y: auto; padding: 19px;"
                 >
                   <ul class="to-do-list style-two ps-0 list-unstyled mb-0">
                     <li
                       v-for="make in makes"
                       :key="make.id"
                       :class="{ selected: make.selected }"
-                      class="to-do-list-item d-flex align-items-center justify-content-between hoverli"
+                      class=" card mb-3 to-do-list-item d-flex align-items-center justify-content-between hoverli"
                       @click.prevent="openBrandsFormMake(make)"
+                      style=" display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding-left: 5px;"
+
                     >
+
                       <div style="width: 95%; cursor: pointer">
                         <div
                           class="'form-check mb-0 fs-md-15 fs-lg-16 text-black fw-medium'"
@@ -133,7 +141,7 @@
       </div>
     </div>
 
-    <div class="col-lg-6 col-xxxl-4">
+    <div class="col-lg-6 col-xxxl-4"  style="height: 22%;!important" >
       <div class="card mb-25 border-0 rounded-0 bg-white">
         <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
           <div
@@ -159,7 +167,7 @@
           </div>
           <div class="responsive">
             <div class="row">
-              <div class="col-lg-12"               style="max-height: 400px; overflow-y: auto;">
+              <div class="col-lg-12"               style="max-height: 855px; min-height: 855px;  overflow-y: auto;">
                  <div  v-for="brand in brands" :key="brand.id">
                   <div
                     class="card mb-3"
@@ -225,8 +233,8 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-6 col-xxxl-4">
-      <div class="card mb-25 border-0 rounded-0 bg-white">
+    <div class="col-lg-6 col-xxxl-4" style="height: 20%;!important">
+<div class="card mb-25 border-0 rounded-0 bg-white">
         <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
           <div
             class="mb-15 mb-md-30 d-sm-flex align-items-center justify-content-between" style="margin-top: 25px;"
@@ -399,61 +407,55 @@
             </div>
           </div>
           <hr />
-        </div>
+       </div>
       </div>
-    </div>
-    <div class="col-lg-6 col-xxxl-3">
-      <div
-        class="card mb-25 border-0 rounded-0 bg-white letter-spacing chat-sidebar"
-      >
-        <div class="card-body">
-          <!-- <input
-            type="text"
-            class="form-control shadow-none text-black rounded-0 border-0"
-            placeholder="Search Makes"
-            v-model="searchInput"
-            @input="searchMake"
-          /> -->
-
-          <button
-            class="btn btn-primary d-block w-100"
-            type="button"
-            @click="openStyle"
+      <div class="card mb-25 border-0 rounded-0 bg-white">
+        <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
+          <div
+            class="mb-15 mb-md-30 d-sm-flex align-items-center justify-content-between" style="margin-top: 25px;"
           >
-            Add New Style
-          </button>
+            <h6 class="card-title fw-bold mb-0">
+              Styles
+              <span class="badge bg-primary fs-20" v-if="openedBrand">{{
+                openedBrand?.attributes?.name
+              }}
+            </span>
+            </h6>
+            <div
+              class="card-select mt-10 mt-md-0 mb-10 mb-md-0 d-inline-block d-sm-flex align-items-center ps-10 pe-10 pt-5 pb-5  "
+              v-if="openedBrand"
+            >
+              <span
+                class="fw-medium text-muted me-8  "
+                 @click="openStyle()"
+                style="cursor: pointer"
+                >+ Styles for {{ openedBrand.attributes?.name }}
+              </span>
 
-          <div class="chat-users-list">
-            <div class="card mb-25 border-0 rounded-0 bg-white to-do-list-box">
-              <div class="card-body letter-spacing">
-                <div
-                  class="scrollable-container"
+            </div>
+          </div>
+          <div class="responsive">
+            <div class="row" >
+
+              <div
+                v-if=" !openedBrand.attributes?.name"
+                class="col-lg-12"
                  style="max-height: 400px; overflow-y: auto;"
-                >
-                  <ul class="to-do-list style-two ps-0 list-unstyled mb-0">
-                    <li
-                      v-for="style in styles"
-                      :key="style.id"
-                      :class="{ selected: style.selected }"
-                      class="to-do-list-item d-flex align-items-center justify-content-between hoverli"
-                     >
-                      <div style="width: 95%; cursor: pointer">
-                        <div
-                          class="'form-check mb-0 fs-md-15 fs-lg-16 text-black fw-medium'"
-                          v-if="
-                            style && style.attributes && style?.attributes?.name
-                          "
-                        >
-                          <label class="aria-label">
-                            <h6
-                              style="cursor: pointer"
-                              class="card-title fw-bold mb-0"
-                            >
-                              {{ style.attributes.name }}
-                            </h6>
-                          </label>
-                        </div>
-                      </div>
+              >
+                <div v-for="style in styles" :key="style.id">
+                  <div class="card mb-3" style="cursor: pointer">
+                    <div
+                      class="card-body hoverli"
+                      style="
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-between;
+                      "
+                    >
+                      <h6 class="card-title fw-bold mb-0">
+                        {{ style?.attributes?.name }}
+                      </h6>
                       <div class="dropdown">
                         <button
                           class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
@@ -466,46 +468,91 @@
                         <ul class="dropdown-menu">
                           <li>
                             <a
-                              class="dropdown-item d-flex align-items-center"
-                              @click.prevent="openEditMake(make)"
+                              class="dropdown-item"
+                              @click.prevent="openEditStyle(style)"
+                              >Edit</a
                             >
-                              <i class="flaticon-pen lh-1 me-8"></i>
-                              Edit
-                            </a>
                           </li>
                           <li>
                             <a
-                              class="dropdown-item d-flex align-items-center"
-                              @click.prevent="deleteMakeMeth(make.id)"
+                              class="dropdown-item"
+                              @click.prevent="deleteStyle(style.id)"
+                              >Delete</a
                             >
-                              <i class="flaticon-delete lh-1 me-8"></i>
-                              Delete
-                            </a>
                           </li>
                         </ul>
                       </div>
-                    </li>
-                  </ul>
+                    </div>
+                  </div>
                 </div>
-                <!-- <div
-                  class="text-center mt-2"
-                  v-if="!showAllItems && makes.length > pageSize"
-                >
-                  <button class="btn btn-link" @click="showAllItems = true">
+
+              </div>
+              <div
+                v-if="  openedBrand.attributes?.name"
+                class="col-lg-12"
+              >
+                <div v-for="(style,index) in styles" :key="index">
+                  <div class="card mb-3" style="cursor: pointer"                       v-if="style"
+>
+                    <div
+                      class="card-body hoverli"
+                      v-if="style"
+                      style="
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-between;
+                      "
+                    >
+                      <h6 class="card-title fw-bold mb-0">
+                        {{ style?.attributes?.name }}
+                      </h6>
+                      <div class="dropdown">
+                        <button
+                          class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="flaticon-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <!-- <li>
+                            <a class="dropdown-item" @click.prevent="openEditTag(tag)">Edit</a>
+                          </li> -->
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              @click.prevent="deleteStyle(style.id)"
+                              >Delete</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- <div v-if="!showAllBrands && brands.length > pageSize">
+                  <button class="btn btn-link" @click="showAllBrands = true">
                     Show more
                   </button>
                 </div>
-                <div class="text-center mt-2" v-else-if="showAllItems">
-                  <button class="btn btn-link" @click="showAllItems = false">
+                <div v-else-if="showAllBrands">
+                  <button class="btn btn-link" @click="showAllBrands = false">
                     Show less
                   </button>
                 </div> -->
               </div>
             </div>
           </div>
-        </div>
+          <hr />
+       </div>
       </div>
     </div>
+    <!-- <div class="col-lg-6 col-xxxl-3">
+
+    </div> -->
      <Modal v-if="openedSyle" @close="close">
     <template v-slot:header><h4> Add Style </h4> </template>
     <template v-slot:body>
@@ -640,16 +687,27 @@ export default {
     async saveStyle(){
      const Data = {
         data : {
-           name : this.styleName
+           name : this.styleName ,
+           brand : this.openedBrand.id
         }
      }
+     console.log(Data)
       const res = await addStyle(Data)
-      console.log(res , 'style added ')
+      // console.log(res , 'style added ')
    if(res ){
    this.styles.push(res.data)
    this.openedSyle= false
    }
     },
+async deleteStyle(styleId) {
+  try {
+    await deleteStyle(styleId);
+    this.styles = this.styles.filter(style => style.id !== styleId);
+  } catch (error) {
+    console.error('Error deleting style:', error);
+  }
+},
+
     close(){
       this.openedSyle = false
     } ,
@@ -718,15 +776,18 @@ export default {
       brand.selected = !brand.selected;
       this.tags = [];
       this.openedBrand = brand;
+      console.log(this.openedBrand)
       this.brandsTags = [];
       if (
         brand &&
         brand.attributes &&
-        brand.attributes.tags &&
-        brand.attributes.tags.data
+        (brand.attributes.tags &&
+        brand.attributes.tags.data) || (brand.attributes.style)
       ) {
         this.tags = brand.attributes.tags.data;
         this.brandsTags = this.openedBrand.attributes.tags.data;
+        this.styles=[]
+        this.styles.push(brand.attributes.style.data)
       }
     },
 
@@ -952,6 +1013,15 @@ this.styles = data.data
 </script>
 
 <style scoped lang="scss">
+.card-container {
+  display: flex;
+  flex-direction: column;
+  height: 100% !important ;
+}
+
+.card {
+  flex: 1; /* Allow the card to grow and take up remaining space */
+}
 .submit {
    background: #6560f0;
    border: none  ;
