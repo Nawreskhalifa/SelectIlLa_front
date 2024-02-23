@@ -168,7 +168,7 @@
               <a
                 class="dropdown-item d-flex align-items-center"
                 href="javascript:void(0);"
-                @click="selectAllEvents"
+                @click="selectAllReservations"
               >
                 <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
                 {{ selectAllChecked ? "Deselect All" : "Select All" }}
@@ -179,7 +179,7 @@
                 :class="{ disabled: selectedCount === 0 }"
                 class="dropdown-item d-flex align-items-center"
                 href="javascript:void(0);"
-                @click.prevent="deleteSelectedCustomers"
+                @click.prevent="deleteSelectedReservations"
               >
                 <i
                   class="flaticon-delete lh-1 me-8 position-relative top-1"
@@ -457,10 +457,7 @@
               <td
                 class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
               >
-                <div
-                  class="dropdown"
-                  v-if="reservation.attributes.status === 'Pending'"
-                >
+                <div class="dropdown">
                   <button
                     class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
                     type="button"
@@ -469,26 +466,41 @@
                   >
                     <i class="flaticon-dots"></i>
                   </button>
-                  <ul
-                    class="dropdown-menu"
-                    v-if="reservation.attributes.status === 'Pending'"
-                  >
-                    <li v-if="reservation.attributes.status !== 'Confirmed'">
+                  <ul class="dropdown-menu">
+                    <li>
                       <a
+                        :class="{
+                          disabled: reservation.attributes.status !== 'Pending',
+                        }"
                         class="dropdown-item d-flex align-items-center"
                         @click="acceptReservation(reservation)"
                       >
-                        <i class="flaticon-pen lh-1 me-8"></i>
+                        <i class="fas fa-check lh-1 me-8"></i>
                         Accept
                       </a>
                     </li>
-                    <li v-if="reservation.attributes.status !== 'Confirmed'">
+                    <li>
                       <a
+                        :class="{
+                          disabled: reservation.attributes.status !== 'Pending',
+                        }"
                         class="dropdown-item d-flex align-items-center"
                         @click="refuseReservation(reservation)"
                       >
-                        <i class="flaticon-delete lh-1 me-8"></i>
+                        <i class="flaticon-cancel lh-1 me-8"></i>
                         Refuse
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        href="javascript:void(0);"
+                        @click="deleteOneReservation(reservation.id)"
+                      >
+                        <i
+                          class="flaticon-delete lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Delete
                       </a>
                     </li>
                   </ul>
@@ -822,14 +834,82 @@ export default {
         });
       }
     },
-    async deleteReservation(id) {
+    selectAllReservations() {
+      this.selectAllChecked = !this.selectAllChecked;
+      this.selectedCount = 0;
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = this.selectAllChecked;
+        if (checkbox.checked) {
+          this.selectedCount++;
+        } else {
+          this.selectedCount--;
+        }
+      });
+    },
+    deleteSelectedReservations() {
+      const selectedReservations = [];
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+          if (this.getAllReservations && this.getAllReservations[index]) {
+            selectedReservations.push(this.getAllReservations[index].id);
+          }
+        }
+      });
+
+      if (selectedReservations.length === 0) {
+        swal("Please select at least one reservation to delete.");
+        return;
+      }
+
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover these reservations!",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          // Call the deleteEvent action or API endpoint to delete the selected events
+          await Promise.all(
+            selectedReservations.map((id) => this.deleteReservation(id))
+          );
+          // After deletion, fetch events again to update the list
+          this.currentPage = 1;
+          await this.fetchAllReservations({
+            page: this.currentPage,
+            perPage: this.perPage,
+          });
+          swal("Selected events have been deleted!", {});
+        }
+      });
+    },
+    async deleteOneReservation(id) {
       try {
-        this.reservations = this.reservations.filter(
-          (reservation) => reservation.id !== id
-        );
-        await deleteReservation(id);
+        swal({
+          text: "Are you sure to delete this reservation?",
+          buttons: ["Cancel", "Confirm"],
+          dangerMode: true,
+        }).then(async (willDelete) => {
+          if (willDelete) {
+            await deleteReservation(id);
+            this.currentPage = 1;
+            await this.fetchAllReservations({
+              page: this.currentPage,
+              perPage: this.perPage,
+            });
+            swal({
+              text: "Reservation deleted Successfully!",
+              closeOnClickOutside: false,
+            });
+          }
+        });
       } catch (error) {
-        console.error(`Error deleting reservation with ID ${id}:`, error);
+        swal({
+          text: `Error deleting reservation with ID ${id}`,
+          closeOnClickOutside: false,
+          dangerMode: true,
+        });
       }
     },
 
