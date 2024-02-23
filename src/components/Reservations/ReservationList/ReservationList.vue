@@ -110,7 +110,7 @@
               :key="partner.id"
               :value="partner.id"
             >
-              {{ partner.name + " " + partner.surname }}
+              {{ partner.attributes.name + " " + partner.attributes.surname }}
             </option>
           </select>
           <select

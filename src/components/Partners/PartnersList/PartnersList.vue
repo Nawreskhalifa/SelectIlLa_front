@@ -1,307 +1,239 @@
 <template>
   <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
     <div
-      class="card-head box-shadow bg-white d-md-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
+      class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
     >
-      <div class="search-box position-relative">
-        <input
-          @input="change"
-          type="text"
-          class="form-control shadow-none text-black rounded-0 border-0"
-          placeholder="Search Partner"
-          v-model="searchInput"
+      <div class="d-flex align-items-center">
+        <form @submit.prevent="handleSearch">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control shadow-none fw-medium ps-1 pt-10 pe-0 letter-spacing"
+              placeholder="Search"
+              v-model="searchText"
+              @input="handleSearch"
+            />
+            <button
+              class="default-btn position-relative transition border-0 text-white ps-12 pe-12 rounded-1"
+              type="button"
+              :disabled="getUsersLoading"
+            >
+              <i class="flaticon-search-interface-symbol position-relative"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+      <select
+        v-model="genderFilter"
+        @change="handleFilterChange"
+        class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+      >
+        <option value="All">All</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select>
+      <div
+        class="rounded-1 d-flex me-1 mt-1 mt-lg-0"
+        style="display: flex; align-items: center; gap: 1px"
+      >
+        <flat-pickr
+          v-model="startDate"
+          :config="{ maxDate: getCurrentDate() }"
+          class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          placeholder="Start"
+          name="startDate"
+          @change="handleFilterChange"
+        />
+
+        <flat-pickr
+          v-model="endDate"
+          :config="{ minDate: startDate, maxDate: getCurrentDate() }"
+          class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          placeholder="End"
+          name="endDate"
+          :disabled="!startDate"
+          @change="handleFilterChange"
         />
       </div>
-        <div class="d-sm-flex align-items-center gap-2">
-        <div class="reviews-select rounded-1 d-flex me-10 mt-10 mt-lg-0">
-          <span class="text-muted fs-12 position-relative fw-medium text-uppercase">
-            Ressources
-          </span>
-       <select class="form-select shadow-none bg-transparent border-0 fw-semibold rounded-0" v-model="selectedStatus" @change="handleOptionClick(selectedStatus)">
-  <option value="All">All</option>
-  <option value="Villas">Villas</option>
-  <option value="Events">Events</option>
-  <option value="Vehicles">Vehicles</option>
-</select>
-</div>
-
-             <!-- <div class="dropdown">
-    <button
-      class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
-      type="button"
-      data-bs-toggle="dropdown"
-      aria-expanded="false"
-    >
-      <i class="flaticon-dots"></i>
-    </button>
-    <ul class="dropdown-menu">
-      <li>
-        <a
-          class="dropdown-item d-flex align-items-center"
-                  @click="allData"
-
-        >
-          <i class="flaticon-view lh-1 me-8"></i>
-          Detail
-        </a>
-      </li>
-      <li>
-        <a
-          class="dropdown-item d-flex align-items-center"
-                    @click="vehicleData"
-
-        >
-          <i class="flaticon-view lh-1 me-8"></i>
-          Vehicles
-        </a>
-      </li>
-      <li  >
-        <a
-          class="dropdown-item d-flex align-items-center"
-                    @click="eventData"
-
-         >
-          <i class="flaticon-pen lh-1 me-8"></i>
-          Events
-        </a>
-      </li>
-      <li  >
-        <a
-          class="dropdown-item d-flex align-items-center"
-                   @click="villaData"
-
-        >
-          <i class="flaticon-delete lh-1 me-8"></i>
-          Villas
-         </a>
-      </li>
-    </ul>
-  </div> -->
-        <!-- <button
-          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
-          type="button"
-          :class="{ selected: allCheckboxesChecked }"
-          @click="allData"
-        >
-          All
-        </button>
-
+      <div class="d-sm-flex align-items-center mt-lg-10">
         <button
-          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
+          v-if="isFilterActive"
+          class="default-outline-btn position-relative transition border-0 fw-medium text-black pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 bg-transparent fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1"
           type="button"
-          :class="{ selected: vehicleSelected }"
-          @click="vehicleData"
+          @click="resetFilters"
         >
-          Vehicle
+          <i class="flaticon-refresh position-relative ms-5 top-2 fs-15"></i>
         </button>
+      </div>
+      <div class="d-sm-flex align-items-center">
         <button
-          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
+          class="default-outline-btn position-relative transition fw-medium text-black pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 bg-transparent fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1"
           type="button"
-          :class="{ selected: eventSelected }"
-          @click="eventData"
         >
-          Events
+          Export
+          <i class="flaticon-file-1 position-relative ms-5 top-2 fs-15"></i>
         </button>
-        <button
-          class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0"
-          type="button"
-          :class="{ selected: villaSelected }"
-          @click="villaData"
+      </div>
+      <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+        <!-- <a
+          href="javascript:void(0);"
+          @click="navigateToAddPartnerPage()"
+          class="default-btn position-relative transition border-0 fw-medium text-white pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1 bg-primary d-inline-block d-inline-block text-decoration-none"
         >
-          Villas
-        </button> -->
-        <div class="d-sm-flex align-items-center mt-10 mt-lg-0">
-          <router-link
-            to="/add-partner"
-            class="btn btn-primary position-relative border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
-          >
-            Add Partner
-            <i class="flaticon-plus position-relative ms-5 fs-12"></i>
-          </router-link>
-          <!-- <select
-              class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          <i class="ph ph-plus"></i>
+        </a> -->
+        <button
+          class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="flaticon-dots"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="selectAllPartners"
             >
-              <option selected>All (32)</option>
-              <option value="1">In Process</option>
-              <option value="2">On Hold</option>
-              <option value="3">Completed</option>
-            </select>
-            <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
-              <button
-                class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i class="flaticon-dots"></i>
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a
-                    class="dropdown-item d-flex align-items-center"
-                    href="javascript:void(0);"
-                    ><i
-                      class="flaticon-view lh-1 me-8 position-relative top-1"
-                    ></i>
-                    View</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item d-flex align-items-center"
-                    href="javascript:void(0);"
-                    ><i
-                      class="flaticon-pen lh-1 me-8 position-relative top-1"
-                    ></i>
-                    Edit</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item d-flex align-items-center"
-                    href="javascript:void(0);"
-                    ><i
-                      class="flaticon-delete lh-1 me-8 position-relative top-1"
-                    ></i>
-                    Delete</a
-                  >
-                </li>
-              </ul> -->
-        </div>
+              <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
+              {{ selectAllChecked ? "Deselect All" : "Select All" }}
+            </a>
+          </li>
+          <li>
+            <a
+              :class="{ disabled: selectedCount === 0 }"
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="deleteSelectedPartners"
+            >
+              <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
+              Delete Selected
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
     <div class="card-body p-15 p-sm-20 p-md-25">
+      <h6 v-if="selectedCount > 0">
+        {{ selectedCount }}
+        {{ selectedCount === 1 ? "item" : "items" }} selected
+      </h6>
       <div class="table-responsive">
         <table class="table text-nowrap align-middle mb-0">
           <thead>
             <tr>
               <th
                 scope="col"
-                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+                @click="toggleSortDirection"
               >
-                Name
+                USER NAME
+                <span v-if="sortDirection === 'asc'" class="arrow-up"></span>
+                <span v-if="sortDirection === 'desc'" class="arrow-down"></span>
               </th>
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
               >
-                surname
+                EMAIL
               </th>
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
               >
-                phone
+                PHONE
+              </th>
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+                @click="toggleSortDirectionLoc"
+              >
+                LOCATIONS
+                <span v-if="sortDirectionLoc === 'asc'" class="arrow-up"></span>
+                <span
+                  v-if="sortDirectionLoc === 'desc'"
+                  class="arrow-down"
+                ></span>
               </th>
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
               >
-                Type Ressource
+                GENDER
               </th>
-              <!-- <th
-              scope="col"
-              class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-            >
-                Check
-            </th> -->
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+              >
+                DATE OF BIRTH
+              </th>
               <th
                 scope="col"
                 class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
               >
-                Actions
+                ACTIONS
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="partner in paginatedPartners" :key="partner.id">
-              <td
+            <tr
+              v-for="(partner, index) in getPartners"
+              :key="index"
+              @click="navigateToPartnerDetailPage(partner.id, $event)"
+              style="cursor: pointer"
+            >
+              <th
                 class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
               >
                 <div class="d-flex align-items-center">
-                  <!-- <div class="form-check mb-0">
+                  <div class="form-check mb-0">
                     <input
                       class="form-check-input shadow-none"
                       type="checkbox"
+                      @change="updateSelectionCounter($event, index)"
                     />
-                  </div> -->
+                  </div>
                   <div class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16">
                     <img
                       v-if="
-                        partner &&
-                        partner.user &&
-                        partner.user.photo &&
-                        partner.user.photo.url
+                        storageUrl &&
+                        partner.attributes.user.data?.attributes.photo.data
+                          ?.attributes.url
                       "
-                      :src="getFullImageUrl(partner.user.photo.url)"
+                      :src="
+                        storageUrl +
+                        partner.attributes.user.data?.attributes.photo.data
+                          ?.attributes.url
+                      "
                       class="rounded-circle me-8"
                       width="24"
                       height="24"
                       alt="user"
                     />
-                    <img
-                      v-else
-                      src="../../../assets/guest.png"
-                      class="rounded-circle me-8"
-                      width="24"
-                      height="24"
-                      alt="user"
-                    />
-
-                    {{ partner.name }}
+                    {{ formattedName(partner.attributes) }}
                   </div>
                 </div>
+              </th>
+              <td class="shadow-none lh-1 fw-medium text-primary">
+                {{ partner.attributes.user.data?.attributes.email }}
               </td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ partner.surname }}
+              <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                {{ partner.attributes.phone }}
               </td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                {{ partner.phone }}
+              <td class="shadow-none lh-1 fw-medium text-muted">
+                {{ truncateLocation(partner.attributes?.address) }}
               </td>
-              <td class="shadow-none lh-1 fw-medium text-paragraph">
-                <div>
-                  <label>
-                    <input
-                      type="checkbox"
-                      :checked="partner.vehicles.length > 0"
-                      v-model="partner.hasVehicle"
-                      disabled
-                      class="form-check-input"
-                    />
-                    Vehicle
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    <input
-                      type="checkbox"
-                      :checked="partner.villas.length > 0"
-                      v-model="partner.hasVillas"
-                      disabled
-                      class="form-check-input"
-                    />
-                    Villas
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    <input
-                      type="checkbox"
-                      :checked="partner.events.length > 0"
-                      disabled
-                      v-model="partner.hasEvents"
-                      class="form-check-input"
-                    />
-                    Events
-                  </label>
-                </div>
+
+              <td class="shadow-none lh-1 fw-medium text-muted">
+                {{ partner.attributes.user.data?.attributes.gender }}
               </td>
-              <!--
-               <td class="shadow-none lh-1 fw-medium text-paragraph">
-                <i @click="openRessources(partner)" class="fas fa-eye" style="cursor: pointer;"></i>
-              </td> -->
+              <td class="shadow-none lh-1 fw-medium text-muted">
+                {{ partner.attributes.user.data?.attributes.date_of_birth }}
+              </td>
               <td
-                class="shadow-none lh-1 fw-medium text-paragraph text-end pe-0"
+                class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
               >
                 <div class="dropdown">
                   <button
@@ -313,45 +245,29 @@
                     <i class="flaticon-dots"></i>
                   </button>
                   <ul class="dropdown-menu">
-                    <!-- <li>
+                    <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
-                        @click.prevent="openEdit(partner)"
-                        ><i
+                        href="javascript:void(0);"
+                        @click="navigateToEditPartnerPage(partner.id)"
+                      >
+                        <i
                           class="flaticon-pen lh-1 me-8 position-relative top-1"
                         ></i>
-                        Add</a
-                      >
-                    </li> -->
-                      <li>
-                      <a
-                        class="dropdown-item d-flex align-items-center"
-                        @click.prevent="openEdit(partner)"
-                        ><i
-                          class="flaticon-pen lh-1 me-8 position-relative top-1"
-                        ></i>
-                        Edit</a
-                      >
+                        Edit
+                      </a>
                     </li>
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
-                        @click.prevent="openDetails(partner)"
-                        ><i
-                          class="flaticon-eye lh-1 me-8 position-relative top-1"
-                        ></i>
-                        Details</a
+                        href="javascript:void(0);"
+                        @click="deleteThePartner(partner.id)"
                       >
-                    </li>
-                    <li>
-                      <a
-                        class="dropdown-item d-flex align-items-center"
-                        @click.prevent="deletePartner(partner.id)"
-                        ><i
+                        <i
                           class="flaticon-delete lh-1 me-8 position-relative top-1"
                         ></i>
-                        Delete</a
-                      >
+                        Delete
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -365,30 +281,45 @@
       >
         <p class="mb-0 text-paragraph">
           Showing
-          <span class="fw-bold">{{ paginatedPartners.length }}</span> out of
-          <span class="fw-bold">{{ partners.length }}</span> results
+          <span class="fw-bold">{{ Math.min(11, getPartners?.length) }}</span>
+          out of
+          <span class="fw-bold">{{ getTotalItemsPartners }}</span> results
         </p>
         <nav class="mt-15 mt-md-0">
           <ul class="pagination mb-0">
-            <li class="page-item">
+            <li class="page-item" :class="{ disabled: currentPage === 1 }">
               <a
                 class="page-link"
                 href="#"
                 aria-label="Previous"
-                @click="prevPage"
+                @click="currentPage !== 1 && onPageChange(currentPage - 1)"
               >
                 <i class="flaticon-chevron-1"></i>
               </a>
             </li>
-            <li class="page-item" v-for="page in maxPage" :key="page">
-            <a
-  class="page-link"
-  :class="{ active: page === currentPage }"
-  @click="currentPage = page"
->{{ page }}</a>
+            <li
+              class="page-item"
+              v-for="page in getTotalPagesPartners"
+              :key="page"
+              :class="{ active: page === currentPage }"
+            >
+              <a class="page-link" href="#" @click="onPageChange(page)">{{
+                page
+              }}</a>
             </li>
-            <li class="page-item">
-              <a class="page-link" aria-label="Next" @click="nextPage">
+            <li
+              class="page-item"
+              :class="{ disabled: currentPage === getTotalPagesPartners }"
+            >
+              <a
+                class="page-link"
+                href="#"
+                aria-label="Next"
+                @click="
+                  currentPage !== getTotalPagesPartners &&
+                    onPageChange(currentPage + 1)
+                "
+              >
                 <i class="flaticon-chevron"></i>
               </a>
             </li>
@@ -397,268 +328,312 @@
       </div>
     </div>
   </div>
-  <div v-if="partnerEdit">
-    <!-- <UpdateModal
-      :show="ModalVisible"
-      :partner="partnerEdit"
-      @close="closeModal"
-     /> -->
-  </div>
-  <loading
-    v-model:active="isLoading"
-    :can-cancel="true"
-    :on-cancel="onCancel"
-    :is-full-page="'false'"
-  />
+  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
 </template>
 
 <script>
-import {
-  fetchVillaCategories,
-  deleteVillaCategory,
-  search,
-} from "@/services/apiService";
-// import UpdateModal from "../AddPartner/EditPartners.vue";
-import { fetchPartners, fetchUserByPartner } from "@/services/apiService";
+import { defineComponent } from "vue";
+import { mapGetters, mapActions } from "vuex";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
-export default {
-  name: "PartnersList ",
+import { storageUrl } from "@/utils/constants";
+import swal from "sweetalert";
+import flatPickr from "vue-flatpickr-component";
+
+export default defineComponent({
+  name: "partnersList",
   components: {
     Loading,
+    flatPickr,
   },
   data() {
     return {
-      partners: [],
-      checkList: {
-        vehicle: true,
-        villa: true,
-        event: true,
-      },
+      storageUrl: "",
       currentPage: 1,
-      pageSize: 3,
+      searchText: "",
+      selectAllChecked: false,
+      genderFilter: "All",
+      startDate: "",
+      endDate: "",
+      sortDirection: "asc",
+      sortDirectionLoc: "asc",
+      selectedCount: 0,
       isLoading: false,
-
-      ModalVisible: false,
-      ressourcesModalVisible: false,
-      partnerEdit: "",
-      searchInput: "",
-      secondAllPartners: [],
+      perPage: 4,
     };
   },
   methods: {
-   async   handleOptionClick(option) {
-                     this.isLoading = true;
+    ...mapActions(["fetchAllPartners", "deletePartner"]),
 
-      switch (option) {
-        case 'All':
-         await  this.allData();
-
-          break;
-        case 'Villas':
-         await  this.villaData();
-
-          break;
-        case 'Events':
-       await    this.eventData();
-
-          break;
-        case 'Vehicles':
-       await    this.vehicleData();
-
-          break;
-        default:
-          break;
-      }
-                     this.isLoading = false;
-
+    truncateLocation(location) {
+      const maxLength = 40;
+      if (location && location?.length <= maxLength) {
+        return location;
+      } else if (location) {
+        return location?.slice(0, maxLength) + "...";
+      } else return location;
     },
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
+    resetFilters() {
+      // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
+      this.searchText = "";
+      this.genderFilter = "All";
+      this.startDate = "";
+      this.endDate = "";
+      // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
+      this.handleFilterChange();
+    },
+    updateSelectionCounter(event, index) {
+      if (event.target.checked) {
+        // Si la case à cocher est cochée, incrémenter le compteur de sélection
+        this.selectedCount++;
+      } else {
+        // Sinon, décrémenter le compteur de sélection
+        this.selectedCount--;
       }
     },
-    nextPage() {
-      const maxPage = Math.ceil(this.partners.length / this.pageSize);
-      if (this.currentPage < maxPage) {
-        this.currentPage++;
+    getCurrentDate() {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      let month = currentDate.getMonth() + 1;
+      if (month < 10) {
+        month = "0" + month; // Ajoute un zéro devant si le mois est inférieur à 10
       }
-    },
-    getFullImageUrl(relativePath) {
-      const stockage = process.env.VUE_APP_STORAGE_URL;
-      return `${stockage}${relativePath}`;
-    },
-    async fetchAllPartners() {
-      try {
-        const data = await fetchPartners();
-        this.partners = data;
-        this.secondAllPartners = data;
-      } catch (error) {
-        console.error("Error fetching partners:", error);
+      let day = currentDate.getDate();
+      if (day < 10) {
+        day = "0" + day; // Ajoute un zéro devant si le jour est inférieur à 10
       }
+      return `${year}-${month}-${day}`;
     },
-    async deletePartner(id) {
-      this.partners = this.partners.filter((item) => {
-        return item.id !== id;
+    onCancel() {
+      console.log("User cancelled the loader.");
+    },
+    async handleFilterChange() {
+      this.isLoading = true;
+
+      // Réinitialiser la page actuelle à 1
+      this.currentPage = 1;
+
+      // Appeler fetchAllEvents avec le filtre actif
+      await this.fetchAllPartners({
+        page: this.currentPage,
+        perPage: this.perPage,
+        name: this.searchText,
+        gender: this.genderFilter,
+        startDate: this.startDate,
+        endDate: this.endDate,
       });
-      const response = await deleteVillaCategory(id);
+      this.isLoading = false;
     },
-    async openEdit(partner) {
-      this.$router.push({name: 'updatepartner', params: { id : partner.id }})
-      this.ModalVisible = !this.ModalVisible;
-      this.partnerEdit = partner;
-    },
+    async toggleSortDirection() {
+      // Basculer entre ascendant et descendant
+      this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      // Réinitialiser la page actuelle à 1
+      this.currentPage = 1;
+      this.isLoading = true;
 
-    closeModal() {
-      this.ModalVisible = !this.ModalVisible;
+      // Appeler fetchAllEvents avec le filtre actif
+      await this.fetchAllPartners({
+        page: this.currentPage,
+        perPage: this.perPage,
+        name: this.searchText,
+        gender: this.genderFilter,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        sortDirectionUserName: this.sortDirection,
+      });
+      this.isLoading = false;
     },
-    closeRessources() {
-      this.ressourcesModalVisible = false;
-    },
-    async updated() {
-      await this.fetchAllPartners();
-      this.ModalVisible = !this.ModalVisible;
-    },
-    openDetails(partner) {
-      console.log(partner);
-      this.$router.push({ name: "partnerdetails", params: { id: partner.id } });
-    },
-    async change() {
-      try {
-        this.partners = await this.secondAllPartners;
+    async toggleSortDirectionLoc() {
+      // Basculer entre ascendant et descendant
+      this.sortDirectionLoc = this.sortDirectionLoc === "asc" ? "desc" : "asc";
+      // Réinitialiser la page actuelle à 1
+      this.currentPage = 1;
+      this.isLoading = true;
 
-        this.currentPage = 1;
-
-        const searchInput = this.searchInput.trim().toLowerCase();
-        if (searchInput !== "") {
-          this.partners = this.partners.filter((partner) =>
-            partner.name.toLowerCase().includes(searchInput)
-          );
-        } else {
-          this.partners = await this.secondAllPartners;
+      // Appeler fetchAllEvents avec le filtre actif
+      await this.fetchAllPartners({
+        page: this.currentPage,
+        perPage: this.perPage,
+        name: this.searchText,
+        gender: this.genderFilter,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        sortDirectionLocation: this.sortDirectionLoc,
+      });
+      this.isLoading = false;
+    },
+    deleteSelectedPartners() {
+      const selectedPartners = [];
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+          selectedPartners.push(this.getPartners[index].id);
         }
-      } catch (error) {
-        console.error(error);
+      });
+
+      if (selectedPartners.length === 0) {
+        swal("Please select at least one partner to delete.");
+        return;
+      }
+
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover these partners!",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          // Call the deletePartner action or API endpoint to delete the selected partners
+          await Promise.all(
+            selectedPartners.map((id) => this.deletePartner(id))
+          );
+          this.isLoading = true;
+          this.currentPage = 1;
+          // After deletion, fetch partners again to update the list
+          await this.fetchAllPartners({
+            page: this.currentPage,
+            perPage: this.perPage,
+          });
+          this.isLoading = false;
+
+          swal("Selected partners have been deleted!", {});
+        }
+      });
+    },
+    selectAllPartners() {
+      this.selectAllChecked = !this.selectAllChecked;
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      this.selectedCount = 0;
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = this.selectAllChecked;
+        if (checkbox.checked) {
+          this.selectedCount++;
+        } else {
+          this.selectedCount--;
+        }
+      });
+    },
+    async handleSearch() {
+      this.isLoading = true;
+
+      await this.fetchAllPartners({
+        page: this.currentPage,
+        perPage: this.perPage,
+        name: this.searchText,
+        gender: this.genderFilter,
+        startDate: this.startDate,
+        endDate: this.endDate,
+      });
+      this.isLoading = false;
+    },
+
+    async onPageChange(pageNumber) {
+      this.currentPage = pageNumber;
+      this.isLoading = true;
+
+      await this.fetchAllPartners({
+        page: pageNumber,
+        perPage: this.perPage,
+      });
+      this.isLoading = false;
+    },
+    navigateToPartnerDetailPage(partnerId, event) {
+      if (
+        event.target.tagName.toLowerCase() === "input" ||
+        event.target.classList.contains("dropdown-toggle")
+      ) {
+        // Si l'utilisateur a cliqué sur une case à cocher ou un dropdown, arrêtez ici
+        return;
+      }
+
+      // Vérifiez si l'utilisateur a cliqué sur un lien ou un élément qui n'est pas un dropdown
+      const isLinkOrNonDropdownClicked =
+        event.target.tagName.toLowerCase() === "a" ||
+        !event.target.closest(".dropdown");
+      // Ajoutez des conditions supplémentaires pour traiter les actions Delete, View et Edit
+      const dropdownItemClicked = event.target.closest(".dropdown-item");
+      if (dropdownItemClicked) {
+        const action = dropdownItemClicked.getAttribute("data-action");
+        if (action === "delete") {
+          // Traitement de l'action de suppression
+          this.deleteThePartner(partnerId);
+          return;
+        } else if (action === "edit") {
+          // Traitement de l'action d'édition
+          this.navigateToEditPartnerPage(partnerId);
+          return;
+        }
+      }
+      if (isLinkOrNonDropdownClicked && !dropdownItemClicked) {
+        // Si l'utilisateur a cliqué sur un lien ou un élément non dropdown, effectuez la redirection
+        this.$router.push({
+          name: "partnerdetails",
+          params: { id: partnerId },
+        });
       }
     },
 
-    async vehicleData() {
-      await this.fetchAllPartners();
-      this.checkList.event = false;
-      this.checkList.villa = false;
-      this.checkList.vehicle = true;
-
-      this.partners = this.partners.filter((partner) => {
-        return partner.vehicles.length > 0;
+    navigateToEditPartnerPage(partnerId) {
+      // Utilisez le routeur de Vue pour naviguer vers la page edit du client
+      this.$router.push({
+        name: "updatepartner",
+        params: { id: partnerId },
       });
     },
-    async villaData() {
-      await this.fetchAllPartners();
-
-      this.checkList.event = false;
-      this.checkList.villa = true;
-      this.checkList.vehicle = false;
-
-      this.partners = this.partners.filter((partner) => {
-        return partner.villas.length > 0;
+    formattedName(partner) {
+      // Ensure that partner.name and partner.surname are defined
+      const name = partner.name
+        ? partner.name.charAt(0).toUpperCase() + "."
+        : "";
+      const surname = partner.surname || "";
+      return name + " " + surname;
+    },
+    async deleteThePartner(id) {
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this partner!",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          // Call the deletepartner action or API endpoint to delete the partner
+          await this.deletePartner(id);
+        }
       });
-    },
-    async eventData() {
-      await this.fetchAllPartners();
-
-      this.checkList.event = true;
-      this.checkList.villa = false;
-      this.checkList.vehicle = false;
-
-      this.partners = this.partners.filter((partner) => {
-        return partner.events.length > 0;
-      });
-    },
-
-    async allData() {
-                  this.loading = true;
-
-      this.checkList.event = true;
-      this.checkList.villa = true;
-      this.checkList.vehicle = true;
-      await this.fetchAllPartners();
-                        this.loading = false;
-
-    },
-    openRessources(partner) {
-      this.partnerEdit = partner;
-      this.ressourcesModalVisible = true;
     },
   },
   computed: {
-    allCheckboxesChecked() {
+    ...mapGetters([
+      "getUsersLoading",
+      "getUsersError",
+      "getPartners",
+      "getTotalPagesPartners",
+      "getTotalItemsPartners",
+    ]),
+    isFilterActive() {
       return (
-        this.checkList.vehicle && this.checkList.villa && this.checkList.event
+        this.searchText !== "" ||
+        this.genderFilter !== "All" ||
+        this.startDate !== "" ||
+        this.endDate !== ""
       );
-    },
-    vehicleSelected() {
-      return this.checkList.vehicle === true;
-    },
-    villaSelected() {
-      return this.checkList.villa === true;
-    },
-    eventSelected() {
-      return this.checkList.event === true;
-    },
-    chechIfPartner() {
-      if (this.partners) {
-        const onlyPartner = this.partners.filter((item) => {
-          if (item.user?.role?.name === "Partner") {
-            return item;
-          }
-        });
-        return onlyPartner;
-      } else {
-        return [];
-      }
-    },
-    paginatedPartners() {
-      if (this.partners) {
-        const startIndex = (this.currentPage - 1) * this.pageSize;
-        const endIndex = startIndex + this.pageSize;
-        return this.chechIfPartner.slice(startIndex, endIndex);
-      } else {
-        return [];
-      }
-    },
-    maxPage() {
-      const totalPartners = this.chechIfPartner.length;
-      return Math.ceil(totalPartners / this.pageSize);
-    },
-  },
-  directives: {
-    date: {
-      mounted(el, binding) {
-        const date = new Date(binding.value);
-        el.textContent = date.toLocaleString();
-      },
-      updated(el, binding) {
-        const date = new Date(binding.value);
-        el.textContent = date.toLocaleString();
-      },
     },
   },
   async mounted() {
     this.isLoading = true;
-
-    await this.fetchAllPartners();
+    await this.fetchAllPartners({ page: 1, perPage: this.perPage });
+    console.log(this.getPartners);
     this.isLoading = false;
+    this.storageUrl = storageUrl;
   },
-};
+});
 </script>
-
 <style scoped>
-.selected {
-  background-color: rgb(89, 64, 231) !important ;
-  color: white !important;
+.arrow-up::before {
+  content: "\25B2"; /* Code Unicode pour la flèche vers le haut */
 }
-.active {
-background-color: rgb(89, 64, 231) !important ;
-  color: white !important;
+
+.arrow-down::before {
+  content: "\25BC"; /* Code Unicode pour la flèche vers le bas */
 }
 </style>

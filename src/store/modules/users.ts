@@ -16,6 +16,8 @@ const state = {
     documents: [],
     totalPagesReservation: 0,
     totalItemsReservation: 0,
+    totalPagesPartners: 0,
+    totalItemsPartners: 0,
     reservation: null,
     documentsCustomer: [],
     allDocuments: [],
@@ -30,6 +32,8 @@ const getters = {
     getTotalItems: (state) => state.totalItems,
     getCustomer: (state) => state.customer,
     getDocuments: (state) => state.documents,
+    getTotalPagesPartners: (state) => state.totalPagesPartners,
+    getTotalItemsPartners: (state) => state.totalItemsPartners,
     getTotalPagesReservation: (state) => state.totalPagesReservation,
     getTotalItemsReservation: (state) => state.totalItemsReservation,
     getReservation: (state) => state.reservation,
@@ -51,6 +55,13 @@ const mutations = {
     SET_TOTAL_PAGES(state, payload = 1) {
         state.totalPages = payload;
     },
+    SET_TOTAL_PAGES_PARTNERS(state, payload = 1) {
+        state.totalPagesPartners = payload;
+    },
+    SET_TOTAL_ITEMS_PARTNERS(state, payload = 0) {
+        state.totalItemsPartners = payload;
+    },
+
     SET_TOTAL_ITEMS_RESERVATION(state, payload = 0) {
         state.totalItemsReservation = payload;
     },
@@ -77,6 +88,9 @@ const mutations = {
     },
     REMOVE_CUSTOMER(state, id) {
         state.customers = state.customers.filter(customer => customer.id != id)
+    },
+    REMOVE_PARTNER(state, id) {
+        state.partners = state.partners.filter(partner => partner.id != id)
     },
     ADD_CUSTOMER(state, payload) {
         state.customers.push(payload)
@@ -266,7 +280,7 @@ const actions = {
                 undefined,
                 undefined
             );
-            console.log('ghj',response.data.data)
+            console.log('ghj', response.data.data)
             if (response.success) {
                 commit('SET_CUSTOMER', response.data.data);
                 commit('SET_USERS_LOADING', false);
@@ -311,24 +325,133 @@ const actions = {
         }
         return true;
     },
-    async fetchAllPartners({ commit }) {
+    async deletePartner({ commit }, id) {
         commit('SET_USERS_LOADING', true)
         commit('SET_USERS_ERROR')
         try {
             const response = await makeApiRequest(
-                methodsHttpNames.GET,
-                endPoints.allPartners,
+                methodsHttpNames.DELETE,
+                `${endPoints.partners}/${id}`,
                 undefined,
                 undefined
             );
-            console.log(response.data)
+            console.log(response)
             if (response.success) {
-                commit('SET_PARTNERS', response.data)
-                commit('SET_USERS_LOADING')
+
+                commit('REMOVE_PARTNER', id)
+                commit('SET_USERS_LOADING', false)
             }
 
         } catch (error: any) {
-            commit('SET_USERS_LOADING')
+            commit('SET_USERS_LOADING', false)
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+    async fetchAllPartners({ commit }, { page = null, perPage = 25, name, gender = 'All', startDate, endDate, sortDirectionUserName, sortDirectionLocation }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startDate?: number, endDate?: number, sortDirectionUserName?: string, sortDirectionLocation?: string }) {
+        commit('SET_USERS_LOADING', true)
+        commit('SET_USERS_ERROR')
+        try {
+            const filters: {
+                populate: any[];
+                pagination?: { page?: number; pageSize?: number };
+                filters?: {
+                    $or?: Array<{
+                        name?: { $contains: string };
+                        surname?: { $contains: string };
+                        phone?: { $contains: string };
+                        address?: { $contains: string };
+                        user?: { email?: { $contains: string }, username?: { $contains: string }, gender?: { $eq: string }, date_of_birth?: { $between?: [string, string] } };
+                    }>;
+                    user?: { $and?: Array<{ gender?: { $eq: string }, date_of_birth?: { $gte?: string, $lte?: string } }>; };
+                };
+                sort?: string[];
+
+
+            } = {
+                populate: ['user', 'user.photo'],
+                sort: []
+
+            };
+            if (page !== undefined && page !== null) {
+                filters.pagination = { page: page, pageSize: perPage };
+            }
+
+            // Add the filters if name is specified
+            if (name) {
+                filters.filters = {
+                    $or: [
+                        { name: { $contains: name } },
+                        { surname: { $contains: name } },
+                        { phone: { $contains: name } },
+                        { address: { $contains: name } },
+                        { user: { email: { $contains: name }, username: { $contains: name } } },
+                    ],
+                };
+            } else {
+                // If no specific name provided, clear filters
+                filters.filters = {};
+            }
+
+            // Add the gender filter if specified
+            if (gender !== 'All') {
+                // Assurez-vous que filters.filters.user est défini avant d'ajouter le filtre de genre
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ gender: { $eq: gender } });
+            }
+            // Add date of birth filter if startDate and endDate are specified
+            if (startDate) {
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ date_of_birth: { $gte: startDate.toString() } });
+            }
+            if (endDate) {
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ date_of_birth: { $lte: endDate.toString() } });
+            }
+            // Add sorting options
+            if (sortDirectionUserName) {
+                // Assuming user is the nested object containing username
+                if (filters.sort) {
+                    filters.sort.push(`name:${sortDirectionUserName}`);
+                    filters.sort.push(`surname:${sortDirectionUserName}`);
+                }
+            }
+            // Add sorting options
+            if (sortDirectionLocation) {
+                // Assuming user is the nested object containing username
+                if (filters.sort) {
+                    filters.sort.push(`address:${sortDirectionLocation}`);
+                }
+            }
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                endPoints.allPartners,
+                undefined,
+                filters
+            );
+            console.log(response.data.meta)
+            if (response.success) {
+                commit('SET_PARTNERS', response.data.data)
+                commit("SET_TOTAL_PAGES_PARTNERS", response.data.meta.pagination.pageCount);
+                commit("SET_TOTAL_ITEMS_PARTNERS", response.data.meta.pagination.total);
+                commit('SET_USERS_LOADING', false)
+            }
+
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false)
             if (
                 error.response &&
                 error.response.data &&
