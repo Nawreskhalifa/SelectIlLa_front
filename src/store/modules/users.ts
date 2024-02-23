@@ -358,7 +358,7 @@ const actions = {
         }
         return true
     },
-    async fetchAllPartners({ commit }, { page = null, perPage = 25, name, gender = 'All', startDate, endDate, sortDirectionUserName, sortDirectionLocation }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startDate?: number, endDate?: number, sortDirectionUserName?: string, sortDirectionLocation?: string }) {
+    async fetchAllPartners({ commit }, { page = null, perPage = 25, name, gender = 'All', startDate, endDate, sortDirectionUserName, sortDirectionLocation, hasResource = 'All' }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startDate?: number, endDate?: number, sortDirectionUserName?: string, sortDirectionLocation?: string, hasResource?: string }) {
         commit('SET_USERS_LOADING', true)
         commit('SET_USERS_ERROR')
         try {
@@ -442,7 +442,38 @@ const actions = {
                 filters
             );
             if (response.success) {
-                commit('SET_PARTNERS', response.data.data)
+                let results = response.data.data
+
+                if (hasResource !== 'All') {
+                    if (hasResource === "Events") {
+                        results = []
+                        response.data.data.forEach(element => {
+                            if (element.attributes.events.data && element.attributes.events.data.length > 0) {
+                                results.push(element)
+                            }
+                        });
+                    }
+
+                    else if (hasResource === "Vehicles") {
+                        results = []
+
+                        response.data.data.forEach(element => {
+                            if (element.attributes.vehicles.data && element.attributes.vehicles.data.length > 0) {
+                                results.push(element)
+                            }
+                        });
+                    }
+                    else if (hasResource === "Villas") {
+                        results = []
+
+                        response.data.data.forEach(element => {
+                            if (element.attributes.villas.data && element.attributes.villas.data.length > 0) {
+                                results.push(element)
+                            }
+                        });
+                    }
+                }
+                commit('SET_PARTNERS', results)
                 commit("SET_TOTAL_PAGES_PARTNERS", response.data.meta.pagination.pageCount);
                 commit("SET_TOTAL_ITEMS_PARTNERS", response.data.meta.pagination.total);
                 commit('SET_USERS_LOADING', false)

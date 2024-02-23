@@ -28,9 +28,19 @@
         @change="handleFilterChange"
         class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
       >
-        <option value="All">All</option>
+        <option value="All" selected>All Genders</option>
         <option value="Female">Female</option>
         <option value="Male">Male</option>
+      </select>
+      <select
+        v-model="resourceFilter"
+        @change="handleFilterChange"
+        class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+      >
+        <option value="All" selected>All Resources</option>
+        <option value="Vehicles">Vehicles</option>
+        <option value="Events">Events</option>
+        <option value="Villas">Villas</option>
       </select>
       <div
         class="rounded-1 d-flex me-1 mt-1 mt-lg-0"
@@ -75,13 +85,6 @@
         </button>
       </div>
       <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
-        <!-- <a
-          href="javascript:void(0);"
-          @click="navigateToAddPartnerPage()"
-          class="default-btn position-relative transition border-0 fw-medium text-white pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1 bg-primary d-inline-block d-inline-block text-decoration-none"
-        >
-          <i class="ph ph-plus"></i>
-        </a> -->
         <button
           class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
           type="button"
@@ -352,6 +355,7 @@ export default defineComponent({
       currentPage: 1,
       searchText: "",
       selectAllChecked: false,
+      resourceFilter: "All",
       genderFilter: "All",
       startDate: "",
       endDate: "",
@@ -379,6 +383,7 @@ export default defineComponent({
       this.genderFilter = "All";
       this.startDate = "";
       this.endDate = "";
+      this.resourceFilter = "All";
       // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
       this.handleFilterChange();
     },
@@ -421,6 +426,7 @@ export default defineComponent({
         gender: this.genderFilter,
         startDate: this.startDate,
         endDate: this.endDate,
+        hasResource: this.resourceFilter.trim(),
       });
       this.isLoading = false;
     },
@@ -614,6 +620,7 @@ export default defineComponent({
       return (
         this.searchText !== "" ||
         this.genderFilter !== "All" ||
+        this.resourceFilter !== "All" ||
         this.startDate !== "" ||
         this.endDate !== ""
       );
