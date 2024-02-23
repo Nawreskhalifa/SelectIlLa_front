@@ -36,10 +36,71 @@ const mutations = {
     SET_RESERVATIONS(state, payload) {
         state.reservations = payload
     },
+    REMOVE_RESERVATION(state, id) {
+        state.reservations = state.reservations.filter((reservation) => reservation.id !== id);
+    },
+    UPDATE_RESERVATION(state, { event, data }) {
+        event.updateReservation(data);
+    },
 
 }
 const actions = {
-
+    async updateReservation({ commit }, { body, event }) {
+        commit("SET_RESERVATIONS_LOADING", true);
+        commit("SET_RESERVATIONS_ERROR");
+        try {
+            commit("UPDATE_EVENT", {
+                event,
+                data: body,
+            });
+            commit("SET_RESERVATIONS_LOADING", false);
+        } catch (error: any) {
+            commit("SET_RESERVATIONS_LOADING", false);
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit("SET_RESERVATIONS_ERROR", error.response.data.error.messages);
+            } else {
+                commit("SET_RESERVATIONS_ERROR", ["Une erreur est survenue"]);
+            }
+            return false;
+        }
+        return true;
+    },
+    async deleteReservation({ commit }, id) {
+        commit("SET_RESERVATIONS_LOADING", true);
+        commit("SET_RESERVATIONS_ERROR");
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.DELETE,
+                `${endPoints.reservations}/${id}`,
+                undefined,
+                undefined
+            );
+            if (response.success) {
+                commit("REMOVE_RESERVATION", id);
+                commit("SET_RESERVATIONS_LOADING", false);
+                commit("SET_RESERVATIONS_ERROR");
+            }
+        } catch (error: any) {
+            commit("SET_RESERVATIONS_LOADING");
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit("SET_RESERVATIONS_ERROR", error.response.data.error.messages);
+            } else {
+                commit("SET_RESERVATIONS_ERROR", ["Une erreur est survenue"]);
+            }
+            return false;
+        }
+        return true;
+    },
     async fetchAllReservations({ commit }, { page, perPage = 25, name, partnerId, customerId, startDate, endDate, status }: { page: number, perPage?: number, name?: string, partnerId?: number, customerId?: number, startDate?: string, endDate?: string, status?: string }) {
         commit("SET_RESERVATIONS_LOADING", true);
         commit("SET_RESERVATIONS_ERROR");
@@ -68,7 +129,8 @@ const actions = {
                         status?: { $eq?: string }
                     }>;
                 };
-            } = {};
+                sort?: string[];
+            } = { sort: ['updatedAt:desc'] };
 
             if (page) {
                 filters.pagination = { page: page, pageSize: perPage };

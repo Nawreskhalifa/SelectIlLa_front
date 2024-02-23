@@ -168,7 +168,7 @@
               <a
                 class="dropdown-item d-flex align-items-center"
                 href="javascript:void(0);"
-                @click="selectAllEvents"
+                @click="selectAllReservations"
               >
                 <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
                 {{ selectAllChecked ? "Deselect All" : "Select All" }}
@@ -179,7 +179,7 @@
                 :class="{ disabled: selectedCount === 0 }"
                 class="dropdown-item d-flex align-items-center"
                 href="javascript:void(0);"
-                @click.prevent="deleteSelectedCustomers"
+                @click.prevent="deleteSelectedReservations"
               >
                 <i
                   class="flaticon-delete lh-1 me-8 position-relative top-1"
@@ -383,42 +383,6 @@
                       height="24"
                       alt="user"
                     />
-                    <!-- <img
-                      v-if="
-                        url &&
-                        reservation?.attributes.villa.data?.attributes.partner
-                          .data?.attributes.user.data?.attributes.photo.data
-                          ?.attributes.url
-                      "
-                      :src="
-                        url +
-                        reservation?.attributes.villa.data?.attributes.partner
-                          .data?.attributes.user.data?.attributes.photo.data
-                          ?.attributes.url
-                      "
-                      class="rounded-circle me-8"
-                      width="24"
-                      height="24"
-                      alt="user"
-                    /> -->
-                    <!-- <img
-                      v-if="
-                        url &&
-                        reservation?.attributes.event.data?.attributes.partner
-                          .data?.attributes.user.data?.attributes.photo.data
-                          ?.attributes.url
-                      "
-                      :src="
-                        url +
-                        reservation?.attributes.event.data?.attributes.partner
-                          .data?.attributes.user.data?.attributes.photo.data
-                          ?.attributes.url
-                      "
-                      class="rounded-circle me-8"
-                      width="24"
-                      height="24"
-                      alt="user"
-                    /> -->
                     {{
                       formattedName(
                         reservation?.attributes.vehicle.data?.attributes.partner
@@ -471,7 +435,7 @@
                 {{ reservation.attributes.drop_off_date }}
               </td>
               <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                {{ reservation.attributes.total_amount }}
+                ${{ reservation.attributes.total_amount }}
               </td>
               <td class="shadow-none lh-1 fw-medium">
                 <span
@@ -493,10 +457,7 @@
               <td
                 class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
               >
-                <div
-                  class="dropdown"
-                  v-if="reservation.attributes.status === 'Pending'"
-                >
+                <div class="dropdown">
                   <button
                     class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
                     type="button"
@@ -505,26 +466,41 @@
                   >
                     <i class="flaticon-dots"></i>
                   </button>
-                  <ul
-                    class="dropdown-menu"
-                    v-if="reservation.attributes.status === 'Pending'"
-                  >
-                    <li v-if="reservation.attributes.status !== 'Confirmed'">
+                  <ul class="dropdown-menu">
+                    <li>
                       <a
+                        :class="{
+                          disabled: reservation.attributes.status !== 'Pending',
+                        }"
                         class="dropdown-item d-flex align-items-center"
                         @click="acceptReservation(reservation)"
                       >
-                        <i class="flaticon-pen lh-1 me-8"></i>
+                        <i class="fas fa-check lh-1 me-8"></i>
                         Accept
                       </a>
                     </li>
-                    <li v-if="reservation.attributes.status !== 'Confirmed'">
+                    <li>
                       <a
+                        :class="{
+                          disabled: reservation.attributes.status !== 'Pending',
+                        }"
                         class="dropdown-item d-flex align-items-center"
                         @click="refuseReservation(reservation)"
                       >
-                        <i class="flaticon-delete lh-1 me-8"></i>
+                        <i class="flaticon-cancel lh-1 me-8"></i>
                         Refuse
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        href="javascript:void(0);"
+                        @click="deleteOneReservation(reservation.id)"
+                      >
+                        <i
+                          class="flaticon-delete lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Delete
                       </a>
                     </li>
                   </ul>
@@ -618,7 +594,6 @@
 <script>
 import {
   fetchReservations,
-  deleteReservation,
   fetchAcceptedReservations,
   updateReservation,
   searchInS,
@@ -630,6 +605,7 @@ import "vue-loading-overlay/dist/css/index.css";
 import { mapActions, mapGetters } from "vuex";
 import { storageUrl } from "../../../utils/constants";
 import flatPickr from "vue-flatpickr-component";
+import swal from "sweetalert";
 
 export default {
   name: "ReservationList",
@@ -685,6 +661,7 @@ export default {
       "fetchAllReservations",
       "fetchAllCustomers",
       "fetchAllPartners",
+      "deleteReservation",
     ]),
     resetFilters() {
       // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
@@ -758,17 +735,6 @@ export default {
         });
       }
     },
-    // navigateToReservationDetailPage(reservationId, event) {
-    //   // Vérifier si l'élément cliqué est la case à cocher
-    //   if (event.target.tagName.toLowerCase() === "input") {
-    //     return; // Ne rien faire si c'est la case à cocher qui a été cliquée
-    //   }
-    //   // Utilisez le routeur de Vue pour naviguer vers la page détaillée du reservation
-    //   this.$router.push({
-    //     name: "ReservationDetailsPage",
-    //     params: { reservationId: reservationId },
-    //   });
-    // },
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;
       await this.fetchAllReservations({
@@ -794,13 +760,16 @@ export default {
             "$contains",
             this.searchInput
           );
-          console.log(data);
           this.reservations = data.data;
         } else {
           await this.fetchReservationsData({ page: 1, perPage: this.perPage });
         }
       } catch (error) {
-        console.log(error);
+        swal({
+          text: "An error occurred, please try again",
+          closeOnClickOutside: false,
+          dangerMode: true,
+        });
       }
     },
     customerHasPhoto(reservation) {
@@ -857,19 +826,79 @@ export default {
       try {
         const data = await fetchReservations();
         this.reservations = data.data;
-        console.log(this.reservations, "reservation List ");
       } catch (error) {
-        console.error("Error fetching reservations:", error);
+        swal({
+          text: "Error fetching reservations, please try again",
+          closeOnClickOutside: false,
+          dangerMode: true,
+        });
       }
     },
-    async deleteReservation(id) {
+    selectAllReservations() {
+      this.selectAllChecked = !this.selectAllChecked;
+      this.selectedCount = 0;
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = this.selectAllChecked;
+        if (checkbox.checked) {
+          this.selectedCount++;
+        } else {
+          this.selectedCount--;
+        }
+      });
+    },
+    deleteSelectedReservations() {
+      const selectedReservations = [];
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((checkbox, index) => {
+        if (checkbox.checked) {
+          if (this.getAllReservations && this.getAllReservations[index]) {
+            selectedReservations.push(this.getAllReservations[index].id);
+          }
+        }
+      });
+
+      if (selectedReservations.length === 0) {
+        swal("Please select at least one reservation to delete.");
+        return;
+      }
+
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover these reservations!",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          // Call the deleteEvent action or API endpoint to delete the selected events
+          await Promise.all(
+            selectedReservations.map((id) => this.deleteReservation(id))
+          );
+          swal("Selected events have been deleted!", {});
+        }
+      });
+    },
+    async deleteOneReservation(id) {
       try {
-        this.reservations = this.reservations.filter(
-          (reservation) => reservation.id !== id
-        );
-        await deleteReservation(id);
+        swal({
+          text: "Are you sure to delete this reservation?",
+          buttons: ["Cancel", "Confirm"],
+          dangerMode: true,
+        }).then(async (willDelete) => {
+          if (willDelete) {
+            await this.deleteReservation(id);
+            swal({
+              text: "Reservation deleted Successfully!",
+              closeOnClickOutside: false,
+            });
+          }
+        });
       } catch (error) {
-        console.error(`Error deleting reservation with ID ${id}:`, error);
+        swal({
+          text: `Error deleting reservation with ID ${id}`,
+          closeOnClickOutside: false,
+          dangerMode: true,
+        });
       }
     },
 
@@ -885,7 +914,6 @@ export default {
       });
 
       this.reserveData = reservation;
-      console.log(reservation);
     },
     acceptReservation(reservation) {
       const updatedData = {
@@ -904,14 +932,17 @@ export default {
           }
         })
         .catch((error) => {
-          console.error("Error updating reservation:", error);
+          swal({
+            text: "Error updating reservation",
+            closeOnClickOutside: false,
+            dangerMode: true,
+          });
         });
     },
 
     async refuseReservation(reservation) {
       this.reserveData = reservation;
       this.isOpenRefuse = !this.isOpenRefuse;
-      console.log("ok");
     },
     changeStatus(event) {
       const index = this.reservations.findIndex(
@@ -929,7 +960,6 @@ export default {
     },
     async fetchAccepted() {
       const res = await fetchAcceptedReservations();
-      console.log(res);
     },
   },
   async mounted() {
@@ -943,7 +973,6 @@ export default {
     await this.fetchAllPartners({
       page: null,
     });
-    console.log(this.getPartners);
   },
 };
 </script>
