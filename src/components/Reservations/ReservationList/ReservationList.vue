@@ -594,7 +594,6 @@
 <script>
 import {
   fetchReservations,
-  deleteReservation,
   fetchAcceptedReservations,
   updateReservation,
   searchInS,
@@ -662,6 +661,7 @@ export default {
       "fetchAllReservations",
       "fetchAllCustomers",
       "fetchAllPartners",
+      "deleteReservation",
     ]),
     resetFilters() {
       // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
@@ -874,12 +874,6 @@ export default {
           await Promise.all(
             selectedReservations.map((id) => this.deleteReservation(id))
           );
-          // After deletion, fetch events again to update the list
-          this.currentPage = 1;
-          await this.fetchAllReservations({
-            page: this.currentPage,
-            perPage: this.perPage,
-          });
           swal("Selected events have been deleted!", {});
         }
       });
@@ -892,12 +886,7 @@ export default {
           dangerMode: true,
         }).then(async (willDelete) => {
           if (willDelete) {
-            await deleteReservation(id);
-            this.currentPage = 1;
-            await this.fetchAllReservations({
-              page: this.currentPage,
-              perPage: this.perPage,
-            });
+            await this.deleteReservation(id);
             swal({
               text: "Reservation deleted Successfully!",
               closeOnClickOutside: false,
