@@ -16,7 +16,7 @@
     </nav>
               <div class="row row-cols-1 row-cols-md-3 pt-15" v-if="villas && ressources && ressources?.villas && ressources?.villas.data">
                 <div class="col mb-4" v-for="villa in ressources?.villas?.data" :key="villa.id">
-                  <div class="card h-100" v-if="villa?.attributes?.photos?.data[0]?.attributes">
+                  <div class="card h-100" v-if="villa?.attributes?.photos">
                     <img :src="urlPic(villa?.attributes?.photos?.data[0]?.attributes.url)" class="card-img-top img" alt="">
                     <div class="card-body">
                       <h5 class="card-title">{{ villa?.attributes?.name }}</h5>
@@ -27,7 +27,7 @@
               </div>
                <div class="row row-cols-1 row-cols-md-3" v-if="vehicles  && ressources && ressources?.vehicles && ressources?.vehicles?.data">
                 <div class="col mb-4" v-for="vehicle in ressources?.vehicles?.data" :key="vehicle.id">
-                    <div class="card h-100" v-if="vehicle?.attributes?.photos?.data[0]?.attributes">
+                    <div class="card h-100" v-if="vehicle?.attributes?.photos">
                       <img :src="urlPic(vehicle?.attributes?.photos?.data[0]?.attributes.url)" class="card-img-top img " alt=""
                        >
                       <div class="card-body">
@@ -41,7 +41,7 @@
 
                <div class="row row-cols-1 row-cols-md-3" v-if="events  && ressources && ressources?.events && ressources?.events?.data">
                 <div class="col mb-4" v-for="event in ressources?.events?.data" :key="event.id">
-                    <div class="card h-100" v-if="event?.attributes?.photos?.data[0]?.attributes">
+                    <div class="card h-100" v-if="event?.attributes?.photos?.data">
                       <img :src="urlPic(event?.attributes?.photos?.data[0]?.attributes?.url)" class="card-img-top img" alt="">
                       <div class="card-body">
                         <h5 class="card-title">{{ event?.attributes?.name }}</h5>
