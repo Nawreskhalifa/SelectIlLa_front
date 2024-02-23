@@ -24,92 +24,88 @@
           "
         >
           <span></span>
-          <div>
-            <div class="dropdown">
-              <button
-                class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i class="flaticon-dots"></i>
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a
-                    v-if="!isAllSelected"
-                    class="dropdown-item d-flex align-items-center"
-                    @click.prevent="selectAll"
-                    style="cursor: pointer"
-                    ><i
-                      class="fas fa-check lh-1 me-8 position-relative top-1"
-                    ></i>
-                    Select All
-                  </a>
-                  <a
-                    v-if="isAllSelected"
-                    class="dropdown-item d-flex align-items-center"
-                    @click.prevent="deselectAll"
-                    style="cursor: pointer"
-                    ><i
-                      class="fas fa-check lh-1 me-8 position-relative top-1"
-                    ></i>
-                    Deselect ALL
-                  </a>
-                </li>
-                <li v-if="isAnySelected">
-                  <a
-                    class="dropdown-item d-flex align-items-center"
-                    @click.prevent="deleteSelected"
-                    ><i
-                      class="flaticon-delete lh-1 me-8 position-relative top-1"
-                    ></i>
-                    Delete Selected
-                  </a>
-                </li>
-                <li v-if="isAnySelected">
-                  <a
-                    class="dropdown-item d-flex align-items-center"
-                    @click.prevent="desactiveteSelected"
-                    ><i
-                      class="flaticon-delete lh-1 me-8 position-relative top-1"
-                    ></i>
-                    Desactivate Selected
-                  </a>
-                </li>
-                <li>
-                  <a
-                    v-if="!isAllSelected && !isAnySelected"
-                    class="dropdown-item d-flex align-items-center"
-                    @click.prevent="deleteAll"
-                    ><i
-                      class="flaticon-delete lh-1 me-8 position-relative top-1"
-                    ></i>
-                    Delete All
-                  </a>
-                </li>
-                <li>
-                  <a
-                    v-if="!isAllSelected && isAllDeactivated && !isAnySelected"
-                    class="dropdown-item d-flex align-items-center"
-                    @click.prevent="deactivateAll"
-                    ><i
-                      class="fas fa-ban lh-1 me-8 position-relative top-1"
-                    ></i>
-                    Disable All
-                  </a>
-                </li>
-                <li v-if="!isAllDeactivated">
-                  <a
-                    class="dropdown-item d-flex align-items-center"
-                    @click.prevent="activateAll"
-                  >
-                    <i class="fas fa-eye lh-1 me-8 position-relative top-1"></i>
-                    Enable All
-                  </a>
-                </li>
-              </ul>
-            </div>
+          <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+            <button
+              class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="flaticon-dots"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a
+                  v-if="!isAllSelected"
+                  class="dropdown-item d-flex align-items-center"
+                  @click.prevent="selectAll"
+                  style="cursor: pointer"
+                  ><i
+                    class="fas fa-check lh-1 me-8 position-relative top-1"
+                  ></i>
+                  Select All
+                </a>
+                <a
+                  v-if="isAllSelected"
+                  class="dropdown-item d-flex align-items-center"
+                  @click.prevent="deselectAll"
+                  style="cursor: pointer"
+                  ><i
+                    class="fas fa-check lh-1 me-8 position-relative top-1"
+                  ></i>
+                  Deselect ALL
+                </a>
+              </li>
+              <li v-if="isAnySelected">
+                <a
+                  class="dropdown-item d-flex align-items-center"
+                  @click.prevent="deleteSelected"
+                  ><i
+                    class="flaticon-delete lh-1 me-8 position-relative top-1"
+                  ></i>
+                  Delete Selected
+                </a>
+              </li>
+              <li v-if="isAnySelected">
+                <a
+                  class="dropdown-item d-flex align-items-center"
+                  @click.prevent="desactiveteSelected"
+                  ><i
+                    class="flaticon-delete lh-1 me-8 position-relative top-1"
+                  ></i>
+                  Desactivate Selected
+                </a>
+              </li>
+              <li>
+                <a
+                  v-if="!isAllSelected && !isAnySelected"
+                  class="dropdown-item d-flex align-items-center"
+                  @click.prevent="deleteAll"
+                  ><i
+                    class="flaticon-delete lh-1 me-8 position-relative top-1"
+                  ></i>
+                  Delete All
+                </a>
+              </li>
+              <li>
+                <a
+                  v-if="!isAllSelected && isAllDeactivated && !isAnySelected"
+                  class="dropdown-item d-flex align-items-center"
+                  @click.prevent="deactivateAll"
+                  ><i class="fas fa-ban lh-1 me-8 position-relative top-1"></i>
+                  Disable All
+                </a>
+              </li>
+              <li v-if="!isAllDeactivated">
+                <a
+                  class="dropdown-item d-flex align-items-center"
+                  @click.prevent="activateAll"
+                >
+                  <i class="fas fa-eye lh-1 me-8 position-relative top-1"></i>
+                  Enable All
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
         <div

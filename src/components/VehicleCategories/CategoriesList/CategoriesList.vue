@@ -187,7 +187,33 @@
                       <h6 class="card-title fw-bold mb-0">
                         {{ brand?.attributes?.name }}
                       </h6>
-                      <div class="dropdown">
+                      <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+                        <button
+                          class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="flaticon-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              @click.prevent="openEditBrand(brand)"
+                              >Edit</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              @click.prevent="deleteBrandMethode(brand.id)"
+                              >Delete</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                      <!-- <div class="dropdown">
                         <button
                           class="dropdown-toggle position-relative top-2 lh-1 bg-transparent border-0 shadow-none p-0 transition"
                           type="button"
@@ -212,7 +238,7 @@
                             >
                           </li>
                         </ul>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                 </div>
