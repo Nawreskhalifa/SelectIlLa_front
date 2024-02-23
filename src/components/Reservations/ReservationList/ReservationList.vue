@@ -721,8 +721,7 @@ export default {
           this.acceptReservation(reservation.id);
           return;
         } else if (action === "Refuse") {
-          // Traitement de l'action d'édition
-          this.refuseReservation(reservation);
+           this.refuseReservation(reservation);
           return;
         }
       }
@@ -915,41 +914,34 @@ export default {
 
       this.reserveData = reservation;
     },
-    acceptReservation(reservation) {
+  async   acceptReservation(reservation) {
       const updatedData = {
         data: {
           status: "Confirmed",
         },
       };
-      updateReservation(reservation.id, updatedData)
-        .then((res) => {
-          const index = this.reservations.findIndex(
-            (item) => item.id === reservation.id
-          );
-          if (index !== -1) {
-            this.reservations[index].attributes.status =
-              res.data.data.attributes.status;
-          }
-        })
-        .catch((error) => {
-          swal({
+      const res = await    updateReservation(reservation.id, updatedData)
+    if(res){
+         this.resetFilters()
+    }else{
+      swal({
             text: "Error updating reservation",
             closeOnClickOutside: false,
             dangerMode: true,
           });
-        });
-    },
+    }
+  },
 
     async refuseReservation(reservation) {
       this.reserveData = reservation;
       this.isOpenRefuse = !this.isOpenRefuse;
     },
     changeStatus(event) {
-      const index = this.reservations.findIndex(
+      const index = this.getAllReservations.findIndex(
         (item) => item.id === event.data.id
       );
       if (index !== -1) {
-        this.reservations[index].attributes.status =
+        this.getAllReservations[index].attributes.status =
           event.data.attributes.status;
       }
       this.isOpenRefuse = false;

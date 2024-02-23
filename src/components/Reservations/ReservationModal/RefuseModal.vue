@@ -3,17 +3,18 @@
     <div v-show="show" class="modal">
       <transition name="modal-animation-inner">
         <div v-show="show" class="modal-inner">
-          <div class="product-details-box">
+          <div class="product-details-box" style="display: flex; flex-direction: column; justify-content: start; align-items: flex-start;">
             <div class="col-md-12">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10">
-                  Rejection Reason
+              <div class="form-group mb-15 mb-sm-20 mb-md-25" >
+                <label class="d-block text-black fw-semibold mb-10" style="text-align: left;">
+                  Rejection Reason :
                 </label>
                 <div class="mb-0">
                   <textarea
                     v-model="rejection"
                     class="form-control shadow-none rounded-0 text-black"
                     placeholder="Write your rejection reason"
+                    rows="4"
                   ></textarea>
                 </div>
               </div>
@@ -22,7 +23,7 @@
               <button class="confirm-button" @click="confirmUpdate">
                 Confirm
               </button>
-              <button class="cancel-button" @click="closeModal">No</button>
+              <button class="cancel-button" @click="closeModal" >Cancel</button>
             </div>
           </div>
         </div>
@@ -159,4 +160,8 @@ export default {
     cursor: pointer;
   }
 }
+.cancel-button :hover {
+         color: #fff;
+         background-color: #6560f0;
+      }
 </style>
