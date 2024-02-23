@@ -13,9 +13,12 @@
         />
       </div>
         <div class="d-sm-flex align-items-center  addCat">
-         <router-link to="/AddVillaCategory" class=" default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0">
+
+         <router-link to="/AddVillaCategory" style="cursor: pointer;" class=" bg-primary   text-white position-relative transition fw-medium  pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mt-10 mt-md-0">
+                    <i class="fas fa-plus position-relative ms-5 top-2 fs-15"></i>
+
           Add New Category
-          <i class="fas fa-plus position-relative ms-5 top-2 fs-15"></i>
+
         </router-link>
       </div>
     </div>

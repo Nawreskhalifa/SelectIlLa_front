@@ -271,6 +271,8 @@
                 Vehicle Image
               </label>
               <div class="file-upload text-center position-relative">
+                                <i class="flaticon-image"></i>
+
                 <!-- <img
                   v-for="(url, index) in imageUrls"
                   :src="url"
@@ -381,7 +383,7 @@
                   {{ partner.attributes.name + ' ' + partner.attributes.surname}}
                 </option>
               </select>
-            </div>+
+            </div>
             <div v-if="partnerErrorVisible" class="text-danger">
               Please select a partner.
             </div>
