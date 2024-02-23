@@ -187,7 +187,7 @@ const actions = {
 
 
             } = {
-                populate: ['user', 'user.photo'],
+                populate: ['user', 'user.photo', 'vehicle', 'event', 'villa'],
                 sort: []
 
             };
@@ -363,7 +363,6 @@ const actions = {
         commit('SET_USERS_ERROR')
         try {
             const filters: {
-                populate: any[];
                 pagination?: { page?: number; pageSize?: number };
                 filters?: {
                     $or?: Array<{
@@ -379,7 +378,7 @@ const actions = {
 
 
             } = {
-                populate: ['user', 'user.photo'],
+                // populate: ['user', 'user.photo'],
                 sort: []
 
             };
@@ -438,11 +437,10 @@ const actions = {
             }
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
-                endPoints.allPartners,
+                `${endPoints.allPartners}?populate=deep`,
                 undefined,
                 filters
             );
-            console.log(response.data.meta)
             if (response.success) {
                 commit('SET_PARTNERS', response.data.data)
                 commit("SET_TOTAL_PAGES_PARTNERS", response.data.meta.pagination.pageCount);
