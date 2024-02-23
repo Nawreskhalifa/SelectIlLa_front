@@ -445,33 +445,18 @@ const actions = {
                 let results = response.data.data
 
                 if (hasResource !== 'All') {
-                    if (hasResource === "Events") {
-                        results = []
-                        response.data.data.forEach(element => {
-                            if (element.attributes.events.data && element.attributes.events.data.length > 0) {
-                                results.push(element)
-                            }
-                        });
-                    }
-
-                    else if (hasResource === "Vehicles") {
-                        results = []
-
-                        response.data.data.forEach(element => {
-                            if (element.attributes.vehicles.data && element.attributes.vehicles.data.length > 0) {
-                                results.push(element)
-                            }
-                        });
-                    }
-                    else if (hasResource === "Villas") {
-                        results = []
-
-                        response.data.data.forEach(element => {
-                            if (element.attributes.villas.data && element.attributes.villas.data.length > 0) {
-                                results.push(element)
-                            }
-                        });
-                    }
+                    results = results.filter(partner => {
+                        switch (hasResource) {
+                            case 'Events':
+                                return partner.attributes.events.data && partner.attributes.events.data.length > 0;
+                            case 'Vehicles':
+                                return partner.attributes.vehicles.data && partner.attributes.vehicles.data.length > 0;
+                            case 'Villas':
+                                return partner.attributes.villas.data && partner.attributes.villas.data.length > 0;
+                            default:
+                                return false;
+                        }
+                    });
                 }
                 commit('SET_PARTNERS', results)
                 commit("SET_TOTAL_PAGES_PARTNERS", response.data.meta.pagination.pageCount);
