@@ -1605,7 +1605,7 @@ export async function addStyle(styleData) {
       queryParams += `&filters[category_villas][id][$eq]=${filters.category_villas.id}`;
     }
 
-    const response = await axios.get(`${endPoints.villa}${queryParams}`);
+    const response = await axios.get(`${endPoints.villa}?${queryParams}`);
 
     if (response.status === 200) {
       return response.data;
