@@ -383,42 +383,6 @@
                       height="24"
                       alt="user"
                     />
-                    <!-- <img
-                      v-if="
-                        url &&
-                        reservation?.attributes.villa.data?.attributes.partner
-                          .data?.attributes.user.data?.attributes.photo.data
-                          ?.attributes.url
-                      "
-                      :src="
-                        url +
-                        reservation?.attributes.villa.data?.attributes.partner
-                          .data?.attributes.user.data?.attributes.photo.data
-                          ?.attributes.url
-                      "
-                      class="rounded-circle me-8"
-                      width="24"
-                      height="24"
-                      alt="user"
-                    /> -->
-                    <!-- <img
-                      v-if="
-                        url &&
-                        reservation?.attributes.event.data?.attributes.partner
-                          .data?.attributes.user.data?.attributes.photo.data
-                          ?.attributes.url
-                      "
-                      :src="
-                        url +
-                        reservation?.attributes.event.data?.attributes.partner
-                          .data?.attributes.user.data?.attributes.photo.data
-                          ?.attributes.url
-                      "
-                      class="rounded-circle me-8"
-                      width="24"
-                      height="24"
-                      alt="user"
-                    /> -->
                     {{
                       formattedName(
                         reservation?.attributes.vehicle.data?.attributes.partner
@@ -471,7 +435,7 @@
                 {{ reservation.attributes.drop_off_date }}
               </td>
               <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                {{ reservation.attributes.total_amount }}
+                ${{ reservation.attributes.total_amount }}
               </td>
               <td class="shadow-none lh-1 fw-medium">
                 <span

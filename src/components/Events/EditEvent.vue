@@ -131,7 +131,6 @@
                 class="form-control shadow-none text-black fs-md-15 lg-5"
                 placeholder="Start"
                 name="startDate"
-                :config="{ minDate: currentDate }"
               />
               <span v-if="formSubmitted && !startDate" class="text-danger"
                 >Start Date is required!</span
@@ -425,16 +424,10 @@ export default defineComponent({
       categories: "",
       price: "",
       location: "",
-      startDate: new Date().toISOString().split("T")[0], // Date actuelle
-      startTime: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }), // Heure actuelle
-      endDate: new Date().toISOString().split("T")[0], // Date actuelle
-      endTime: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }), // Heure actuelle
+      startDate: "", // Date actuelle
+      startTime: "", // Heure actuelle
+      endDate: "",
+      endTime: "", // Heure actuelle
       seats: 1,
       bottles: 1,
       promoterName: "",
@@ -650,6 +643,7 @@ export default defineComponent({
           })
         );
       }
+      console.log(this.getEvent);
       this.price = this.getEvent.price;
       this.location = this.getEvent.location;
       this.startDate = this.getEvent.startDate;
@@ -670,6 +664,7 @@ export default defineComponent({
       this.isLoading = false;
     }
     this.isLoading = true;
+    console.log(this.startDate);
 
     await this.fetchAllCategoriesEvent({ page: null });
     await this.fetchAllPartners();
@@ -780,8 +775,8 @@ fieldset[disabled] .multiselect {
   border-bottom-right-radius: 0;
 }
 
-.edit-course-card.edit-course-card button span::before{
-  background-color:#ffffff !important;
+.edit-course-card.edit-course-card button span::before {
+  background-color: #ffffff !important;
 }
 .multiselect--active .multiselect__select {
   transform: rotateZ(180deg);
