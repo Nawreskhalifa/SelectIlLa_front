@@ -237,6 +237,8 @@
               ></h4>
               <div class="file-upload-area">
                 <div class="file-upload text-center position-relative">
+                                  <i class="flaticon-image"></i>
+
                   <div class="image-grid" style="z-index: 1">
                     <!-- <div
                       v-for="(url, index) in imageUrls"
