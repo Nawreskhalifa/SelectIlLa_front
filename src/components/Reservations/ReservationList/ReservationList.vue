@@ -594,6 +594,7 @@ import "vue-loading-overlay/dist/css/index.css";
 import { mapActions, mapGetters } from "vuex";
 import { storageUrl } from "../../../utils/constants";
 import flatPickr from "vue-flatpickr-component";
+import swal from "sweetalert";
 
 export default {
   name: "ReservationList",
@@ -722,17 +723,6 @@ export default {
         });
       }
     },
-    // navigateToReservationDetailPage(reservationId, event) {
-    //   // Vérifier si l'élément cliqué est la case à cocher
-    //   if (event.target.tagName.toLowerCase() === "input") {
-    //     return; // Ne rien faire si c'est la case à cocher qui a été cliquée
-    //   }
-    //   // Utilisez le routeur de Vue pour naviguer vers la page détaillée du reservation
-    //   this.$router.push({
-    //     name: "ReservationDetailsPage",
-    //     params: { reservationId: reservationId },
-    //   });
-    // },
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;
       await this.fetchAllReservations({
@@ -758,13 +748,16 @@ export default {
             "$contains",
             this.searchInput
           );
-          console.log(data);
           this.reservations = data.data;
         } else {
           await this.fetchReservationsData({ page: 1, perPage: this.perPage });
         }
       } catch (error) {
-        console.log(error);
+        swal({
+          text: "An error occurred, please try again",
+          closeOnClickOutside: false,
+          dangerMode: true,
+        });
       }
     },
     customerHasPhoto(reservation) {
@@ -821,9 +814,12 @@ export default {
       try {
         const data = await fetchReservations();
         this.reservations = data.data;
-        console.log(this.reservations, "reservation List ");
       } catch (error) {
-        console.error("Error fetching reservations:", error);
+        swal({
+          text: "Error fetching reservations, please try again",
+          closeOnClickOutside: false,
+          dangerMode: true,
+        });
       }
     },
     async deleteReservation(id) {
@@ -849,7 +845,6 @@ export default {
       });
 
       this.reserveData = reservation;
-      console.log(reservation);
     },
     acceptReservation(reservation) {
       const updatedData = {
@@ -868,14 +863,17 @@ export default {
           }
         })
         .catch((error) => {
-          console.error("Error updating reservation:", error);
+          swal({
+            text: "Error updating reservation",
+            closeOnClickOutside: false,
+            dangerMode: true,
+          });
         });
     },
 
     async refuseReservation(reservation) {
       this.reserveData = reservation;
       this.isOpenRefuse = !this.isOpenRefuse;
-      console.log("ok");
     },
     changeStatus(event) {
       const index = this.reservations.findIndex(
@@ -893,7 +891,6 @@ export default {
     },
     async fetchAccepted() {
       const res = await fetchAcceptedReservations();
-      console.log(res);
     },
   },
   async mounted() {
@@ -907,7 +904,6 @@ export default {
     await this.fetchAllPartners({
       page: null,
     });
-    console.log(this.getPartners);
   },
 };
 </script>

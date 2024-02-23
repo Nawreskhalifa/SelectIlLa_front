@@ -68,7 +68,8 @@ const actions = {
                         status?: { $eq?: string }
                     }>;
                 };
-            } = {};
+                sort?: string[];
+            } = { sort: ['updatedAt:desc'] };
 
             if (page) {
                 filters.pagination = { page: page, pageSize: perPage };
