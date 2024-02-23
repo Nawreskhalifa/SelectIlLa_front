@@ -1546,7 +1546,7 @@ export async function addStyle(styleData) {
       queryParams += `&filters[$or][0][make][name][$contains]=${filters.searchQuery}&filters[$or][1][brand][name][$contains]=${filters.searchQuery}`;
     }
 
-    const response = await axios.get(`http://localhost:1337/api/vehicles?${queryParams}`);
+    const response = await axios.get(`${endPoints.vehicles}?${queryParams}`);
 
     if (response.status === 200) {
       return response.data;
@@ -1605,7 +1605,7 @@ export async function addStyle(styleData) {
       queryParams += `&filters[category_villas][id][$eq]=${filters.category_villas.id}`;
     }
 
-    const response = await axios.get(`http://localhost:1337/api/villas?${queryParams}`);
+    const response = await axios.get(`${endPoints.villa}${queryParams}`);
 
     if (response.status === 200) {
       return response.data;

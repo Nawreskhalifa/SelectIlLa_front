@@ -295,7 +295,7 @@ export default {
       isSelected: false,
       isLoading: false,
       fullPage: true,
-      itemsPerPage: 4,
+      itemsPerPage: 2,
       currentPage: 1,
       deleteModalVisible: false,
       itemToRemove: "",
