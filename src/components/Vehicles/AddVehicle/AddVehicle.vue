@@ -18,9 +18,15 @@
               <div v-if="makesLoading" class="loader"></div>
 
               <div style="display: flex; flex-direction: row">
-                                                   <a  class="card-link-btn lnk text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"   style="cursor: pointer;"                       @click.prevent="addMake" ><i   class="flaticon-plus lh-2 me-16 position-relative top-1"></i> Add new make </a>
-
-
+                <a
+                  class="card-link-btn lnk text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"
+                  style="cursor: pointer"
+                  @click.prevent="addMake"
+                  ><i
+                    class="flaticon-plus lh-2 me-16 position-relative top-1"
+                  ></i>
+                  Add new make
+                </a>
               </div>
 
               <div v-if="makeErrorVisible" class="text-danger">
@@ -55,9 +61,15 @@
               </select>
               <div v-if="brandsLoading" class="loader"></div>
               <div v-if="make" style="display: flex; flex-direction: row">
-                                                                   <a  class="card-link-btn lnk text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"   style="cursor: pointer;"                       @click.prevent="addBrand" ><i   class="flaticon-plus lh-2 me-16 position-relative top-1"></i> Add Brand To {{ make.attributes.name }} </a>
-
-
+                <a
+                  class="card-link-btn lnk text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"
+                  style="cursor: pointer"
+                  @click.prevent="addBrand"
+                  ><i
+                    class="flaticon-plus lh-2 me-16 position-relative top-1"
+                  ></i>
+                  Add Brand To {{ make.attributes.name }}
+                </a>
               </div>
 
               <div v-if="brandErrorVisible" class="text-danger">
@@ -72,7 +84,7 @@
               <select
                 v-model="style"
                 class="form-select shadow-none fw-semibold rounded-0"
-               >
+              >
                 <option v-for="st in styles" :key="st?.id" :value="st">
                   {{ st.attributes.name }}
                 </option>
@@ -80,9 +92,15 @@
               <!-- <div v-if="makesLoading" class="loader"></div> -->
 
               <div style="display: flex; flex-direction: row">
-                                                                                   <a  class="card-link-btn lnk text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"   style="cursor: pointer;"                       @click.prevent="addStyleModal" ><i   class="flaticon-plus lh-2 me-16 position-relative top-1"></i>Add new Style </a>
-
-
+                <a
+                  class="card-link-btn lnk text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"
+                  style="cursor: pointer"
+                  @click.prevent="addStyleModal"
+                  ><i
+                    class="flaticon-plus lh-2 me-16 position-relative top-1"
+                  ></i
+                  >Add new Style
+                </a>
               </div>
 
               <div v-if="makeErrorVisible" class="text-danger">
@@ -125,7 +143,7 @@
               </div>
             </div>
           </div>
-           <div class="col-md-6">
+          <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10"
                 >New Daily</label
@@ -247,8 +265,6 @@
             </div>
           </div>
 
-
-
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
@@ -356,16 +372,16 @@
                 v-model="selectedPartner"
                 class="form-select shadow-none fw-semibold rounded-0"
               >
-                <option selected>Select a partner</option>
+                <option value=""  selected disabled>Select a partner</option>
                 <option
-                  v-for="partner in allPartners"
+                  v-for="partner in getPartners"
                   :key="partner.id"
                   :value="partner.id"
                 >
-                  {{ partner.name }}
+                  {{ partner.attributes.name + ' ' + partner.attributes.surname}}
                 </option>
               </select>
-            </div>
+            </div>+
             <div v-if="partnerErrorVisible" class="text-danger">
               Please select a partner.
             </div>
@@ -383,20 +399,37 @@
       </form>
     </div>
   </div>
-   <div class="modal" :class="{ hide: !modalStyle }">
+  <div class="modal" :class="{ hide: !modalStyle }">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Add New Style</h5>
-          <button type="button" class="btn-close" @click="closeModalStyle"></button>
+          <button
+            type="button"
+            class="btn-close"
+            @click="closeModalStyle"
+          ></button>
         </div>
         <div class="modal-body">
           <label class="d-block text-black fw-semibold mb-10">Style:</label>
-          <input v-model="newStyle" type="text" class="form-control" placeholder="Enter style name" />
+          <input
+            v-model="newStyle"
+            type="text"
+            class="form-control"
+            placeholder="Enter style name"
+          />
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="closeModalStyle">Close</button>
-          <button type="button" class="btn btn-primary" @click="saveStyle">Save</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="closeModalStyle"
+          >
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" @click="saveStyle">
+            Save
+          </button>
         </div>
       </div>
     </div>
@@ -497,11 +530,20 @@ import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useRouter } from "vue-router";
 import MakeModal from "../AddMake/MakeModal.vue";
+import { mapGetters, mapActions } from "vuex";
 
 export default defineComponent({
   name: "AddProduct",
   components: { Loading },
-
+  computed: {
+    ...mapGetters(["getUsersLoading", "getUsersError", "getPartners"]),
+  },
+  methods: {
+    ...mapActions(["fetchAllPartners"]),
+  },
+  async mounted() {
+    await this.fetchAllPartners({ page: null });
+  },
   setup() {
     const makesLoading = ref(false);
     const coverImageIndex = ref(0);
@@ -525,7 +567,7 @@ export default defineComponent({
     const newDaily = ref("");
     const msrp = ref("");
     const styles = ref([]);
-    const style= ref()
+    const style = ref();
     const deposit = ref("");
     const make = ref();
     const newMake = ref("");
@@ -564,12 +606,12 @@ export default defineComponent({
     const addBrand = async () => {
       modalBrand.value = true;
     };
-       const getStyles = async () => {
-      const {data} = await fetchStyles();
-      styles.value = data ;
-      console.log(styles.value,"styless")
+    const getStyles = async () => {
+      const { data } = await fetchStyles();
+      styles.value = data;
+      console.log(styles.value, "styless");
       // console.log(data, styles, "styles");
-     };
+    };
 
     const makeError = ref("");
     const brandError = ref("");
@@ -579,9 +621,9 @@ export default defineComponent({
     const seatsError = ref("");
     const dailyError = ref("");
     const miceError = ref("");
-        const modalStyle = ref(false);
+    const modalStyle = ref(false);
     const newStyle = ref("");
-  const closeModalStyle = () => {
+    const closeModalStyle = () => {
       modalStyle.value = false;
     };
 
@@ -591,15 +633,15 @@ export default defineComponent({
         autoClose: 1000,
       });
     };
-     const addStyleModal = () => {
+    const addStyleModal = () => {
       modalStyle.value = true;
     };
 
-   const saveStyle = async () => {
+    const saveStyle = async () => {
       try {
-        const response = await addStyle({data:{ name: newStyle.value} });
+        const response = await addStyle({ data: { name: newStyle.value } });
         if (response) {
-           getStyles();
+          getStyles();
           closeModalStyle();
         } else {
           console.error("Failed to add style.");
@@ -674,114 +716,117 @@ export default defineComponent({
       AllSelected.value = AllSelected.value.filter((item) => item !== cat);
     };
     const submitForm = async () => {
-    makeErrorVisible.value = false;
-    brandErrorVisible.value = false;
-    descriptionErrorVisible.value = false;
-    seatsErrorVisible.value = false;
-    dailyErrorVisible.value = false;
-    miceErrorVisible.value = false;
-    newDailyErrorVisible.value = false;
-    imageErrorVisible.value = false;
-    depositErrorVisible.value = false;
-    msrpErrorVisible.value = false;
-    styleErrorVisible.value = false;
-    partnerErrorVisible.value = false;
+      makeErrorVisible.value = false;
+      brandErrorVisible.value = false;
+      descriptionErrorVisible.value = false;
+      seatsErrorVisible.value = false;
+      dailyErrorVisible.value = false;
+      miceErrorVisible.value = false;
+      newDailyErrorVisible.value = false;
+      imageErrorVisible.value = false;
+      depositErrorVisible.value = false;
+      msrpErrorVisible.value = false;
+      styleErrorVisible.value = false;
+      partnerErrorVisible.value = false;
 
-    isLoading.value = true;
+      isLoading.value = true;
 
-    let hasError = false;
+      let hasError = false;
 
-    if (!make.value) {
+      if (!make.value) {
         makeErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (!brand.value) {
+      if (!brand.value) {
         brandErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (!description.value || !description.value.ops || !description.value.ops[0].insert) {
+      if (
+        !description.value ||
+        !description.value.ops ||
+        !description.value.ops[0].insert
+      ) {
         descriptionErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (!seats.value) {
+      if (!seats.value) {
         seatsErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (!selectedPartner.value) {
+      if (!selectedPartner.value) {
         partnerErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (!daily.value) {
+      if (!daily.value) {
         dailyErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (!mice.value) {
+      if (!mice.value) {
         miceErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (!deposit.value) {
+      if (!deposit.value) {
         depositErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (!msrp.value) {
+      if (!msrp.value) {
         msrpErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (!newDaily.value) {
+      if (!newDaily.value) {
         newDailyErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (selectedFilesRef.value.length === 0) {
+      if (selectedFilesRef.value.length === 0) {
         imageErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (!style.value) {
+      if (!style.value) {
         styleErrorVisible.value = true;
         hasError = true;
-    }
+      }
 
-    if (hasError) {
+      if (hasError) {
         isLoading.value = false;
         return;
-    }
+      }
 
-    const selectedC = AllSelected.value.filter((item) => parseInt(item));
-    const vehicleData = {
+      const selectedC = AllSelected.value.filter((item) => parseInt(item));
+      const vehicleData = {
         data: {
-            make: make.value.id,
-            brand: brand.value.id,
-            msrp: msrp.value,
-            daily: parseFloat(daily.value),
-            mice: parseFloat(mice.value),
-            new_daily: parseFloat(newDaily.value),
-            deposit: parseFloat(deposit.value),
-            description: description.value.ops[0].insert,
-            seats: parseInt(seats.value),
-            partner: [parseInt(selectedPartner.value)],
-            style: style.value,
-            cover_image_index: [coverImageIndex.value]
+          make: make.value.id,
+          brand: brand.value.id,
+          msrp: msrp.value,
+          daily: parseFloat(daily.value),
+          mice: parseFloat(mice.value),
+          new_daily: parseFloat(newDaily.value),
+          deposit: parseFloat(deposit.value),
+          description: description.value.ops[0].insert,
+          seats: parseInt(seats.value),
+          partner: [parseInt(selectedPartner.value)],
+          style: style.value,
+          cover_image_index: [coverImageIndex.value],
         },
-    };
+      };
 
-    const result = await postVehicle(selectedFilesRef, vehicleData);
-    if (result.success) {
+      const result = await postVehicle(selectedFilesRef, vehicleData);
+      if (result.success) {
         showToatSuccess();
         isLoading.value = false;
         router.push("/vehiclelist");
-    }
-};
-
+      }
+    };
 
     const getBrands = async (selectedMake) => {
       brandsLoading.value = true;
@@ -863,8 +908,8 @@ export default defineComponent({
     getStyles();
     return {
       modules,
-        modalStyle,
-       newStyle,
+      modalStyle,
+      newStyle,
       addStyleModal,
       closeModalStyle,
       saveStyle,
@@ -894,7 +939,7 @@ export default defineComponent({
       brands,
       getBrands,
       deposit,
-       styleErrorVisible,
+      styleErrorVisible,
       partnerErrorVisible,
       addBrand,
       msrp,
@@ -939,7 +984,7 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.lnk{
+.lnk {
   margin-top: 5px !important;
 }
 .loader {

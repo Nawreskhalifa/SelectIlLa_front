@@ -5,12 +5,11 @@
         @newFiltredData="filtredData"
         @filtreBycategory="getByCat"
         @priceRangeChanged="handlePriceRangeChange"
-       @newDailyRangeChanged="handleNewDailyRangeChanged"
-      @sleepRangeChanged="handleSleepRangeChanged"
-      @roomsRangeChanged="handleRoomsRangeChanged"
-      @partnerChanged="handlePartnerChanged"
-      @reset="reset"
-
+        @newDailyRangeChanged="handleNewDailyRangeChanged"
+        @sleepRangeChanged="handleSleepRangeChanged"
+        @roomsRangeChanged="handleRoomsRangeChanged"
+        @partnerChanged="handlePartnerChanged"
+        @reset="reset"
       />
     </div>
     <div class="col-lg-8 col-xxxl-9">
@@ -173,12 +172,7 @@
                   "
                 >
                   <h4 class="mb-10 fw-semibold fs-16 fs-lg-18">
-                    <span>
-                      {{
-                        villa.attributes?.name
-                      }}</span
-                    >
-
+                    <span> {{ villa.attributes?.name }}</span>
                   </h4>
                   <div class="form-check mb-2">
                     <input
@@ -193,9 +187,9 @@
                 <div
                   class="mt-10 price d-flex align-items-center justify-content-between"
                 >
-                  <span class="text-primary fw-bold fs-md-15 fs-lg-16">{{
-                    villa?.attributes?.daily
-                  }} $ </span>
+                  <span class="text-primary fw-bold fs-md-15 fs-lg-16"
+                    >{{ villa?.attributes?.daily }} $
+                  </span>
                   <div class="lockbtn reviews d-flex align-items-center">
                     <button
                       @click="active(false, villa.id)"
@@ -229,17 +223,15 @@
                   Update This
                   <i class="fas fa-edit"></i>
                 </button>
-
               </div>
             </div>
             <DeleteModal
-                  :show="deleteModalVisible"
-                  :propToDelete=" villa.attributes?.name"
-                  @delete="handleDelete"
-                />
+              :show="deleteModalVisible"
+              :propToDelete="villa.attributes?.name"
+              @delete="handleDelete"
+            />
           </div>
         </div>
-
       </div>
 
       <div
@@ -287,7 +279,6 @@
         :on-cancel="onCancel"
         :is-full-page="fullPage"
       />
-
     </div>
   </div>
 </template>
@@ -298,12 +289,7 @@ import VillaFiltreBased from "./VillaFiltreBased.vue";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import DeleteModal from "@/components/Common/DeleteModal.vue";
-import {
-
-    updateVilla,
-   deleteVilla,
-  AllVillaApi,
-} from "@/services/apiService";
+import { updateVilla, deleteVilla, AllVillaApi } from "@/services/apiService";
 
 export default {
   data() {
@@ -313,60 +299,59 @@ export default {
       isSelected: false,
       isLoading: false,
       fullPage: true,
-      itemsPerPage:4,
+      itemsPerPage: 4,
       currentPage: 1,
       deleteModalVisible: false,
       itemToRemove: "",
-      category: "" ,
+      category: "",
       minPrice: 1,
       maxPrice: 6000,
       searchQuery: "",
       minRooms: 0,
-maxRooms: 0,
+      maxRooms: 0,
       minNewDaily: 0,
-maxNewDaily: 0,
-minSleep:0,
-maxSleep: 0,
-partner:""
+      maxNewDaily: 0,
+      minSleep: 0,
+      maxSleep: 0,
+      partner: "",
     };
   },
-    watch: {
-
-      partner(newValue, oldValue) {
-  if (newValue !== oldValue) {
-        this.fetchVillasAp();
-      }
-   },
-   minNewDaily(newValue, oldValue) {
+  watch: {
+    partner(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.fetchVillasAp();
       }
-   },
-  maxNewDaily(newValue, oldValue) {
+    },
+    minNewDaily(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.fetchVillasAp();
       }
-   },
-  minSleep(newValue, oldValue) {
+    },
+    maxNewDaily(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.fetchVillasAp();
       }
-   },
-  maxSleep(newValue, oldValue) {
+    },
+    minSleep(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.fetchVillasAp();
       }
-   },
-   minRooms(newValue, oldValue) {
+    },
+    maxSleep(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.fetchVillasAp();
       }
-   },
-  maxRooms(newValue, oldValue) {
+    },
+    minRooms(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.fetchVillasAp();
       }
-   },
+    },
+    maxRooms(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchVillasAp();
+      }
+    },
 
     category(newValue, oldValue) {
       if (newValue !== oldValue) {
@@ -412,8 +397,7 @@ partner:""
     },
   },
   methods: {
-
-     reset() {
+    reset() {
       this.category = "";
       this.minPrice = 1;
       this.maxPrice = 6000;
@@ -427,79 +411,76 @@ partner:""
       this.partner = "";
     },
     handleNewDailyRangeChanged(range) {
-         this.minNewDaily = range.min
-         this.maxNewDaily = range.max
+      this.minNewDaily = range.min;
+      this.maxNewDaily = range.max;
     },
     handleSleepRangeChanged(range) {
-this.minSleep = range.min,
-this.maxSleep = range.max
+      (this.minSleep = range.min), (this.maxSleep = range.max);
     },
     handleRoomsRangeChanged(range) {
-   this.minRooms = range.min ,
-   this.maxRooms = range.max
+      (this.minRooms = range.min), (this.maxRooms = range.max);
     },
     handlePartnerChanged(partner) {
-       this.partner = partner
+      this.partner = partner;
     },
-       async fetchVillasAp() {
+    async fetchVillasAp() {
       try {
         this.isLoading = true;
         const filters = {
-           daily: [this.minPrice, this.maxPrice],
-      name: this.searchQuery,
-      category_villas: this.category,
-      minRooms: this.minRooms,
-      maxRooms: this.maxRooms,
-      minNewDaily: this.minNewDaily,
-      maxNewDaily: this.maxNewDaily,
-      minSleep: this.minSleep,
-      maxSleep: this.maxSleep,
-      partner: this.partner,
-
+          daily: [this.minPrice, this.maxPrice],
+          name: this.searchQuery,
+          category_villas: this.category,
+          minRooms: this.minRooms,
+          maxRooms: this.maxRooms,
+          minNewDaily: this.minNewDaily,
+          maxNewDaily: this.maxNewDaily,
+          minSleep: this.minSleep,
+          maxSleep: this.maxSleep,
+          partner: this.partner,
         };
 
         const data = await AllVillaApi(filters);
         this.originalvillas = data.data;
         this.villas = [...this.originalvillas];
       } catch (error) {
-        console.error('Error fetching villas:', error);
+        console.error("Error fetching villas:", error);
       } finally {
         this.isLoading = false;
       }
     },
 
-  //      async fetchVehicles() {
-  // try {
-  //   this.isLoading = true;
-  //   const filters = {
-  //     make:this.make,
-  //     brand: this.brand,
-  //       daily: [parseInt( this.minPrice), parseInt(this.maxPrice)],
-      // minPrice: this.minPrice,
-      // maxPrice: this.maxPrice,
-//       searchQuery: this.searchQuery,
-//     };
-//             console.log(filters,"daily")
+    //      async fetchVehicles() {
+    // try {
+    //   this.isLoading = true;
+    //   const filters = {
+    //     make:this.make,
+    //     brand: this.brand,
+    //       daily: [parseInt( this.minPrice), parseInt(this.maxPrice)],
+    // minPrice: this.minPrice,
+    // maxPrice: this.maxPrice,
+    //       searchQuery: this.searchQuery,
+    //     };
+    //             console.log(filters,"daily")
 
-//     const data = await allVehiclesApi(filters);
-//     this.originalVehicles = data.data;
-//     this.villas = [...this.originalVehicles];
-//   } catch (error) {
-//     console.error("Error fetching villas:", error);
-//   } finally {
-//     this.isLoading = false;
-//   }
-// },
+    //     const data = await allVehiclesApi(filters);
+    //     this.originalVehicles = data.data;
+    //     this.villas = [...this.originalVehicles];
+    //   } catch (error) {
+    //     console.error("Error fetching villas:", error);
+    //   } finally {
+    //     this.isLoading = false;
+    //   }
+    // },
 
- handlePriceRangeChange(range) {
-console.log(range)
-       this.minPrice =range.min
-       this.maxPrice= range.max
-     },
+    handlePriceRangeChange(range) {
+      console.log(range);
+      this.minPrice = range.min;
+      this.maxPrice = range.max;
+    },
 
     toggleModal(id) {
-     this.$router.push({ name: 'villadetails', params: { id: id } });
-  },
+      this.$router.push({ name: "villadetails", params: { id: id } });
+    },
 
     activateAll() {
       this.villas.forEach(async (villa) => {
@@ -521,10 +502,10 @@ console.log(range)
       });
     },
     deleteSelected() {
-      this.villas.forEach(async (villa,i) => {
+      this.villas.forEach(async (villa, i) => {
         if (villa.selected) {
           await deleteVilla(villa.id);
-      this.villas.splice(i, 1);
+          this.villas.splice(i, 1);
         }
       });
     },
@@ -582,15 +563,15 @@ console.log(range)
       }
     },
     async getByCat(event) {
-    if(event.category != ""){
-this.category=event.category
-    }else{
-this.isLoading = true
-const data = await AllVillaApi(" ");
-    this.originalvillas = data.data;
-    this.villas = [...this.originalvillas];
-    this.isLoading = false
-    }
+      if (event.category != "") {
+        this.category = event.category;
+      } else {
+        this.isLoading = true;
+        const data = await AllVillaApi(" ");
+        this.originalvillas = data.data;
+        this.villas = [...this.originalvillas];
+        this.isLoading = false;
+      }
     },
 
     async fetchData() {
@@ -604,18 +585,17 @@ const data = await AllVillaApi(" ");
         this.isLoading = false;
       }
     },
- async filtredData(searchInput) {
-  try {
-    this.isLoading = true;
-    this.searchQuery = searchInput;
-    console.log(searchInput)
-  } catch (error) {
-    console.error("Error in filtredData:", error);
-  } finally {
-    this.isLoading = false;
-  }
-}
-,
+    async filtredData(searchInput) {
+      try {
+        this.isLoading = true;
+        this.searchQuery = searchInput;
+        console.log(searchInput);
+      } catch (error) {
+        console.error("Error in filtredData:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
     async active(value, id) {
       if (value === true) {
         const updatedData = {
@@ -645,22 +625,21 @@ const data = await AllVillaApi(" ");
         const res = await updateVilla(id, updatedData);
       }
     },
-  async handleDelete(confirmed) {
-  console.log(this.villas)
-  if (confirmed && this.itemToRemove) {
-       await deleteVilla(this.itemToRemove);
-      this.villas = await this.villas.filter((villa) => villa.id !== this.itemToRemove);
-    console.log("Deletion cancelled.");
-      this.deleteModalVisible = false;
-  this.itemToRemove = "";
-  }
-
-
-},
-
+    async handleDelete(confirmed) {
+      console.log(this.villas);
+      if (confirmed && this.itemToRemove) {
+        await deleteVilla(this.itemToRemove);
+        this.villas = await this.villas.filter(
+          (villa) => villa.id !== this.itemToRemove
+        );
+        console.log("Deletion cancelled.");
+        this.deleteModalVisible = false;
+        this.itemToRemove = "";
+      }
+    },
 
     toggleDeleteModal(id) {
-     console.log(this.villas,"villas")
+      console.log(this.villas, "villas");
       this.itemToRemove = id;
       this.deleteModalVisible = !this.deleteModalVisible;
     },
@@ -687,7 +666,7 @@ const data = await AllVillaApi(" ");
   async mounted() {
     this.isLoading = true;
     await this.fetchVillasAp("");
-    this.isLoading= false
+    this.isLoading = false;
   },
   components: {
     VillaFiltreBased,

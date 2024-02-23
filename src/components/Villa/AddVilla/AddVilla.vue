@@ -28,7 +28,7 @@
               <div v-if="cityError" class="text-danger">{{ cityError }}</div>
             </div>
           </div>
- <div class="col-md-6">
+          <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <MultiSelectVilla
                 :options="transformedCategories"
@@ -44,13 +44,20 @@
               </div>
               <div style="display: flex; flex-direction: row">
                 <p class="fs-md-15 fs-lg-16">
-                                   <a  class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"   style="cursor: pointer;"  @click.prevent="OpenVilla" ><i   class="flaticon-plus lh-2 me-16 position-relative top-1"></i> add new category </a>
-
+                  <a
+                    class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"
+                    style="cursor: pointer"
+                    @click.prevent="OpenVilla"
+                    ><i
+                      class="flaticon-plus lh-2 me-16 position-relative top-1"
+                    ></i>
+                    add new category
+                  </a>
                 </p>
               </div>
             </div>
           </div>
-<div class="col-md-6">
+          <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
                 Partner
@@ -59,13 +66,15 @@
                 v-model="selectedPartner"
                 class="form-select shadow-none fw-semibold rounded-0"
               >
-                <option disabled selected>Select a partner</option>
+                <option value="" disabled selected>Select a partner</option>
                 <option
-                  v-for="partner in allPartners"
+                  v-for="partner in getPartners"
                   :key="partner.id"
                   :value="partner.id"
                 >
-                  {{ partner.name }}
+                  {{
+                    partner.attributes.name + " " + partner.attributes.surname
+                  }}
                 </option>
               </select>
             </div>
@@ -111,8 +120,7 @@
               <input
                 v-model="baths"
                 type="number"
-                                min="0"
-
+                min="0"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 2"
               />
@@ -127,7 +135,6 @@
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 1"
                 min="0"
-
               />
             </div>
           </div>
@@ -152,8 +159,7 @@
                 type="number"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 3"
-                                min="0"
-
+                min="0"
               />
             </div>
           </div>
@@ -167,29 +173,25 @@
                 type="number"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g 20"
-                                min="1"
-
+                min="1"
               />
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10"
-                >
+              <label class="d-block text-black fw-semibold mb-10">
                 Daily
-                </label
-              >
+              </label>
               <input
                 v-model="daily"
                 type="text"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 50"
-                                min="0"
-
+                min="0"
               />
             </div>
           </div>
-            <div class="col-md-6">
+          <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10"
                 >New Daily</label
@@ -199,15 +201,14 @@
                 type="number"
                 class="form-control shadow-none rounded-0 text-black"
                 placeholder="e.g. 50"
-                                min="1"
-
+                min="1"
               />
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-               Mini Daily Work
+                Mini Daily Work
               </label>
               <input
                 v-model="minioeuvre_daily"
@@ -218,7 +219,7 @@
             </div>
           </div>
 
-<div class="col-md-6">
+          <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">Status</label>
               <div
@@ -252,8 +253,7 @@
             </div>
           </div>
 
-
-   <!-- <div class="col-md-6">
+          <!-- <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">Daily</label>
               <div class="input-group">
@@ -274,7 +274,7 @@
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <label class="d-block text-black fw-semibold mb-10">
-                Upload  Images
+                Upload Images
               </label>
               <div class="file-upload text-center position-relative">
                 <!-- <img
@@ -284,7 +284,7 @@
                   alt="Uploaded Image"
                   class="preview-image"
                 /> -->
-                                                                  <i class="flaticon-image"></i>
+                <i class="flaticon-image"></i>
 
                 <span class="d-block text-muted">
                   Drop Files Here Or
@@ -294,7 +294,6 @@
                   >
                     Click To Upload
                   </span>
-
                 </span>
                 <input
                   type="file"
@@ -304,7 +303,6 @@
                   multiple
                   accept="image/*"
                 />
-
               </div>
               <div v-if="imageUrls.length > 0" class="image-preview">
                 <div
@@ -334,7 +332,6 @@
               </div>
             </div>
           </div>
-
 
           <div class="col-md-12">
             <button
@@ -371,12 +368,22 @@ import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import MultiSelectVilla from "@/components/Common/MultiSelect.vue";
 import AddVillaCategoryModal from "../AddVillaCategoryModal/AddVillaCategoryModal.vue";
+import { mapGetters, mapActions } from "vuex";
 export default defineComponent({
   name: "AddVilla",
   components: {
     AddVillaCategoryModal,
     Loading,
     MultiSelectVilla,
+  },
+  computed: {
+    ...mapGetters(["getUsersLoading", "getUsersError", "getPartners"]),
+  },
+  methods: {
+    ...mapActions(["fetchAllPartners"]),
+  },
+  async mounted() {
+    await this.fetchAllPartners({ page: null });
   },
   setup() {
     const router = useRouter();
@@ -397,7 +404,7 @@ export default defineComponent({
     const selectedCat = ref([]);
     const daily = ref("");
     const newDaily = ref("");
-    const status = ref(false) ;
+    const status = ref(false);
     const deposit = ref("");
     const description = ref();
     const minioeuvre_daily = ref("");
@@ -587,7 +594,7 @@ export default defineComponent({
           minioeuvre_daily: minioeuvre_daily.value.toString(),
           partner: [parseInt(selectedPartner.value)],
           category_villas: selectedC,
-          isActive: status.value
+          isActive: status.value,
         },
       };
 

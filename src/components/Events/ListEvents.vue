@@ -631,7 +631,7 @@ export default {
   async mounted() {
     this.storageUrl = storageUrl;
     await this.fetchAllCategoriesEvent({ page: null });
-    await this.fetchAllPartners();
+    await this.fetchAllPartners({page:null});
     await this.fetchAllEvents({
       page: this.currentPage,
       perPage: 4,

@@ -1,52 +1,81 @@
 <template>
   <div class="products-sidebar-filter bg-white letter-spacing mb-25">
+    <div class="sidebar-item" style="padding-top: 30px">
+      <router-link
+        to="/addvilla"
+        class="btn btn-primary d-block w-100 mt-15 mb-25"
+      >
+        + ADD VILLA</router-link
+      >
 
-    <div class="sidebar-item" style="padding-top: 30px;">
-       <router-link to="/addvilla" class="btn btn-primary d-block w-100 mt-15 mb-25"> + ADD VILLA</router-link>
-
-
-
-       <div class="search-box -relative mb-15 "  >
+      <div class="search-box -relative mb-15">
         <!-- <input
           type="text"
           class="form-control shadow-none text-black rounded-0 border-0"
           placeholder="Search Vehicles"
           v-model="searchInput"
         /> -->
-        <div class="input-group" style="display: flex; align-items: center;">
-            <input
-              type="text"
-              class="form-control shadow-none fw-medium ps-1 pt-10 pe-0 letter-spacing "
-              placeholder="Search"
-
-              v-model="searchInput"
-            />
-            <button
-              class="default-btn   transition border-0 text-white ps-12 pe-12 rounded-1"
-              disabled
-              style="height: 100%   !important; align-self: flex-end; z-index: 100; position:absolute; right: 0;"
-              type="button"
-            >
-              <i class="flaticon-search-interface-symbol "></i>
-            </button>
-          </div>
+        <div class="input-group" style="display: flex; align-items: center">
+          <input
+            type="text"
+            class="form-control shadow-none fw-medium ps-1 pt-10 pe-0 letter-spacing"
+            placeholder="Search"
+            v-model="searchInput"
+          />
+          <button
+            class="default-btn transition border-0 text-white ps-12 pe-12 rounded-1"
+            disabled
+            style="
+              height: 100% !important;
+              align-self: flex-end;
+              z-index: 100;
+              position: absolute;
+              right: 0;
+            "
+            type="button"
+          >
+            <i class="flaticon-search-interface-symbol"></i>
+          </button>
+        </div>
       </div>
     </div>
 
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Categories</h6>
-       <ul class="categories-list ps-0 mb-0 list-unstyled" style="max-height: 200px; overflow-y: auto; padding-right: 5px ;  cursor:pointer">
-  <li class="cat cursor-pointer" v-if="categories.length > 0 " @click="byCategory() , toggleCategorySelection()"  :class="{selected:  all}"  >
-    <span class=" cursor-pointer fs-md-15 fw-medium"   >All</span>
-        <span class="cursor-pointer fw-medium text-muted"   >{{ totalVehiclesCount  }} {{categories?.attributes?.villas.data}}</span>
-
-  </li>
-  <li v-for="category in categoriesWithVehicles" :key="category.id" @click="byCategory(category),toggleCategorySelection(category)"  class="cat" :class="{ selected: category.selected }" >
-     <span class="  fs-md-15 fw-medium">{{ category.attributes.Name }}</span>
-    <span class="  fw-medium text-muted">{{ category.attributes.villas.data.length }}</span>
-   </li>
-</ul>
-
+      <ul
+        class="categories-list ps-0 mb-0 list-unstyled"
+        style="
+          max-height: 200px;
+          overflow-y: auto;
+          padding-right: 5px;
+          cursor: pointer;
+        "
+      >
+        <li
+          class="cat cursor-pointer"
+          v-if="categories.length > 0"
+          @click="byCategory(), toggleCategorySelection()"
+          :class="{ selected: all }"
+        >
+          <span class="cursor-pointer fs-md-15 fw-medium">All</span>
+          <span class="cursor-pointer fw-medium text-muted"
+            >{{ totalVehiclesCount }}
+            {{ categories?.attributes?.villas.data }}</span
+          >
+        </li>
+        <li
+          v-for="category in categoriesWithVehicles"
+          :key="category.id"
+          @click="byCategory(category), toggleCategorySelection(category)"
+          class="cat"
+          :class="{ selected: category.selected }"
+        >
+          <span class="fs-md-15 fw-medium">{{ category.attributes.Name }}</span>
+          <span class="fw-medium text-muted">{{
+            category.attributes.villas.data.length
+          }}</span>
+        </li>
+      </ul>
     </div>
     <div class="sidebar-item">
       <h6 class="text-black fw-bold fs-md-15">Daily</h6>
@@ -80,8 +109,8 @@
       </div>
     </div>
 
-      <div class="sidebar-item">
-      <h6 class="text-black fw-bold fs-md-15">NEW DAILY </h6>
+    <div class="sidebar-item">
+      <h6 class="text-black fw-bold fs-md-15">NEW DAILY</h6>
       <div class="pricing-filter" id="pricing-filter">
         <div class="range-slider">
           <input
@@ -112,8 +141,8 @@
         </div>
       </div>
     </div>
-       <div class="sidebar-item">
-      <h6 class="text-black fw-bold fs-md-15">SLEEPS </h6>
+    <div class="sidebar-item">
+      <h6 class="text-black fw-bold fs-md-15">SLEEPS</h6>
       <div class="pricing-filter" id="pricing-filter">
         <div class="range-slider">
           <input
@@ -144,8 +173,8 @@
         </div>
       </div>
     </div>
-       <div class="sidebar-item">
-      <h6 class="text-black fw-bold fs-md-15">ROOMS </h6>
+    <div class="sidebar-item">
+      <h6 class="text-black fw-bold fs-md-15">ROOMS</h6>
       <div class="pricing-filter" id="pricing-filter">
         <div class="range-slider">
           <input
@@ -176,29 +205,64 @@
         </div>
       </div>
     </div>
-    <div class="sidebar-item" style="display: flex ;  justify-content: start; align-items: center; width: 100% !important;" >
-       <div style="width: 100%;">
-         <h6 class="text-black fw-bold fs-md-15">Partner</h6>
-        <select class="project-select form-select shadow-none fw-semibold rounded-1 " v-model="partner" @change="handleChangedPartner" style="width: 100%;" >
-          <option v-for="partner in partners" :key="partner.id" :value="partner.id">{{partner.name}}</option>
+    <div
+      class="sidebar-item"
+      style="
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        width: 100% !important;
+      "
+    >
+      <div style="width: 100%">
+        <h6 class="text-black fw-bold fs-md-15">Partner</h6>
+        <select
+          class="project-select form-select shadow-none fw-semibold rounded-1"
+          v-model="partner"
+          @change="handleChangedPartner"
+          style="width: 100%"
+        >
+          <option value="" selected disabled>Select Partner</option>
+          <option
+            v-for="partner in getPartners"
+            :key="partner.id"
+            :value="partner.id"
+          >
+            {{ partner?.attributes?.name + " " + partner?.attributes?.surname }}
+          </option>
         </select>
-       </div>
+      </div>
     </div>
-    <div class="sidebar-item" style="display: flex ;  justify-content: start; align-items: center; width: 100% !important;" >
-       <div style="width: 100%; ">
-         <button class="btn "  @click="reset" style="width: 100%; background-color: #6560f0;  color: white;"><i class="fas fa-refresh"> </i> </button>
-       </div>
+    <div
+      class="sidebar-item"
+      style="
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        width: 100% !important;
+      "
+    >
+      <div style="width: 100%">
+        <button
+          class="btn"
+          @click="reset"
+          style="width: 100%; background-color: #6560f0; color: white"
+        >
+          <i class="fas fa-refresh"> </i>
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { fetchVillaCategories, fetchPartners} from "@/services/apiService";
+import { fetchVillaCategories, fetchPartners } from "@/services/apiService";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   data() {
     return {
-     categories: [],
+      categories: [],
       searchInput: "",
       partners: [],
       minNewDaily: 100,
@@ -208,11 +272,10 @@ export default {
       minRooms: 1,
       maxRooms: 15,
       minPrice: 10,
-      partner:"",
+      partner: "",
       maxPrice: 20000,
       debounceTimeout: null,
       all: true,
-
     };
   },
   watch: {
@@ -224,35 +287,29 @@ export default {
       this.updateRange();
       this.debouncedPriceRangeChanged();
     },
-     minNewDaily(newValue, oldValue) {
+    minNewDaily(newValue, oldValue) {
       this.updateRangeNewDaily();
-            this.debouncedPriceRangeChanged();
-
+      this.debouncedPriceRangeChanged();
     },
     maxNewDaily(newValue, oldValue) {
       this.updateRangeNewDaily();
-            this.debouncedPriceRangeChanged();
-
+      this.debouncedPriceRangeChanged();
     },
     minSleep(newValue, oldValue) {
       this.emitSleepRange();
-            this.debouncedPriceRangeChanged();
-
+      this.debouncedPriceRangeChanged();
     },
     maxSleep(newValue, oldValue) {
       this.emitSleepRange();
-            this.debouncedPriceRangeChanged();
-
+      this.debouncedPriceRangeChanged();
     },
     minRooms(newValue, oldValue) {
       this.emitRoomsRange();
-            this.debouncedPriceRangeChanged();
-
+      this.debouncedPriceRangeChanged();
     },
     maxRooms(newValue, oldValue) {
       this.emitRoomsRange();
-            this.debouncedPriceRangeChanged();
-
+      this.debouncedPriceRangeChanged();
     },
     async searchInput(newValue, oldValue) {
       this.$emit("newFiltredData", newValue);
@@ -262,78 +319,101 @@ export default {
     },
   },
 
-   computed:{
-  categoriesWithVehicles() {
-      return this.categories.filter(category => category.attributes.villas.data.length > 0);
+  computed: {
+    ...mapGetters(["getUsersLoading", "getUsersError", "getPartners"]),
+    categoriesWithVehicles() {
+      return this.categories.filter(
+        (category) => category.attributes.villas.data.length > 0
+      );
     },
 
-      totalVehiclesCount() {
-      return this.categories.reduce((total, category) => total + category.attributes.villas.data.length, 0);
-    }
-  },
-    methods: {
-        reset(){
-            this.searchInput = "";
-  this.minNewDaily = 100;
-  this.maxNewDaily = 20000;
-  this.minSleep = 1;
-  this.maxSleep = 15;
-  this.minRooms = 1;
-  this.maxRooms = 15;
-  this.minPrice = 10;
-  this.maxPrice = 20000;
-  this.partner = "";
-  this.all = true;
-this.$emit('reset',true)
+    totalVehiclesCount() {
+      return this.categories.reduce(
+        (total, category) => total + category.attributes.villas.data.length,
+        0
+      );
     },
-      handleChangedPartner(event){
-        this.emitPartner()
-      },
-         emitNewDailyRange() {
-      this.$emit("newDailyRangeChanged", { min: this.minNewDaily, max: this.maxNewDaily });
+  },
+
+  methods: {
+    ...mapActions(["fetchAllPartners"]),
+
+    reset() {
+      this.searchInput = "";
+      this.minNewDaily = 100;
+      this.maxNewDaily = 20000;
+      this.minSleep = 1;
+      this.maxSleep = 15;
+      this.minRooms = 1;
+      this.maxRooms = 15;
+      this.minPrice = 10;
+      this.maxPrice = 20000;
+      this.partner = "";
+      this.all = true;
+      this.$emit("reset", true);
+    },
+    handleChangedPartner(event) {
+      this.emitPartner();
+    },
+    emitNewDailyRange() {
+      this.$emit("newDailyRangeChanged", {
+        min: this.minNewDaily,
+        max: this.maxNewDaily,
+      });
     },
     emitSleepRange() {
-      this.$emit("sleepRangeChanged", { min: this.minSleep, max: this.maxSleep });
+      this.$emit("sleepRangeChanged", {
+        min: this.minSleep,
+        max: this.maxSleep,
+      });
     },
     emitRoomsRange() {
-      this.$emit("roomsRangeChanged", { min: this.minRooms, max: this.maxRooms });
+      this.$emit("roomsRangeChanged", {
+        min: this.minRooms,
+        max: this.maxRooms,
+      });
     },
     emitPartner() {
       this.$emit("partnerChanged", this.partner);
     },
-       async getPartner (){
-     const data= await  fetchPartners()
-     console.log(data,"partners")
-     this.partners = data
-     },
-        debouncedPriceRangeChanged() {
+    async getPartner() {
+      const data = await fetchPartners();
+      console.log(data, "partners");
+      this.partners = data;
+    },
+    debouncedPriceRangeChanged() {
       clearTimeout(this.debounceTimeout);
       this.debounceTimeout = setTimeout(() => {
-        this.$emit("priceRangeChanged", { min: this.minPrice, max: this.maxPrice });
+        this.$emit("priceRangeChanged", {
+          min: this.minPrice,
+          max: this.maxPrice,
+        });
       }, 500);
     },
-          updateRange() {
+    updateRange() {
       if (parseInt(this.minPrice) > parseInt(this.maxPrice)) {
         [this.minPrice, this.maxPrice] = [this.maxPrice, this.minPrice];
       }
     },
-     toggleCategorySelection(category) {
-  this.categories.forEach(cat => {
-    if (cat !== category) {
-      cat.selected = false;
-    }
-  });
-  if (category) {
-    this.all = false
-    category.selected = !category.selected;
-  } else {
-
-    this.all = !this.all
-  }
-},
-  updateRangeNewDaily() {
+    toggleCategorySelection(category) {
+      this.categories.forEach((cat) => {
+        if (cat !== category) {
+          cat.selected = false;
+        }
+      });
+      if (category) {
+        this.all = false;
+        category.selected = !category.selected;
+      } else {
+        this.all = !this.all;
+      }
+    },
+    updateRangeNewDaily() {
       if (parseInt(this.minNewDaily) > parseInt(this.maxNewDaily)) {
-        [this.minNewDaily, this.maxNewDaily] = [this.maxNewDaily, this.minNewDaily];
+        [this.minNewDaily, this.maxNewDaily] = [
+          this.maxNewDaily,
+          this.minNewDaily,
+        ];
       }
       this.emitNewDailyRange();
     },
@@ -346,16 +426,16 @@ this.$emit('reset',true)
         console.error("Error fetching categories:", error);
       }
     },
-      byCategory(categorie=""){
-        console.log("okay",categorie)
-this.$emit("filtreBycategory", { category: categorie });
-    }
+    byCategory(categorie = "") {
+      console.log("okay", categorie);
+      this.$emit("filtreBycategory", { category: categorie });
+    },
   },
- async  mounted() {
-  await this.getPartner()
-  await   this.fetchCategories();
+  async mounted() {
+    await this.fetchAllPartners({ page: null });
+    await this.fetchCategories();
   },
- };
+};
 </script>
 
 <style scoped>
@@ -386,14 +466,13 @@ this.$emit("filtreBycategory", { category: categorie });
   background-color: #6560f0;
   color: #fff !important;
 }
-.cat.selected  > span {
-   color: #fff !important;
+.cat.selected > span {
+  color: #fff !important;
 }
 
 .cat.selected:hover {
-  background-color:  #6560f0;
-    color: #fff !important;
-
+  background-color: #6560f0;
+  color: #fff !important;
 }
 .checkbox-wrapper input[type="checkbox"] {
   opacity: 0;
@@ -435,13 +514,12 @@ this.$emit("filtreBycategory", { category: categorie });
 
 .cat:hover > span {
   color: white !important;
-    cursor: pointer;
-
+  cursor: pointer;
 }
 
-.btn :hover{
- background-color: white;
- color: gray;
- border: gray;
+.btn :hover {
+  background-color: white;
+  color: gray;
+  border: gray;
 }
 </style>

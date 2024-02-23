@@ -28,7 +28,7 @@
           </div>
 
           <div class="col-md-6">
-             <MultiSelect
+            <MultiSelect
               :options="styles"
               :selected="style"
               @update:selectedOne="updateStyle"
@@ -36,13 +36,17 @@
               :multiSelect="false"
               :label="'Style'"
             />
-           </div>
-            <div class="col-md-6">
+          </div>
+          <div class="col-md-6">
             <MultiSelect
-              :options="transormPartner"
+              :options="getPartners"
               :selected="partner"
               @update:selectedOne="updatePartner"
-              :placeholder="getSelectedPartnerName"
+              :placeholder="
+                selectedPartner[0]?.attributes?.name +
+                ' ' +
+                selectedPartner[0]?.attributes?.surname
+              "
               :multiSelect="false"
               :label="'Partner'"
             />
@@ -83,20 +87,20 @@
             </div>
           </div>
           <div class="col-md-6">
-              <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                <label class="d-block text-black fw-semibold mb-10">
-                  <abbr title="Manufacturer's Suggested Retail Price"
-                    >MSRP</abbr
-                  ></label
-                >
-                <input
-                  v-model="msrp"
-                  type="number"
-                  class="form-control shadow-none rounded-0 text-black"
-                  placeholder="e.g. 248500"
-                />
-              </div>
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                <abbr title="Manufacturer's Suggested Retail Price"
+                  >MSRP</abbr
+                ></label
+              >
+              <input
+                v-model="msrp"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 248500"
+              />
             </div>
+          </div>
           <!-- <div class="row">
 
             <div class="col-md-6 d-flex align-items-end">
@@ -123,9 +127,6 @@
               </div>
             </div>
           </div> -->
-
-
-
 
           <div class="col-md-6">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -178,7 +179,6 @@
             </div>
           </div>
 
-
           <!-- <div class="col-md-12 text-danger"></div> -->
 
           <div class="col-md-6">
@@ -197,7 +197,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-12"  >
+          <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
               <div
                 v-if="
@@ -219,7 +219,7 @@
                   <GallayImages
                     @deletePhoto="deleteImage"
                     @coverImageIndex="handleCover"
-                    :previousIndex = "Number(coverImageIndex)"
+                    :previousIndex="Number(coverImageIndex)"
                     galleryID="my-test-gallery"
                     :images="previousPhotos.attributes.photos.data"
                   />
@@ -279,7 +279,7 @@
             </div>
           </div>
           <!-- <div class="col-md-6"> -->
-            <!-- <MultiSelect  :options="makes" :selected="make" @update:selectedOne="updateMake" :placeholder="make?.attributes?.name" :label="'Tags'"   :multiSelect="true"    /> -->
+          <!-- <MultiSelect  :options="makes" :selected="make" @update:selectedOne="updateMake" :placeholder="make?.attributes?.name" :label="'Tags'"   :multiSelect="true"    /> -->
           <!-- </div> -->
           <div class="col-md-12">
             <button
@@ -309,7 +309,7 @@ import {
   fetchBrandMyMake,
   fetchVehicleById,
   updateVehicle,
-  fetchStyles
+  fetchStyles,
 } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -317,6 +317,7 @@ import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import GallayImages from "../../Common/Gallary.vue";
 import MultiSelect from "../../../components/Common/MultiSelect.vue";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
@@ -334,7 +335,7 @@ export default {
       previousBrand: "",
       make: "",
       brand: "",
-      style:"",
+      style: "",
       description: "",
       // previousCategories: this.vehicle.attributes.category_vehicles.data,
       selectedCategory: "",
@@ -344,7 +345,7 @@ export default {
       mice: "",
       newDaily: "",
       msrp: "",
-      styles:[],
+      styles: [],
       deposit: "",
       partner: "",
       showUploadedFiles: false,
@@ -352,12 +353,12 @@ export default {
       categories: [],
       makes: [],
       brands: [],
-       vehicle: "",
+      vehicle: "",
       isLoading: false,
       selectedFiles: [],
       imageUrls: [],
       partnerData: [],
-
+      selectedPartner: "",
     };
   },
 
@@ -370,32 +371,35 @@ export default {
     },
   },
   computed: {
-     transormPartner(){
-      let trans = []
-        this.partnerData.forEach((item)=> {
-           trans.push({id : item.id  , attributes : { name : item.name}})
-        })
-        return trans
+    ...mapGetters(["getUsersLoading", "getUsersError", "getPartners"]),
+
+    transormPartner() {
+      let trans = [];
+      this.partnerData.forEach((item) => {
+        trans.push({ id: item.id, attributes: { name: item.name } });
+      });
+      return trans;
     },
     getSelectedPartnerName() {
-      if (this.partnerData && this.partnerData.length > 0) {
-        const selectedPartner = this.partnerData.find(
-          (partner) => partner.id === this.partner
-        );
-        return selectedPartner ? selectedPartner.name : "";
-      }
-      return "";
+      console.log(
+        "fggghyuj",
+        this.getPartners.filter((partner) => partner.id === this.partner)
+      );
+      return this.getPartners?.filter((partner) => partner.id === this.partner)
+        .attributes?.name;
     },
   },
   methods: {
-    handleCover(event){
-this.coverImageIndex =event
-     },
+    ...mapActions(["fetchAllPartners"]),
+
+    handleCover(event) {
+      this.coverImageIndex = event;
+    },
     updatePartner(partner) {
       this.partner = partner[0];
     },
-    updateStyle(event){
-      this.style= event[0]
+    updateStyle(event) {
+      this.style = event[0];
     },
     updateMake(selectedMake) {
       console.log("okay");
@@ -429,18 +433,17 @@ this.coverImageIndex =event
         this.brand = this.vehicle.attributes.brand.data;
         this.description = this.vehicle.attributes.description;
         this.seats = this.vehicle.attributes.seats;
-         this.daily = this.vehicle.attributes.daily;
+        this.daily = this.vehicle.attributes.daily;
         this.mice = this.vehicle.attributes.mice;
         this.newDaily = this.vehicle.attributes.new_daily;
         this.msrp = this.vehicle.attributes.msrp;
         this.style = this.vehicle.attributes.style.data;
         this.deposit = this.vehicle.attributes.deposit;
-        this.coverImageIndex = this.vehicle.attributes.cover_image_index,
-        this.partner = this.vehicle.attributes.partner.data
-          ? this.vehicle.attributes.partner.data.id
-          : null;
+        (this.coverImageIndex = this.vehicle.attributes.cover_image_index),
+          (this.partner = this.vehicle.attributes.partner.data
+            ? this.vehicle.attributes.partner.data.id
+            : null);
         this.previousPhotos = this.vehicle;
-
       }
     },
 
@@ -473,56 +476,66 @@ this.coverImageIndex =event
       this.showUploadedFiles = !this.showUploadedFiles;
     },
     async handleFileChange(event) {
-  try {
-    const input = event.target;
-    console.log('Files selected:', input.files);
+      try {
+        const input = event.target;
+        console.log("Files selected:", input.files);
 
-    if (!input.files || input.files.length === 0) {
-      return;
-    }
-
-    const formData = new FormData();
-    Array.from(input.files).forEach((file) => {
-      formData.append('photos', file);
-    });
-     this.isLoading =true
-    const response = await uploadFiles(formData, 'api::vehicle.vehicle', 'photos', this.vehicle.id);
-    console.log(response.data)
-    if (response && Array.isArray(response.data.filesData)) {
-      response.data.filesData.forEach(item => {
-        const transformedData = {
-          id: item.id,
-          attributes: {
-            alternativeText: item.alternativeText || null,
-            caption: item.caption || null,
-            createdAt: item.createdAt,
-            ext: item.ext,
-            url: item.url,
-            formats: {
-              large: {
-                url: item.url,
-                width: item.width,
-                height: item.height,
-              },
-            },
-          },
-        };
-
-        if (transformedData && this.previousPhotos && this.previousPhotos.attributes && this.previousPhotos.attributes.photos && this.previousPhotos.attributes.photos.data && this.previousPhotos.attributes.photos.data.length >= 0) {
-          this.previousPhotos.attributes.photos.data.push(transformedData);
+        if (!input.files || input.files.length === 0) {
+          return;
         }
-      });
-           this.isLoading =false
-    } else {
-      toast.error('Failed to upload images');
-    }
-  } catch (error) {
-    console.error('Error uploading images:', error);
-    toast.error('An error occurred while uploading images');
-  }
-}
-,
 
+        const formData = new FormData();
+        Array.from(input.files).forEach((file) => {
+          formData.append("photos", file);
+        });
+        this.isLoading = true;
+        const response = await uploadFiles(
+          formData,
+          "api::vehicle.vehicle",
+          "photos",
+          this.vehicle.id
+        );
+        console.log(response.data);
+        if (response && Array.isArray(response.data.filesData)) {
+          response.data.filesData.forEach((item) => {
+            const transformedData = {
+              id: item.id,
+              attributes: {
+                alternativeText: item.alternativeText || null,
+                caption: item.caption || null,
+                createdAt: item.createdAt,
+                ext: item.ext,
+                url: item.url,
+                formats: {
+                  large: {
+                    url: item.url,
+                    width: item.width,
+                    height: item.height,
+                  },
+                },
+              },
+            };
+
+            if (
+              transformedData &&
+              this.previousPhotos &&
+              this.previousPhotos.attributes &&
+              this.previousPhotos.attributes.photos &&
+              this.previousPhotos.attributes.photos.data &&
+              this.previousPhotos.attributes.photos.data.length >= 0
+            ) {
+              this.previousPhotos.attributes.photos.data.push(transformedData);
+            }
+          });
+          this.isLoading = false;
+        } else {
+          toast.error("Failed to upload images");
+        }
+      } catch (error) {
+        console.error("Error uploading images:", error);
+        toast.error("An error occurred while uploading images");
+      }
+    },
     previewImages() {
       this.imageUrls = [];
 
@@ -562,9 +575,9 @@ this.coverImageIndex =event
       this.partnerData = await fetchPartners();
       console.log(this.partnerData, "partners");
     },
-    async fetchStyles(){
-    const {data}= await fetchStyles()
-    this.styles =data
+    async fetchStyles() {
+      const { data } = await fetchStyles();
+      this.styles = data;
     },
 
     async submitForm() {
@@ -575,7 +588,7 @@ this.coverImageIndex =event
           brand: this.brand.id,
           style: this.style.id,
           msrp: this.msrp,
-          cover_image_index:this.coverImageIndex ,
+          cover_image_index: this.coverImageIndex,
           daily: parseFloat(this.daily),
           mice: parseFloat(this.mice),
           new_daily: parseFloat(this.newDaily),
@@ -607,9 +620,12 @@ this.coverImageIndex =event
     this.isLoading = true;
     // this.fetchCategories();
     await this.fetchVehicleBId();
-    await this.fetchPartner();
-        await this.fetchStyles();
+    await this.fetchAllPartners({ page: null });
+    await this.fetchStyles();
     await this.fetchMakesCat();
+    this.selectedPartner = this.getPartners.filter(
+      (partner) => partner.id === this.partner
+    );
     this.isLoading = false;
   },
 };

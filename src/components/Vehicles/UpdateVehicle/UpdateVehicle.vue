@@ -14,7 +14,6 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group mb-15 mb-sm-20 mb-md-25">
-
                         <label class="d-block text-black fw-semibold mb-10"
                           >Make</label
                         >
@@ -31,15 +30,15 @@
                         <div v-if="makeError" class="text-danger">
                           {{ makeError }}
                         </div>
-                            <div
-                              v-if="make"
+                        <div
+                          v-if="make"
                           class="item d-inline-block fw-medium fs-13 text-primary position-relative"
                         >
-                          {{ make.attributes.name}}
+                          {{ make.attributes.name }}
                           <button
                             type="button"
                             class="bg-transparent p-0 border-0 transition"
-@click="make=''"
+                            @click="make = ''"
                           >
                             <i class="flaticon-close"></i>
                           </button>
@@ -74,22 +73,21 @@
                         <div v-if="brandError" class="text-danger">
                           {{ brandError }}
                         </div>
-                            <div
-                            v-if="brand"
+                        <div
+                          v-if="brand"
                           class="item d-inline-block fw-medium fs-13 text-primary position-relative"
                         >
-                                                    {{ brand.attributes.name}}
+                          {{ brand.attributes.name }}
 
                           <button
                             type="button"
                             class="bg-transparent p-0 border-0 transition"
-                            @click="brand=''"
+                            @click="brand = ''"
                           >
                             <i class="flaticon-close"></i>
                           </button>
                         </div>
                       </div>
-
                     </div>
 
                     <div class="col-md-6">
@@ -242,13 +240,12 @@
                           Description
                         </label>
                         <div class="mb-0">
-                           <QuillEditor
-                  theme="snow"
-                  :placeholder="description"
-v-model:content="description"
-
-                   toolbar="full"
-                />
+                          <QuillEditor
+                            theme="snow"
+                            :placeholder="description"
+                            v-model:content="description"
+                            toolbar="full"
+                          />
                         </div>
                         <div v-if="descriptionError" class="text-danger">
                           {{ descriptionError }}
@@ -336,13 +333,13 @@ v-model:content="description"
                           v-model="partner"
                           class="form-select shadow-none fw-semibold rounded-0"
                         >
-                          <option selected>Select a Partner</option>
+                          <option value="" disabled>Select a Partner</option>
                           <option
-                            v-for="partner in partnerData"
+                            v-for="partner in getPartners"
                             :key="partner.id"
                             :value="partner.id"
                           >
-                            {{ partner.name }}
+                            {{ partner.attributes.name + ' '+ partner.attributes.surname }}
                           </option>
                         </select>
                         <div v-if="categoryError" class="text-danger">
@@ -363,7 +360,7 @@ v-model:content="description"
                       </div>
                     </div> -->
                     <!-- <div class="col-md-6"> -->
-                      <!-- <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                    <!-- <div class="form-group mb-15 mb-sm-20 mb-md-25">
                         <label class="d-block text-black fw-semibold mb-10"
                           >Owner</label
                         >
@@ -419,7 +416,6 @@ v-model:content="description"
 import {
   uploadFiles,
   deleteFiles,
-  fetchPartners,
   fetchMakes,
   fetchBrands,
   fetchBrandMyMake,
@@ -427,6 +423,7 @@ import {
 } from "@/services/apiService";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   props: {
@@ -478,6 +475,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(["getUsersLoading", "getUsersError", "getPartners"]),
     getSelectedPartnerName() {
       if (this.partnerData && this.partnerData.length > 0) {
         const selectedPartner = this.partnerData.find(
@@ -489,6 +487,8 @@ export default {
     },
   },
   methods: {
+    ...mapActions(["fetchAllPartners"]),
+
     // perviousMakeAndBrand(){
     //   if(this.vehicle? && this.vehicle?.attributes?.make &&  this.vehicle?.attributes?.make.data && this.vehicle?.attributes?.make.data.attributes &&   this.vehicle?.attributes?.make.data.attributes.name )
     // }
@@ -597,10 +597,10 @@ export default {
     //   const result =
     //   console.log(result);
     // },
-    async fetchPartner() {
-      this.partnerData = await fetchPartners();
-      console.log(this.partnerData, "partners");
-    },
+    // async fetchPartner() {
+    //   this.partnerData = await fetchPartners();
+    //   console.log(this.partnerData, "partners");
+    // },
 
     // async submitForm() {
 
@@ -646,51 +646,51 @@ export default {
     //   }
     // },
     async submitForm() {
-  const vehicleData = {
-    data: {
-      make: this.make.id,
-      brand: this.brand.id,
-      style: this.style,
-      msrp: this.msrp,
-      daily: parseFloat(this.daily),
-      mice: parseFloat(this.mice),
-      new_daily: parseFloat(this.newDaily),
-      deposit: parseFloat(this.deposit),
-      // owner: this.owner,
-      seats: parseInt(this.seats),
-      partner: this.partner,
-      description: this.description.ops && this.description.ops.length > 0
-        ? this.description.ops[0].insert
-        : this.vehicle.attributes.description,
+      const vehicleData = {
+        data: {
+          make: this.make.id,
+          brand: this.brand.id,
+          style: this.style,
+          msrp: this.msrp,
+          daily: parseFloat(this.daily),
+          mice: parseFloat(this.mice),
+          new_daily: parseFloat(this.newDaily),
+          deposit: parseFloat(this.deposit),
+          // owner: this.owner,
+          seats: parseInt(this.seats),
+          partner: this.partner,
+          description:
+            this.description.ops && this.description.ops.length > 0
+              ? this.description.ops[0].insert
+              : this.vehicle.attributes.description,
+        },
+      };
+      if (this.selectedFiles.length > 0) {
+        await uploadFiles(
+          this.selectedFiles,
+          "api::vehicle.vehicle",
+          "photos",
+          this.vehicle.id
+        );
+      }
+      const result = await updateVehicle(this.vehicle.id, vehicleData);
+
+      if (result.success) {
+        this.$emit("updatedData", result.data.data);
+
+        toast.success("Vehicle Updated  🚗 👍 ", {
+          autoClose: 1000,
+        });
+        setTimeout(() => {
+          this.closeModal();
+        }, 1500);
+      }
     },
-  };
-  if (this.selectedFiles.length > 0) {
-    await uploadFiles(
-      this.selectedFiles,
-      "api::vehicle.vehicle",
-      "photos",
-      this.vehicle.id
-    );
-  }
-  const result = await updateVehicle(this.vehicle.id, vehicleData);
-
-  if (result.success) {
-    this.$emit("updatedData", result.data.data);
-
-    toast.success("Vehicle Updated  🚗 👍 ", {
-      autoClose: 1000,
-    });
-    setTimeout(() => {
-      this.closeModal();
-    }, 1500);
-  }
-},
-
   },
-  mounted() {
+  async mounted() {
     // this.fetchCategories();
     console.log(this.vehicle, "vehicle");
-    this.fetchPartner();
+    await this.fetchAllPartners({ page: null });
     this.fetchMakesCat();
   },
 };

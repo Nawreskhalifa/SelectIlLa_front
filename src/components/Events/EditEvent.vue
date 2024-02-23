@@ -667,7 +667,7 @@ export default defineComponent({
     console.log(this.startDate);
 
     await this.fetchAllCategoriesEvent({ page: null });
-    await this.fetchAllPartners();
+    await this.fetchAllPartners({page:null});
     this.isLoading = false;
 
     // Initialise currentDate avec la date actuelle au format YYYY-MM-DD

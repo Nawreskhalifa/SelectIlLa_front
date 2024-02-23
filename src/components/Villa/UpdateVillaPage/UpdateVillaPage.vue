@@ -31,35 +31,36 @@
                 />
               </div>
             </div>
- <div class="col-md-6">
+            <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                  <MultiSelectVilla
-              :options="categories"
-              :selected="category"
-              :selectedTagsProp="previousCategories"
-              @update:selected="updateCategories"
-              :placeholder="'eg .Mountain view Villas'"
-              :multiSelect="multiple"
-              :label="'Categories'"
-            />
+                <MultiSelectVilla
+                  :options="categories"
+                  :selected="category"
+                  :selectedTagsProp="previousCategories"
+                  @update:selected="updateCategories"
+                  :placeholder="'eg .Mountain view Villas'"
+                  :multiSelect="multiple"
+                  :label="'Categories'"
+                />
                 <div v-if="categoryError" class="text-danger">
                   {{ categoryError }}
                 </div>
               </div>
             </div>
-             <div class="col-md-6">
-             <MultiSelect
-              :options="transormPartner"
-              :selected="partner"
-              @update:selectedOne="updatePartner"
-              :placeholder="partner?.data?.attributes?.name"
-              :multiSelect="false"
-              :label="'Partner'"
-            />
+            <div class="col-md-6">
+              <MultiSelect
+                :options="getPartners"
+                :selected="partner"
+                @update:selectedOne="updatePartner"
+                :placeholder="
+                  partner.data?.attributes?.name +
+                  ' ' +
+                  partner.data?.attributes?.surname
+                "
+                :multiSelect="false"
+                :label="'Partner'"
+              />
             </div>
-
-
-
 
             <div class="col-md-12">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -68,8 +69,7 @@
                 </label>
                 <div class="mb-0" v-if="description">
                   <QuillEditor
-                                    style="height: 12em"
-
+                    style="height: 12em"
                     theme="snow"
                     :placeholder="description"
                     v-model:content="description"
@@ -81,8 +81,6 @@
                 </div>
               </div>
             </div>
-
-
 
             <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -104,8 +102,6 @@
                 </div>
               </div>
             </div>
-
-
 
             <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
@@ -133,19 +129,19 @@
                 />
               </div>
             </div>
-   <div class="col-md-6">
+            <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
                 <label class="d-block text-black fw-semibold mb-10">Pool</label>
 
-                  <input
-                    v-model="pool"
-                    type="number"
-                    class="form-control shadow-none rounded-0 text-black"
-                    placeholder="e.g. 15"
-                  />
+                <input
+                  v-model="pool"
+                  type="number"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="e.g. 15"
+                />
               </div>
             </div>
-    <div class="col-md-6">
+            <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
                 <label class="d-block text-black fw-semibold mb-10">
                   Rooms
@@ -195,10 +191,10 @@
                   class="form-control shadow-none rounded-0 text-black"
                   placeholder="e.g deposit"
                 />
-             </div>
-                         </div>
+              </div>
+            </div>
 
-                <div class="col-md-6">
+            <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
                 <label class="d-block text-black fw-semibold mb-10">
                   Baths
@@ -209,53 +205,57 @@
                   class="form-control shadow-none rounded-0 text-black"
                   placeholder="e.g deposit"
                 />
-             </div>
-</div>
-
-<div class="col-md-6">
-  <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">Status</label>
-              <div
-                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
-              >
-                <input
-                  class="form-check-input shadow-none"
-                  type="radio"
-                  name="communicationRadio"
-                  id="activeRadio"
-                  v-model="status"
-                  :value="false"
-                />
-                <label class="form-check-label" for="activeRadio">Active</label>
-              </div>
-              <div
-                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
-              >
-                <input
-                  class="form-check-input shadow-none"
-                  type="radio"
-                  name="communicationRadio"
-                  id="deactivatedRadio"
-                  v-model="status"
-                  :value="true"
-                />
-                <label class="form-check-label" for="deactivatedRadio"
-                  >In Active</label
-                >
               </div>
             </div>
-            </div>
 
-              <div class="col-md-12" >
+            <div class="col-md-6">
               <div class="form-group mb-15 mb-sm-20 mb-md-25">
-                 <div
-                          v-if="
-                            previousPhotos &&
-                            previousPhotos.attributes &&
-                            previousPhotos.attributes?.photos &&
-                            previousPhotos.attributes?.photos.data.length > 0
-                          "
-                        >
+                <label class="d-block text-black fw-semibold mb-10"
+                  >Status</label
+                >
+                <div
+                  class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+                >
+                  <input
+                    class="form-check-input shadow-none"
+                    type="radio"
+                    name="communicationRadio"
+                    id="activeRadio"
+                    v-model="status"
+                    :value="false"
+                  />
+                  <label class="form-check-label" for="activeRadio"
+                    >Active</label
+                  >
+                </div>
+                <div
+                  class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+                >
+                  <input
+                    class="form-check-input shadow-none"
+                    type="radio"
+                    name="communicationRadio"
+                    id="deactivatedRadio"
+                    v-model="status"
+                    :value="true"
+                  />
+                  <label class="form-check-label" for="deactivatedRadio"
+                    >In Active</label
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group mb-15 mb-sm-20 mb-md-25">
+                <div
+                  v-if="
+                    previousPhotos &&
+                    previousPhotos.attributes &&
+                    previousPhotos.attributes?.photos &&
+                    previousPhotos.attributes?.photos.data.length > 0
+                  "
+                >
                   <div
                     style="
                       display: flex;
@@ -346,8 +346,6 @@
               </div>
             </div>
 
-
-
             <div class="col-md-12">
               <button
                 class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16"
@@ -361,11 +359,7 @@
       </div>
     </div>
   </div>
-    <loading
-      v-model:active="isLoading"
-      :can-cancel="true"
-      :is-full-page="true"
-    />
+  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
 </template>
 <script>
 import {
@@ -383,31 +377,32 @@ import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
     Loading,
     GallayImages,
     MultiSelect,
-    MultiSelectVilla
+    MultiSelectVilla,
     //   Loading
   },
   data() {
     return {
       villa: {},
       name: "",
-      coverImageI:0,
+      coverImageI: 0,
       city: "",
       rooms: 0,
       baths: 0,
       pool: 0,
-      allCategories:[] ,
+      allCategories: [],
       view: "",
       sleeps: 0,
       daily: 0,
       newDaily: 0,
       deposit: 0,
-      status:true ,
+      status: true,
       description: "",
       minioeuvre_daily: "",
       selectedPartner: "",
@@ -424,13 +419,14 @@ export default {
     };
   },
   computed: {
-    transormPartner(){
-      let trans = []
-        this.partnerData.forEach((item)=> {
-           trans.push({id : item.id  , attributes : { name : item.name}})
-        })
-        return trans
-    },
+    ...mapGetters(["getUsersLoading", "getUsersError", "getPartners"]),
+    // transormPartner() {
+    //   let trans = [];
+    //   this.getPartners.forEach((item) => {
+    //     trans.push({ id: item.id, attributes: { name: item.name } });
+    //   });
+    //   return trans;
+    // },
     getSelectedPartnerName() {
       if (this.partnerData && this.partnerData.length > 0) {
         const selectedPartner = this.partnerData.find(
@@ -444,25 +440,24 @@ export default {
   watch: {
     previousCategories: {
       handler(newValue, oldValue) {
-        console.log(newValue,"wiou");
+        console.log(newValue, "wiou");
       },
       deep: true,
     },
   },
 
   methods: {
+    ...mapActions(["fetchAllPartners"]),
+    async updateCategories(event) {
+      console.log(event);
+      this.allCategories.push(...event);
+      console.log(this.allCategories, "all ok");
+    },
 
-  async updateCategories(event) {
-  console.log(event);
-  this.allCategories.push(...event);
-  console.log(this.allCategories, "all ok");
-},
-
-updatePartner(event) {
-  console.log(this.partner = event[0]);
-this.partner = event[0]
-},
-
+    updatePartner(event) {
+      console.log((this.partner = event[0]));
+      this.partner = event[0];
+    },
 
     async getVillaById() {
       const id = this.$route.params.id;
@@ -485,7 +480,7 @@ this.partner = event[0]
       this.selectedCategory = "";
       this.showUploadedFiles = false;
       this.previousPhotos = this.villa;
-      this.status=this.villa.attributes.isActive
+      this.status = this.villa.attributes.isActive;
       this.partner = this.villa.attributes.partner;
     },
 
@@ -532,55 +527,67 @@ this.partner = event[0]
     checkUploadedFiles() {
       this.showUploadedFiles = !this.showUploadedFiles;
     },
-       async handleFileChange(event) {
-           this.isLoading =true
-  try {
-    const input = event.target;
-    console.log('Files selected:', input.files);
+    async handleFileChange(event) {
+      this.isLoading = true;
+      try {
+        const input = event.target;
+        console.log("Files selected:", input.files);
 
-    if (!input.files || input.files.length === 0) {
-      return;
-    }
-
-    const formData = new FormData();
-    Array.from(input.files).forEach((file) => {
-      formData.append('photos', file);
-    });
-    const response = await uploadFiles(formData,"api::villa.villa", 'photos',  this.villa.id);
-    console.log(response.data)
-    if (response && Array.isArray(response.data.filesData)) {
-      response.data.filesData.forEach(item => {
-        const transformedData = {
-          id: item.id,
-          attributes: {
-            alternativeText: item.alternativeText || null,
-            caption: item.caption || null,
-            createdAt: item.createdAt,
-            ext: item.ext,
-            url: item.url,
-            formats: {
-              large: {
-                url: item.url,
-                width: item.width,
-                height: item.height,
-              },
-            },
-          },
-        };
-
-        if (transformedData && this.previousPhotos && this.previousPhotos.attributes && this.previousPhotos.attributes.photos && this.previousPhotos.attributes.photos.data && this.previousPhotos.attributes.photos.data.length >= 0) {
-          this.previousPhotos.attributes.photos.data.push(transformedData);
+        if (!input.files || input.files.length === 0) {
+          return;
         }
-      });
-           this.isLoading =false
-    } else {
-      toast.error('Failed to upload images');
-    }
-  } catch (error) {
-    console.error('Error uploading images:', error);
-    toast.error('An error occurred while uploading images');
-  }
-},
+
+        const formData = new FormData();
+        Array.from(input.files).forEach((file) => {
+          formData.append("photos", file);
+        });
+        const response = await uploadFiles(
+          formData,
+          "api::villa.villa",
+          "photos",
+          this.villa.id
+        );
+        console.log(response.data);
+        if (response && Array.isArray(response.data.filesData)) {
+          response.data.filesData.forEach((item) => {
+            const transformedData = {
+              id: item.id,
+              attributes: {
+                alternativeText: item.alternativeText || null,
+                caption: item.caption || null,
+                createdAt: item.createdAt,
+                ext: item.ext,
+                url: item.url,
+                formats: {
+                  large: {
+                    url: item.url,
+                    width: item.width,
+                    height: item.height,
+                  },
+                },
+              },
+            };
+
+            if (
+              transformedData &&
+              this.previousPhotos &&
+              this.previousPhotos.attributes &&
+              this.previousPhotos.attributes.photos &&
+              this.previousPhotos.attributes.photos.data &&
+              this.previousPhotos.attributes.photos.data.length >= 0
+            ) {
+              this.previousPhotos.attributes.photos.data.push(transformedData);
+            }
+          });
+          this.isLoading = false;
+        } else {
+          toast.error("Failed to upload images");
+        }
+      } catch (error) {
+        console.error("Error uploading images:", error);
+        toast.error("An error occurred while uploading images");
+      }
+    },
     previewImages() {
       this.imageUrls = [];
 
@@ -618,24 +625,24 @@ this.partner = event[0]
     //   console.log(result);
     // },
 
-    async fetchAllPartners() {
-      this.partnerData = await fetchPartners();
-      console.log(this.partnerData, "data");
+    // async fetchAllPartners() {
+    //   this.partnerData = await fetchPartners();
+    //   console.log(this.partnerData, "data");
+    // },
+    handleCover(event) {
+      this.coverImageIndex = event;
     },
-        handleCover(event){
-this.coverImageIndex =event
-     },
     async submitForm() {
       this.isLoading = true;
-      let vehicleCategories = [] ;
-          this.previousCategories.forEach(category => {
-  vehicleCategories.push(category.id);
-}),
-      // const allCategories = this.previousCategories.map((item) => {
-      //   return item.id;
-      // });
-      // console.log(allCategories);
-      console.log(this.partner);
+      let vehicleCategories = [];
+      this.previousCategories.forEach((category) => {
+        vehicleCategories.push(category.id);
+      }),
+        // const allCategories = this.previousCategories.map((item) => {
+        //   return item.id;
+        // });
+        // console.log(allCategories);
+        console.log(this.partner);
       const villaData = {
         data: {
           name: this.name,
@@ -644,14 +651,14 @@ this.coverImageIndex =event
           baths: parseInt(this.baths),
           pool: parseInt(this.pool),
           view: this.view,
-          isActive : this.status ,
+          isActive: this.status,
           sleeps: parseInt(this.sleeps),
           daily: parseFloat(this.daily),
           new_daily: parseFloat(this.newDaily),
           deposit: parseFloat(this.deposit),
           minioeuvre_daily: this.minioeuvre_daily.toString(),
-          category_villas: vehicleCategories ,
-                    cover_image_index:this.coverImageIndex ,
+          category_villas: vehicleCategories,
+          cover_image_index: this.coverImageIndex,
 
           partner: this.partner,
           description:
@@ -666,7 +673,7 @@ this.coverImageIndex =event
       if (result.success) {
         // this.$emit("updatedData", result.data.data);
         // this.$emit("close");
-this.$router.push({path: '/villalist'})
+        this.$router.push({ path: "/villalist" });
 
         toast.success("villa Updated  🚗 👍 ", {
           autoClose: 1000,
@@ -678,12 +685,12 @@ this.$router.push({path: '/villalist'})
     },
   },
   async mounted() {
-    this.isLoading = true
-  await   this.getVillaById();
-   await  this.fetchCategories();
-   await  this.fetchAllPartners();
-   console.log(this.partnerData,"ok")
-   this.isLoading = false
+    this.isLoading = true;
+    await this.getVillaById();
+    await this.fetchCategories();
+    await this.fetchAllPartners({ page: null });
+    console.log(this.partnerData, "ok");
+    this.isLoading = false;
   },
 };
 </script>
