@@ -28,9 +28,13 @@
         @change="handleFilterChange"
         class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
       >
-        <option value="All" selected>All Genders</option>
-        <option value="Female">Female</option>
-        <option value="Male">Male</option>
+        <option value="All">All Genders</option>
+        <option value="Female">
+          <i class="flaticon-gender">&#9792;</i> Female
+        </option>
+        <option value="Male">
+          <i class="flaticon-gender">&#9794;</i> Male
+        </option>
       </select>
       <select
         v-model="resourceFilter"

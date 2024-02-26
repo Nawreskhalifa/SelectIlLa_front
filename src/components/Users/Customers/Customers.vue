@@ -28,9 +28,22 @@
         @change="handleFilterChange"
         class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
       >
-        <option value="All">All</option>
-        <option value="Female">Female</option>
-        <option value="Male">Male</option>
+        <option value="All">All Genders</option>
+        <option value="Female">
+          <i class="flaticon-gender">&#9792;</i> Female
+        </option>
+        <option value="Male">
+          <i class="flaticon-gender">&#9794;</i> Male
+        </option>
+      </select>
+      <select
+        v-model="activeFilter"
+        @change="handleFilterChange"
+        class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+      >
+        <option value="All" selected>All Status</option>
+        <option value="true">Active</option>
+        <option value="false">Blocked</option>
       </select>
       <div
         class="rounded-1 d-flex me-1 mt-1 mt-lg-0"
@@ -38,18 +51,18 @@
       >
         <flat-pickr
           v-model="startDate"
-          :config="{ maxDate:getCurrentDate() }"
+          :config="{ maxDate: getCurrentDate() }"
           class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-          placeholder="Start"
+          placeholder="Born from"
           name="startDate"
           @change="handleFilterChange"
         />
 
         <flat-pickr
           v-model="endDate"
-          :config="{ minDate: startDate , maxDate:getCurrentDate() }"
+          :config="{ minDate: startDate, maxDate: getCurrentDate() }"
           class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-          placeholder="End"
+          placeholder="Born until"
           name="endDate"
           :disabled="!startDate"
           @change="handleFilterChange"
@@ -76,12 +89,12 @@
       </div>
       <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
         <a
-        href="javascript:void(0);"
-        @click="navigateToAddCustomerPage()"
-        class="default-btn position-relative transition border-0 fw-medium text-white pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1 bg-primary d-inline-block d-inline-block text-decoration-none"
-      >
-        <i class="ph ph-plus"></i>
-      </a>
+          href="javascript:void(0);"
+          @click="navigateToAddCustomerPage()"
+          class="default-btn position-relative transition border-0 fw-medium text-white pt-1 pb-1 ps-2 pe-2 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-1 fs-lg-1 d-inline-block mb-1 mb-lg-1 bg-primary d-inline-block d-inline-block text-decoration-none"
+        >
+          <i class="ph ph-plus"></i>
+        </a>
         <button
           class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
           type="button"
@@ -355,6 +368,7 @@ export default defineComponent({
       selectedCount: 0,
       isLoading: false,
       perPage: 4,
+      activeFilter: "All",
     };
   },
   methods: {
@@ -378,6 +392,7 @@ export default defineComponent({
       this.genderFilter = "All";
       this.startDate = "";
       this.endDate = "";
+      this.activeFilter="All";
       // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
       this.handleFilterChange();
     },
@@ -420,6 +435,7 @@ export default defineComponent({
         gender: this.genderFilter,
         startDate: this.startDate,
         endDate: this.endDate,
+        blocked: this.activeFilter,
       });
       this.isLoading = false;
     },

@@ -164,7 +164,7 @@ const actions = {
         }
         return true
     },
-    async fetchAllCustomers({ commit }, { page = null, perPage = 25, name, gender = 'All', startDate, endDate, sortDirectionUserName, sortDirectionLocation }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startDate?: number, endDate?: number, sortDirectionUserName?: string, sortDirectionLocation?: string }) {
+    async fetchAllCustomers({ commit }, { page = null, perPage = 25, name, gender = 'All', startDate, endDate, sortDirectionUserName, sortDirectionLocation, blocked = 'All' }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startDate?: number, endDate?: number, sortDirectionUserName?: string, sortDirectionLocation?: string, blocked?: string }) {
         commit('SET_USERS_LOADING', true);
         commit('SET_USERS_ERROR', null);
         try {
@@ -181,7 +181,7 @@ const actions = {
                         address?: { $contains: string };
                         user?: { email?: { $contains: string }, username?: { $contains: string }, gender?: { $eq: string }, date_of_birth?: { $between?: [string, string] } };
                     }>;
-                    user?: { $and?: Array<{ gender?: { $eq: string }, date_of_birth?: { $gte?: string, $lte?: string } }>; };
+                    user?: { $and?: Array<{ gender?: { $eq: string }, date_of_birth?: { $gte?: string, $lte?: string }, blocked?: { $eq: boolean }, }>; };
                 };
                 sort?: string[];
 
@@ -230,6 +230,11 @@ const actions = {
                 filters.filters.user = filters.filters.user || {};
                 filters.filters.user.$and = filters.filters.user.$and || [];
                 filters.filters.user.$and.push({ date_of_birth: { $lte: endDate.toString() } });
+            }
+            if (blocked !== 'All') {
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ blocked: { $eq: blocked === 'false' } });
             }
             // Add sorting options
             if (sortDirectionUserName) {
