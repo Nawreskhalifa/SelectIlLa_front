@@ -26,17 +26,20 @@
       <select
         v-model="genderFilter"
         @change="handleFilterChange"
-        class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+        class="project-select frm shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
       >
-        <option value="All">All</option>
-        <option value="Female">Female</option>
-        <option value="Male">Male</option>
+        <option value="All">All Genders</option>
+        <option value="Female">
+          <i class="flaticon-gender">&#9792;</i> Female
+        </option>
+        <option value="Male">
+          <i class="flaticon-gender">&#9794;</i> Male
+        </option>
       </select>
       <div
         class="rounded-1 d-flex me-1 mt-1 mt-lg-0"
         style="display: flex; align-items: center; gap: 1px"
       >
-        <label class="text-muted fs-md-1" for="start-date">From</label>
         <input
           id="start-date"
           type="date"
@@ -47,7 +50,6 @@
           @change="handleFilterChange"
         />
 
-        <label class="text-muted fs-md-6" for="end-date">To </label>
         <input
           id="end-date"
           type="date"
@@ -518,10 +520,13 @@ export default defineComponent({
     async onPageChange(pageNumber) {
       this.currentPage = pageNumber;
       this.isLoading = true;
-
       await this.fetchAllCustomers({
-        page: pageNumber,
+        page: this.currentPage,
         perPage: this.perPage,
+        name: this.searchText,
+        gender: this.genderFilter,
+        startDate: this.startDate,
+        endDate: this.endDate,
       });
       this.isLoading = false;
     },
@@ -622,5 +627,17 @@ export default defineComponent({
 
 .arrow-down::before {
   content: "\25BC"; /* Code Unicode pour la flèche vers le bas */
+}
+.frm {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-size: 20px 12px;
+  background-position: right 18px center;
+  color: var(--splash-black-color);
+  border-color: #dedee4;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
 }
 </style>

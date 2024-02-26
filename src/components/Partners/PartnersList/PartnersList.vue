@@ -26,7 +26,7 @@
       <select
         v-model="genderFilter"
         @change="handleFilterChange"
-        class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+        class="project-select frm shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
       >
         <option value="All">All Genders</option>
         <option value="Female">
@@ -39,7 +39,7 @@
       <select
         v-model="resourceFilter"
         @change="handleFilterChange"
-        class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+        class="project-select frm shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
       >
         <option value="All" selected>All Resources</option>
         <option value="Vehicles">Vehicles</option>
@@ -54,7 +54,7 @@
           v-model="startDate"
           :config="{ maxDate: getCurrentDate() }"
           class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-          placeholder="Start"
+          placeholder="Start Event"
           name="startDate"
           @change="handleFilterChange"
         />
@@ -63,7 +63,7 @@
           v-model="endDate"
           :config="{ minDate: startDate, maxDate: getCurrentDate() }"
           class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-          placeholder="End"
+          placeholder="End Event"
           name="endDate"
           :disabled="!startDate"
           @change="handleFilterChange"
@@ -646,5 +646,17 @@ export default defineComponent({
 
 .arrow-down::before {
   content: "\25BC"; /* Code Unicode pour la flèche vers le bas */
+}
+.frm {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-size: 20px 12px;
+  background-position: right 18px center;
+  color: var(--splash-black-color);
+  border-color: #dedee4;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
 }
 </style>

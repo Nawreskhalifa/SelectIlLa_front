@@ -392,7 +392,7 @@ export default defineComponent({
       this.genderFilter = "All";
       this.startDate = "";
       this.endDate = "";
-      this.activeFilter="All";
+      this.activeFilter = "All";
       // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
       this.handleFilterChange();
     },
@@ -547,8 +547,13 @@ export default defineComponent({
       this.isLoading = true;
 
       await this.fetchAllCustomers({
-        page: pageNumber,
+        page: this.currentPage,
         perPage: this.perPage,
+        name: this.searchText,
+        gender: this.genderFilter,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        blocked: this.activeFilter,
       });
       this.isLoading = false;
     },

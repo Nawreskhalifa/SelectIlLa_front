@@ -13,6 +13,10 @@
         {{ selectedCount }}
         {{ selectedCount === 1 ? "item" : "items" }} selected
       </h6>
+      <h6 v-if="nbResults > 0">
+        {{ nbResults }}
+        {{ nbResults === 1 ? "item" : "items" }} found
+      </h6>
       <div class="d-flex align-items-center mt-lg-10">
         <form @submit.prevent="handleFilterChange">
           <div class="input-group">
@@ -68,7 +72,9 @@
           @change="handleFilterChange"
           class="project-select frm shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
         >
-          <option value="All" selected><span> </span> <span> All Status</span> </option>
+          <option value="All" selected>
+            <span> </span> <span> All Status</span>
+          </option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
@@ -372,9 +378,8 @@
     </div>
   </div>
   <loading
-    v-model:active="getEventsLoading"
+    v-model:active="isLoading"
     :can-cancel="true"
-    :on-cancel="onCancel"
     :is-full-page="fullPage"
   />
 </template>
@@ -406,6 +411,8 @@ export default {
       perPage: 4,
       startDate: "",
       endDate: "",
+      nbResults: 0,
+      isLoading: false,
     };
   },
   methods: {
@@ -425,7 +432,7 @@ export default {
         this.selectedCount--;
       }
     },
-    resetFilters() {
+    async resetFilters() {
       // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
       this.searchText = "";
       this.activeFilter = "All";
@@ -433,7 +440,9 @@ export default {
       this.startDate = "";
       this.endDate = "";
       // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
-      this.handleFilterChange();
+      await this.handleFilterChange();
+      this.nbResults = 0;
+
     },
     deleteSelectedCustomers() {
       const selectedEvents = [];
@@ -462,10 +471,13 @@ export default {
           await Promise.all(selectedEvents.map((id) => this.deleteEvent(id)));
           // After deletion, fetch events again to update the list
           this.currentPage = 1;
+          this.isLoading = true;
           await this.fetchAllEvents({
             page: this.currentPage,
             perPage: this.perPage,
           });
+          this.isLoading = false;
+
           swal("Selected events have been deleted!", {});
         }
       });
@@ -481,6 +493,7 @@ export default {
     async handleFilterChange() {
       // Réinitialiser la page actuelle à 1
       this.currentPage = 1;
+      this.isLoading = true;
 
       // Appeler fetchAllEvents avec le filtre actif
       await this.fetchAllEvents({
@@ -493,6 +506,8 @@ export default {
         startDate: this.startDate,
         endDate: this.endDate,
       });
+      this.nbResults = this.getEvents.length;
+      this.isLoading = false;
     },
     selectAllEvents() {
       this.selectAllChecked = !this.selectAllChecked;
@@ -508,13 +523,19 @@ export default {
       });
     },
     async onPageChange(pageNumber) {
+      this.isLoading = true;
       this.currentPage = pageNumber;
       await this.fetchAllEvents({
-        page: pageNumber,
+        page: this.currentPage,
         perPage: this.perPage,
-        name: null,
+        name: this.searchText,
+        isActive: this.activeFilter,
+        category: this.selectedCategory,
+        partner: this.selectedPartner,
+        startDate: this.startDate,
+        endDate: this.endDate,
       });
-      console.log(this.getEvents);
+      this.isLoading = false;
     },
     getDayOfMonth(inputDate) {
       // Création d'un objet Date à partir de la chaîne de date d'entrée
@@ -630,6 +651,7 @@ export default {
   },
   async mounted() {
     this.storageUrl = storageUrl;
+    this.isLoading = true;
     await this.fetchAllCategoriesEvent({ page: null });
     await this.fetchAllPartners({ page: null });
     await this.fetchAllEvents({
@@ -637,6 +659,7 @@ export default {
       perPage: 4,
       name: null,
     });
+    this.isLoading = false;
     console.log(this.getEvents);
   },
 };
@@ -682,7 +705,7 @@ export default {
   color: #ff001e; /* Change the hover color */
   text-decoration: none; /* Remove default underline on hover */
 }
-.frm{
+.frm {
   padding-top: 15px;
   padding-bottom: 15px;
   background-size: 20px 12px;

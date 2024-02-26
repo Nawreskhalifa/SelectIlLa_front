@@ -127,7 +127,7 @@
             v-model="startDate"
             :config="config"
             class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-            placeholder="Start"
+            placeholder="Start Reservation"
             name="startDate"
             @change="handleFilterChange"
           />
@@ -136,7 +136,7 @@
             v-model="endDate"
             :config="{ minDate: startDate }"
             class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-            placeholder="End"
+            placeholder="End Reservation"
             name="endDate"
             :disabled="!startDate"
             @change="handleFilterChange"
@@ -739,6 +739,12 @@ export default {
       await this.fetchAllReservations({
         page: this.currentPage,
         perPage: this.perPage,
+        name: this.searchText,
+        partnerId: this.selectedPartner,
+        customerId: this.selectedCustomer,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        status: this.statusFilter,
       });
     },
     formattedName(nameCustomer, surnameCustomer) {
