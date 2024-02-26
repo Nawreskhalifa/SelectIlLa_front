@@ -133,6 +133,10 @@
         {{ selectedCount }}
         {{ selectedCount === 1 ? "item" : "items" }} selected
       </h6>
+      <h6 v-if="nbResults > 0">
+        {{ nbResults }}
+        {{ nbResults === 1 ? "item" : "items" }} found
+      </h6>
       <div class="table-responsive">
         <table class="table text-nowrap align-middle mb-0">
           <thead>
@@ -331,12 +335,7 @@
       </div>
     </div>
   </div>
-  <loading
-    v-model:active="isLoading"
-    :can-cancel="true"
-    :on-cancel="onCancel"
-    :is-full-page="true"
-  />
+  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
 </template>
 
 <script>
@@ -369,6 +368,7 @@ export default defineComponent({
       isLoading: false,
       perPage: 4,
       activeFilter: "All",
+      nbResults: 0,
     };
   },
   methods: {
@@ -386,7 +386,7 @@ export default defineComponent({
         return location.slice(0, maxLength) + "...";
       }
     },
-    resetFilters() {
+    async resetFilters() {
       // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
       this.searchText = "";
       this.genderFilter = "All";
@@ -394,7 +394,8 @@ export default defineComponent({
       this.endDate = "";
       this.activeFilter = "All";
       // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
-      this.handleFilterChange();
+      await this.handleFilterChange();
+      this.nbResults = 0;
     },
     updateSelectionCounter(event, index) {
       if (event.target.checked) {
@@ -437,6 +438,7 @@ export default defineComponent({
         endDate: this.endDate,
         blocked: this.activeFilter,
       });
+      this.nbResults = this.getCustomers.length;
       this.isLoading = false;
     },
     async toggleSortDirection() {

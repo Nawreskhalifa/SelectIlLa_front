@@ -660,7 +660,6 @@ export default {
       name: null,
     });
     this.isLoading = false;
-    console.log(this.getEvents);
   },
 };
 </script>
