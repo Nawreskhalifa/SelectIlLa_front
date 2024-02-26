@@ -114,7 +114,7 @@
                     </thead>
                     <tbody>
                       <tr
-                        v-for="(card, index) in getCustomer.attributes
+                        v-for="(card, index) in getCustomer?.attributes
                           ?.credit_cards"
                         :key="index"
                       >
@@ -198,7 +198,12 @@
                       </li>
                       <li>
                         <a
-                          :class="{ disabled: selectedCount === 0 }"
+                          :class="{
+                            disabled:
+                              selectedCount === 0 ||
+                              (pendingReservations &&
+                                pendingReservations.length === 0),
+                          }"
                           class="dropdown-item d-flex align-items-center"
                           href="javascript:void(0);"
                           @click="AcceptSelectedReservations"
@@ -521,6 +526,8 @@ export default defineComponent({
       documents: [],
       loadingFiles: false,
       selectedCount: 0,
+      pendingReservations: [],
+      perPage: 5,
     };
   },
   methods: {
@@ -608,7 +615,7 @@ export default defineComponent({
       this.currentPage = 1;
       await this.fetchAllAttachmentsByCustomer({
         page: this.currentPage,
-        perPage: 5,
+        perPage: this.perPage,
         idCustomer: this.idCustomer,
         status: this.statusFilter,
       });
@@ -665,7 +672,7 @@ export default defineComponent({
 
           await this.fetchAllAttachmentsByCustomer({
             page: this.currentPage,
-            perPage: 4,
+            perPage: this.perPage,
           });
           this.isLoading = false;
 
@@ -710,10 +717,11 @@ export default defineComponent({
       this.isLoading = true;
 
       this.currentPage = pageNumber;
-      await this.fetchAllCustomers({
-        page: pageNumber,
-        perPage: 4,
-        name: null,
+      await this.fetchAllAttachmentsByCustomer({
+        page: this.currentPage,
+        perPage: this.perPage,
+        idCustomer: this.idCustomer,
+        status: this.statusFilter,
       });
       this.isLoading = false;
     },
@@ -738,13 +746,12 @@ export default defineComponent({
 
       await this.fetchAllAttachmentsByCustomer({
         page: this.currentPage,
-        perPage: 5,
+        perPage: this.perPage,
         idCustomer: this.idCustomer,
       });
       await this.fetchAllDocumentsByCustomer({
         idCustomer: this.idCustomer,
       });
-      console.log("new documents :", this.getAllDocuments);
       await this.fetchDocumentsCustomer(this.idCustomer);
       if (this.customerId) {
         this.isLoading = false;
@@ -752,6 +759,9 @@ export default defineComponent({
         await this.fetchOneCustomer(this.customerId);
         this.isLoading = false;
       }
+      this.pendingReservations = this.getDocuments.filter(
+        (reservation) => reservation.attributes.status === "Pending"
+      );
 
       this.isLoading = false;
     } catch (error) {
