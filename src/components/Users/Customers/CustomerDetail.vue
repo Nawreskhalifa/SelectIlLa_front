@@ -487,10 +487,11 @@
                       Attachments of reservations
                     </h6>
                     <button
-                      @click="openFileDialog"
+                      v-if="selectedReservationAttachment != 0"
+                      @click="openFileDialogReservation"
                       class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mb-10 mb-lg-0"
                       type="button"
-                      :disabled="loadingFiles"
+                      :disabled="loadingFilesReservation"
                     >
                       Upload
                       <i
@@ -521,6 +522,7 @@
                       Attachments of customer
                     </h6>
                     <button
+                      v-if="selectedReservationAttachment != 0"
                       @click="openFileDialog"
                       class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mb-10 mb-lg-0"
                       type="button"
@@ -587,10 +589,12 @@ export default defineComponent({
       fullPage: true,
       documents: [],
       loadingFiles: false,
+      loadingFilesReservation: false,
       selectedCount: 0,
       pendingReservations: [],
       perPage: 5,
       selectedReservationAttachment: 0,
+      documentsToReservation: [],
     };
   },
   methods: {
@@ -606,6 +610,70 @@ export default defineComponent({
         return text;
       } else {
         return text.slice(0, maxLength) + "...";
+      }
+    },
+    async openFileDialogReservation() {
+      try {
+        // Créez un élément de type input de fichier
+        const input = document.createElement("input");
+        input.type = "file";
+        input.multiple = true;
+
+        // Définissez les attributs supplémentaires si nécessaire
+        // input.accept = 'image/*'; // Décommentez pour limiter les types de fichiers acceptés
+
+        // Créez une promesse pour attendre que l'utilisateur sélectionne les fichiers
+        const files = await new Promise((resolve, reject) => {
+          // Ajoutez un écouteur d'événements pour détecter lorsque des fichiers sont sélectionnés
+          input.addEventListener("change", (event) => {
+            const files = event.target.files;
+            resolve(Array.from(files));
+          });
+          // Cliquez sur l'élément input de fichier pour ouvrir la boîte de dialogue
+          input.click();
+        });
+
+        // Ajoutez les fichiers sélectionnés à la liste des documents
+        this.documentsToReservation.push(...files);
+
+        // Vérifiez s'il y a des fichiers à télécharger
+        if (files.length > 0) {
+          // Mettez le chargement en cours
+          this.loadingFilesReservation = true;
+
+          // Téléchargez les fichiers du client
+          const res = await uploadFiles(
+            files,
+            "api::reservation.reservation",
+            "documents",
+            this.selectedReservationAttachment
+          );
+
+          // Arrêtez le chargement
+          this.loadingFilesReservation = false;
+
+          // Vérifiez si le téléchargement a réussi
+          if (res.success) {
+            await this.handleFilterAttachmentsChange();
+            // Affichez un message de succès
+            swal({
+              text: "Files uploaded Successfully!",
+              closeOnClickOutside: false,
+            });
+          } else {
+            // Affichez un message d'erreur
+            swal({
+              text: "An error occurred, please try again",
+              closeOnClickOutside: false,
+            });
+          }
+        }
+      } catch (error) {
+        // Gérez les erreurs
+        swal({
+          text: "An error occurred, please try again",
+          closeOnClickOutside: false,
+        });
       }
     },
     async openFileDialog() {
@@ -672,14 +740,12 @@ export default defineComponent({
       }
     },
     async handleFilterAttachmentsChange() {
-      console.log("rrr", this.selectedReservationAttachment);
       this.isLoading = true;
       await this.fetchAllDocumentsByCustomer({
         idCustomer: this.idCustomer,
         idReservation: this.selectedReservationAttachment,
       });
       this.isLoading = false;
-      console.log("hhh", this.getAllDocuments);
     },
     async handleFilterChange() {
       this.isLoading = true;
