@@ -432,6 +432,60 @@
                 >
                   <h5 class="card-title fw-bold mb-0">Attachments</h5>
                   <div class="d-sm-flex align-items-center">
+                    <select
+                      class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+                      v-model="selectedReservationAttachment"
+                      @change="handleFilterAttachmentsChange"
+                    >
+                      <option value="0" selected>All Reservations</option>
+                      <option
+                        v-for="reservation in getDocuments"
+                        :key="reservation.id"
+                        :value="reservation.id"
+                      >
+                        <span
+                          class="text-decoration-none text-black-emphasis"
+                          v-if="reservation?.attributes.event.data !== null"
+                        >
+                          {{
+                            reservation?.attributes.event.data?.attributes.name
+                          }}</span
+                        >
+                        <span
+                          class="text-decoration-none text-black-emphasis"
+                          v-if="reservation?.attributes.villa.data !== null"
+                        >
+                          {{
+                            reservation?.attributes.villa.data?.attributes.name
+                          }}</span
+                        >
+                        <span
+                          class="text-decoration-none text-black-emphasis"
+                          v-if="reservation?.attributes.vehicle.data !== null"
+                        >
+                          {{
+                            reservation?.attributes.vehicle.data?.attributes
+                              .style.data?.name
+                          }}</span
+                        >
+                      </option>
+                    </select>
+                    <span></span>
+                  </div>
+                </div>
+                <div
+                  v-if="
+                    getAllDocuments &&
+                    getAllDocuments.data &&
+                    getAllDocuments.data.length
+                  "
+                >
+                  <div
+                    class="mb-15 mb-md-20 mb-lg-25 d-sm-flex align-items-center justify-content-between"
+                  >
+                    <h6 class="card-title fw-bold mb-0">
+                      Attachments of reservations
+                    </h6>
                     <button
                       @click="openFileDialog"
                       class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mb-10 mb-lg-0"
@@ -449,32 +503,40 @@
                       ></div>
                     </button>
                   </div>
-                </div>
-                <div>
-                  <h6
-                    v-if="
-                      getAllDocuments &&
-                      getAllDocuments.data &&
-                      getAllDocuments.data.length
-                    "
-                    class="card-title fw-bold mb-0"
-                  >
-                    Attachments of reservations
-                  </h6>
 
                   <Media :documents="getAllDocuments" />
                 </div>
-                <div>
-                  <h6
-                    v-if="
-                      getDocumentsCustomer &&
-                      getDocumentsCustomer.data &&
-                      getDocumentsCustomer.data.length
-                    "
-                    class="card-title fw-bold mb-0"
+                <br />
+                <div
+                  v-if="
+                    getDocumentsCustomer &&
+                    getDocumentsCustomer.data &&
+                    getDocumentsCustomer.data.length
+                  "
+                >
+                  <div
+                    class="mb-15 mb-md-20 mb-lg-25 d-sm-flex align-items-center justify-content-between"
                   >
-                    Attachments of customer
-                  </h6>
+                    <h6 class="card-title fw-bold mb-0">
+                      Attachments of customer
+                    </h6>
+                    <button
+                      @click="openFileDialog"
+                      class="default-outline-btn position-relative transition fw-medium text-black pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-transparent fs-md-15 fs-lg-16 d-inline-block mb-10 mb-lg-0"
+                      type="button"
+                      :disabled="loadingFiles"
+                    >
+                      Upload
+                      <i
+                        class="ph ph-upload position-relative ms-5 top-2 fs-15"
+                      ></i>
+                      <div
+                        v-if="loadingFiles"
+                        class="spinner-border"
+                        role="status"
+                      ></div>
+                    </button>
+                  </div>
 
                   <Media :documents="getDocumentsCustomer" />
                 </div>
@@ -528,6 +590,7 @@ export default defineComponent({
       selectedCount: 0,
       pendingReservations: [],
       perPage: 5,
+      selectedReservationAttachment: 0,
     };
   },
   methods: {
@@ -607,6 +670,16 @@ export default defineComponent({
           closeOnClickOutside: false,
         });
       }
+    },
+    async handleFilterAttachmentsChange() {
+      console.log("rrr", this.selectedReservationAttachment);
+      this.isLoading = true;
+      await this.fetchAllDocumentsByCustomer({
+        idCustomer: this.idCustomer,
+        idReservation: this.selectedReservationAttachment,
+      });
+      this.isLoading = false;
+      console.log("hhh", this.getAllDocuments);
     },
     async handleFilterChange() {
       this.isLoading = true;
@@ -751,6 +824,7 @@ export default defineComponent({
       });
       await this.fetchAllDocumentsByCustomer({
         idCustomer: this.idCustomer,
+        idReservation: undefined,
       });
       await this.fetchDocumentsCustomer(this.idCustomer);
       if (this.customerId) {
@@ -764,6 +838,7 @@ export default defineComponent({
       );
 
       this.isLoading = false;
+      console.log(this.getAllDocuments);
     } catch (error) {
       this.isLoading = false;
       swal({

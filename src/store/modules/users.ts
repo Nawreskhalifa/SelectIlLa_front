@@ -610,19 +610,22 @@ const actions = {
         }
         return true;
     },
-    async fetchAllDocumentsByCustomer({ commit }, { idCustomer }) {
+    async fetchAllDocumentsByCustomer({ commit }, { idCustomer, idReservation }: { idCustomer: number, idReservation?: number }) {
         commit('SET_USERS_LOADING', true);
         commit('SET_USERS_ERROR', null);
         try {
             const filters: any = { customer: { id: { $eq: idCustomer } } };
 
-
+            if (idReservation !== undefined && idReservation !== null && idReservation != 0) {
+                filters.id = { $eq: idReservation };
+            }
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
                 `${endPoints.reservations}?populate=deep`,
                 undefined,
                 { filters }
             );
+
             if (response.success) {
                 const result: any = { data: [] };
                 if (response.data.data && response.data.data.length) {
@@ -639,15 +642,13 @@ const actions = {
             }
         } catch (error: any) {
             commit('SET_USERS_LOADING', false);
-            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
-                commit('SET_USERS_ERROR', error.response.data.error.messages);
-            } else {
-                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
-            }
+            const errorMessage = error.response?.data?.error?.messages || ['Une erreur est survenue'];
+            commit('SET_USERS_ERROR', errorMessage);
             return false;
         }
         return true;
     },
+
 
 }
 export default {
