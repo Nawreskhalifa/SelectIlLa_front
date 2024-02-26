@@ -262,6 +262,8 @@
                     :key="index"
                     class="image-item"
                   >
+                  {{  selectedPhoto}}
+
                     <img :src="photo.url" alt="Selected Image" />
                     <button
                       type="button"
@@ -284,7 +286,7 @@
                   type="submit"
                   @click="setFormSubmitted"
                 >
-                  Edit User
+                  Save
                 </button>
               </div>
             </div>

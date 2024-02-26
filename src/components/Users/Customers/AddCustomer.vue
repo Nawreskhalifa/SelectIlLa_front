@@ -568,6 +568,7 @@ export default defineComponent({
           gender: this.gender,
           date_of_birth: this.datofbirth,
         };
+        console.log('data of user:',userData)
         const registredUser = await RegistreUser(userData);
         if (registredUser.data && registredUser.data.user) {
           if (this.photo) {
@@ -621,7 +622,7 @@ export default defineComponent({
       this.SelectedPicture = file;
     },
     async getRoles() {
-      const roles = await getRole("customer");
+      const roles = await getRole("Customer");
       this.Role = roles?.roles?.roles[0]?.id;
     },
   },
