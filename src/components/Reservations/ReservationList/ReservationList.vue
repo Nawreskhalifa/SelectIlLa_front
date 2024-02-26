@@ -1,55 +1,5 @@
 <template>
   <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
-    <!-- <div
-      class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
-    >
-      <div class="d-sm-flex align-items-center">
-        <div class="reviews-select rounded-1 d-flex me-10 mt-10 mt-lg-0">
-          <span
-            class="text-muted fs-12 position-relative fw-medium text-uppercase"
-          >
-            Status
-          </span>
-          <select
-            class="form-select shadow-none bg-transparent border-0 fw-semibold rounded-0"
-            v-model="selectedStatus"
-          >
-            <option value="">All</option>
-            <option value="Pending">Pending</option>
-            <option value="Confirmed">Confirmed</option>
-            <option value="Canceled">Canceled</option>
-          </select>
-        </div>
-        <div class="d-sm-flex align-items-center">
-          <div
-            class="rounded-1 d-flex me-10 mt-10 mt-lg-0"
-            style="display: flex; align-items: center; gap: 2px"
-          >
-            <label class="text-muted fs-md-15" for="start-date"
-              >Start Date :</label
-            >
-            <input
-              id="start-date"
-              type="date"
-              class="form-control datepicker project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-              placeholder="Start Date"
-              v-model="startDate"
-            />
-
-            <label class="text-muted fs-md-15" for="end-date"
-              >End Date :
-            </label>
-            <input
-              id="end-date"
-              type="date"
-              class="form-control datepicker project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-              placeholder="End Date"
-              v-model="endDate"
-            />
-          </div>
-        </div>
-      </div>
-    </div> -->
     <div
       class="card mb-25 border-0 rounded-0 bg-white letter-spacing"
       style="transition: background-color 0.3s"
@@ -60,6 +10,10 @@
         <h6 v-if="selectedCount > 0">
           {{ selectedCount }}
           {{ selectedCount === 1 ? "item" : "items" }} selected
+        </h6>
+        <h6 v-if="nbResults > 0">
+          {{ nbResults }}
+          {{ nbResults === 1 ? "item" : "items" }} found
         </h6>
         <div class="d-flex align-items-center mt-lg-10">
           <form @submit.prevent="handleFilterChange">
@@ -86,7 +40,7 @@
 
         <div class="d-sm-flex align-items-center mt-15 mt-lg-10">
           <select
-            class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+            class="project-select frm shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
             v-model="selectedCustomer"
             @change="handleFilterChange"
           >
@@ -100,7 +54,7 @@
             </option>
           </select>
           <select
-            class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+            class="project-select frm shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
             v-model="selectedPartner"
             @change="handleFilterChange"
           >
@@ -116,7 +70,7 @@
           <select
             v-model="statusFilter"
             @change="handleFilterChange"
-            class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+            class="project-select frm shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
           >
             <option value="All" selected>All Status</option>
             <option value="Pending">Pending</option>
@@ -634,6 +588,7 @@ export default {
       selectedPartner: 0,
       searchText: "",
       statusFilter: "All",
+      nbResults: 0,
     };
   },
   computed: {
@@ -663,7 +618,7 @@ export default {
       "fetchAllPartners",
       "deleteReservation",
     ]),
-    resetFilters() {
+    async resetFilters() {
       // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
       this.searchText = "";
       this.statusFilter = "All";
@@ -672,7 +627,8 @@ export default {
       this.startDate = "";
       this.endDate = "";
       // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
-      this.handleFilterChange();
+      await this.handleFilterChange();
+      this.nbResults = 0;
     },
     async handleFilterChange() {
       // Réinitialiser la page actuelle à 1
@@ -689,6 +645,7 @@ export default {
         endDate: this.endDate,
         status: this.statusFilter,
       });
+      this.nbResults = this.getAllReservations.length;
     },
     updateSelectionCounter(event, index) {
       if (event.target.checked) {
@@ -721,7 +678,7 @@ export default {
           this.acceptReservation(reservation.id);
           return;
         } else if (action === "Refuse") {
-           this.refuseReservation(reservation);
+          this.refuseReservation(reservation);
           return;
         }
       }
@@ -920,23 +877,23 @@ export default {
 
       this.reserveData = reservation;
     },
-  async   acceptReservation(reservation) {
+    async acceptReservation(reservation) {
       const updatedData = {
         data: {
           status: "Confirmed",
         },
       };
-      const res = await    updateReservation(reservation.id, updatedData)
-    if(res){
-         this.resetFilters()
-    }else{
-      swal({
-            text: "Error updating reservation",
-            closeOnClickOutside: false,
-            dangerMode: true,
-          });
-    }
-  },
+      const res = await updateReservation(reservation.id, updatedData);
+      if (res) {
+        this.resetFilters();
+      } else {
+        swal({
+          text: "Error updating reservation",
+          closeOnClickOutside: false,
+          dangerMode: true,
+        });
+      }
+    },
 
     async refuseReservation(reservation) {
       this.reserveData = reservation;
@@ -1023,5 +980,17 @@ table tbody tr:hover td {
 
 .btn-action:hover {
   filter: brightness(90%);
+}
+.frm {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-size: 20px 12px;
+  background-position: right 18px center;
+  color: var(--splash-black-color);
+  border-color: #dedee4;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
 }
 </style>
