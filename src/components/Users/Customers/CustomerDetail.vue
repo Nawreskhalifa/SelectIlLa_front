@@ -85,6 +85,18 @@
                           scope="col"
                           class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
                         >
+                          Reservation Id
+                        </th>
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+                        >
+                          Product
+                        </th>
+                        <th
+                          scope="col"
+                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+                        >
                           HOLDER NAME
                         </th>
                         <th
@@ -94,12 +106,6 @@
                           NUMBER
                         </th>
 
-                        <th
-                          scope="col"
-                          class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-                        >
-                          cvv
-                        </th>
                         <th
                           scope="col"
                           class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
@@ -114,29 +120,49 @@
                     </thead>
                     <tbody>
                       <tr
-                        v-for="(card, index) in getCustomer?.attributes
-                          ?.credit_cards"
-                        :key="index"
+                        v-for="card in getDocuments"
+                        :key="card.id"
+                        @click="navigateToReservationDetail(card.id)"
+                        style="cursor: pointer"
                       >
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
                         >
-                          {{ card.holder_name }}
+                          #{{ card.id }}
                         </td>
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
                         >
-                          {{ card.number }}
+                          <span v-if="card.attributes.event.data">
+                            {{
+                              card.attributes.event.data?.attributes.name
+                            }}</span
+                          >
+                          <span v-if="card.attributes.villa.data">
+                            {{
+                              card.attributes.villa.data?.attributes.name
+                            }}</span
+                          >
+                          <span v-if="card.attributes.vehicle.data">{{
+                            card.attributes.vehicle.data?.attributes.style.data
+                              ?.name
+                          }}</span>
+                        </td>
+
+                        <td
+                          class="shadow-none lh-1 fw-medium text-black-emphasis"
+                        >
+                          {{ card.attributes.credit_card.holder_name }}
                         </td>
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
                         >
-                          {{ card.cvv }}
+                          {{ card.attributes.credit_card.number }}
                         </td>
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
                         >
-                          {{ card.expiry_date }}
+                          {{ card.attributes.credit_card.expiry_date }}
                         </td>
                         <td
                           class="shadow-none lh-1 fw-medium text-black-emphasis"
@@ -604,6 +630,12 @@ export default defineComponent({
       "fetchDocumentsCustomer",
       "fetchAllDocumentsByCustomer",
     ]),
+    navigateToReservationDetail(id) {
+      this.$router.push({
+        name: "ReservationDetailsPage",
+        params: { reservationId: id },
+      });
+    },
     truncateText(text) {
       const maxLength = 35;
       if (text.length <= maxLength) {
@@ -904,7 +936,7 @@ export default defineComponent({
       );
 
       this.isLoading = false;
-      console.log(this.getAllDocuments);
+      console.log(this.getDocuments);
     } catch (error) {
       this.isLoading = false;
       swal({
