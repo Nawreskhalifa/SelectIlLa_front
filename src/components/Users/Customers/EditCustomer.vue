@@ -1,9 +1,9 @@
 <template>
   <BreadCrumb
-  :PrevPage="'Customers List'"
-  :url="'/customersList'"
-  :PageTitle="'Edit Customer'"
-/>
+    :PrevPage="'Customers List'"
+    :url="'/customersList'"
+    :PageTitle="'Edit Customer'"
+  />
   <div class="card mb-25 border-0 rounded-0 bg-white add-user-card">
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
       <form @submit.prevent="EditUser">
@@ -240,7 +240,6 @@
                 <div class="file-upload text-center position-relative">
                   <input
                     type="file"
-                    multiple
                     v-on:change="handleFileUpload"
                     accept="image/*"
                     class="d-block shadow-none border-0 position-absolute start-0 end-0 top-0 bottom-0 z-1 opacity-0"
@@ -253,21 +252,14 @@
                     </span>
                   </span>
                 </div>
-                <div
-                  v-if="selectedPhoto && selectedPhoto.length > 0"
-                  class="image-preview"
-                >
-                  <div
-                    v-for="(photo, index) in selectedPhoto"
-                    :key="index"
-                    class="image-item"
-                  >
-                  {{  selectedPhoto}}
+                <div v-if="selectedPhoto" class="image-preview">
+                  <div class="image-item">
+                    {{ selectedPhoto }}
 
-                    <img :src="photo.url" alt="Selected Image" />
+                    <img :src="selectedPhoto.url" alt="Selected Image" />
                     <button
                       type="button"
-                      @click="removeImageFromDatabase(photo, index)"
+                      @click="removeImage"
                       class="delete_icon"
                     >
                       <i class="fas fa-times-circle"></i>
@@ -322,12 +314,12 @@ export default defineComponent({
   name: "EditUser",
   components: {
     Loading,
-    BreadCrumb
+    BreadCrumb,
   },
   data() {
     return {
       idUser: null,
-      selectedPhoto: [],
+      selectedPhoto: null,
       isLoading: false,
       fullPage: true,
       address: "",
@@ -373,41 +365,48 @@ export default defineComponent({
     setFormSubmitted() {
       this.formSubmitted = true;
     },
-    handleFileUpload(event) {
+    async handleFileUpload(event) {
       // Vérifie si un fichier a été sélectionné
-      if (event.target.files.length > 0) {
-        const file = event.target.files[0];
-        const maxSize = 20 * 1024 * 1024; // Taille maximale en octets (ici, 20 Mo)
+      // if (event.target.files.length > 0) {
 
-        // Vérifier si la taille du fichier est inférieure ou égale à la taille maximale
-        if (file.size > maxSize) {
-          // Afficher un message d'erreur à l'utilisateur
-          this.errors.photo =
-            "The size of the image exceeds the limit of 20 MB.";
-          return; // Arrêter le traitement
-        }
-
-        // Continuer le traitement si la taille est conforme à la limite
-        this.errors.photo = ""; // Effacer les erreurs précédentes
-        this.photo = file;
-
-        this.selectedPhoto = [];
-        this.selectedPhoto.push({
-          id: file.name,
-          url: URL.createObjectURL(file),
-        });
+      const file = await event.target.files[0];
+      const maxSize = 20 * 1024 * 1024; // Taille maximale en octets (ici, 20 Mo)
+      event.target.value = "";
+      // Vérifier si la taille du fichier est inférieure ou égale à la taille maximale
+      if (file.size > maxSize) {
+        // Afficher un message d'erreur à l'utilisateur
+        this.errors.photo = "The size of the image exceeds the limit of 20 MB.";
+        return; // Arrêter le traitement
       }
+
+      // Continuer le traitement si la taille est conforme à la limite
+      this.errors.photo = ""; // Effacer les erreurs précédentes
+      this.photo = file;
+
+      // this.selectedPhoto = null;
+      this.selectedPhoto = await {
+        id: file.name,
+        url: URL.createObjectURL(file),
+      };
+      // }
+    },
+
+    removeImageFromDatabase(obj, index) {
+      this.updatedPhotos.push(obj.id);
+      this.databasePhoto.splice(index, 1);
+    },
+    photoExistsInList(photo, list) {
+      // Parcourir la liste d'objets
+      return list.some((item) => item.id === photo.id);
+    },
+    removeImage(index, obj) {
+      if (this.photoExistsInList(this.selectedPhoto, this.databasePhoto)) {
+        this.updatedPhotos.push(this.selectedPhoto.id);
+      }
+      this.selectedPhoto = null;
     },
     checkObjectExists(list, objetRecherche) {
-      return list.some((objet) => objet.id === objetRecherche.id);
-    },
-    removeImageFromDatabase(obj, index) {
-      if (this.checkObjectExists(this.databasePhoto, obj)) {
-        this.updatedPhotos = [];
-        this.updatedPhotos.push(obj.id);
-      }
-      this.selectedPhoto.splice(index, 1);
-      console.log(this.updatedPhotos);
+      return list.some((objet) => objet.url === objetRecherche.url);
     },
     getCurrentDate() {
       const currentDate = new Date();
@@ -422,9 +421,7 @@ export default defineComponent({
       }
       return `${year}-${month}-${day}`;
     },
-    onCancel() {
-      console.log("User cancelled the loader.");
-    },
+
     validateEmail(email) {
       // Fonction de validation de l'email
       // Vous pouvez utiliser une expression régulière ou une autre méthode de validation ici
@@ -514,12 +511,10 @@ export default defineComponent({
         date_of_birth: this.datofbirth,
       };
       const updateUser = await UpdateUser(userData, this.idUser);
-      console.log(updateUser);
       if (updateUser.data) {
         if (this.photo) {
           await this.uploadProfilePicture(this.idUser);
         }
-        console.log(this.status);
         const customerDetails = {
           data: {
             name: this.name,
@@ -584,7 +579,6 @@ export default defineComponent({
     if (this.$route.params && this.$route.params.customerId) {
       this.isLoading = true;
       await this.fetchOneCustomer(this.$route.params.customerId);
-      console.log(this.getCustomer);
       this.address = this.getCustomer?.attributes.address;
       this.name = this.getCustomer?.attributes.name;
       this.surname = this.getCustomer?.attributes.surname;
@@ -602,19 +596,18 @@ export default defineComponent({
           this.getCustomer?.attributes.user.data?.attributes.photo?.data
             ?.attributes.url,
       });
-      this.selectedPhoto.push({
+      this.selectedPhoto = {
         id: this.getCustomer?.attributes.user.data?.attributes.photo?.data?.id,
         url:
           this.uploadUrl +
           this.getCustomer?.attributes.user.data?.attributes.photo?.data
             ?.attributes.url,
-      });
+      };
       this.password = "";
       this.email = this.getCustomer?.attributes.user.data?.attributes.email;
       this.ancienEmail =
         this.getCustomer?.attributes.user.data?.attributes.email;
       this.idUser = this.getCustomer?.attributes.user.data?.id;
-      console.log(this.idUser);
 
       this.isLoading = false;
     }
