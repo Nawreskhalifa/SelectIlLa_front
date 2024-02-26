@@ -21,6 +21,7 @@ const state = {
     reservation: null,
     documentsCustomer: [],
     allDocuments: [],
+    allCustomers: [],
 }
 const getters = {
     getUsersError: state => state.userError,
@@ -39,6 +40,7 @@ const getters = {
     getReservation: (state) => state.reservation,
     getDocumentsCustomer: (state) => state.documentsCustomer,
     getAllDocuments: (state) => state.allDocuments,
+    getAllCustomers: (state) => state.allCustomers,
 
 
 }
@@ -79,6 +81,9 @@ const mutations = {
     },
     SET_CUSTOMERS(state, payload) {
         state.customers = payload
+    },
+    SET_ALL_CUSTOMERS(state, payload) {
+        state.allCustomers = payload
     },
     SET_CUSTOMER(state, payload) {
         state.customer = payload
@@ -163,6 +168,32 @@ const actions = {
             return false
         }
         return true
+    },
+    async fetchAllCustomersWithoutPagination({ commit }) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
+        try {
+
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                endPoints.allCustomers,
+                undefined,
+                undefined
+            );
+            if (response.success) {
+                commit('SET_ALL_CUSTOMERS', response.data.data);
+                commit('SET_USERS_LOADING', false);
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages);
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
+            }
+            return false;
+        }
+        return true;
     },
     async fetchAllCustomers({ commit }, { page = null, perPage = 25, name, gender = 'All', startDate, endDate, sortDirectionUserName, sortDirectionLocation, blocked = 'All' }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startDate?: number, endDate?: number, sortDirectionUserName?: string, sortDirectionLocation?: string, blocked?: string }) {
         commit('SET_USERS_LOADING', true);

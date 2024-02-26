@@ -111,7 +111,18 @@
               @click="selectAllCustomers"
             >
               <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
-              {{ selectAllChecked ? "Deselect All" : "Select All" }}
+              {{ "Select All" }}
+            </a>
+          </li>
+          <li>
+            <a
+              :class="{ disabled: selectedCount === 0 }"
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="deSelectAllCustomers"
+            >
+              <i class="fas fa-close lh-1 me-8 position-relative top-1"></i>
+              {{ "Deselect All" }}
             </a>
           </li>
           <li>
@@ -209,7 +220,8 @@
                     <input
                       class="form-check-input shadow-none"
                       type="checkbox"
-                      @change="updateSelectionCounter($event, index)"
+                      :checked="isCustomerSelected(customer.id)"
+                      @change="toggleSelection(customer)"
                     />
                   </div>
                   <div class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16">
@@ -366,13 +378,18 @@ export default defineComponent({
       sortDirectionLoc: "asc",
       selectedCount: 0,
       isLoading: false,
-      perPage: 4,
+      perPage: 2,
       activeFilter: "All",
       nbResults: 0,
+      selectedCustomers: [],
     };
   },
   methods: {
-    ...mapActions(["fetchAllCustomers", "deleteCustomer"]),
+    ...mapActions([
+      "fetchAllCustomers",
+      "deleteCustomer",
+      "fetchAllCustomersWithoutPagination",
+    ]),
     navigateToAddCustomerPage() {
       this.$router.push({
         name: "AddCustomerPage",
@@ -517,19 +534,63 @@ export default defineComponent({
         }
       });
     },
-    selectAllCustomers() {
-      this.selectAllChecked = !this.selectAllChecked;
+
+    async updateSelectionOnPageChange() {
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
       this.selectedCount = 0;
+
       checkboxes.forEach((checkbox) => {
-        checkbox.checked = this.selectAllChecked;
-        if (checkbox.checked) {
+        const customerId = parseInt(checkbox.getAttribute("data-customer-id"));
+
+        if (this.selectedCustomers.includes(customerId)) {
+          checkbox.checked = true;
           this.selectedCount++;
         } else {
-          this.selectedCount--;
+          checkbox.checked = false;
         }
       });
     },
+    isCustomerSelected(customerId) {
+      return this.selectedCustomers.some(
+        (customer) => customer.id === customerId
+      );
+    },
+    toggleSelection(customer) {
+      // Vérifie si le client est déjà sélectionné
+      const index = this.selectedCustomers.findIndex(
+        (c) => c.id === customer.id
+      );
+
+      if (index !== -1) {
+        // Si le client est déjà sélectionné, le retire de la liste des clients sélectionnés
+        this.selectedCustomers.splice(index, 1);
+      } else {
+        // Sinon, l'ajoute à la liste des clients sélectionnés
+        this.selectedCustomers.push(customer);
+      }
+
+      // Met à jour le compteur de clients sélectionnés
+      this.selectedCount = this.selectedCustomers.length;
+    },
+
+    async deSelectAllCustomers() {
+      this.selectedCustomers = [];
+      this.selectedCount = 0;
+    },
+    async selectAllCustomers() {
+      // Inverse l'état de la sélection de tous les clients
+      // this.selectAllChecked = !this.selectAllChecked;
+      this.isLoading = true;
+      await this.fetchAllCustomersWithoutPagination();
+      // Sélectionne tous les clients de la page actuelle s'ils ne sont pas déjà sélectionnés
+      this.getAllCustomers.forEach((customer) => {
+        this.selectedCustomers.push(customer);
+      });
+      this.isLoading = false;
+      // Met à jour le compteur de clients sélectionnés
+      this.selectedCount = this.selectedCustomers.length;
+    },
+
     async handleSearch() {
       this.isLoading = true;
 
@@ -631,6 +692,7 @@ export default defineComponent({
       "getCustomers",
       "getTotalPages",
       "getTotalItems",
+      "getAllCustomers",
     ]),
     isFilterActive() {
       return (
