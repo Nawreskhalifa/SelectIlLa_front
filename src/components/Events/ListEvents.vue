@@ -36,7 +36,7 @@
 
       <div class="d-sm-flex align-items-center mt-15 mt-lg-10">
         <select
-          class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          class="project-select frm shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
           v-model="selectedCategory"
           @change="handleFilterChange"
         >
@@ -50,7 +50,7 @@
           </option>
         </select>
         <select
-          class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          class="project-select frm shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
           v-model="selectedPartner"
           @change="handleFilterChange"
         >
@@ -60,15 +60,15 @@
             :key="partner.id"
             :value="partner.id"
           >
-            {{ partner.name }}
+            {{ partner.attributes.name + " " + partner.attributes.surname }}
           </option>
         </select>
         <select
           v-model="activeFilter"
           @change="handleFilterChange"
-          class="project-select form-select shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
+          class="project-select frm shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
         >
-          <option value="All" selected>All Status</option>
+          <option value="All" selected><span> </span> <span> All Status</span> </option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
@@ -76,7 +76,7 @@
           v-model="startDate"
           :config="config"
           class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-          placeholder="Start"
+          placeholder="Event Start"
           name="startDate"
           @change="handleFilterChange"
         />
@@ -85,7 +85,7 @@
           v-model="endDate"
           :config="{ minDate: startDate }"
           class="project-select form-control shadow-none fw-semibold rounded-1 mt-10 mt-sm-0 ms-sm-10"
-          placeholder="End"
+          placeholder="Event End"
           name="endDate"
           :disabled="!startDate"
           @change="handleFilterChange"
@@ -631,7 +631,7 @@ export default {
   async mounted() {
     this.storageUrl = storageUrl;
     await this.fetchAllCategoriesEvent({ page: null });
-    await this.fetchAllPartners({page:null});
+    await this.fetchAllPartners({ page: null });
     await this.fetchAllEvents({
       page: this.currentPage,
       perPage: 4,
@@ -681,5 +681,17 @@ export default {
 .google-maps-icon:hover {
   color: #ff001e; /* Change the hover color */
   text-decoration: none; /* Remove default underline on hover */
+}
+.frm{
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-size: 20px 12px;
+  background-position: right 18px center;
+  color: var(--splash-black-color);
+  border-color: #dedee4;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
 }
 </style>
