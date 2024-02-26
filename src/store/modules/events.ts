@@ -9,7 +9,8 @@ const state = {
   event: null,
   totalEventPages: 1,
   totalEventItems: 0,
-  open: false
+  open: false,
+  allEvents: [],
 };
 const getters = {
   getEventsError: (state) => state.eventsError,
@@ -18,7 +19,8 @@ const getters = {
   getEvent: (state) => state.event,
   getTotalEventPages: (state) => state.totalEventPages,
   getTotalEventItems: (state) => state.totalEventItems,
-  isOpen: (state) => state.open
+  isOpen: (state) => state.open,
+  getAllEvents: (state) => state.allEvents
 };
 const mutations = {
   SET_TOTAL_ITEMS(state, payload = 0) {
@@ -35,6 +37,9 @@ const mutations = {
   },
   SET_EVENTS(state, payload) {
     state.events = payload;
+  },
+  SET_ALL_EVENTS(state, payload) {
+    state.allEvents = payload;
   },
   REMOVE_EVENT(state, id) {
     state.events = state.events.filter((event) => event.id !== id);
@@ -77,6 +82,37 @@ const actions = {
       return false;
     }
     return true;
+  },
+  async fetchAllEventsWithoutPagination({ commit }) {
+    commit("SET_EVENTS_LOADING", true);
+    commit("SET_EVENTS_ERROR");
+
+    try {
+      const response = await makeApiRequest(
+        methodsHttpNames.GET,
+        `${endPoints.allEvents}/?populate=deep`,
+        undefined,
+        undefined
+      );
+      if (response.success) {
+        commit("SET_ALL_EVENTS", response.data.data);
+        commit("SET_EVENTS_LOADING", false);
+      }
+      return true;
+    } catch (error: any) {
+      commit("SET_EVENTS_LOADING", false);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.error &&
+        error.response.data.error.messages
+      ) {
+        commit("SET_EVENTS_ERROR", error.response.data.error.messages);
+      } else {
+        commit("SET_EVENTS_ERROR", ["Une erreur est survenue"]);
+      }
+      return false;
+    }
   },
   async fetchAllEvents({ commit }, { page, perPage = 25, name, isActive = 'All', category = 'All', partner = 0, startDate, endDate }: { page: number, perPage?: number, name: string | null, isActive?: string, category?: string, partner?: number, startDate?: string, endDate?: string }) {
     commit("SET_EVENTS_LOADING", true);

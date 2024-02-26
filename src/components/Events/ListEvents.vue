@@ -133,7 +133,18 @@
               @click="selectAllEvents"
             >
               <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
-              {{ selectAllChecked ? "Deselect All" : "Select All" }}
+              {{ "Select All" }}
+            </a>
+          </li>
+          <li>
+            <a
+              :class="{ disabled: selectedCount === 0 }"
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="deSelectAllEvents"
+            >
+              <i class="fas fa-close lh-1 me-8 position-relative top-1"></i>
+              {{ "Deselect All" }}
             </a>
           </li>
           <li>
@@ -159,7 +170,8 @@
             <input
               class="form-check-input shadow-none"
               type="checkbox"
-              @change="updateSelectionCounter($event, index)"
+              :checked="isEventSelected(event.id)"
+              @change="toggleSelection(event)"
             />
           </div>
           <router-link :to="`/event-details/${event.id}`">
@@ -413,6 +425,7 @@ export default {
       endDate: "",
       nbResults: 0,
       isLoading: false,
+      selectedEvents: [],
     };
   },
   methods: {
@@ -421,8 +434,26 @@ export default {
       "deleteEvent",
       "fetchAllCategoriesEvent",
       "fetchAllPartners",
+      "fetchAllEventsWithoutPagination",
     ]),
+    isEventSelected(eventId) {
+      return this.selectedEvents.some((event) => event.id === eventId);
+    },
+    toggleSelection(event) {
+      // Vérifie si le client est déjà sélectionné
+      const index = this.selectedEvents.findIndex((c) => c.id === event.id);
 
+      if (index !== -1) {
+        // Si le client est déjà sélectionné, le retire de la liste des clients sélectionnés
+        this.selectedEvents.splice(index, 1);
+      } else {
+        // Sinon, l'ajoute à la liste des clients sélectionnés
+        this.selectedEvents.push(event);
+      }
+
+      // Met à jour le compteur de clients sélectionnés
+      this.selectedCount = this.selectedEvents.length;
+    },
     updateSelectionCounter(event, index) {
       if (event.target.checked) {
         // Si la case à cocher est cochée, incrémenter le compteur de sélection
@@ -442,23 +473,13 @@ export default {
       // Appeler la méthode handleFilterChange pour mettre à jour la liste des clients
       await this.handleFilterChange();
       this.nbResults = 0;
-
     },
     deleteSelectedCustomers() {
-      const selectedEvents = [];
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach((checkbox, index) => {
-        if (checkbox.checked) {
-          if (this.getEvents && this.getEvents[index]) {
-            selectedEvents.push(this.getEvents[index].id);
-          }
-        }
-      });
-
-      if (selectedEvents.length === 0) {
-        swal("Please select at least one customer to delete.");
+      if (this.selectedEvents.length === 0) {
+        swal("Please select at least one event to delete.");
         return;
       }
+      const selectedEventsIds = this.selectedEvents.map((event) => event.id);
 
       swal({
         title: "Are you sure?",
@@ -468,7 +489,9 @@ export default {
       }).then(async (willDelete) => {
         if (willDelete) {
           // Call the deleteEvent action or API endpoint to delete the selected events
-          await Promise.all(selectedEvents.map((id) => this.deleteEvent(id)));
+          await Promise.all(
+            selectedEventsIds.map((id) => this.deleteEvent(id))
+          );
           // After deletion, fetch events again to update the list
           this.currentPage = 1;
           this.isLoading = true;
@@ -509,18 +532,31 @@ export default {
       this.nbResults = this.getEvents.length;
       this.isLoading = false;
     },
-    selectAllEvents() {
-      this.selectAllChecked = !this.selectAllChecked;
+    async deSelectAllEvents() {
+      this.selectedEvents = [];
       this.selectedCount = 0;
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = this.selectAllChecked;
-        if (checkbox.checked) {
-          this.selectedCount++;
-        } else {
-          this.selectedCount--;
-        }
+    },
+    async selectAllEvents() {
+      this.isLoading = true;
+      await this.fetchAllEventsWithoutPagination();
+      // Sélectionne tous les events de la page actuelle s'ils ne sont pas déjà sélectionnés
+      this.getAllEvents.forEach((event) => {
+        this.selectedEvents.push(event);
       });
+      this.isLoading = false;
+      // Met à jour le compteur de clients sélectionnés
+      this.selectedCount = this.selectedEvents.length;
+      // this.selectAllChecked = !this.selectAllChecked;
+      // this.selectedCount = 0;
+      // const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      // checkboxes.forEach((checkbox) => {
+      //   checkbox.checked = this.selectAllChecked;
+      //   if (checkbox.checked) {
+      //     this.selectedCount++;
+      //   } else {
+      //     this.selectedCount--;
+      //   }
+      // });
     },
     async onPageChange(pageNumber) {
       this.isLoading = true;
@@ -638,6 +674,7 @@ export default {
       "getCategoriesEvent",
       "getTotalEventItems",
       "getPartners",
+      "getAllEvents",
     ]),
     isFilterActive() {
       return (
@@ -656,7 +693,7 @@ export default {
     await this.fetchAllPartners({ page: null });
     await this.fetchAllEvents({
       page: this.currentPage,
-      perPage: 4,
+      perPage: this.perPage,
       name: null,
     });
     this.isLoading = false;

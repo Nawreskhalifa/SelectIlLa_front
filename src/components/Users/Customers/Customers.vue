@@ -497,15 +497,7 @@ export default defineComponent({
       this.isLoading = false;
     },
     deleteSelectedCustomers() {
-      const selectedCustomers = [];
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach((checkbox, index) => {
-        if (checkbox.checked) {
-          selectedCustomers.push(this.getCustomers[index].id);
-        }
-      });
-
-      if (selectedCustomers.length === 0) {
+      if (this.selectedCustomers.length === 0) {
         swal("Please select at least one customer to delete.");
         return;
       }
@@ -517,17 +509,25 @@ export default defineComponent({
         dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
-          // Call the deleteCustomer action or API endpoint to delete the selected customers
-          await Promise.all(
-            selectedCustomers.map((id) => this.deleteCustomer(id))
+          // Récupérer les IDs des clients sélectionnés
+          const selectedCustomerIds = this.selectedCustomers.map(
+            (customer) => customer.id
           );
+
+          // Appeler l'action deleteCustomer ou l'API pour supprimer les clients sélectionnés
+          await Promise.all(
+            selectedCustomerIds.map((id) => this.deleteCustomer(id))
+          );
+
           this.isLoading = true;
           this.currentPage = 1;
-          // After deletion, fetch customers again to update the list
+
+          // Après la suppression, récupérer à nouveau les clients pour mettre à jour la liste
           await this.fetchAllCustomers({
             page: this.currentPage,
             perPage: this.perPage,
           });
+
           this.isLoading = false;
 
           swal("Selected customers have been deleted!", {});
@@ -578,8 +578,6 @@ export default defineComponent({
       this.selectedCount = 0;
     },
     async selectAllCustomers() {
-      // Inverse l'état de la sélection de tous les clients
-      // this.selectAllChecked = !this.selectAllChecked;
       this.isLoading = true;
       await this.fetchAllCustomersWithoutPagination();
       // Sélectionne tous les clients de la page actuelle s'ils ne sont pas déjà sélectionnés
