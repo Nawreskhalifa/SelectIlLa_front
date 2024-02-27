@@ -22,6 +22,7 @@ const state = {
     documentsCustomer: [],
     allDocuments: [],
     allCustomers: [],
+    allPartners: [],
 }
 const getters = {
     getUsersError: state => state.userError,
@@ -29,6 +30,7 @@ const getters = {
     getUsers: state => state.users,
     getCustomers: state => state.customers,
     getPartners: state => state.partners,
+    getAllPartners: state => state.allPartners,
     getTotalPages: (state) => state.totalPages,
     getTotalItems: (state) => state.totalItems,
     getCustomer: (state) => state.customer,
@@ -90,6 +92,9 @@ const mutations = {
     },
     SET_PARTNERS(state, payload) {
         state.partners = payload
+    },
+    SET_ALL_PARTNERS(state, payload) {
+        state.allPartners = payload
     },
     REMOVE_CUSTOMER(state, id) {
         state.customers = state.customers.filter(customer => customer.id != id)
@@ -316,7 +321,6 @@ const actions = {
                 undefined,
                 undefined
             );
-            console.log('ghj', response.data.data)
             if (response.success) {
                 commit('SET_CUSTOMER', response.data.data);
                 commit('SET_USERS_LOADING', false);
@@ -345,8 +349,6 @@ const actions = {
             );
 
             if (response.success) {
-                console.log(response);
-
                 commit('ADD_CUSTOMER', decodeCustomer(response.data.data));
                 commit('SET_USERS_LOADING', false)
             }
@@ -371,10 +373,41 @@ const actions = {
                 undefined,
                 undefined
             );
-            console.log(response)
             if (response.success) {
 
                 commit('REMOVE_PARTNER', id)
+                commit('SET_USERS_LOADING', false)
+            }
+
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false)
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+    async fetchAllPartnersWithoutPagination({ commit }) {
+        commit('SET_USERS_LOADING', true)
+        commit('SET_USERS_ERROR')
+        try {
+
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.allPartners}?populate=deep`,
+                undefined,
+                undefined
+            );
+            if (response.success) {
+                commit('SET_ALL_PARTNERS', response.data.data)
                 commit('SET_USERS_LOADING', false)
             }
 

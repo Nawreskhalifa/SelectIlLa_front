@@ -76,7 +76,7 @@
               href="javascript:void(0);"
               @click="deSelectAllCategories"
             >
-              <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
+              <i class="fas fa-close lh-1 me-8 position-relative top-1"></i>
               {{ "Deselect All" }}
             </a>
           </li>

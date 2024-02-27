@@ -105,7 +105,17 @@
               @click="selectAllPartners"
             >
               <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
-              {{ selectAllChecked ? "Deselect All" : "Select All" }}
+              {{ "Select All" }}
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="deSelectAllPartners"
+            >
+              <i class="fas fa-close lh-1 me-8 position-relative top-1"></i>
+              {{ "Deselect All" }}
             </a>
           </li>
           <li>
@@ -203,7 +213,8 @@
                     <input
                       class="form-check-input shadow-none"
                       type="checkbox"
-                      @change="updateSelectionCounter($event, index)"
+                      :checked="isPartnerSelected(partner.id)"
+                      @change="toggleSelection(partner)"
                     />
                   </div>
                   <div class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16">
@@ -373,10 +384,15 @@ export default defineComponent({
       isLoading: false,
       perPage: 4,
       nbResults: 0,
+      selectedPartners: [],
     };
   },
   methods: {
-    ...mapActions(["fetchAllPartners", "deletePartner"]),
+    ...mapActions([
+      "fetchAllPartners",
+      "deletePartner",
+      "fetchAllPartnersWithoutPagination",
+    ]),
 
     truncateLocation(location) {
       const maxLength = 40;
@@ -480,18 +496,13 @@ export default defineComponent({
       this.isLoading = false;
     },
     deleteSelectedPartners() {
-      const selectedPartners = [];
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach((checkbox, index) => {
-        if (checkbox.checked) {
-          selectedPartners.push(this.getPartners[index].id);
-        }
-      });
-
-      if (selectedPartners.length === 0) {
+      if (this.selectedPartners.length === 0) {
         swal("Please select at least one partner to delete.");
         return;
       }
+      const selectedEventsIds = this.selectedPartners.map(
+        (partner) => partner.id
+      );
 
       swal({
         title: "Are you sure?",
@@ -502,7 +513,7 @@ export default defineComponent({
         if (willDelete) {
           // Call the deletePartner action or API endpoint to delete the selected partners
           await Promise.all(
-            selectedPartners.map((id) => this.deletePartner(id))
+            selectedEventsIds.map((id) => this.deletePartner(id))
           );
           this.isLoading = true;
           this.currentPage = 1;
@@ -517,19 +528,34 @@ export default defineComponent({
         }
       });
     },
-    selectAllPartners() {
-      this.selectAllChecked = !this.selectAllChecked;
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    async deSelectAllPartners() {
+      this.selectedPartners = [];
       this.selectedCount = 0;
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = this.selectAllChecked;
-        if (checkbox.checked) {
-          this.selectedCount++;
-        } else {
-          this.selectedCount--;
-        }
-      });
     },
+    async selectAllPartners() {
+      this.isLoading = true;
+      await this.fetchAllPartnersWithoutPagination();
+      // Sélectionne tous les events de la page actuelle s'ils ne sont pas déjà sélectionnés
+      this.getAllPartners.forEach((partner) => {
+        this.selectedPartners.push(partner);
+      });
+      this.isLoading = false;
+      // Met à jour le compteur
+      this.selectedCount = this.selectedPartners.length;
+    },
+    // selectAllPartners() {
+    //   this.selectAllChecked = !this.selectAllChecked;
+    //   const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    //   this.selectedCount = 0;
+    //   checkboxes.forEach((checkbox) => {
+    //     checkbox.checked = this.selectAllChecked;
+    //     if (checkbox.checked) {
+    //       this.selectedCount++;
+    //     } else {
+    //       this.selectedCount--;
+    //     }
+    //   });
+    // },
     async handleSearch() {
       this.isLoading = true;
 
@@ -618,6 +644,24 @@ export default defineComponent({
         }
       });
     },
+    isPartnerSelected(partnerId) {
+      return this.selectedPartners.some((partner) => partner.id === partnerId);
+    },
+    toggleSelection(partner) {
+      // Vérifie si le partner est déjà sélectionné
+      const index = this.selectedPartners.findIndex((c) => c.id === partner.id);
+
+      if (index !== -1) {
+        // Si le client est déjà sélectionné, le retire de la liste des clients sélectionnés
+        this.selectedPartners.splice(index, 1);
+      } else {
+        // Sinon, l'ajoute à la liste des clients sélectionnés
+        this.selectedPartners.push(partner);
+      }
+
+      // Met à jour le compteur de clients sélectionnés
+      this.selectedCount = this.selectedPartners.length;
+    },
   },
   computed: {
     ...mapGetters([
@@ -626,6 +670,7 @@ export default defineComponent({
       "getPartners",
       "getTotalPagesPartners",
       "getTotalItemsPartners",
+      "getAllPartners",
     ]),
     isFilterActive() {
       return (
