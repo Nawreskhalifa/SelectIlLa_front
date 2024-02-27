@@ -97,7 +97,6 @@ export default defineComponent({
             undefined,
             undefined
           );
-          console.log(response);
           if (response.success) {
             swal({
               text: "Category already exists!",
@@ -119,8 +118,11 @@ export default defineComponent({
         this.name = "";
         this.description = "";
       } catch (error: any) {
-        console.log(error);
-      }
+        swal({
+          text: "error!",
+          closeOnClickOutside: false,
+          dangerMode:true
+        });      }
       // Do something with the new category, like emitting an event or making an API call
     },
   },

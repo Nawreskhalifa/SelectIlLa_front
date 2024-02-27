@@ -110,6 +110,7 @@
           </li>
           <li>
             <a
+            :class="{ disabled: selectedCount === 0 }"
               class="dropdown-item d-flex align-items-center"
               href="javascript:void(0);"
               @click="deSelectAllPartners"
@@ -435,9 +436,6 @@ export default defineComponent({
       }
       return `${year}-${month}-${day}`;
     },
-    onCancel() {
-      console.log("User cancelled the loader.");
-    },
     async handleFilterChange() {
       this.isLoading = true;
 
@@ -543,19 +541,6 @@ export default defineComponent({
       // Met à jour le compteur
       this.selectedCount = this.selectedPartners.length;
     },
-    // selectAllPartners() {
-    //   this.selectAllChecked = !this.selectAllChecked;
-    //   const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    //   this.selectedCount = 0;
-    //   checkboxes.forEach((checkbox) => {
-    //     checkbox.checked = this.selectAllChecked;
-    //     if (checkbox.checked) {
-    //       this.selectedCount++;
-    //     } else {
-    //       this.selectedCount--;
-    //     }
-    //   });
-    // },
     async handleSearch() {
       this.isLoading = true;
 
@@ -685,7 +670,6 @@ export default defineComponent({
   async mounted() {
     this.isLoading = true;
     await this.fetchAllPartners({ page: 1, perPage: this.perPage });
-    console.log(this.getPartners);
     this.isLoading = false;
     this.storageUrl = storageUrl;
   },

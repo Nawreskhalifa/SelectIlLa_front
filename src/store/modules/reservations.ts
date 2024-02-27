@@ -8,6 +8,8 @@ const state = {
     totalPagesOfReservation: 0,
     totalItemsOfReservation: 0,
     reservations: [],
+    allReservations: [],
+
 
 }
 const getters = {
@@ -16,6 +18,7 @@ const getters = {
     getAllReservations: state => state.reservations,
     getTotalPagesOfReservation: (state) => state.totalPagesOfReservation,
     getTotalItemsOfReservation: (state) => state.totalItemsOfReservation,
+    getAllReservationsWithoutPagination: (state) => state.allReservations
 }
 const mutations = {
     SET_TOTAL_ITEMS_RESERVATION(state, payload = 0) {
@@ -35,6 +38,9 @@ const mutations = {
     },
     SET_RESERVATIONS(state, payload) {
         state.reservations = payload
+    },
+    SET_ALL_RESERVATIONS(state, payload) {
+        state.allReservations = payload
     },
     REMOVE_RESERVATION(state, id) {
         state.reservations = state.reservations.filter((reservation) => reservation.id !== id);
@@ -87,6 +93,34 @@ const actions = {
             }
         } catch (error: any) {
             commit("SET_RESERVATIONS_LOADING");
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit("SET_RESERVATIONS_ERROR", error.response.data.error.messages);
+            } else {
+                commit("SET_RESERVATIONS_ERROR", ["Une erreur est survenue"]);
+            }
+            return false;
+        }
+        return true;
+    },
+    async fetchAllReservationsWithoutPagination({ commit }) {
+        commit("SET_RESERVATIONS_LOADING", true);
+        commit("SET_RESERVATIONS_ERROR");
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.reservations}?populate=deep`,
+                undefined,
+                undefined
+            );
+            commit("SET_ALL_RESERVATIONS", response.data.data);
+            commit('SET_RESERVATIONS_LOADING', false);
+        } catch (error: any) {
+            commit('SET_RESERVATIONS_LOADING', false);
             if (
                 error.response &&
                 error.response.data &&
@@ -168,7 +202,6 @@ const actions = {
                 }
                 if (startDate) {
                     filters.filters.$and.push({ pickup_date: { $gte: startDate } });
-                    console.log(filters)
                 }
 
                 if (endDate) {
@@ -186,7 +219,6 @@ const actions = {
                 undefined,
                 filters
             );
-            console.log(response.data)
             commit("SET_TOTAL_PAGES_RESERVATION", response.data.meta.pagination.pageCount);
             commit("SET_TOTAL_ITEMS_RESERVATION", response.data.meta.pagination.total);
             commit("SET_RESERVATIONS", response.data.data);

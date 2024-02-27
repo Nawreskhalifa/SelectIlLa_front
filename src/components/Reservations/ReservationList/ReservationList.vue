@@ -125,7 +125,18 @@
                 @click="selectAllReservations"
               >
                 <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
-                {{ selectAllChecked ? "Deselect All" : "Select All" }}
+                {{ "Select All" }}
+              </a>
+            </li>
+            <li>
+              <a
+                :class="{ disabled: selectedCount === 0 }"
+                class="dropdown-item d-flex align-items-center"
+                href="javascript:void(0);"
+                @click="deSelectAllReservations"
+              >
+                <i class="fas fa-close lh-1 me-8 position-relative top-1"></i>
+                {{ "Deselect All" }}
               </a>
             </li>
             <li>
@@ -219,7 +230,8 @@
                     <input
                       class="form-check-input shadow-none"
                       type="checkbox"
-                      @change="updateSelectionCounter($event, index)"
+                      :checked="isReservationSelected(reservation.id)"
+                      @change="toggleSelection(reservation)"
                     />
                   </div>
                   <span
@@ -589,6 +601,7 @@ export default {
       searchText: "",
       statusFilter: "All",
       nbResults: 0,
+      selectedReservations: [],
     };
   },
   computed: {
@@ -599,6 +612,7 @@ export default {
       "getTotalItemsOfReservation",
       "getCustomers",
       "getPartners",
+      "getAllReservationsWithoutPagination",
     ]),
     isFilterActive() {
       return (
@@ -617,6 +631,7 @@ export default {
       "fetchAllCustomers",
       "fetchAllPartners",
       "deleteReservation",
+      "fetchAllReservationsWithoutPagination",
     ]),
     async resetFilters() {
       // Réinitialiser les valeurs des filtres à leurs valeurs par défaut
@@ -646,15 +661,6 @@ export default {
         status: this.statusFilter,
       });
       this.nbResults = this.getAllReservations.length;
-    },
-    updateSelectionCounter(event, index) {
-      if (event.target.checked) {
-        // Si la case à cocher est cochée, incrémenter le compteur de sélection
-        this.selectedCount++;
-      } else {
-        // Sinon, décrémenter le compteur de sélection
-        this.selectedCount--;
-      }
     },
     navigateToReservationDetailPage(reservation, event) {
       if (
@@ -712,118 +718,52 @@ export default {
       const surname = surnameCustomer || "";
       return name + " " + surname;
     },
-    async change() {
-      try {
-        if (this.searchInput.trim() !== "") {
-          const data = await searchInS(
-            "reservations",
-            "customer",
-            "name",
-            "$contains",
-            this.searchInput
-          );
-          this.reservations = data.data;
-        } else {
-          await this.fetchReservationsData({ page: 1, perPage: this.perPage });
-        }
-      } catch (error) {
-        swal({
-          text: "An error occurred, please try again",
-          closeOnClickOutside: false,
-          dangerMode: true,
-        });
-      }
-    },
-    customerHasPhoto(reservation) {
-      return (
-        reservation &&
-        reservation.attributes &&
-        reservation.attributes.customer &&
-        reservation.attributes.customer.data &&
-        reservation.attributes.customer.data.attributes &&
-        reservation.attributes.customer.data.attributes.user &&
-        reservation.attributes.customer.data.attributes.user.data &&
-        reservation.attributes.customer.data.attributes.user.data.attributes &&
-        reservation.attributes.customer.data.attributes.user.data.attributes
-          .photo &&
-        reservation.attributes.customer.data.attributes.user.data.attributes
-          .photo.data &&
-        reservation.attributes.customer.data.attributes.user.data.attributes
-          .photo.data.attributes &&
-        reservation.attributes.customer.data.attributes.user.data.attributes
-          .photo.data.attributes.url
+
+    isReservationSelected(reservationId) {
+      return this.selectedReservations.some(
+        (reservation) => reservation.id === reservationId
       );
     },
-    getCustomerPhotoUrl(reservation) {
-      const stockage = process.env.VUE_APP_STORAGE_URL;
-      return (
-        stockage +
-        reservation.attributes.customer.data.attributes.user.data.attributes
-          .photo.data.attributes.url
+    toggleSelection(reservation) {
+      // Vérifie si le partner est déjà sélectionné
+      const index = this.selectedReservations.findIndex(
+        (c) => c.id === reservation.id
       );
-    },
-    getCustomerName(reservation) {
-      return (
-        reservation &&
-        reservation.attributes &&
-        reservation.attributes.customer &&
-        reservation.attributes.customer.data &&
-        reservation.attributes.customer.data.attributes &&
-        reservation.attributes.customer.data.attributes.name
-      );
-    },
-    getStatusClass(status) {
-      switch (status) {
-        case "Pending":
-          return "badge text-outline-warning";
-        case "Confirmed":
-          return "badge text-outline-success";
-        case "Canceled":
-          return "badge text-outline-danger";
-        default:
-          return "badge";
+
+      if (index !== -1) {
+        // Si le client est déjà sélectionné, le retire de la liste des clients sélectionnés
+        this.selectedReservations.splice(index, 1);
+      } else {
+        // Sinon, l'ajoute à la liste des clients sélectionnés
+        this.selectedReservations.push(reservation);
       }
+
+      // Met à jour le compteur de clients sélectionnés
+      this.selectedCount = this.selectedReservations.length;
     },
-    async fetchReservationsData() {
-      try {
-        const data = await fetchReservations();
-        this.reservations = data.data;
-      } catch (error) {
-        swal({
-          text: "Error fetching reservations, please try again",
-          closeOnClickOutside: false,
-          dangerMode: true,
-        });
-      }
-    },
-    selectAllReservations() {
-      this.selectAllChecked = !this.selectAllChecked;
+    async deSelectAllReservations() {
+      this.selectedReservations = [];
       this.selectedCount = 0;
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = this.selectAllChecked;
-        if (checkbox.checked) {
-          this.selectedCount++;
-        } else {
-          this.selectedCount--;
-        }
+    },
+    async selectAllReservations() {
+      this.isLoading = true;
+      await this.fetchAllReservationsWithoutPagination();
+      // Sélectionne tous les events de la page actuelle s'ils ne sont pas déjà sélectionnés
+      this.getAllReservationsWithoutPagination.forEach((reservation) => {
+        this.selectedReservations.push(reservation);
       });
+      this.isLoading = false;
+      // Met à jour le compteur
+      this.selectedCount = this.selectedReservations.length;
     },
     deleteSelectedReservations() {
-      const selectedReservations = [];
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach((checkbox, index) => {
-        if (checkbox.checked) {
-          if (this.getAllReservations && this.getAllReservations[index]) {
-            selectedReservations.push(this.getAllReservations[index].id);
-          }
-        }
-      });
-
-      if (selectedReservations.length === 0) {
+      if (this.selectedReservations.length === 0) {
         swal("Please select at least one reservation to delete.");
         return;
       }
+      const selectedEventsIds = this.selectedReservations.map(
+        (reservation) => reservation.id
+      );
 
       swal({
         title: "Are you sure?",
@@ -834,7 +774,7 @@ export default {
         if (willDelete) {
           // Call the deleteEvent action or API endpoint to delete the selected events
           await Promise.all(
-            selectedReservations.map((id) => this.deleteReservation(id))
+            selectedEventsIds.map((id) => this.deleteReservation(id))
           );
           swal("Selected events have been deleted!", {});
         }
@@ -866,16 +806,6 @@ export default {
 
     closeModal() {
       this.ModalVisible = false;
-    },
-    showDetail(reservation) {
-      // this.ModalVisible = true;
-      const reservationId = reservation.id;
-      this.$router.push({
-        name: "ReservationDetailsPage",
-        params: { reservationId },
-      });
-
-      this.reserveData = reservation;
     },
     async acceptReservation(reservation) {
       const updatedData = {

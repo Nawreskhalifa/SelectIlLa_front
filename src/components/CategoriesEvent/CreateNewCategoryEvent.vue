@@ -1,11 +1,17 @@
 <template>
-  <div class="card mb-25 border-0 rounded-0 bg-white create-new-project-box" id="createNewCategoryBox">
+  <div
+    class="card mb-25 border-0 rounded-0 bg-white create-new-project-box"
+    id="createNewCategoryBox"
+  >
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
       <form @submit.prevent="createNewCategory" id="createNewCategoryForm">
         <div class="row">
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10" for="categoryName">
+              <label
+                class="d-block text-black fw-semibold mb-10"
+                for="categoryName"
+              >
                 Category Name
               </label>
               <input
@@ -20,7 +26,10 @@
           </div>
           <div class="col-md-12">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10" for="categoryDescription">
+              <label
+                class="d-block text-black fw-semibold mb-10"
+                for="categoryDescription"
+              >
                 Category Description
               </label>
               <div class="mb-0">
@@ -98,7 +107,6 @@ export default defineComponent({
           undefined,
           undefined
         );
-        console.log(response);
         if (response.success) {
           swal({
             text: "Category already exists!",
@@ -117,7 +125,10 @@ export default defineComponent({
           this.description = "";
         }
       } catch (error: any) {
-        console.log(error);
+        swal({
+          text: "error!",
+          closeOnClickOutside: false,
+        });
       }
     },
   },

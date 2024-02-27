@@ -482,34 +482,8 @@ export default defineComponent({
   async mounted() {
     this.storageUrl = storageUrl;
     if (this.$route.params && this.$route.params.idEvent) {
-      console.log("ddd", this.$route.params.idEvent);
       await this.fetchOneEvent(this.$route.params.idEvent);
-      console.log(this.getEvent);
     }
-    // Initialiser le slider Swiper après que les images de l'événement ont été chargées
-    // this.swiper = new Swiper(".swiper-container", {
-    //   loop: false,
-    //   pagination: {
-    //     el: ".swiper-pagination",
-    //     clickable: true,
-    //   },
-    //   allowTouchMove: false,
-    //   on: {
-    //     slideChange: () => {
-    //       const bullets = document.querySelectorAll(
-    //         ".swiper-pagination-bullet"
-    //       );
-    //       const activeIndex = this.swiper.realIndex;
-    //       bullets.forEach((bullet, index) => {
-    //         if (index === activeIndex) {
-    //           bullet.classList.add("swiper-pagination-bullet-active");
-    //         } else {
-    //           bullet.classList.remove("swiper-pagination-bullet-active");
-    //         }
-    //       });
-    //     },
-    //   },
-    // });
   },
 });
 </script>

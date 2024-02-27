@@ -136,7 +136,6 @@ export default {
   async mounted() {
     if (this.$route.params && this.$route.params.idCategoryEvent) {
       await this.fetchOneCategoryEvent(this.$route.params.idCategoryEvent);
-      console.log(this.getCategoryEvent.id);
     }
   },
 };

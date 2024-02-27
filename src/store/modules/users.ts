@@ -655,7 +655,6 @@ const actions = {
                 undefined,
                 undefined
             );
-            console.log(response.data)
             commit("SET_RESERVATION", response.data.data);
             commit('SET_USERS_LOADING', false);
         } catch (error: any) {

@@ -542,7 +542,6 @@ export default defineComponent({
           undefined
         );
         if (response.success) {
-          console.log(response);
           this.isLoading = false;
 
           await this.addEvent(response.data.data);
@@ -592,7 +591,6 @@ export default defineComponent({
     this.currentTime = `${hours}:${minutes}`;
     this.currentDate = `${year}-${month}-${day}`;
     // Initialise startDate avec la date actuelle
-    console.log(this.currentDate);
   },
 });
 </script>

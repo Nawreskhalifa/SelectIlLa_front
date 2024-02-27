@@ -643,7 +643,6 @@ export default defineComponent({
           })
         );
       }
-      console.log(this.getEvent);
       this.price = this.getEvent.price;
       this.location = this.getEvent.location;
       this.startDate = this.getEvent.startDate;
@@ -664,7 +663,6 @@ export default defineComponent({
       this.isLoading = false;
     }
     this.isLoading = true;
-    console.log(this.startDate);
 
     await this.fetchAllCategoriesEvent({ page: null });
     await this.fetchAllPartners({page:null});
