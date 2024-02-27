@@ -61,13 +61,12 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Date of Birth
               </label>
-              <input
+              <flat-pickr
                 v-model="datofbirth"
-                type="date"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. EnvyTheme Software"
-                required
-                :max="getCurrentDate()"
+                class="form-control shadow-none text-black fs-md-15 lg-5"
+                placeholder="Date of birth"
+                name="datofbirth"
+                :config="{ maxDate: getCurrentDate() }"
               />
               <p v-if="formSubmitted && !dateOfBirth" class="text-danger">
                 Date of birth is required
@@ -287,6 +286,7 @@ import "vue-loading-overlay/dist/css/index.css";
 import { makeApiRequest } from "../../../services/apiService";
 import { methodsHttpNames } from "../../../utils/methods";
 import { endPoints } from "../../../utils/endPoints";
+import flatPickr from "vue-flatpickr-component";
 
 import swal from "sweetalert";
 
@@ -301,6 +301,7 @@ export default defineComponent({
   name: "AddUser",
   components: {
     Loading,
+    flatPickr,
   },
   data() {
     return {
@@ -391,7 +392,6 @@ export default defineComponent({
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
     async addUser() {
-
       this.formSubmitted = true;
       this.isLoading = true;
       try {

@@ -69,15 +69,16 @@
               <label class="d-block text-black fw-semibold mb-10">
                 Date of Birth
               </label>
-              <input
+              <flat-pickr
                 v-model="datofbirth"
-                type="date"
-                class="form-control shadow-none rounded-0 text-black"
-                placeholder="e.g. EnvyTheme Software"
+                class="form-control shadow-none text-black fs-md-15 lg-5"
+                placeholder="Date of birth"
+                name="datofbirth"
+                :disabled="true"
                 required
-                :max="getCurrentDate()"
-                disabled
+                :config="{ maxDate: getCurrentDate() }"
               />
+
               <p v-if="formSubmitted && !dateOfBirth" class="text-danger">
                 Date of birth is required
               </p>
@@ -301,6 +302,7 @@ import "vue-loading-overlay/dist/css/index.css";
 import { storageUrl } from "../../../utils/constants";
 import { mapActions, mapGetters } from "vuex";
 import BreadCrumb from "../../Common/BreadCrumb.vue";
+import flatPickr from "vue-flatpickr-component";
 
 import {
   getRole,
@@ -315,6 +317,7 @@ export default defineComponent({
   components: {
     Loading,
     BreadCrumb,
+    flatPickr,
   },
   data() {
     return {
