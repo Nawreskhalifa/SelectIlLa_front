@@ -896,9 +896,6 @@ export default defineComponent({
       });
       this.isLoading = false;
     },
-    onCancel() {
-      console.log("User cancelled the loader.");
-    },
   },
   computed: {
     ...mapGetters([

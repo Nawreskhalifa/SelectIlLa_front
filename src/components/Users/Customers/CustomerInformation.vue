@@ -116,7 +116,6 @@
     <loading
       v-model:active="getUsersLoading"
       :can-cancel="true"
-      :on-cancel="onCancel"
       :is-full-page="true"
     />
   </div>
@@ -148,9 +147,6 @@ export default {
   },
   methods: {
     ...mapActions(["fetchOneCustomer"]),
-    onCancel() {
-      console.log("User cancelled the loader.");
-    },
   },
   computed: {
     ...mapGetters(["getCustomer","getUsersLoading",]),

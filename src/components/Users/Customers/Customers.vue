@@ -378,7 +378,7 @@ export default defineComponent({
       sortDirectionLoc: "asc",
       selectedCount: 0,
       isLoading: false,
-      perPage: 2,
+      perPage: 4,
       activeFilter: "All",
       nbResults: 0,
       selectedCustomers: [],
@@ -436,9 +436,7 @@ export default defineComponent({
       }
       return `${year}-${month}-${day}`;
     },
-    onCancel() {
-      console.log("User cancelled the loader.");
-    },
+
     async handleFilterChange() {
       this.isLoading = true;
 
