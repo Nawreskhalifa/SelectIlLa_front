@@ -4,6 +4,10 @@
     <div
       class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-20 p-md-25 p-lg-30"
     >
+      <h6 v-if="selectedCount > 0">
+        {{ selectedCount }}
+        {{ selectedCount === 1 ? "item" : "items" }} selected
+      </h6>
       <div class="d-flex align-items-center">
         <form
           class="search-box position-relative"
@@ -62,11 +66,23 @@
               @click="selectAllCategories"
             >
               <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
-              {{ selectAllChecked ? "Deselect All" : "Select All" }}
+              {{ "Select All" }}
             </a>
           </li>
           <li>
             <a
+              :class="{ disabled: selectedCount === 0 }"
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="deSelectAllCategories"
+            >
+              <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
+              {{ "Deselect All" }}
+            </a>
+          </li>
+          <li>
+            <a
+              :class="{ disabled: selectedCount === 0 }"
               class="dropdown-item d-flex align-items-center"
               href="javascript:void(0);"
               @click.prevent="deleteSelectedCategories"
@@ -121,6 +137,8 @@
                     <input
                       class="form-check-input shadow-none"
                       type="checkbox"
+                      :checked="isCategorySelected(category.id)"
+                      @change="toggleSelection(category)"
                     />
                   </div>
                   {{ category.name }}
@@ -142,18 +160,6 @@
                     <i class="flaticon-dots"></i>
                   </button>
                   <ul class="dropdown-menu">
-                    <!-- <li>
-                      <a
-                        class="dropdown-item d-flex align-items-center"
-                        @click.prevent="
-                          navigateToCategoryDetailPage(category.id)
-                        "
-                        ><i
-                          class="flaticon-view lh-1 me-8 position-relative top-1"
-                        ></i>
-                        View</a
-                      >
-                    </li> -->
                     <li>
                       <a
                         class="dropdown-item d-flex align-items-center"
@@ -268,6 +274,8 @@ export default defineComponent({
       modalMessage: "",
       categoryIdToDelete: null, // Ajoutez la propriété pour stocker l'ID de la catégorie à supprimer
       messageType: "delete",
+      selectedCategories: [],
+      selectedCount: 0,
     };
   },
   methods: {
@@ -275,7 +283,30 @@ export default defineComponent({
       "fetchAllCategoriesEvent",
       "deleteCategoryEvent",
       "getCategoriesLoading",
+      "fetchAllCategoriesEventWithoutPagination",
     ]),
+    isCategorySelected(categoryId) {
+      return this.selectedCategories.some(
+        (category) => category.id === categoryId
+      );
+    },
+    toggleSelection(category) {
+      // Vérifie si le client est déjà sélectionné
+      const index = this.selectedCategories.findIndex(
+        (c) => c.id === category.id
+      );
+
+      if (index !== -1) {
+        // Si le client est déjà sélectionné, le retire de la liste des clients sélectionnés
+        this.selectedCategories.splice(index, 1);
+      } else {
+        // Sinon, l'ajoute à la liste des clients sélectionnés
+        this.selectedCategories.push(category);
+      }
+
+      // Met à jour le compteur de clients sélectionnés
+      this.selectedCount = this.selectedCategories.length;
+    },
     async toggleSortDirection() {
       // Basculer entre ascendant et descendant
       this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
@@ -288,17 +319,13 @@ export default defineComponent({
       });
     },
     deleteSelectedCategories() {
-      const selectedCategories = [];
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach((checkbox, index) => {
-        if (checkbox.checked) {
-          if (this.getCategoriesEvent && this.getCategoriesEvent[index]) {
-            // Add null check
-            selectedCategories.push(this.getCategoriesEvent[index].id);
-          }
-        }
-      });
-
+      if (this.selectedCategories.length === 0) {
+        swal("Please select at least one category to delete.");
+        return;
+      }
+      const selectedCategoriesIds = this.selectedCategories.map(
+        (category) => category.id
+      );
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover these categories!",
@@ -308,7 +335,7 @@ export default defineComponent({
         if (willDelete) {
           // Call the deleteCustomer action or API endpoint to delete the selected customers
           await Promise.all(
-            selectedCategories.map((id) => this.deleteCategoryEvent(id))
+            selectedCategoriesIds.map((id) => this.deleteCategoryEvent(id))
           );
           // After deletion, fetch customers again to update the list
           this.currentPage = 1;
@@ -321,12 +348,20 @@ export default defineComponent({
         }
       });
     },
-    selectAllCategories() {
-      this.selectAllChecked = !this.selectAllChecked;
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = this.selectAllChecked;
+    async deSelectAllCategories() {
+      this.selectedCategories = [];
+      this.selectedCount = 0;
+    },
+    async selectAllCategories() {
+      this.isLoading = true;
+      await this.fetchAllCategoriesEventWithoutPagination();
+      // Sélectionne tous les events de la page actuelle s'ils ne sont pas déjà sélectionnés
+      this.getAllCategoriesEvent.forEach((event) => {
+        this.selectedCategories.push(event);
       });
+      this.isLoading = false;
+      // Met à jour le compteur
+      this.selectedCount = this.selectedCategories?.length;
     },
     async handleSearch() {
       await this.fetchAllCategoriesEvent({
@@ -390,14 +425,6 @@ export default defineComponent({
         });
       }
     },
-    // navigateToCategoryDetailPage(idCategoryEvent) {
-    //   if (idCategoryEvent !== null && idCategoryEvent !== undefined) {
-    //     this.$router.push({
-    //       name: "CategoryEventDetails",
-    //       params: { idCategoryEvent: idCategoryEvent },
-    //     });
-    //   }
-    // },
     async deleteCategory(id) {
       this.showModal = true;
       this.modalMessage = "Are you sure you want to delete this category?";
@@ -423,6 +450,7 @@ export default defineComponent({
       "getCategoriesEvent",
       "getTotalPages",
       "getTotalItems",
+      "getAllCategoriesEvent",
     ]),
   },
   async mounted() {

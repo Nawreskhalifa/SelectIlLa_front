@@ -2,6 +2,7 @@ import { decodeApiToEventCategory } from '@/models/EventCategory/EventCategory'
 import { makeApiRequest } from '@/services/apiService'
 import { endPoints } from '@/utils/endPoints'
 import { methodsHttpNames } from '@/utils/methods'
+import { unref } from 'vue'
 
 const state = {
     categoriesError: null,
@@ -10,11 +11,15 @@ const state = {
     categoryEvent: null,
     totalPages: 1,
     totalItems: 0,
+    allCategoriesEvent: [],
+
+
 }
 const getters = {
     getCategoriesError: state => state.categoriesError,
     getCategoriesLoading: state => state.categoriesLoading,
     getCategoriesEvent: state => state.categoriesEvent,
+    getAllCategoriesEvent: state => state.allCategoriesEvent,
     getCategoryEvent: state => state.categoryEvent,
     getTotalPages: state => state.totalPages,
     getTotalItems: (state) => state.totalItems,
@@ -36,6 +41,9 @@ const mutations = {
     },
     SET_CATEGORIES(state, payload) {
         state.categoriesEvent = payload
+    },
+    SET_ALL_CATEGORIES(state, payload) {
+        state.allCategoriesEvent = payload
     },
     REMOVE_CATEGORY(state, id) {
         state.categoriesEvent = state.categoriesEvent.filter(category => category.id != id)
@@ -74,6 +82,39 @@ const actions = {
                     data: decodeApiToEventCategory(response.data.data)
                 })
                 commit('SET_CATEGORIES_LOADING')
+            }
+
+        } catch (error: any) {
+            commit('SET_CATEGORIES_LOADING')
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_CATEGORIES_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_CATEGORIES_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+    async fetchAllCategoriesEventWithoutPagination({ commit }) {
+        commit('SET_CATEGORIES_LOADING', true)
+        commit('SET_CATEGORIES_ERROR')
+        try {
+
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                endPoints.allCategoriesEvent,
+                undefined,
+                undefined
+            );
+            if (response.success) {
+                commit('SET_ALL_CATEGORIES', response.data.data)
+                commit('SET_CATEGORIES_LOADING', false)
+
             }
 
         } catch (error: any) {

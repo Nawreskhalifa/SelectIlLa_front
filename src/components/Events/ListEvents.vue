@@ -544,19 +544,8 @@ export default {
         this.selectedEvents.push(event);
       });
       this.isLoading = false;
-      // Met à jour le compteur de clients sélectionnés
+      // Met à jour le compteur
       this.selectedCount = this.selectedEvents.length;
-      // this.selectAllChecked = !this.selectAllChecked;
-      // this.selectedCount = 0;
-      // const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      // checkboxes.forEach((checkbox) => {
-      //   checkbox.checked = this.selectAllChecked;
-      //   if (checkbox.checked) {
-      //     this.selectedCount++;
-      //   } else {
-      //     this.selectedCount--;
-      //   }
-      // });
     },
     async onPageChange(pageNumber) {
       this.isLoading = true;
