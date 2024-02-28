@@ -1,0 +1,478 @@
+<template>
+  <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing"></div>
+  <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
+    <div
+      class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-20 p-md-25 p-lg-30"
+    >
+      <h6 v-if="selectedCount > 0">
+        {{ selectedCount }}
+        {{ selectedCount === 1 ? "item" : "items" }} selected
+      </h6>
+      <div class="d-flex align-items-center">
+        <form
+          class="search-box position-relative"
+          @submit.prevent="handleSearch"
+        >
+          <input
+            type="text"
+            class="form-control shadow-none rounded-0 border-0 pr-40"
+            placeholder="Search here"
+            style="width: calc(100% - 40px)"
+            v-model="searchText"
+            @input="handleSearch"
+          />
+          <button
+            class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-3 pe-md-3 rounded-1 fs-md-15 fs-lg-16 bg-primary"
+            type="submit"
+            style="
+              position: absolute;
+              right: 0;
+              top: 50%;
+              transform: translateY(-50%);
+            "
+            :disabled="getCategoriesLoading"
+          >
+            Search
+
+            <i
+              class="flaticon-search-interface-symbol position-relative ms-5 top-1"
+            ></i>
+          </button>
+        </form>
+      </div>
+      <div class="d-sm-flex align-items-center mt-10 mt-lg-0">
+        <router-link
+          to="/create-new-category-event"
+          class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 fs-lg-16 d-inline-block d-inline-block text-decoration-none"
+        >
+          Add New Category
+          <i class="flaticon-plus position-relative ms-5 fs-12"></i>
+        </router-link>
+      </div>
+      <div class="dropdown mt-10 mt-sm-0 ms-sm-10">
+        <button
+          class="dropdown-toggle card-dot-btn lh-1 position-relative top-4 bg-transparent border-0 shadow-none p-0 transition"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="flaticon-dots"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="selectAllCategories"
+            >
+              <i class="fas fa-check lh-1 me-8 position-relative top-1"></i>
+              {{ "Select All" }}
+            </a>
+          </li>
+          <li>
+            <a
+              :class="{ disabled: selectedCount === 0 }"
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click="deSelectAllCategories"
+            >
+              <i class="fas fa-close lh-1 me-8 position-relative top-1"></i>
+              {{ "Deselect All" }}
+            </a>
+          </li>
+          <li>
+            <a
+              :class="{ disabled: selectedCount === 0 }"
+              class="dropdown-item d-flex align-items-center"
+              href="javascript:void(0);"
+              @click.prevent="deleteSelectedCategories"
+            >
+              <i class="flaticon-delete lh-1 me-8 position-relative top-1"></i>
+              Delete Selected
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="card-body p-15 p-sm-20 p-md-25">
+      <div class="table-responsive">
+        <table class="table text-nowrap align-middle mb-0">
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
+                @click="toggleSortDirection"
+              >
+                Category Name
+                <span v-if="sortDirection === 'asc'" class="arrow-up"></span>
+                <span v-if="sortDirection === 'desc'" class="arrow-down"></span>
+              </th>
+
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+              >
+                Description
+              </th>
+
+              <th
+                scope="col"
+                class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="category in getCategoriesEvent"
+              :key="category.id"
+              @click="navigateToCategoryDetailPage(category?.id, $event)"
+              style="cursor: pointer"
+            >
+              <td class="shadow-none lh-1 fw-medium text-paragraph">
+                <div class="d-flex align-items-center">
+                  <div class="form-check mb-0">
+                    <input
+                      class="form-check-input shadow-none"
+                      type="checkbox"
+                      :checked="isCategorySelected(category.id)"
+                      @change="toggleSelection(category)"
+                    />
+                  </div>
+                  {{ category.name }}
+                </div>
+              </td>
+              <td class="shadow-none lh-1 fw-medium text-paragraph">
+                {{ truncateDescription(category.description) }}
+              </td>
+              <td
+                class="shadow-none lh-1 fw-medium text-paragraph text-end pe-0"
+              >
+                <div class="dropdown">
+                  <button
+                    class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i class="flaticon-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        @click.prevent="navigateToEditCategoryPage(category.id)"
+                        ><i
+                          class="flaticon-pen lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Edit</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center"
+                        @click="deleteCategory(category.id)"
+                        ><i
+                          class="flaticon-delete lh-1 me-8 position-relative top-1"
+                        ></i>
+                        Delete</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div
+        class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
+      >
+        <p class="mb-0 text-paragraph">
+          Showing
+          <span class="fw-bold">{{ getCategoriesEvent.length }}</span> out of
+          <span class="fw-bold">{{ getTotalItems }}</span> results
+        </p>
+        <nav class="mt-15 mt-md-0">
+          <ul class="pagination mb-0">
+            <li class="page-item" :class="{ disabled: currentPage === 1 }">
+              <a
+                class="page-link"
+                href="#"
+                aria-label="Previous"
+                @click="currentPage !== 1 && onPageChange(currentPage - 1)"
+              >
+                <i class="flaticon-chevron-1"></i>
+              </a>
+            </li>
+            <li
+              class="page-item"
+              v-for="page in getTotalPages"
+              :key="page"
+              :class="{ active: page === currentPage }"
+            >
+              <a class="page-link" href="#" @click="onPageChange(page)">{{
+                page
+              }}</a>
+            </li>
+            <li
+              class="page-item"
+              :class="{ disabled: currentPage === getTotalPages }"
+            >
+              <a
+                class="page-link"
+                href="#"
+                aria-label="Next"
+                @click="
+                  currentPage !== getTotalPages && onPageChange(currentPage + 1)
+                "
+              >
+                <i class="flaticon-chevron"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <loading
+      v-model:active="getCategoriesLoading"
+      :can-cancel="true"
+      :is-full-page="true"
+    />
+    <CustomModal
+      :show="showModal"
+      :msg="modalMessage"
+      :messageType="messageType"
+      @action="handleModalAction"
+      @close="showModal = false"
+    />
+  </div>
+</template>
+
+<script>
+import swal from "sweetalert";
+import { defineComponent } from "vue";
+import { mapActions, mapGetters } from "vuex";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
+import CustomModal from "../Common/CustomModal.vue";
+export default defineComponent({
+  name: "CategoriesEventList",
+  components: {
+    Loading,
+    CustomModal,
+  },
+  data() {
+    return {
+      currentPage: 1,
+      searchText: "",
+      selectAllChecked: false,
+      sortDirection: "asc",
+      showModal: false,
+      modalMessage: "",
+      categoryIdToDelete: null, // Ajoutez la propriété pour stocker l'ID de la catégorie à supprimer
+      messageType: "delete",
+      selectedCategories: [],
+      selectedCount: 0,
+    };
+  },
+  methods: {
+    ...mapActions([
+      "fetchAllCategoriesEvent",
+      "deleteCategoryEvent",
+      "getCategoriesLoading",
+      "fetchAllCategoriesEventWithoutPagination",
+    ]),
+    isCategorySelected(categoryId) {
+      return this.selectedCategories.some(
+        (category) => category.id === categoryId
+      );
+    },
+    toggleSelection(category) {
+      // Vérifie si le client est déjà sélectionné
+      const index = this.selectedCategories.findIndex(
+        (c) => c.id === category.id
+      );
+
+      if (index !== -1) {
+        // Si le client est déjà sélectionné, le retire de la liste des clients sélectionnés
+        this.selectedCategories.splice(index, 1);
+      } else {
+        // Sinon, l'ajoute à la liste des clients sélectionnés
+        this.selectedCategories.push(category);
+      }
+
+      // Met à jour le compteur de clients sélectionnés
+      this.selectedCount = this.selectedCategories.length;
+    },
+    async toggleSortDirection() {
+      // Basculer entre ascendant et descendant
+      this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      // Appeler handleFilterChange pour appliquer le nouveau tri
+      await this.fetchAllCategoriesEvent({
+        page: this.currentPage,
+        perPage: 4,
+        name: this.searchText,
+        sortDirectionName: this.sortDirection,
+      });
+    },
+    deleteSelectedCategories() {
+      if (this.selectedCategories.length === 0) {
+        swal("Please select at least one category to delete.");
+        return;
+      }
+      const selectedCategoriesIds = this.selectedCategories.map(
+        (category) => category.id
+      );
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover these categories!",
+        dangerMode: true,
+        buttons: ["Cancel", "Delete"],
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          // Call the deleteCustomer action or API endpoint to delete the selected customers
+          await Promise.all(
+            selectedCategoriesIds.map((id) => this.deleteCategoryEvent(id))
+          );
+          // After deletion, fetch customers again to update the list
+          this.currentPage = 1;
+
+          await this.fetchAllCategoriesEvent({
+            page: this.currentPage,
+            perPage: 4,
+          });
+          swal("Selected categories have been deleted!", {});
+        }
+      });
+    },
+    async deSelectAllCategories() {
+      this.selectedCategories = [];
+      this.selectedCount = 0;
+    },
+    async selectAllCategories() {
+      this.isLoading = true;
+      await this.fetchAllCategoriesEventWithoutPagination();
+      // Sélectionne tous les events de la page actuelle s'ils ne sont pas déjà sélectionnés
+      this.getAllCategoriesEvent.forEach((event) => {
+        this.selectedCategories.push(event);
+      });
+      this.isLoading = false;
+      // Met à jour le compteur
+      this.selectedCount = this.selectedCategories?.length;
+    },
+    async handleSearch() {
+      await this.fetchAllCategoriesEvent({
+        page: this.currentPage,
+        perPage: 4,
+        name: this.searchText,
+      });
+    },
+    async onPageChange(pageNumber) {
+      this.currentPage = pageNumber;
+      await this.fetchAllCategoriesEvent({ page: pageNumber, perPage: 4 });
+    },
+    truncateDescription(description) {
+      const maxLength = 80;
+      if (description.length <= maxLength) {
+        return description;
+      } else {
+        return description.slice(0, maxLength) + "...";
+      }
+    },
+    navigateToEditCategoryPage(idCategoryEvent) {
+      if (idCategoryEvent !== null && idCategoryEvent !== undefined) {
+        this.$router.push({
+          name: "EditCategoryEventPage",
+          params: { idCategoryEvent: idCategoryEvent },
+        });
+      }
+    },
+    navigateToCategoryDetailPage(idCategoryEvent, event) {
+      if (
+        event.target.tagName.toLowerCase() === "input" ||
+        event.target.classList.contains("dropdown-toggle")
+      ) {
+        // Si l'utilisateur a cliqué sur une case à cocher ou un dropdown, arrêtez ici
+        return;
+      }
+
+      // Vérifiez si l'utilisateur a cliqué sur un lien ou un élément qui n'est pas un dropdown
+      const isLinkOrNonDropdownClicked =
+        event.target.tagName.toLowerCase() === "a" ||
+        !event.target.closest(".dropdown");
+      // Ajoutez des conditions supplémentaires pour traiter les actions Delete, View et Edit
+      const dropdownItemClicked = event.target.closest(".dropdown-item");
+      if (dropdownItemClicked) {
+        const action = dropdownItemClicked.getAttribute("data-action");
+        if (action === "delete") {
+          // Traitement de l'action de suppression
+          this.deleteCategory(idCategoryEvent);
+          return;
+        } else if (action === "edit") {
+          // Traitement de l'action d'édition
+          this.navigateToEditCategoryPage(idCategoryEvent);
+          return;
+        }
+      }
+      if (isLinkOrNonDropdownClicked && !dropdownItemClicked) {
+        // Si l'utilisateur a cliqué sur un lien ou un élément non dropdown, effectuez la redirection
+        this.$router.push({
+          name: "CategoryEventDetails",
+          params: { idCategoryEvent: idCategoryEvent },
+        });
+      }
+    },
+    async deleteCategory(id) {
+      this.showModal = true;
+      this.modalMessage = "Are you sure you want to delete this category?";
+      this.categoryIdToDelete = id;
+    },
+    async handleModalAction(confirmed) {
+      // Fermer la modal
+      this.showModal = false;
+      // Vérifier si l'utilisateur a confirmé
+      if (confirmed) {
+        // Appeler la méthode de suppression de la catégorie ici
+        // Utilisez this.categoryIdToDelete pour obtenir l'ID de la catégorie à supprimer
+        await this.deleteCategoryEvent(this.categoryIdToDelete);
+        // Suppression confirmée, afficher un message de succès
+        this.$emit("categoryDeleted");
+      }
+    },
+  },
+  computed: {
+    ...mapGetters([
+      "getCategoriesError",
+      "getCategoriesLoading",
+      "getCategoriesEvent",
+      "getTotalPages",
+      "getTotalItems",
+      "getAllCategoriesEvent",
+    ]),
+  },
+  async mounted() {
+    await this.fetchAllCategoriesEvent({ page: this.currentPage, perPage: 4 });
+  },
+});
+</script>
+<style scoped>
+.event-card {
+  /* Default box shadow */
+  transition: box-shadow 0.4s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.arrow-up::before {
+  content: "\25B2"; /* Code Unicode pour la flèche vers le haut */
+}
+
+.arrow-down::before {
+  content: "\25BC"; /* Code Unicode pour la flèche vers le bas */
+}
+.event-card:hover {
+  /* Box shadow on hover */
+  box-shadow: 0 8px 12px #7d6ff0;
+}
+</style>

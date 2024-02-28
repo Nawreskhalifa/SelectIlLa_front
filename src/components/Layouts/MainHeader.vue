@@ -1,5 +1,6 @@
 <template>
   <header
+  style="position: fixed; top: 2px;"
     :class="[
       'header-area bg-white text-center text-md-start pt-15 pb-15 ps-15 pe-15 ps-md-20 pe-md-20 pe-lg-30 transition mb-25 position-fixed',
       { sticky: isSticky },
@@ -14,11 +15,11 @@
           <button
             class="header-burger-menu transition position-relative lh-1 bg-transparent p-0 border-0"
             id="header-burger-menu"
-            @click="stateStoreInstance.onChange"
+            @click="updateOpen"
           >
             <i class="flaticon-menu-3"></i>
           </button>
-          <form class="search-box">
+          <!-- <form class="search-box">
             <div class="input-group">
               <input
                 type="text"
@@ -35,107 +36,15 @@
                 ></i>
               </button>
             </div>
-          </form>
+          </form> -->
         </div>
       </div>
       <div class="col-xl-8 col-lg-7 col-md-6">
         <div
           class="header-right-side d-flex align-items-center justify-content-center justify-content-md-end"
         >
-          <div class="dropdown language-dropdown">
-            <button
-              class="dropdown-toggle fw-medium position-relative pt-0 pb-0 bg-transparent border-0 transition lh-1"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <i class="flaticon-translate"></i>
-              ENG
-            </button>
-            <div
-              class="dropdown-menu rounded-0 bg-white border-0 start-auto end-0"
-            >
-              <div
-                class="title d-flex align-items-center justify-content-between"
-              >
-                <span class="text-black fw-bold">Choose Language</span>
-              </div>
-              <ul class="ps-0 mb-0 list-unstyled dropdown-body">
-                <li class="position-relative fw-semibold text-black-emphasis">
-                  <img
-                    src="../../assets/images/flag/usa.png"
-                    width="30"
-                    height="30"
-                    class="rounded-circle position-absolute"
-                    alt="flag"
-                  />
-                  English
-                  <a
-                    href="#"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></a>
-                </li>
-                <li class="position-relative fw-semibold text-black-emphasis">
-                  <img
-                    src="../../assets/images/flag/australia.png"
-                    width="30"
-                    height="30"
-                    class="rounded-circle position-absolute"
-                    alt="flag"
-                  />
-                  Australian
-                  <a
-                    href="#"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></a>
-                </li>
-                <li class="position-relative fw-semibold text-black-emphasis">
-                  <img
-                    src="../../assets/images/flag/spain.png"
-                    width="30"
-                    height="30"
-                    class="rounded-circle position-absolute"
-                    alt="flag"
-                  />
-                  Spanish
-                  <a
-                    href="#"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></a>
-                </li>
-                <li class="position-relative fw-semibold text-black-emphasis">
-                  <img
-                    src="../../assets/images/flag/france.png"
-                    width="30"
-                    height="30"
-                    class="rounded-circle position-absolute"
-                    alt="flag"
-                  />
-                  French
-                  <a
-                    href="#"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></a>
-                </li>
-                <li class="position-relative fw-semibold text-black-emphasis">
-                  <img
-                    src="../../assets/images/flag/germany.png"
-                    width="30"
-                    height="30"
-                    class="rounded-circle position-absolute"
-                    alt="flag"
-                  />
-                  German
-                  <a
-                    href="#"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></a>
-                </li>
-              </ul>
-            </div>
-          </div>
           <LightDarkSwtichBtn />
-          <div class="dropdown apps-dropdown">
+          <!-- <div class="dropdown apps-dropdown">
             <button
               class="dropdown-toggle p-0 position-relative bg-transparent border-0 transition lh-1"
               type="button"
@@ -232,7 +141,7 @@
                 </li>
               </ul>
             </div>
-          </div>
+          </div> -->
           <div class="dropdown email-dropdown">
             <button
               class="dropdown-toggle p-0 position-relative bg-transparent border-0 transition lh-1"
@@ -446,8 +355,13 @@
                 height="44"
                 alt="admin"
               />
-              <span class="title d-none d-lg-block ms-10 ms-lg-15">
-                <span class="d-block fw-bold mb-5 mb-md-8">Victor James</span>
+              <span
+                class="title d-none d-lg-block ms-10 ms-lg-15"
+                v-if="getCurrentUser && getCurrentUser.username"
+              >
+                <span class="d-block fw-bold mb-5 mb-md-8">{{
+                  getCurrentUser.username
+                }}</span>
                 <span class="text-body-emphasis fw-semibold fs-13">Admin</span>
               </span>
             </button>
@@ -487,13 +401,10 @@
                 </li>
                 <li
                   class="text-body-secondary fw-semibold transition position-relative"
+                  @click="logout"
                 >
                   <i class="flaticon-logout"></i>
                   Logout
-                  <router-link
-                    to="/logout"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></router-link>
                 </li>
               </ul>
             </div>
@@ -504,31 +415,39 @@
   </header>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent, ref, onMounted } from "vue";
+
 import LightDarkSwtichBtn from "./LightDarkSwtichBtn.vue";
 import stateStore from "../../utils/store";
+import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "MainHeader",
   components: {
     LightDarkSwtichBtn,
   },
-  setup() {
-    const stateStoreInstance = stateStore;
-    const isSticky = ref(false);
-
-    onMounted(() => {
-      window.addEventListener("scroll", () => {
-        let scrollPos = window.scrollY;
-        isSticky.value = scrollPos >= 100;
-      });
-    });
-
+  data() {
     return {
-      isSticky,
-      stateStoreInstance,
+      currentUser: null,
+      router: useRouter(),
     };
+  },
+  methods: {
+    ...mapMutations(["SET_LOG_OUT", "updateOpen"]),
+    async logout() {
+      await localStorage.clear();
+      await this.$router.push({ name: "LoginPage" });
+    },
+
+    // ...mapActions(["fetchCurrentUser"]),
+  },
+  computed: {
+    ...mapGetters(["getCurrentUser"]),
+  },
+  async mounted() {
+    //  await this.fetchCurrentUser()
   },
 });
 </script>

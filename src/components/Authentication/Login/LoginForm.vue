@@ -1,14 +1,14 @@
 <template>
-  <div class="row justify-content-center">
-    <div class="col-md-10 col-lg-8 col-xl-9 col-xxl-8 col-xxxl-6">
-      <div class="card mb-25 border-0 rounded-0 bg-white authentication-card">
+  <div class="container" id="loginContainer">
+    <div class="center-container">
+      <div class="card mb-25 border-0 rounded-0 bg-white authentication-card" id="authenticationCard">
         <div class="card-body letter-spacing">
-          <h4 class="text-black fw-bold mb-0 text-center">
+          <h4 class="text-black fw-bold mb-0 text-center" id="signInTitle">
             Sign In To Your Account!
           </h4>
-          <form @submit="handleSubmit">
+          <form @submit="handleSubmit" id="signInForm">
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
+              <label class="d-block text-black fw-semibold mb-10" for="emailInput">
                 Email Address
               </label>
               <input
@@ -17,10 +17,11 @@
                 placeholder="e.g. adam127704@gmail.com"
                 required
                 v-model="email"
+                id="emailInput"
               />
             </div>
             <div class="form-group mb-15 mb-sm-20 mb-md-25">
-              <label class="d-block text-black fw-semibold mb-10">
+              <label class="d-block text-black fw-semibold mb-10" for="passwordInput">
                 Password
               </label>
               <input
@@ -29,13 +30,16 @@
                 placeholder="**************"
                 required
                 v-model="password"
+                id="passwordInput"
               />
             </div>
             <div
               class="d-flex align-items-center justify-content-between mb-15 mb-md-20"
+              id="rememberMeSection"
             >
               <div
                 class="form-check form-check-primary mb-0 fs-md-15 fs-lg-16 text-muted lh-1"
+                id="rememberMeCheckbox"
               >
                 <input
                   class="form-check-input shadow-none"
@@ -49,11 +53,14 @@
               <router-link
                 to="/forgot-password"
                 class="forgot-password-btn fs-md-15 fs-lg-16 text-decoration-none position-relative text-primary"
+                id="forgotPasswordLink"
               >
                 Forgot Password?
               </router-link>
             </div>
             <button
+              id="signInBtn"
+              name="signin"
               class="default-btn transition border-0 fw-medium text-white rounded-1 fs-md-15 fs-lg-16 bg-primary d-block w-100"
               type="submit"
               :disabled="loading"
@@ -67,6 +74,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import { httpCodes } from "@/utils/httpCodes";
@@ -91,20 +99,16 @@ export default {
       this.loading = true;
       const response = await logIn(this.email, this.password);
       if (response.status == httpCodes.HTTP_OK) {
-        // update isAuthenticated in the store
-        stateStore.isAuthenticated = true;
-        // Redirect to the user's dashboard
-        this.$router.push({ name: "EcommercePage" });
+         stateStore.isAuthenticated = true;
+         this.$router.push("/dashboard");
       } else if (response.status == httpCodes.HTTP_NOT_FOUND) {
         swal({
           text: response.message,
-          icon: "error",
           closeOnClickOutside: false,
         });
       } else {
         swal({
           text: this.errorMsg,
-          icon: "error",
           closeOnClickOutside: false,
         });
       }
@@ -116,3 +120,11 @@ export default {
   },
 };
 </script>
+<style scoped>
+.center-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>

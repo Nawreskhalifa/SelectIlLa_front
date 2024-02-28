@@ -6,14 +6,11 @@
     <div class="row align-items-center">
       <div class="col-md-6 col-lg-6">
         <p class="text-body-secondary fw-medium mb-0">
-          © <span class="fw-bold text-primary">Adlash</span>. All rights
+          © <span class="fw-bold text-primary">SELECTITLA </span>. All rights
           reserved by
-          <a
-            href="https://envytheme.com/"
-            class="text-decoration-none fw-bold transition"
-            target="_blank"
-            >EnvyTheme</a
-          >
+          <a class="text-decoration-none fw-bold transition" target="_blank"
+            >SW CONSULTING
+          </a>
         </p>
       </div>
       <div class="col-md-6 col-lg-6 text-md-end">

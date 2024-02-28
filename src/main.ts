@@ -16,7 +16,6 @@ import '@vueup/vue-quill/dist/vue-quill.bubble.css';
 import "vue3-prism/lib/Vue3Prism.css"
 import store from './store/index';
 import "./assets/custom.scss";
-
 const app = createApp(App).use(router);
 app.use(VueApexCharts);
 app.use(BootstrapVueNext);

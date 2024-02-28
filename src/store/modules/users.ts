@@ -2,8 +2,7 @@ import { decodeUsers } from '@/models/User/User'
 import { makeApiRequest } from '@/services/apiService'
 import { endPoints } from '@/utils/endPoints'
 import { methodsHttpNames } from '@/utils/methods'
-import { decodeCustomers } from '@/models/Customer/Customer'
-import { decodePartners } from '@/models/Partner/Partner'
+import { decodeCustomer } from '@/models/Customer/Customer'
 
 const state = {
     userError: null,
@@ -11,6 +10,19 @@ const state = {
     users: [],
     customers: [],
     partners: [],
+    totalPages: 1,
+    totalItems: 0,
+    customer: null,
+    documents: [],
+    totalPagesReservation: 0,
+    totalItemsReservation: 0,
+    totalPagesPartners: 0,
+    totalItemsPartners: 0,
+    reservation: null,
+    documentsCustomer: [],
+    allDocuments: [],
+    allCustomers: [],
+    allPartners: [],
 }
 const getters = {
     getUsersError: state => state.userError,
@@ -18,8 +30,48 @@ const getters = {
     getUsers: state => state.users,
     getCustomers: state => state.customers,
     getPartners: state => state.partners,
+    getAllPartners: state => state.allPartners,
+    getTotalPages: (state) => state.totalPages,
+    getTotalItems: (state) => state.totalItems,
+    getCustomer: (state) => state.customer,
+    getDocuments: (state) => state.documents,
+    getTotalPagesPartners: (state) => state.totalPagesPartners,
+    getTotalItemsPartners: (state) => state.totalItemsPartners,
+    getTotalPagesReservation: (state) => state.totalPagesReservation,
+    getTotalItemsReservation: (state) => state.totalItemsReservation,
+    getReservation: (state) => state.reservation,
+    getDocumentsCustomer: (state) => state.documentsCustomer,
+    getAllDocuments: (state) => state.allDocuments,
+    getAllCustomers: (state) => state.allCustomers,
+
+
 }
 const mutations = {
+    SET_ALL_DOCUMENTS(state, payload) {
+        state.allDocuments = payload;
+    },
+    SET_DOCUMENTS_CUSTOMER(state, payload) {
+        state.documentsCustomer = payload;
+    },
+    SET_TOTAL_ITEMS(state, payload = 0) {
+        state.totalItems = payload;
+    },
+    SET_TOTAL_PAGES(state, payload = 1) {
+        state.totalPages = payload;
+    },
+    SET_TOTAL_PAGES_PARTNERS(state, payload = 1) {
+        state.totalPagesPartners = payload;
+    },
+    SET_TOTAL_ITEMS_PARTNERS(state, payload = 0) {
+        state.totalItemsPartners = payload;
+    },
+
+    SET_TOTAL_ITEMS_RESERVATION(state, payload = 0) {
+        state.totalItemsReservation = payload;
+    },
+    SET_TOTAL_PAGES_RESERVATION(state, payload = 1) {
+        state.totalPagesReservation = payload;
+    },
     SET_USERS_LOADING(state, payload = false) {
         state.usersLoading = payload
     },
@@ -32,28 +84,63 @@ const mutations = {
     SET_CUSTOMERS(state, payload) {
         state.customers = payload
     },
+    SET_ALL_CUSTOMERS(state, payload) {
+        state.allCustomers = payload
+    },
+    SET_CUSTOMER(state, payload) {
+        state.customer = payload
+    },
     SET_PARTNERS(state, payload) {
         state.partners = payload
     },
+    SET_ALL_PARTNERS(state, payload) {
+        state.allPartners = payload
+    },
     REMOVE_CUSTOMER(state, id) {
         state.customers = state.customers.filter(customer => customer.id != id)
-    }
-    //   ADD_user(state, payload) {
-    //     state.userOfProject.push(user.create(payload))
-    //   },
-    //   SET_ONE_user_OF_PROJECT(state, payload) {
-    //     state.userOfProject = payload
-    //       ? payload.map(user => user.create(user))
-    //       : payload
-    //   },
-    //   UPDATE_user(state, { user, data }) {
-    //     user.updateuser(data)
-    //   },
-    //   REMOVE_user(state, id) {
-    //     state.userOfProject = state.userOfProject.filter(type => type.id != id)
-    //   }
+    },
+    REMOVE_PARTNER(state, id) {
+        state.partners = state.partners.filter(partner => partner.id != id)
+    },
+    ADD_CUSTOMER(state, payload) {
+        state.customers.push(payload)
+    },
+    SET_DOCUMENTS(state, payload) {
+        state.documents = payload
+    },
+    SET_RESERVATION(state, payload) {
+        state.reservation = payload
+    },
+    UPDATE_RESERVATION(state, { reservation, data }) {
+        reservation.updateReservation(data);
+    },
 }
 const actions = {
+    async updateReservation({ commit }, { body, reservation }) {
+        commit("SET_USERS_LOADING", true);
+        commit("SET_USERS_ERROR");
+        try {
+            commit("UPDATE_RESERVATION", {
+                reservation,
+                data: body,
+            });
+            commit("SET_USERS_LOADING", false);
+        } catch (error: any) {
+            commit("SET_USERS_LOADING");
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit("SET_USERS_ERROR", error.response.data.error.messages);
+            } else {
+                commit("SET_USERS_ERROR", ["Une erreur est survenue"]);
+            }
+            return false;
+        }
+        return true;
+    },
     async fetchAllUsers({ commit }) {
         commit('SET_USERS_LOADING', true)
         commit('SET_USERS_ERROR')
@@ -87,10 +174,11 @@ const actions = {
         }
         return true
     },
-    async fetchAllCustomers({ commit }) {
-        commit('SET_USERS_LOADING', true)
-        commit('SET_USERS_ERROR')
+    async fetchAllCustomersWithoutPagination({ commit }) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
         try {
+
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
                 endPoints.allCustomers,
@@ -98,14 +186,201 @@ const actions = {
                 undefined
             );
             if (response.success) {
-                commit('SET_CUSTOMERS', decodeCustomers(response.data))
-                commit('SET_USERS_LOADING')
-                console.log(decodeCustomers(response.data))
+                commit('SET_ALL_CUSTOMERS', response.data.data);
+                commit('SET_USERS_LOADING', false);
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages);
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
+            }
+            return false;
+        }
+        return true;
+    },
+    async fetchAllCustomers({ commit }, { page = null, perPage = 25, name, gender = 'All', startDate, endDate, sortDirectionUserName, sortDirectionLocation, blocked = 'All' }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startDate?: number, endDate?: number, sortDirectionUserName?: string, sortDirectionLocation?: string, blocked?: string }) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
+        try {
+            const filters: {
+                populate: any[];
+                pagination?: { page?: number; pageSize?: number };
+                filters?: {
+                    $or?: Array<{
+                        name?: { $contains: string };
+                        surname?: { $contains: string };
+                        phone?: { $contains: string };
+                        driver_license?: { $contains: string };
+                        Insurance?: { $contains: string };
+                        address?: { $contains: string };
+                        user?: { email?: { $contains: string }, username?: { $contains: string }, gender?: { $eq: string }, date_of_birth?: { $between?: [string, string] } };
+                    }>;
+                    user?: { $and?: Array<{ gender?: { $eq: string }, date_of_birth?: { $gte?: string, $lte?: string }, blocked?: { $eq: boolean }, }>; };
+                };
+                sort?: string[];
 
+
+            } = {
+                populate: ['user', 'user.photo', 'vehicle', 'event', 'villa'],
+                sort: []
+
+            };
+            if (page !== undefined && page !== null) {
+                filters.pagination = { page: page, pageSize: perPage };
+            }
+
+            // Add the filters if name is specified
+            if (name) {
+                filters.filters = {
+                    $or: [
+                        { name: { $contains: name } },
+                        { surname: { $contains: name } },
+                        { phone: { $contains: name } },
+                        { driver_license: { $contains: name } },
+                        { Insurance: { $contains: name } },
+                        { address: { $contains: name } },
+                        { user: { email: { $contains: name }, username: { $contains: name } } },
+                    ],
+                };
+            } else {
+                // If no specific name provided, clear filters
+                filters.filters = {};
+            }
+
+            // Add the gender filter if specified
+            if (gender !== 'All') {
+                // Assurez-vous que filters.filters.user est défini avant d'ajouter le filtre de genre
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ gender: { $eq: gender } });
+            }
+            // Add date of birth filter if startDate and endDate are specified
+            if (startDate) {
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ date_of_birth: { $gte: startDate.toString() } });
+            }
+            if (endDate) {
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ date_of_birth: { $lte: endDate.toString() } });
+            }
+            if (blocked !== 'All') {
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ blocked: { $eq: blocked === 'false' } });
+            }
+            // Add sorting options
+            if (sortDirectionUserName) {
+                // Assuming user is the nested object containing username
+                if (filters.sort) {
+                    filters.sort.push(`name:${sortDirectionUserName}`);
+                    filters.sort.push(`surname:${sortDirectionUserName}`);
+                }
+            }
+            // Add sorting options
+            if (sortDirectionLocation) {
+                // Assuming user is the nested object containing username
+                if (filters.sort) {
+                    filters.sort.push(`address:${sortDirectionLocation}`);
+                }
+            }
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                endPoints.allCustomers,
+                undefined,
+                filters
+            );
+
+            if (response.success) {
+                commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
+                commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
+                commit('SET_CUSTOMERS', response.data.data.map(decodeCustomer));
+                commit('SET_USERS_LOADING', false);
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages);
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
+            }
+            return false;
+        }
+        return true;
+    },
+    async fetchOneCustomer({ commit }, id) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.deleteCustomer}${id}?populate=deep`,
+                undefined,
+                undefined
+            );
+            if (response.success) {
+                commit('SET_CUSTOMER', response.data.data);
+                commit('SET_USERS_LOADING', false);
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages);
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
+            }
+            return false;
+        }
+        return true;
+    },
+    async AddNewCustomer({ commit },) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
+        try {
+
+            const response = await makeApiRequest(
+                methodsHttpNames.POST,
+                endPoints.allCustomers,
+                undefined,
+                undefined
+            );
+
+            if (response.success) {
+                commit('ADD_CUSTOMER', decodeCustomer(response.data.data));
+                commit('SET_USERS_LOADING', false)
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages);
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
+            }
+            return false;
+        }
+        return true;
+    },
+    async deletePartner({ commit }, id) {
+        commit('SET_USERS_LOADING', true)
+        commit('SET_USERS_ERROR')
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.DELETE,
+                `${endPoints.partners}/${id}`,
+                undefined,
+                undefined
+            );
+            if (response.success) {
+
+                commit('REMOVE_PARTNER', id)
+                commit('SET_USERS_LOADING', false)
             }
 
         } catch (error: any) {
-            commit('SET_USERS_LOADING')
+            commit('SET_USERS_LOADING', false)
             if (
                 error.response &&
                 error.response.data &&
@@ -120,23 +395,146 @@ const actions = {
         }
         return true
     },
-    async fetchAllPartners({ commit }) {
+    async fetchAllPartnersWithoutPagination({ commit }) {
         commit('SET_USERS_LOADING', true)
         commit('SET_USERS_ERROR')
         try {
+
             const response = await makeApiRequest(
                 methodsHttpNames.GET,
-                endPoints.allPartners,
+                `${endPoints.allPartners}?populate=deep`,
                 undefined,
                 undefined
             );
             if (response.success) {
-                commit('SET_PARTNERS', decodePartners(response.data))
-                commit('SET_USERS_LOADING')
+                commit('SET_ALL_PARTNERS', response.data.data)
+                commit('SET_USERS_LOADING', false)
             }
 
         } catch (error: any) {
-            commit('SET_USERS_LOADING')
+            commit('SET_USERS_LOADING', false)
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+    async fetchAllPartners({ commit }, { page = null, perPage = 25, name, gender = 'All', startDate, endDate, sortDirectionUserName, sortDirectionLocation, hasResource = 'All' }: { page?: number | null; perPage?: number; name: string | null, gender?: string, startDate?: number, endDate?: number, sortDirectionUserName?: string, sortDirectionLocation?: string, hasResource?: string }) {
+        commit('SET_USERS_LOADING', true)
+        commit('SET_USERS_ERROR')
+        try {
+            const filters: {
+                pagination?: { page?: number; pageSize?: number };
+                filters?: {
+                    $or?: Array<{
+                        name?: { $contains: string };
+                        surname?: { $contains: string };
+                        phone?: { $contains: string };
+                        address?: { $contains: string };
+                        user?: { email?: { $contains: string }, username?: { $contains: string }, gender?: { $eq: string }, date_of_birth?: { $between?: [string, string] } };
+                    }>;
+                    user?: { $and?: Array<{ gender?: { $eq: string }, date_of_birth?: { $gte?: string, $lte?: string } }>; };
+                };
+                sort?: string[];
+
+
+            } = {
+                // populate: ['user', 'user.photo'],
+                sort: []
+
+            };
+            if (page !== undefined && page !== null) {
+                filters.pagination = { page: page, pageSize: perPage };
+            }
+
+            // Add the filters if name is specified
+            if (name) {
+                filters.filters = {
+                    $or: [
+                        { name: { $contains: name } },
+                        { surname: { $contains: name } },
+                        { phone: { $contains: name } },
+                        { address: { $contains: name } },
+                        { user: { email: { $contains: name }, username: { $contains: name } } },
+                    ],
+                };
+            } else {
+                // If no specific name provided, clear filters
+                filters.filters = {};
+            }
+
+            // Add the gender filter if specified
+            if (gender !== 'All') {
+                // Assurez-vous que filters.filters.user est défini avant d'ajouter le filtre de genre
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ gender: { $eq: gender } });
+            }
+            // Add date of birth filter if startDate and endDate are specified
+            if (startDate) {
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ date_of_birth: { $gte: startDate.toString() } });
+            }
+            if (endDate) {
+                filters.filters.user = filters.filters.user || {};
+                filters.filters.user.$and = filters.filters.user.$and || [];
+                filters.filters.user.$and.push({ date_of_birth: { $lte: endDate.toString() } });
+            }
+            // Add sorting options
+            if (sortDirectionUserName) {
+                // Assuming user is the nested object containing username
+                if (filters.sort) {
+                    filters.sort.push(`name:${sortDirectionUserName}`);
+                    filters.sort.push(`surname:${sortDirectionUserName}`);
+                }
+            }
+            // Add sorting options
+            if (sortDirectionLocation) {
+                // Assuming user is the nested object containing username
+                if (filters.sort) {
+                    filters.sort.push(`address:${sortDirectionLocation}`);
+                }
+            }
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.allPartners}?populate=deep`,
+                undefined,
+                filters
+            );
+            if (response.success) {
+                let results = response.data.data
+
+                if (hasResource !== 'All') {
+                    results = results.filter(partner => {
+                        switch (hasResource) {
+                            case 'Events':
+                                return partner.attributes.events.data && partner.attributes.events.data.length > 0;
+                            case 'Vehicles':
+                                return partner.attributes.vehicles.data && partner.attributes.vehicles.data.length > 0;
+                            case 'Villas':
+                                return partner.attributes.villas.data && partner.attributes.villas.data.length > 0;
+                            default:
+                                return false;
+                        }
+                    });
+                }
+                commit('SET_PARTNERS', results)
+                commit("SET_TOTAL_PAGES_PARTNERS", response.data.meta.pagination.pageCount);
+                commit("SET_TOTAL_ITEMS_PARTNERS", response.data.meta.pagination.total);
+                commit('SET_USERS_LOADING', false)
+            }
+
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false)
             if (
                 error.response &&
                 error.response.data &&
@@ -152,19 +550,19 @@ const actions = {
         return true
     },
     async deleteCustomer({ commit }, id) {
-        commit('SET_USER_LOADING', true)
-        commit('SET_USER_ERROR')
+        commit('SET_USERS_LOADING', true)
+        commit('SET_USERS_ERROR')
         try {
             const response = await makeApiRequest(
                 methodsHttpNames.DELETE,
-                `${endPoints.deleteCustomer}/${id}`,
+                `${endPoints.deleteCustomer}${id}`,
                 undefined,
                 undefined
             );
             if (response.success) {
 
                 commit('REMOVE_CUSTOMER', id)
-                commit('SET_USER_LOADING')
+                commit('SET_USERS_LOADING')
             }
 
         } catch (error: any) {
@@ -183,169 +581,138 @@ const actions = {
         }
         return true
     },
+    async fetchDocumentsCustomer({ commit }, id) {
+        commit('SET_USERS_LOADING', true)
+        commit('SET_USERS_ERROR')
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.deleteCustomer}${id}`,
+                undefined,
+                { populate: { documents: true } }
+            );
+            if (response.success) {
+                commit('SET_DOCUMENTS_CUSTOMER', response.data.data.attributes.documents)
+                commit('SET_USERS_LOADING')
+            }
 
-    //   async fetchOneTypeuserOfProject({ commit }, user_id) {
-    //     commit('SET_user_LOADING', true)
-    //     commit('SET_user_ERROR')
-    //     try {
-    //       const params = {
-    //         projet_id: user_id
-    //       }
-    //       const response = await axios.get(domain + '/api/users', {
-    //         headers: {
-    //           Authorization: `Bearer ${this.state.currentUser.token}`
-    //         },
-    //         params: params
-    //       })
-    //       commit('SET_ONE_user_OF_PROJECT', response.data.users)
-    //       commit('SET_user_LOADING')
-    //     } catch (error) {
-    //       commit('SET_user_LOADING')
-    //       if (
-    //         error.response &&
-    //         error.response.data &&
-    //         error.response.data.error &&
-    //         error.response.data.error.messages
-    //       ) {
-    //         commit('SET_user_ERROR', error.response.data.error.messages)
-    //       } else {
-    //         commit('SET_user_ERROR', ['Une erreur est survenue'])
-    //       }
-    //       return false
-    //     }
-    //     return true
-    //   },
-    //   async adduser({ commit }, payload) {
-    //     commit('SET_user_LOADING', true)
-    //     commit('SET_user_ERROR')
-    //     const body = {
-    //       designation: payload.name,
-    //       detail: payload.detail,
-    //       start_date: payload.start,
-    //       end_date: payload.end,
-    //       projet_id: payload.projet_id
-    //     }
-    //     if (payload.start_time) {
-    //       body.start_time = payload.start_time
-    //     }
-    //     if (payload.end_time) {
-    //       body.end_time = payload.end_time
-    //     }
-    //     if (payload.type) {
-    //       body.type_user_id =
-    //         payload.type && payload.type.id ? payload.type.id : payload.type
-    //     }
-    //     if (payload.fields && payload.fields.length) {
-    //       body.fields = payload.fields
-    //     }
-    //     try {
-    //       const response = await axios.post(domain + '/api/users', body, {
-    //         headers: {
-    //           Authorization: `Bearer ${this.state.currentUser.token}`
-    //         }
-    //       })
-    //       commit('ADD_user', response.data.data)
-    //       commit('SET_user_LOADING')
-    //     } catch (error) {
-    //       commit('SET_user_LOADING')
-    //       if (
-    //         error.response &&
-    //         error.response.data &&
-    //         error.response.data.error &&
-    //         error.response.data.error.messages
-    //       ) {
-    //         commit('SET_user_ERROR', error.response.data.error.messages)
-    //       } else {
-    //         commit('SET_user_ERROR', ['Une erreur est survenue'])
-    //       }
-    //       return false
-    //     }
-    //     return true
-    //   },
-    //   async updateuser({ commit }, { body, user }) {
-    //     commit('SET_user_LOADING', true)
-    //     commit('SET_user_ERROR')
-    //     const payload = {
-    //       designation: body.name,
-    //       detail: body.detail,
-    //       start_date: body.start,
-    //       end_date: body.end,
-    //       projet_id: body.projet_id
-    //     }
-    //     if (body.type) {
-    //       payload.type_user_id =
-    //         body.type && body.type.id ? body.type.id : body.type
-    //     }
-    //     if (body.fieldsUpdate && body.fieldsUpdate.length) {
-    //       payload.fields = body.fieldsUpdate
-    //     }
-    //     if (body.start_time) {
-    //       payload.start_time = body.start_time
-    //     }
-    //     if (body.end_time) {
-    //       payload.end_time = body.end_time
-    //     }
-    //     try {
-    //       const response = await axios.put(
-    //         domain + '/api/users/' + user.id,
-    //         payload,
-    //         {
-    //           headers: {
-    //             Authorization: `Bearer ${this.state.currentUser.token}`
-    //           }
-    //         }
-    //       )
-    //       commit('UPDATE_user', {
-    //         user,
-    //         data: response.data.data
-    //       })
-    //       commit('SET_user_LOADING')
-    //     } catch (error) {
-    //       commit('SET_user_LOADING')
-    //       if (
-    //         error.response &&
-    //         error.response.data &&
-    //         error.response.data.error &&
-    //         error.response.data.error.messages
-    //       ) {
-    //         commit('SET_user_ERROR', error.response.data.error.messages)
-    //       } else {
-    //         commit('SET_user_ERROR', ['Une erreur est survenue'])
-    //       }
-    //       return false
-    //     }
-    //     return true
-    //   },
-    //   async deleteduser({ commit }, id) {
-    //     commit('SET_user_LOADING', true)
-    //     commit('SET_user_ERROR')
-    //     try {
-    //       await axios.delete(domain + '/api/users/' + id, {
-    //         headers: {
-    //           Authorization: `Bearer ${this.state.currentUser.token}`
-    //         }
-    //       })
-    //       commit('REMOVE_user', id)
-    //       commit('SET_user_LOADING')
-    //     } catch (error) {
-    //       commit('SET_user_LOADING')
-    //       if (
-    //         error.response &&
-    //         error.response.data &&
-    //         error.response.data.error &&
-    //         error.response.data.error.messages
-    //       ) {
-    //         commit('SET_user_ERROR', error.response.data.error.messages)
-    //       } else {
-    //         commit('SET_user_ERROR', ['Une erreur est survenue'])
-    //       }
-    //       return false
-    //     }
-    //     return true
-    //   },
-    //   resetErroruser({ commit }) {
-    //     commit('SET_user_ERROR')
-    //   }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING')
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+    async fetchAllAttachmentsByCustomer({ commit }, { page = 1, perPage = 25, idCustomer, status }: { page?: number, perPage?: number, idCustomer: number, status?: string }) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
+        try {
+            let filters: any = { customer: { id: { $eq: idCustomer } } };
+
+            // Ajouter la condition pour le statut uniquement s'il n'est pas nul
+            if (status && status !== '') {
+                filters = { ...filters, status: { $eq: status } };
+            }
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.reservations}?populate=deep`,
+                undefined,
+                { filters, pagination: { page: page, pageSize: perPage } }
+            );
+            if (response.success) {
+                commit("SET_TOTAL_PAGES_RESERVATION", response.data.meta.pagination.pageCount);
+                commit("SET_TOTAL_ITEMS_RESERVATION", response.data.meta.pagination.total);
+                commit('SET_DOCUMENTS', response.data.data);
+                commit('SET_USERS_LOADING', false);
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (error.response && error.response.data && error.response.data.error && error.response.data.error.messages) {
+                commit('SET_USERS_ERROR', error.response.data.error.messages);
+            } else {
+                commit('SET_USERS_ERROR', ['Une erreur est survenue']);
+            }
+            return false;
+        }
+        return true;
+    },
+    async fetchOneReservation({ commit }, idReservation) {
+        commit("SET_USERS_LOADING", true);
+        commit("SET_USERS_ERROR");
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.reservations}/${idReservation}?populate=deep`,
+                undefined,
+                undefined
+            );
+            commit("SET_RESERVATION", response.data.data);
+            commit('SET_USERS_LOADING', false);
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit("SET_USERS_ERROR", error.response.data.error.messages);
+            } else {
+                commit("SET_USERS_ERROR", ["Une erreur est survenue"]);
+            }
+            return false;
+        }
+        return true;
+    },
+    async fetchAllDocumentsByCustomer({ commit }, { idCustomer, idReservation }: { idCustomer: number, idReservation?: number }) {
+        commit('SET_USERS_LOADING', true);
+        commit('SET_USERS_ERROR', null);
+        try {
+            const filters: any = { customer: { id: { $eq: idCustomer } } };
+
+            if (idReservation !== undefined && idReservation !== null && idReservation != 0) {
+                filters.id = { $eq: idReservation };
+            }
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.reservations}?populate=deep`,
+                undefined,
+                { filters }
+            );
+
+            if (response.success) {
+                const result: any = { data: [] };
+                if (response.data.data && response.data.data.length) {
+                    response.data.data.forEach(element => {
+                        if (element.attributes.documents.data && element.attributes.documents.data.length) {
+                            element.attributes.documents.data.forEach(elt => {
+                                result.data.push(elt); // Ajout de l'élément à result.data
+                            });
+                        }
+                    });
+                }
+                commit('SET_ALL_DOCUMENTS', result);
+                commit('SET_USERS_LOADING', false);
+            }
+        } catch (error: any) {
+            commit('SET_USERS_LOADING', false);
+            const errorMessage = error.response?.data?.error?.messages || ['Une erreur est survenue'];
+            commit('SET_USERS_ERROR', errorMessage);
+            return false;
+        }
+        return true;
+    },
+
+
 }
 export default {
     state,

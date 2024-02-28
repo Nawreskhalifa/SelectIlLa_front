@@ -1,5 +1,5 @@
 <template>
-  <div
+  <div style="display: flex; justify-content: center; align-items: center; width: 100% !important ; height: 100%  !important; position: fixed  !important; top: 0  !important ; right: 0  !important; ; left: 0 !important;  "
     class="card mb-25 border-0 rounded-0 bg-white text-center error-404-card"
   >
     <div class="card-body letter-spacing">

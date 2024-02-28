@@ -59,6 +59,8 @@
               </label>
             </div>
             <button
+             id="2"
+               name="Register"
               class="default-btn transition border-0 fw-medium text-white rounded-1 fs-md-15 fs-lg-16 bg-success d-block w-100"
               type="submit"
             >
@@ -83,6 +85,8 @@
             <ul class="socials ps-0 mb-0 list-unstyled text-center">
               <li class="d-inline-block">
                 <button
+                   id="3"
+               name="fb"
                   type="button"
                   class="d-block rounded-circle text-center position-relative facebook border-0 p-0"
                 >
@@ -92,6 +96,8 @@
               <li class="d-inline-block">
                 <button
                   type="button"
+                        id="google"
+               name="google"
                   class="d-block rounded-circle text-center position-relative google border-0 p-0"
                 >
                   <i class="ph-bold ph-google-logo"></i>
@@ -99,6 +105,8 @@
               </li>
               <li class="d-inline-block">
                 <button
+                id="relative"
+                name="relative"
                   type="button"
                   class="d-block rounded-circle text-center position-relative twitter border-0 p-0"
                 >
@@ -107,6 +115,8 @@
               </li>
               <li class="d-inline-block">
                 <button
+                id="ph"
+                name="ph"
                   type="button"
                   class="d-block rounded-circle text-center position-relative linkedin border-0 p-0"
                 >

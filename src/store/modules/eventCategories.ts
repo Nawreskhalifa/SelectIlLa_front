@@ -1,0 +1,299 @@
+import { decodeApiToEventCategory } from '@/models/EventCategory/EventCategory'
+import { makeApiRequest } from '@/services/apiService'
+import { endPoints } from '@/utils/endPoints'
+import { methodsHttpNames } from '@/utils/methods'
+import { unref } from 'vue'
+
+const state = {
+    categoriesError: null,
+    categoriesLoading: false,
+    categoriesEvent: [],
+    categoryEvent: null,
+    totalPages: 1,
+    totalItems: 0,
+    allCategoriesEvent: [],
+
+
+}
+const getters = {
+    getCategoriesError: state => state.categoriesError,
+    getCategoriesLoading: state => state.categoriesLoading,
+    getCategoriesEvent: state => state.categoriesEvent,
+    getAllCategoriesEvent: state => state.allCategoriesEvent,
+    getCategoryEvent: state => state.categoryEvent,
+    getTotalPages: state => state.totalPages,
+    getTotalItems: (state) => state.totalItems,
+
+
+}
+const mutations = {
+    SET_TOTAL_ITEMS(state, payload = 0) {
+        state.totalItems = payload;
+    },
+    SET_TOTAL_PAGES(state, payload = 1) {
+        state.totalPages = payload
+    },
+    SET_CATEGORIES_LOADING(state, payload = false) {
+        state.categoriesLoading = payload
+    },
+    SET_CATEGORIES_ERROR(state, payload = null) {
+        state.categoriesError = payload
+    },
+    SET_CATEGORIES(state, payload) {
+        state.categoriesEvent = payload
+    },
+    SET_ALL_CATEGORIES(state, payload) {
+        state.allCategoriesEvent = payload
+    },
+    REMOVE_CATEGORY(state, id) {
+        state.categoriesEvent = state.categoriesEvent.filter(category => category.id != id)
+    },
+    SET_CATEGORY_EVENT(state, payload = null) {
+        state.categoryEvent = payload
+
+    },
+    ADD_CATEGORY(state, payload) {
+        state.categoriesEvent.push(payload)
+    },
+    UPDATE_CATEGORY(state, { category, data }) {
+        category.updateCategory(data)
+    },
+}
+const actions = {
+    async updateCategory({ commit }, { body, category }) {
+        commit('SET_CATEGORIES_LOADING', true)
+        commit('SET_CATEGORIES_ERROR')
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.PUT,
+                `${endPoints.deleteCategoryEvent}/${category.id}`,
+                {
+                    data: {
+                        name: body.name,
+                        description: body.description,
+                    }
+                },
+                undefined
+            );
+            if (response.success) {
+
+                commit('UPDATE_CATEGORY', {
+                    category,
+                    data: decodeApiToEventCategory(response.data.data)
+                })
+                commit('SET_CATEGORIES_LOADING')
+            }
+
+        } catch (error: any) {
+            commit('SET_CATEGORIES_LOADING')
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_CATEGORIES_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_CATEGORIES_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+    async fetchAllCategoriesEventWithoutPagination({ commit }) {
+        commit('SET_CATEGORIES_LOADING', true)
+        commit('SET_CATEGORIES_ERROR')
+        try {
+
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                endPoints.allCategoriesEvent,
+                undefined,
+                undefined
+            );
+            if (response.success) {
+                commit('SET_ALL_CATEGORIES', response.data.data)
+                commit('SET_CATEGORIES_LOADING', false)
+
+            }
+
+        } catch (error: any) {
+            commit('SET_CATEGORIES_LOADING')
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_CATEGORIES_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_CATEGORIES_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+    async fetchAllCategoriesEvent({ commit }, { page = null, perPage = 25, name = null, sortDirectionName }: { page?: number | null, perPage?: number, name: string | null, sortDirectionName?: string }) {
+        commit('SET_CATEGORIES_LOADING', true)
+        commit('SET_CATEGORIES_ERROR')
+        try {
+            let filters: {
+                pagination?: { page: number; pageSize: number };
+                filters?: {
+                    $or?: Array<{
+                        name?: { $contains: string };
+                        description?: { $contains: string };
+                    }>;
+                };
+                sort?: string[];
+            } = { sort: [] }
+            if (page !== null) {
+                filters = { pagination: { page: page, pageSize: perPage } };
+            }
+            //    Add sorting options
+            if (sortDirectionName != null) {
+                filters.sort = [];
+                filters.sort.push(`name:${sortDirectionName}`);
+
+
+            }
+
+            // Add the name filter if specified
+            if (name) {
+                filters.filters = {
+                    ...(filters.filters || {}), $or: [
+                        { name: { $contains: name } },
+                        { description: { $contains: name } },
+                    ]
+                };
+            }
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                endPoints.allCategoriesEvent,
+                undefined,
+                filters
+            );
+            if (response.success) {
+                commit("SET_TOTAL_PAGES", response.data.meta.pagination.pageCount);
+                commit("SET_TOTAL_ITEMS", response.data.meta.pagination.total);
+                commit('SET_CATEGORIES', response.data.data.map(decodeApiToEventCategory))
+                commit('SET_CATEGORIES_LOADING')
+
+            }
+
+        } catch (error: any) {
+            commit('SET_CATEGORIES_LOADING')
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_CATEGORIES_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_CATEGORIES_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+    async deleteCategoryEvent({ commit }, id) {
+        commit('SET_CATEGORIES_LOADING', true)
+        commit('SET_CATEGORIES_ERROR')
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.DELETE,
+                `${endPoints.deleteCategoryEvent}/${id}`,
+                undefined,
+                undefined
+            );
+            if (response.success) {
+
+                commit('REMOVE_CATEGORY', id)
+                commit('SET_CATEGORIES_LOADING')
+            }
+
+        } catch (error: any) {
+            commit('SET_CATEGORIES_LOADING')
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_CATEGORIES_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_CATEGORIES_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+    async fetchOneCategoryEvent({ commit }, idCategory) {
+        commit('SET_CATEGORIES_LOADING', true)
+        commit('SET_CATEGORIES_ERROR')
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.GET,
+                `${endPoints.detailCategoryEvent}/${idCategory}`,
+                undefined,
+                undefined
+            );
+            commit('SET_CATEGORY_EVENT', decodeApiToEventCategory(response.data.data))
+            commit('SET_CATEGORIES_LOADING')
+        } catch (error: any) {
+            commit('SET_CATEGORIES_LOADING')
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_CATEGORIES_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_CATEGORIES_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+    async addCategory({ commit }, payload) {
+        commit('SET_CATEGORIES_LOADING', true)
+        commit('SET_CATEGORIES_ERROR')
+        try {
+            const response = await makeApiRequest(
+                methodsHttpNames.POST,
+                endPoints.createCategoryEvent,
+                {
+                    data: {
+                        name: payload.name,
+                        description: payload.description,
+                    }
+                },
+                undefined
+            );
+            commit('ADD_CATEGORY', decodeApiToEventCategory(response.data.data))
+            commit('SET_CATEGORIES_LOADING')
+        } catch (error: any) {
+            commit('SET_CATEGORIES_LOADING')
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.messages
+            ) {
+                commit('SET_CATEGORIES_ERROR', error.response.data.error.messages)
+            } else {
+                commit('SET_CATEGORIES_ERROR', ['Une erreur est survenue'])
+            }
+            return false
+        }
+        return true
+    },
+}
+export default {
+    state,
+    getters,
+    mutations,
+    actions
+}

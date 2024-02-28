@@ -1,0 +1,711 @@
+<template>
+  <div class="card mb-25 border-0 rounded-0 bg-white add-product-box">
+    <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30 letter-spacing">
+      <form @submit.prevent="submitForm">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">Name</label>
+              <input
+                v-model="name"
+                type="text"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g.Smart House"
+              />
+              <div v-if="nameError" class="text-danger">{{ nameError }}</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"> City </label>
+              <input
+                v-model="city"
+                type="text"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. Ny"
+              />
+              <div v-if="cityError" class="text-danger">{{ cityError }}</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <MultiSelectVilla
+                :options="transformedCategories"
+                :selected="category"
+                @update:selected="updateCategories"
+                :placeholder="'eg .Mountain view Villas'"
+                :multiSelect="'multiple'"
+                :label="'Categories'"
+              />
+
+              <div v-if="categoryError" class="text-danger">
+                {{ categoryError }}
+              </div>
+              <div style="display: flex; flex-direction: row">
+                <p class="fs-md-15 fs-lg-16">
+                  <a
+                    class="card-link-btn text-decoration-none text-primary fw-medium position-relative d-inline-block mt-10 mt-sm-0"
+                    style="cursor: pointer"
+                    @click.prevent="OpenVilla"
+                    ><i
+                      class="flaticon-plus lh-2 me-16 position-relative top-1"
+                    ></i>
+                    add new category
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Partner
+              </label>
+              <select
+                v-model="selectedPartner"
+                class="form-select shadow-none fw-semibold rounded-0"
+              >
+                <option value="" disabled selected>Select a partner</option>
+                <option
+                  v-for="partner in getPartners"
+                  :key="partner.id"
+                  :value="partner.id"
+                >
+                  {{
+                    partner.attributes.name + " " + partner.attributes.surname
+                  }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Description
+              </label>
+              <div class="mb-0">
+                <QuillEditor
+                  style="height: 12em"
+                  theme="snow"
+                  placeholder="Write your meta description"
+                  v-model:content="description"
+                  toolbar="full"
+                />
+              </div>
+              <div v-if="descriptionError" class="text-danger">
+                {{ descriptionError }}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Rooms
+              </label>
+              <input
+                v-model="rooms"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 2"
+                min="0"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Baths
+              </label>
+              <input
+                v-model="baths"
+                type="number"
+                min="0"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 2"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"> Pool </label>
+              <input
+                v-model="pool"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 1"
+                min="0"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"> View </label>
+              <input
+                v-model="view"
+                type="text"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g.Seaview  "
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Sleeps
+              </label>
+              <input
+                v-model="sleeps"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 3"
+                min="0"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Deposit
+              </label>
+              <input
+                v-model="deposit"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g 20"
+                min="1"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Daily
+              </label>
+              <input
+                v-model="daily"
+                type="text"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 50"
+                min="0"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10"
+                >New Daily</label
+              >
+              <input
+                v-model="newDaily"
+                type="number"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 50"
+                min="1"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Mini Daily Work
+              </label>
+              <input
+                v-model="minioeuvre_daily"
+                type="text"
+                class="form-control shadow-none rounded-0 text-black"
+                placeholder="e.g. 212520"
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">Status</label>
+              <div
+                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+              >
+                <input
+                  class="form-check-input shadow-none"
+                  type="radio"
+                  name="communicationRadio"
+                  id="activeRadio"
+                  v-model="status"
+                  :value="false"
+                />
+                <label class="form-check-label" for="activeRadio">Active</label>
+              </div>
+              <div
+                class="form-check fs-md-15 fs-lg-16 text-black mb-0 d-inline-block me-15 me-md-25"
+              >
+                <input
+                  class="form-check-input shadow-none"
+                  type="radio"
+                  name="communicationRadio"
+                  id="deactivatedRadio"
+                  v-model="status"
+                  :value="true"
+                />
+                <label class="form-check-label" for="deactivatedRadio"
+                  >In Active</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="col-md-6">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">Daily</label>
+              <div class="input-group">
+                <span
+                  class="input-group-text rounded-0 fs-14 fw-bold text-primary"
+                >
+                  $
+                </span>
+                <input
+                  v-model="daily"
+                  type="text"
+                  class="form-control shadow-none rounded-0 text-black"
+                  placeholder="e.g. 120.00"
+                />
+              </div>
+            </div>
+          </div> -->
+          <div class="col-md-12">
+            <div class="form-group mb-15 mb-sm-20 mb-md-25">
+              <label class="d-block text-black fw-semibold mb-10">
+                Upload Images
+              </label>
+              <div class="file-upload text-center position-relative">
+                <!-- <img
+                  v-for="(url, index) in imageUrls"
+                  :src="url"
+                  :key="index"
+                  alt="Uploaded Image"
+                  class="preview-image"
+                /> -->
+                <i class="flaticon-image"></i>
+
+                <span class="d-block text-muted">
+                  Drop Files Here Or
+                  <span
+                    @click="uploadImage"
+                    class="text-black fw-medium position-relative"
+                  >
+                    Click To Upload
+                  </span>
+                </span>
+                <input
+                  type="file"
+                  class="d-block shadow-none border-0 position-absolute start-0 end-0 top-0 bottom-0 z-1 opacity-0"
+                  ref="fileInput"
+                  @change="handleFileChange"
+                  multiple
+                  accept="image/*"
+                />
+              </div>
+              <div v-if="imageUrls.length > 0" class="image-preview">
+                <div
+                  v-for="(photo, index) in imageUrls"
+                  :key="index"
+                  class="image-item"
+                >
+                  <img :src="photo" alt="Selected Image" />
+                  <button
+                    @click="removeImage(index)"
+                    class="delete_icon"
+                    type="button"
+                  >
+                    <i class="fas fa-times-circle"></i>
+                  </button>
+
+                  <input
+                    type="radio"
+                    :id="'radio_' + index"
+                    v-model="coverImageIndex"
+                    :value="index"
+                    class="set_cover_button"
+                    title="Set as a cover image"
+                    style="cursor: pointer"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <button
+              class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16"
+              type="submit"
+            >
+              Save Villa
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <loading v-model:active="isLoading" :can-cancel="true" :is-full-page="true" />
+  <AddVillaCategoryModal
+    @addedCat="addedCategory"
+    :show="showModal"
+    @close="closeModal"
+  />
+</template>
+<script lang="ts">
+import { Ref, defineComponent, ref, computed } from "vue";
+import BlotFormatter from "quill-blot-formatter";
+import ImageUploader from "quill-image-uploader";
+import {
+  postVilla,
+  fetchVillaCategories,
+  fetchPartners,
+} from "@/services/apiService";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+import { useRouter } from "vue-router";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
+import MultiSelectVilla from "@/components/Common/MultiSelect.vue";
+import AddVillaCategoryModal from "../AddVillaCategoryModal/AddVillaCategoryModal.vue";
+import { mapGetters, mapActions } from "vuex";
+export default defineComponent({
+  name: "AddVilla",
+  components: {
+    AddVillaCategoryModal,
+    Loading,
+    MultiSelectVilla,
+  },
+  computed: {
+    ...mapGetters(["getUsersLoading", "getUsersError", "getPartners"]),
+  },
+  methods: {
+    ...mapActions(["fetchAllPartners"]),
+  },
+  async mounted() {
+    await this.fetchAllPartners({ page: null });
+  },
+  setup() {
+    const router = useRouter();
+    const AllSelected = ref<Array<any>>([]);
+    const selectedCategory: Ref<any | null> = ref(null);
+    const selectedFiles = ref([]);
+    const isLoading = ref(false);
+    const categories = ref();
+    const started = ref(true);
+    const allPartners = ref();
+    const name = ref("");
+    const city = ref("");
+    const rooms = ref("");
+    const baths = ref("");
+    const pool = ref("");
+    const view = ref("");
+    const sleeps = ref("");
+    const selectedCat = ref([]);
+    const daily = ref("");
+    const newDaily = ref("");
+    const status = ref(false);
+    const deposit = ref("");
+    const description = ref();
+    const minioeuvre_daily = ref("");
+    const coverImageIndex = ref("");
+    const category = ref("");
+    const updateCategories = (selectedCategories) => {
+      AllCat.value = selectedCategories;
+      console.log(AllCat.value);
+    };
+
+    const transformedCategories = computed(() => {
+      if (!categories.value) return [];
+
+      return categories.value.map((category) => {
+        if (category.attributes && category.attributes.Name) {
+          return {
+            ...category,
+            attributes: {
+              ...category.attributes,
+              name: category.attributes.Name,
+            },
+          };
+        } else {
+          return category;
+        }
+      });
+    });
+    const showModal = ref(false);
+    // const owner = ref("");
+    const selectedPartner = ref("");
+    const modules = {
+      module: BlotFormatter,
+      ImageUploader,
+      options: {
+        upload: (file) => {
+          return new Promise((resolve, reject) => {
+            resolve("fake-image-url");
+          });
+        },
+      },
+    };
+    const closeModal = async () => {
+      showModal.value = false;
+    };
+    const OpenVilla = async () => {
+      console.log("okay");
+      showModal.value = true;
+      console.log(showModal.value);
+    };
+    const addedCategory = async (event) => {
+      categories.value.push(event);
+    };
+    const AllCat = ref([]);
+    const nameError = ref("");
+    const cityError = ref("");
+    const descriptionError = ref("");
+    const categoryError = ref("");
+    const seatsError = ref("");
+    const dailyError = ref("");
+    const roomsError = ref("");
+    const newDailyError = ref("");
+    const showToatSuccess = () => {
+      toast.success("Villa Created  🚗 👍 ", {
+        autoClose: 1000,
+      });
+    };
+    const addToAllCat = () => {
+      AllSelected.value.push(selectedCategory.value);
+      console.log(AllSelected.value, "are selected");
+    };
+    const fetchPartnersList = async () => {
+      const data = await fetchPartners();
+      allPartners.value = data;
+      console.log(data, allPartners, "data");
+    };
+    const fetchCategories = async () => {
+      const data = await fetchVillaCategories();
+      categories.value = data.data;
+    };
+    const selectedFilesRef = ref([] as File[]);
+    const imageUrls = ref([] as string[]);
+
+    const handleFileChange = (event) => {
+      const input = event.target;
+      selectedFilesRef.value = Array.from(input.files || []);
+      previewImages();
+    };
+
+    const previewImages = () => {
+      imageUrls.value = [];
+
+      for (const file of selectedFilesRef.value) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          imageUrls.value.push(event.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    const uploadImage = async () => {
+      const formData = new FormData();
+      selectedFilesRef.value.forEach((file, index) => {
+        formData.append(`image_${index}`, file);
+      });
+
+      try {
+        const response = await fetch("/upload-endpoint", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.ok) {
+          const responseData = await response.json();
+          imageUrls.value = responseData.imageUrls;
+        } else {
+          console.error("Image upload failed.");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    };
+    const deleteFromCategories = (cat) => {
+      AllSelected.value = AllSelected.value.filter((item) => item !== cat);
+    };
+    const removeImage = (index) => {
+      selectedFilesRef.value.splice(index, 1);
+      imageUrls.value.splice(index, 1);
+    };
+    const submitForm = async () => {
+      nameError.value = "";
+      cityError.value = "";
+      descriptionError.value = "";
+      categoryError.value = "";
+      seatsError.value = "";
+      dailyError.value = "";
+      roomsError.value = "";
+      newDailyError.value = "";
+      if (!name.value.trim()) {
+        nameError.value = "name is required.";
+      }
+
+      if (!city.value.trim()) {
+        cityError.value = "city is required.";
+      }
+
+      if (!AllSelected.value) {
+        categoryError.value = "Please select a category.";
+      }
+
+      if (!daily.value.trim()) {
+        dailyError.value = "Daily amount is required.";
+      }
+
+      if (
+        nameError.value ||
+        roomsError.value ||
+        descriptionError.value ||
+        categoryError.value ||
+        seatsError.value ||
+        dailyError.value ||
+        cityError.value ||
+        newDailyError.value
+      ) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      isLoading.value = true;
+
+      const selectedC = AllSelected.value.filter((item) => {
+        return parseInt(item.id);
+      });
+      console.log(selectedC, "categories check ");
+      const vehicleData = {
+        data: {
+          name: name.value,
+          city: city.value,
+          rooms: parseInt(rooms.value),
+          baths: parseInt(baths.value),
+          pool: parseInt(pool.value),
+          view: view.value,
+          sleeps: parseInt(sleeps.value),
+          daily: parseFloat(daily.value),
+          new_daily: parseFloat(newDaily.value),
+          deposit: parseFloat(deposit.value),
+          description: description.value.ops[0].insert,
+          minioeuvre_daily: minioeuvre_daily.value.toString(),
+          partner: [parseInt(selectedPartner.value)],
+          category_villas: selectedC,
+          isActive: status.value,
+        },
+      };
+
+      const result = await postVilla(selectedFilesRef, vehicleData);
+
+      if (result.success) {
+        showToatSuccess();
+        isLoading.value = false;
+
+        router.push("/villalist");
+      } else {
+        console.error("Error:", result.error);
+      }
+    };
+
+    fetchCategories();
+    fetchPartnersList();
+
+    return {
+      modules,
+      started,
+      categories,
+      status,
+      addToAllCat,
+      allPartners,
+      description,
+      selectedCategory,
+      selectedFiles,
+      addedCategory,
+      daily,
+      deposit,
+      category,
+      updateCategories,
+      showToatSuccess,
+      newDaily,
+      descriptionError,
+      categoryError,
+      seatsError,
+      dailyError,
+      OpenVilla,
+      showModal,
+      newDailyError,
+      submitForm,
+      selectedFilesRef,
+      removeImage,
+      isLoading,
+      imageUrls,
+      handleFileChange,
+      uploadImage,
+      city,
+      cityError,
+      name,
+      pool,
+      view,
+      transformedCategories,
+      baths,
+      sleeps,
+      AllSelected,
+      minioeuvre_daily,
+      deleteFromCategories,
+      selectedPartner,
+      coverImageIndex,
+      rooms,
+      nameError,
+      closeModal,
+    };
+  },
+});
+</script>
+<style scoped>
+.delete_icon {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  left: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #ffffff; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
+  margin-right: 10px; /* Ajouter une marge à droite pour créer de l'espace entre les boutons */
+}
+.image-item {
+  position: relative;
+  max-width: 150px;
+  /* Taille maximale d'une image */
+  margin-bottom: 5px;
+}
+
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  overflow-x: auto;
+  max-height: 200px;
+  /* Ajustez la hauteur maximale si nécessaire */
+}
+.select-same-width {
+  width: calc(100% - 24px); /* Réglez la largeur en fonction de vos besoins */
+}
+.set_cover_button {
+  position: absolute;
+  top: 5px; /* Ajustez la position verticale selon vos besoins */
+  right: 5px; /* Ajustez la position horizontale selon vos besoins */
+  background-color: transparent; /* Couleur de fond du bouton */
+  color: #0056b3; /* Couleur du texte */
+  border: none; /* Supprimer la bordure */
+  padding: 5px; /* Espacement intérieur */
+  border-radius: 50%; /* Bordure arrondie pour un aspect de bouton circulaire */
+  cursor: pointer; /* Curseur pointeur au survol */
+  transition: background-color 0.3s ease; /* Animation de transition */
+}
+</style>

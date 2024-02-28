@@ -4,36 +4,56 @@
   >
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30">
       <div class="profile-info d-sm-flex align-items-center">
-        <!-- <img
-        v-if="storageUrl && customer?.user?.photo.url"
-        :src="storageUrl + customer.user.photo.url"
+        <img
+          v-if="storageUrl && getCustomer?.attributes.user.data?.attributes.photo.data?.attributes.url"
+          :src="storageUrl + getCustomer?.attributes.user.data?.attributes.photo.data?.attributes.url"
           class="rounded"
           alt="user"
-        /> -->
+        />
         <div class="title mt-12 mt-sm-0">
-          <h5 class="text-black fw-medium mb-8">ff</h5>
-          <!-- <span class="d-block fs-md-15 fs-lg-16 text-dark-emphasis mb-8">
-            Chief Software Developer
-          </span> -->
-          <span class="d-block fw-bold text-primary"> Solit IT Solution </span>
+          <h3 class="text-black fw-medium mb-8">
+            {{ getCustomer?.attributes.name + " " + getCustomer?.attributes.surname }}
+          </h3>
+          <span class="d-block fs-md-15 fs-lg-16 text-dark-emphasis mb-8">
+            {{ getCustomer?.attributes.user.data?.attributes.role.data?.attributes.name }}
+          </span>
         </div>
       </div>
       <div
         class="border-top mt-15 mb-15 mt-sm-20 mb-sm-20 mt-md-25 mb-md-25 mt-lg-30 mb-lg-30"
       ></div>
       <div class="d-flex align-items-center justify-content-between">
-        <h5 class="fw-medium text-black-emphasis mb-0">Lead’s Information</h5>
-        <router-link
-          to="/lead-details"
-          class="d-inline-block text-decoration-none lh-1 text-muted fw-medium"
-        >
-          <i
-            class="ph-duotone ph-pencil text-black position-relative top-1 fs-16 me-1"
-          ></i>
-          Edit
-        </router-link>
+        <h5 class="fw-medium text-black-emphasis mb-0">
+          Customer’s Information
+        </h5>
       </div>
       <ul class="info mt-25 ps-0 mb-0 list-unstyled">
+        <li class="position-relative">
+          <div class="icon text-warning rounded-circle text-center">
+            <!-- Use Unicode character for the birthday cake symbol -->
+            <i class="dob-icon">&#127874;</i>
+          </div>
+          <span class="d-block text-black mb-5 fw-semibold">Date of Birth</span>
+          <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
+            {{ getCustomer?.attributes.user.data?.attributes.date_of_birth }}
+          </span>
+        </li>
+        <li class="position-relative">
+          <div class="icon text-success rounded-circle text-center">
+            <i class="flaticon-gender" v-if="getCustomer?.attributes.user.data?.attributes.gender === 'Male'"
+              >&#9794;</i
+            >
+            <i
+              class="flaticon-gender"
+              v-if="getCustomer?.attributes.user.data?.attributes.gender === 'Female'"
+              >&#9792;</i
+            >
+          </div>
+          <span class="d-block text-black mb-5 fw-semibold">Gender</span>
+          <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
+            {{ getCustomer?.attributes.user.data?.attributes.gender }}
+          </span>
+        </li>
         <li class="position-relative">
           <div class="icon text-success rounded-circle text-center">
             <i class="flaticon-mail-inbox-app"></i>
@@ -43,11 +63,11 @@
             href="mailto:johnathon23@gmail.com"
             class="d-inline-block fs-md-15 fs-lg-16 text-primary text-decoration-none"
           >
-            johnathon23@gmail.com
+            {{ getCustomer?.attributes.user.data?.attributes.email }}
           </a>
         </li>
         <li class="position-relative">
-          <div class="icon text-info rounded-circle text-center">
+          <div class="icon text-warning rounded-circle text-center">
             <i class="flaticon-telephone-call"></i>
           </div>
           <span class="d-block text-black mb-5 fw-semibold">Phone No</span>
@@ -55,123 +75,87 @@
             href="tel:+1-321-456-8756"
             class="d-inline-block fs-md-15 fs-lg-16 text-muted text-decoration-none"
           >
-            +1-321-456-8756
+            {{ getCustomer?.attributes.phone }}
           </a>
+        </li>
+
+        <li class="position-relative">
+          <div class="icon text-info rounded-circle text-center">
+            <!-- Use the appropriate Flaticon class for the location icon -->
+            <i class="flaticon-maps-and-flags"></i>
+          </div>
+          <span class="d-block text-black mb-5 fw-semibold">Location</span>
+          <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
+            {{getCustomer?.attributes.address }}
+          </span>
         </li>
         <li class="position-relative">
           <div class="icon text-primary rounded-circle text-center">
-            <i class="flaticon-web"></i>
+            <!-- Use Unicode character for the steering wheel symbol -->
+            <i class="driver-license-icon">&#128663;</i>
           </div>
-          <span class="d-block text-black mb-5 fw-semibold">Website</span>
-          <a
-            href="#"
-            target="_blank"
-            class="d-inline-block fs-md-15 fs-lg-16 text-muted text-decoration-none"
+          <span class="d-block text-black mb-5 fw-semibold"
+            >Driver's License</span
           >
-            Johnydev.com
-          </a>
-        </li>
-        <li class="position-relative">
-          <div class="icon text-warning rounded-circle text-center">
-            <i class="flaticon-industry"></i>
-          </div>
-          <span class="d-block text-black mb-5 fw-semibold">Industry</span>
           <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
-            Medium
-          </span>
-        </li>
-        <li class="position-relative">
-          <div class="icon text-info rounded-circle text-center">
-            <i class="flaticon-employee"></i>
-          </div>
-          <span class="d-block text-black mb-5 fw-semibold">
-            No Of Employees
-          </span>
-          <span class="d-inline-block fs-md-15 fs-lg-16 text-muted"> 125 </span>
-        </li>
-        <li class="position-relative">
-          <div class="icon text-success rounded-circle text-center">
-            <i class="flaticon-money"></i>
-          </div>
-          <span class="d-block text-black mb-5 fw-semibold">
-            Annual Revenue
-          </span>
-          <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
-            $ 24000 USD
-          </span>
-        </li>
-        <li class="position-relative">
-          <div class="icon text-info rounded-circle text-center">
-            <i class="flaticon-date-1"></i>
-          </div>
-          <span class="d-block text-black mb-5 fw-semibold">
-            Last Contacted
-          </span>
-          <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
-            12 March 2023, 10:54 AM
+            {{ getCustomer?.attributes.driver_license }}
           </span>
         </li>
         <li class="position-relative">
           <div class="icon text-primary rounded-circle text-center">
-            <i class="flaticon-search-1"></i>
+            <!-- Use the Flaticon insurance icon class -->
+            <i class="insurance-icon">&#128451;</i>
           </div>
-          <span class="d-block text-black mb-5 fw-semibold"> Lead Source </span>
+          <span class="d-block text-black mb-5 fw-semibold">Insurance</span>
           <span class="d-inline-block fs-md-15 fs-lg-16 text-muted">
-            Social media advertisement
+            {{ getCustomer?.attributes.Insurance }}
           </span>
-        </li>
-        <li class="position-relative">
-          <div class="icon text-warning rounded-circle text-center">
-            <i class="flaticon-status"></i>
-          </div>
-          <span class="d-block text-black mb-5 fw-semibold"> Lead Status </span>
-          <span class="badge text-outline-info">New Lead</span>
         </li>
       </ul>
     </div>
+    <loading
+      v-model:active="getUsersLoading"
+      :can-cancel="true"
+      :is-full-page="true"
+    />
   </div>
 </template>
 
 <script>
-import { endPoints } from "@/utils/endPoints";
-import { methodsHttpNames } from "@/utils/methods";
-import { makeApiRequest } from "@/services/apiService";
-import { decodeCustomer } from "@/models/Customer/Customer";
+import { storageUrl } from "../../../utils/constants";
+import { mapActions, mapGetters } from "vuex";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 export default {
   name: "CustomerInformation",
+  components: {
+    Loading,
+  },
   props: {
     // Define the 'customer id' prop
     customerId: {
-      type: [Number,String],
       required: true,
     },
-    data() {
-      return {
-        customer: null,
-      };
-    },
-    methods: {
-      async findCustomer(id) {
-        try {
-          const response = await makeApiRequest(
-            methodsHttpNames.GET,
-            `${endPoints.findCustomer}/${id}?populate=*`,
-            undefined,
-            undefined
-          );
-          if (response.success) {
-            console.log(decodeCustomer(response.data));
-            this.customer = decodeCustomer(response.data);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      },
-    },
+  },
 
-    async created() {
-      await this.findCustomer(this.customerId);
-    },
+  data() {
+    return {
+      storageUrl: "",
+      customer: {},
+      idCustomer: this.customerId,
+    };
+  },
+  methods: {
+    ...mapActions(["fetchOneCustomer"]),
+  },
+  computed: {
+    ...mapGetters(["getCustomer","getUsersLoading",]),
+  },
+  async mounted() {
+    if (this.customerId) {
+      await this.fetchOneCustomer(this.customerId);
+    }
+    this.storageUrl = storageUrl;
   },
 };
 </script>
