@@ -5,7 +5,7 @@ FROM node:20.11.0 as build-stage
 WORKDIR /app
 
 # Copy package.json and package-lock.json to container
-COPY package.json package-lock.json ./
+COPY package*.json  ./
 
 # Install dependencies
 RUN npm install
@@ -19,11 +19,11 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
+FROM nginx:alpine AS Production
 
 # Copy build output from build stage to nginx
 COPY --from=build-stage /app/dist /usr/share/nginx/html
-
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose port 80
 EXPOSE 80
 
