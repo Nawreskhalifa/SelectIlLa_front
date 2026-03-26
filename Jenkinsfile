@@ -3,19 +3,27 @@ pipeline {
 
     stages {
 
-        stage('Build') {
+        stage('SCM') {
             steps {
-                nodejs(nodeJSInstallationName: 'nodejs15.2.1') {
-                    sh 'npm install'
-                }
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/Nawreskhalifa/SelectIlLa_Backend.git'
+                    ]]
+                ])
             }
         }
 
-        stage('ExecuteSonarQubeReport') {
+        stage('Install Dependencies') {
             steps {
-                nodejs(nodeJSInstallationName: 'nodejs15.2.1') {
-                    sh 'npm run sonar'
-                }
+                sh 'npm install'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm run build'
             }
         }
 
