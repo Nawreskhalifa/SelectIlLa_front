@@ -7,11 +7,9 @@ WORKDIR /app
 # Copy package.json and package-lock.json to container
 COPY package*.json  ./
 
-# 🔥 FIX réseau npm (IMPORTANT)
-RUN npm config set registry https://registry.npmmirror.com/ \
- && npm config set fetch-retry-maxtimeout 600000 \
- && npm config set fetch-retry-mintimeout 20000
-
+RUN npm config set registry https://registry.npmjs.org/ && \
+    npm config set fetch-retry-maxtimeout 600000 && \
+    npm config set fetch-retry-mintimeout 20000
 # Install dependencies
 RUN npm install --legacy-peer-deps
 

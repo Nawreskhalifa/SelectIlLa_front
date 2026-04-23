@@ -1,6 +1,6 @@
 import { API_BASE_URL } from './constants';
 export const endPoints = {
-    login: `${API_BASE_URL}auth/local`,
+    login: `${API_BASE_URL}/api/auth/local`,
     allUsers: `${API_BASE_URL}users?populate=*`,
     findUser: `${API_BASE_URL}users`,
     allCustomers: `${API_BASE_URL}customers`,
