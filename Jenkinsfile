@@ -85,22 +85,22 @@ pipeline {
             }
         }
 
-      stage('Deploy Kubernetes') {
-        steps {
-            withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
-                sh '''
-                export KUBECONFIG=$KUBECONFIG_FILE
+     // stage('Deploy Kubernetes') {
+     //    steps {
+     //        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
+        //         sh '''
+     //            export KUBECONFIG=$KUBECONFIG_FILE
                 
-                kubectl config view
-                kubectl get nodes
+      //           kubectl config view
+       //          kubectl get nodes
                 
-                kubectl apply -f k8s/frontend-deployment.yml
-                kubectl apply -f k8s/frontend-service.yml
-                kubectl rollout restart deployment frontend-deployment
-                '''
-            }
-        }
-    }
+         //        kubectl apply -f k8s/frontend-deployment.yml
+         //        kubectl apply -f k8s/frontend-service.yml
+         //        kubectl rollout restart deployment frontend-deployment
+            //     '''
+           //  }
+     //    }
+  //   }
     }
 
     post {
