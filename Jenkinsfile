@@ -1,6 +1,6 @@
 pipeline {
 
-```
+
 agent any
 
 environment {
@@ -185,7 +185,7 @@ ${env.BUILD_URL}console
 ============================================
 """,
 
-```
+
             to: "${env.EMAIL_DEST}",
             mimeType: 'text/plain'
         )
@@ -197,7 +197,7 @@ ${env.BUILD_URL}console
             subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
 
             body: """
-```
+
 
 ============================================
 FRONTEND CI/CD — ECHEC
@@ -228,7 +228,7 @@ Verifier :
 ============================================
 """,
 
-```
+
             to: "${env.EMAIL_DEST}",
             mimeType: 'text/plain'
         )
@@ -236,9 +236,8 @@ Verifier :
 
     always {
 
-        cleanWs()
+        deleteDir()
     }
 }
-```
 
 }
