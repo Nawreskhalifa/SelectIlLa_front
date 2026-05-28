@@ -4,17 +4,10 @@ pipeline {
 agent any
 
 environment {
-
     AWS_REGION = 'us-east-1'
-
     ECR_REGISTRY = '289835834707.dkr.ecr.us-east-1.amazonaws.com'
-
-    HELM_CHART_PATH = "infra/selectilla-chart"
-
+    HELM_CHART_PATH = "infra/selectitla-chart"
     IMAGE_TAG = "${BUILD_NUMBER}"
-
-    HELM_CHART_PATH = '/home/nawres/projetPFE/selectilla-chart'
-
     EMAIL_DEST = 'nawreskhalifa17@gmail.com'
 }
 
@@ -27,6 +20,15 @@ stages {
 
             git branch: 'main',
                 url: 'https://github.com/Nawreskhalifa/SelectIlLa_front.git'
+        }
+    }
+    stage('Clone Infra') {
+        steps {
+            dir('infra') {
+                git branch: 'main',
+                    credentialsId: 'github-token1',
+                    url: 'https://github.com/Nawreskhalifa/projetPFE.git'
+            }
         }
     }
 
