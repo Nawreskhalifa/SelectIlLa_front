@@ -13,7 +13,7 @@ environment {
 
     IMAGE_TAG = "${BUILD_NUMBER}"
 
-    HELM_CHART_PATH = '/home/nawres/projetPFE/selectitla-chart'
+    HELM_CHART_PATH = '/home/nawres/projetPFE/selectilla-chart'
 
     EMAIL_DEST = 'nawreskhalifa17@gmail.com'
 }
