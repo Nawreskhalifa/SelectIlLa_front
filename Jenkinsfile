@@ -30,19 +30,7 @@ stages {
         }
     }
 
-    stage('Check Network') {
-        steps {
-
-            sh '''
-                echo "Checking network..."
-
-                curl -I https://google.com || true
-
-                curl -I https://${ECR_REGISTRY} || true
-            '''
-        }
-    }
-
+    
     stage('AWS Authentication') {
         steps {
 
