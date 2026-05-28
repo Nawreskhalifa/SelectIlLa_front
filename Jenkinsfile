@@ -9,7 +9,7 @@ environment {
 
     ECR_REGISTRY = '289835834707.dkr.ecr.us-east-1.amazonaws.com'
 
-    FRONT_IMAGE = "${ECR_REGISTRY}/selectilla-front"
+    HELM_CHART_PATH = "infra/selectilla-chart"
 
     IMAGE_TAG = "${BUILD_NUMBER}"
 
