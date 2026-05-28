@@ -6,7 +6,8 @@ agent any
 environment {
     AWS_REGION = 'us-east-1'
     ECR_REGISTRY = '289835834707.dkr.ecr.us-east-1.amazonaws.com'
-    HELM_CHART_PATH = "infra/selectitla-chart"
+    FRONT_IMAGE = '289835834707.dkr.ecr.us-east-1.amazonaws.com/selectilla-front'
+    HELM_CHART_PATH = 'infra/selectitla-chart'
     IMAGE_TAG = "${BUILD_NUMBER}"
     EMAIL_DEST = 'nawreskhalifa17@gmail.com'
 }
